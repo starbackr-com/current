@@ -1,1 +1,2 @@
 # current
+nostr + bitcoin
