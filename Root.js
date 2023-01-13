@@ -9,7 +9,8 @@ import { logIn, setBearer } from "./features/authSlice";
 import UnauthedNavigator from "./nav/UnauthedNavigator";
 import { loadAsync } from "expo-font";
 import AuthedNavigator from "./nav/AuthedNavigator";
-import colors from "./styles/colors";
+import { usePostLoginMutation } from "./services/walletApi";
+import { loginToWallet } from "./utils/wallet";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +25,7 @@ const RootNav = () => {
 const Root = () => {
     const [appIsReady, setAppIsReady] = useState();
     const dispatch = useDispatch();
+    const [login] = usePostLoginMutation();
 
     useEffect(() => {
         const prepare = async () => {
@@ -34,8 +36,9 @@ const Root = () => {
                     "Montserrat-Bold": require("./assets//Montserrat-Bold.ttf"),
                 });
                 if (privKey) {
-                    const pubKey = getPublicKey(privKey);
-                    dispatch(logIn());
+                    console.log('Initialising from storage...')
+                    const { access_token } = loginToWallet(privKey)
+                    dispatch(logIn({bearer: access_token}));
                 }
                 await new Promise((resolve) => setTimeout(resolve, 4000));
             } catch (e) {

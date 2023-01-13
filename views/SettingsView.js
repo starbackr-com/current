@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logOut } from '../features/authSlice'
 
 
+
 const SettingsView = () => {
     const state = useSelector(state => state.auth.isLoggedIn)
     const dispatch = useDispatch();
     const logoutHandler = () => {
         deleteValue('privKey')
+        dispatch
         dispatch(logOut())
     }
     const test = () => {

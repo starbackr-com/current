@@ -1,24 +1,58 @@
-import { View, Text, Button, StyleSheet } from 'react-native'
-import React from 'react'
-import { useSelector } from 'react-redux';
-import { loginToWallet } from '../utils/wallet';
+import { View, Text, Button, StyleSheet } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { loginToWallet } from "../utils/wallet";
+import globalStyles from "../styles/globalStyles";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const HomeView = () => {
-    const { privKey, pubKey } = useSelector((state) => state.auth);
+const HomeStack = createStackNavigator();
+const TestStack = createStackNavigator();
+
+const HomeScreen = ({ navigation }) => {
+    const { privKey, pubKey, walletExpires } = useSelector(
+        (state) => state.auth
+    );
+
+    const twitterModalShown = useSelector(
+        (state) => state.intro.twitterModalShown
+    );
+    const onLayoutView = useCallback(() => {
+        if (!twitterModalShown) {
+            console.log(twitterModalShown);
+            navigation.navigate("TwitterModal");
+        }
+    }, []);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.createKeyText}>
-                Feed will go here...
+        <View style={styles.container} onLayout={onLayoutView}>
+            <Text style={styles.createKeyText}>Feed will go here...</Text>
+            <Text style={globalStyles.textBody}>
+                Wallet expires in{" "}
+                {Math.round(walletExpires - new Date()) / 1000}
             </Text>
-            <Button title='Testing' onPress={() => {
-                loginToWallet();
-            }}/>
+            <Button
+                title="Testing"
+                onPress={() => {
+                    navigation.navigate("TwitterModal");
+                }}
+            />
         </View>
     );
-}
+};
 
-export default HomeView
+const HomeView = () => {
+    return (
+        <HomeStack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+        </HomeStack.Navigator>
+    );
+};
+
+export default HomeView;
 
 const styles = StyleSheet.create({
     container: {

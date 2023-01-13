@@ -14,6 +14,9 @@ export const authSlice = createSlice({
     reducers: {
         logIn: (state, action) => {
             state.isLoggedIn = true;
+            state.walletBearer = action.payload.bearer
+            const now = new Date();
+            state.walletExpires = now.setHours(now.getHours() + 1)
         },
         setBearer: (state, action) => {
             state.walletBearer = action.payload;
@@ -29,7 +32,6 @@ export const authSlice = createSlice({
     },
 });
 
-// Action creators are generated for each case reducer function
 export const { logIn, setBearer, logOut } = authSlice.actions;
 
 export default authSlice.reducer;

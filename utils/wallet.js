@@ -9,13 +9,24 @@ import { walletApi } from "../services/walletApi"
 const utf8Encoder = new TextEncoder()
 
 
-export const createWallet = () => {}
-
-export const loginToWallet = async () => {
+export const createWallet = async (privKey) => {
     try {
-        const privKey = await getValue('privKey')
         if (!privKey) {
-            throw new Error('No privKey found in storage!')
+            throw new Error('Expected to get a valid private key')
+        }
+        const password = secp256k1.utils.bytesToHex(sha256(utf8Encoder.encode(privKey)))
+        const username = getPublicKey(privKey)
+        const result = await store.dispatch(walletApi.endpoints.postNewWallet.initiate({login: username, password}))
+        console.log(result)
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+export const loginToWallet = async (privKey) => {
+    try {
+        if (!privKey) {
+            throw new Error('Expected to get a valid private key')
         }
         const password = secp256k1.utils.bytesToHex(sha256(utf8Encoder.encode(privKey)))
         const username = getPublicKey(privKey)
@@ -23,6 +34,8 @@ export const loginToWallet = async () => {
         if (result?.error === true) {
             throw new Error(`Auth failed: ${result?.message}`)
         }
+        console.log(result)
+        return result
     } catch (err) {
         console.log(err)
     }

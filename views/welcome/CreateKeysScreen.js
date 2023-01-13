@@ -14,6 +14,8 @@ const CreateKeysScreen = ({ navigation: { navigate } }) => {
         skip,
     });
 
+    console.log(data)
+
     useEffect(() => {
         setIsFetching(true)
         setSkip(true)
@@ -33,7 +35,7 @@ const CreateKeysScreen = ({ navigation: { navigate } }) => {
 
     return (
         <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textH1}>Create a new key-pair</Text>
+            <Text style={globalStyles.textH1}>Choose your username</Text>
             <View style={{ width: "100%", alignItems: "center", margin: 32 }}>
                 <Input
                     label="Choose Username"
@@ -43,6 +45,7 @@ const CreateKeysScreen = ({ navigation: { navigate } }) => {
                         onChangeText: (value) => {
                             setUsername(value);
                         },
+                        autoCapitalize: 'none'
                     }}
                 />
                 {data?.names ? <Text style={[globalStyles.textBody, {color: 'red', fontSize: 12, marginTop:8}]}>Username already taken!</Text> : undefined}
