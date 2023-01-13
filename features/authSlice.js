@@ -16,7 +16,7 @@ export const authSlice = createSlice({
             state.isLoggedIn = true;
             state.walletBearer = action.payload.bearer
             const now = new Date();
-            state.walletExpires = now.setHours(now.getHours() + 1)
+            state.walletExpires = now.setHours(now.getHours() + 2)
         },
         setBearer: (state, action) => {
             state.walletBearer = action.payload;

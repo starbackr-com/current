@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -8,13 +8,12 @@ import FeedView from "../views/FeedView";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
-import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 
-const TabNavigator = ({ navigation }) => {
+const TabNavigator = () => {
     return (
             <Tab.Navigator
                 screenOptions={({ route }) => ({
@@ -44,6 +43,7 @@ const TabNavigator = ({ navigation }) => {
                     tabBarActiveTintColor: "#5E88BF",
                     tabBarInactiveTintColor: "gray",
                     tabBarStyle: { backgroundColor: "#18181b" },
+                    headerShadowVisible: false
                 })}
             >
                 <Tab.Screen name="Home" component={HomeView} />
@@ -56,7 +56,8 @@ const TabNavigator = ({ navigation }) => {
 
 const AuthedNavigator = () => {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <>
+        <Stack.Navigator screenOptions={{ headerShown: false }} >
             <Stack.Screen name="MainTabNav" component={TabNavigator} />
             <Stack.Screen
                 name="TwitterModal"
@@ -64,6 +65,7 @@ const AuthedNavigator = () => {
                 options={{ presentation: "modal" }}
             />
         </Stack.Navigator>
+        </>
     );
 };
 
