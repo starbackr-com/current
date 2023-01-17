@@ -7,12 +7,14 @@ export const walletApi = createApi({
         prepareHeaders: (headers, { getState }) => {
             const token = getState().auth.walletBearer;
             if (token) {
-                headers.set("authorization", `Bearer ${token}`);
+                headers.set("Authorization", `Bearer ${token}`);
             }
 
             return headers;
         },
+        
     }),
+    tagTypes: ['Balance'],
     endpoints: (builder) => ({
         postNewWallet: builder.mutation({
             query: ({ login, password }) => ({
@@ -38,6 +40,7 @@ export const walletApi = createApi({
         }),
         getWalletBalance: builder.query({
             query: () => `balance`,
+            providesTags: ['Balance']
         }),
         postInvoice: builder.mutation({
             query: ({ amtinusd, memo }) => ({
@@ -48,10 +51,30 @@ export const walletApi = createApi({
                     memo,
                 },
             }),
+            invalidatesTags: ['Balance'],
         }),
         checkUsername: builder.query({
             query: (username) => `.well-known/nostr.json?name=${username}`
-        })
+        }),
+        postPayment: builder.mutation({
+            query: ({invoice}) => ({
+                url: 'payinvoice',
+                method: 'POST',
+                body: {
+                    invoice
+                }
+            })
+        }),
+        getTransactions: builder.mutation({
+            query: (page) => ({
+                url: 'txnhistory',
+                method: 'POST',
+                body: {
+                    limit: 100,
+                    offset: page ? page * 100 : 0
+                }
+            })
+        }),
     }),
 });
 
@@ -60,5 +83,8 @@ export const {
     useGetWalletBalanceQuery,
     usePostLoginMutation,
     usePostInvoiceMutation,
-    useCheckUsernameQuery
+    useCheckUsernameQuery,
+    usePostPaymentMutation,
+    useLazyGetWalletBalanceQuery,
+    useGetTransactionsMutation
 } = walletApi;

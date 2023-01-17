@@ -4,6 +4,7 @@
     "slug": "current",
     "version": "1.0.0",
     "orientation": "portrait",
+    "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "jsEngine": "hermes",
@@ -19,7 +20,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.current"
     },
     "android": {
       "adaptiveIcon": {

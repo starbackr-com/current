@@ -8,34 +8,39 @@ import { logIn } from "./features/authSlice";
 import UnauthedNavigator from "./nav/UnauthedNavigator";
 import { loadAsync } from "expo-font";
 import AuthedNavigator from "./nav/AuthedNavigator";
-import { usePostLoginMutation } from "./services/walletApi";
 import { loginToWallet } from "./utils/wallet";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import { init } from "./utils/database";
+import { getEvents } from "./utils/nostr";
 
 SplashScreen.preventAutoHideAsync();
-
 
 const Root = () => {
     const [appIsReady, setAppIsReady] = useState();
     const dispatch = useDispatch();
-    const {isLoggedIn, walletExpires} = useSelector((state) => state.auth);
-
+    const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const prepare = async () => {
             try {
+                await getEvents("wss://nostr1.starbackr.me");
                 const privKey = await getValue("privKey");
+                const username = await getValue("username");
                 await loadAsync({
                     "Montserrat-Regular": require("./assets//Montserrat-Regular.ttf"),
                     "Montserrat-Bold": require("./assets//Montserrat-Bold.ttf"),
                 });
                 if (privKey) {
                     console.log("Initialising from storage...");
-                    const { access_token } = loginToWallet(privKey);
-                    dispatch(logIn({ bearer: access_token }));
+                    const { access_token } = await loginToWallet(
+                        privKey,
+                        username
+                    );
+                    dispatch(logIn({ bearer: access_token, username }));
                 }
-                await new Promise((resolve) => setTimeout(resolve, 4000));
+                await init();
+                await new Promise((resolve) => setTimeout(resolve, 1000));
             } catch (e) {
                 console.warn(e);
             } finally {
@@ -59,9 +64,12 @@ const Root = () => {
             onStateChange={async () => {
                 if (isLoggedIn && new Date() > walletExpires) {
                     const privKey = await getValue("privKey");
-                    const { access_token } = loginToWallet(privKey);
-                    dispatch(logIn({ bearer: access_token }));
-                    console.log('Token refreshed')
+                    const username = await getValue("username");
+                    const { access_token } = loginToWallet(privKey, username);
+                    dispatch(
+                        logIn({ bearer: access_token, username: username })
+                    );
+                    console.log("Token refreshed");
                 }
             }}
         >

@@ -30,7 +30,7 @@ const CreateKeysScreen = ({ navigation: { navigate } }) => {
 
     const createKeysHandler = async () => {
         const mem = await generateMnemonic();
-        navigate("ShowBackup", { mem });
+        navigate("ShowBackup", { mem, username });
     };
 
     return (

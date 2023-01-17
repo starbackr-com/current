@@ -35,16 +35,17 @@ const Word = ({ word, index }) => {
 
 const ShowBackupScreen = ({ route }) => {
     const dispatch = useDispatch();
-    const mem = route.params.mem;
+    const {mem, username} = route.params;
     const [postWallet, results] = usePostNewWalletMutation();
 
     const saveHandler = async () => {
         const privKey = await mnemonicToSeed(mem);
         const pubKey = nostr.getPublicKey(privKey);
-        await createWallet(privKey);
-        const { access_token } = await loginToWallet(privKey)
+        await createWallet(privKey, username);
+        const { access_token } = await loginToWallet(privKey, username)
         await saveValue("privKey", privKey);
-        dispatch(logIn({bearer: access_token}));
+        await saveValue("username", username);
+        dispatch(logIn({bearer: access_token, username}));
     };
     return (
         <View style={globalStyles.screenContainer}>
