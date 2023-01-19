@@ -5,6 +5,10 @@ import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import wordlist from "../../utils/wordlist.json";
 import { mnemonicToSeed } from "../../utils/keys";
+import { getPublicKey } from "nostr-tools";
+import { loginWithNip5 } from "../../utils/nostr/nip05";
+import { loginToWallet } from "../../utils/wallet";
+import { saveValue } from "../../utils/secureStore";
 
 const ImportKeysScreen = () => {
     const input1 = useRef();
@@ -39,7 +43,9 @@ const ImportKeysScreen = () => {
         setError(errorArray)
         if (errorArray.length === 0 && mem.length === 12) {
             const privKey = await mnemonicToSeed(mem)
-            console.log(privKey)
+            await saveValue("privKey", privKey);
+            const pubKey = getPublicKey(privKey)
+            const nip05 = await loginWithNip5(privKey);
         }
     };
     return (
@@ -58,9 +64,9 @@ const ImportKeysScreen = () => {
                         textInputConfig={{
                             placeholder: "1",
                             ref: input1,
-                            // onBlur: () => {
-                            //     input2.current.focus();
-                            // },
+                            onSubmitEditing: () => {
+                                input2.current.focus();
+                            },
                             onChangeText: (text) => {
                                 onChangeHandler("1", text);
                             },
@@ -72,9 +78,9 @@ const ImportKeysScreen = () => {
                         textInputConfig={{
                             placeholder: "2",
                             ref: input2,
-                            // onBlur: () => {
-                            //     input3.current.focus();
-                            // },
+                            onSubmitEditing: () => {
+                                input3.current.focus();
+                            },
                             onChangeText: (text) => {
                                 onChangeHandler("2", text);
                             },
@@ -94,9 +100,9 @@ const ImportKeysScreen = () => {
                         textInputConfig={{
                             placeholder: "3",
                             ref: input3,
-                            // onBlur: () => {
-                            //     input4.current.focus();
-                            // },
+                            onSubmitEditing: () => {
+                                input4.current.focus();
+                            },
                             onChangeText: (text) => {
                                 onChangeHandler("3", text);
                             },
@@ -108,9 +114,9 @@ const ImportKeysScreen = () => {
                         textInputConfig={{
                             placeholder: "4",
                             ref: input4,
-                            // onBlur: () => {
-                            //     input5.current.focus();
-                            // },
+                            onSubmitEditing: () => {
+                                input5.current.focus();
+                            },
                             onChangeText: (text) => {
                                 onChangeHandler("4", text);
                             },

@@ -35,7 +35,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                     }}
                 />
             </View>
-            <View style={{ flex: 3, justifyContent: "center" }}>
+            <View style={{ flex: 4, justifyContent: "center" }}>
                 <Text style={[globalStyles.textH1]}>
                     {data ? `${data.BTC?.AvailableBalance} SATS` : "Loading..."}
                 </Text>
@@ -50,6 +50,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
             >
                 <View
                     style={{
+                        flex: 1,
                         flexDirection: "column",
                         width: "70%",
                         justifyContent: "space-between",
@@ -64,7 +65,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                             },
                         }}
                         containerStyles={{ width: "100%" }}
-                        icon="arrow-down-circle"
+                        icon="list"
                     />
                     <CustomButton
                         text="Send"
@@ -73,7 +74,6 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                                 navigate("WalletSendScreen");
                             },
                         }}
-                        containerStyles={{ marginBottom: 32 }}
                         icon="arrow-up-circle"
                     />
                     <CustomButton
@@ -87,7 +87,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                         icon="arrow-down-circle"
                     />
                 </View>
-                <View style={{ alignItems: "center" }}>
+                <View style={{ alignItems: "center", flex: 1 }}>
                     <Pressable
                         style={{
                             width: device.width / 6,

@@ -14,14 +14,7 @@ const WelcomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
 
     const importHandler = async () => {
-        const test = secp.utils.bytesToHex(secp.utils.randomPrivateKey());
-        const pubKey = nostr.getPublicKey(test);
-        const data = await postLogin({
-            login: "AppTest",
-            password: "12345",
-        }).unwrap();
-        dispatch(setBearer(data.access_token));
-        dispatch(logIn({ privKey: test, pubKey: pubKey }));
+        navigation.navigate("ImportKeys");
     };
 
     const createHandler = () => {

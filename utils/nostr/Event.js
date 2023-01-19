@@ -1,9 +1,10 @@
 import { store } from "../../store/store";
-import { addUser } from "../../features/messagesSlice";
+import { addMessage, addUser } from "../../features/messagesSlice";
 
 export class Event {
     constructor(eventData) {
         this.eventData = eventData;
+        this.id = eventData.id
         this.content = eventData.content;
         this.created_at = eventData.created_at;
         this.kind = eventData.kind;
@@ -37,10 +38,10 @@ export class Event {
                 picture: userData.picture,
                 about: userData.about,
                 display_name: userData.display_name,
+                lightningAddress: userData.lud06,
                 created_at,
             };
-        store.dispatch(addUser({user}))
-            
+            store.dispatch(addUser({ user }));
         } catch (err) {
             console.log(err);
         }
@@ -48,17 +49,10 @@ export class Event {
 
     saveNote() {
         const { id, pubkey, created_at, kind, tags, content, sig } = this;
-        const sql = `INSERT INTO arc_notes (id, pubkey, created_at, kind, tags, content, sig) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        const params = [
-            id,
-            pubkey,
-            created_at,
-            kind,
-            JSON.stringify(tags),
-            content,
-            sig,
-        ];
-
+        let root = !tags.some((tag) => {
+            let response = tag.includes("e");
+            return response
+        });
         try {
             const note = {
                 id,
@@ -68,9 +62,9 @@ export class Event {
                 tags: JSON.stringify(tags),
                 content,
                 sig,
+                root
             };
-
-            addNoteHelper(note);
+            store.dispatch(addMessage({ event: note }));
         } catch (err) {
             console.log(err);
         }

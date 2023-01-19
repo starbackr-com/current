@@ -51,6 +51,7 @@ const SettingsHomeScreen = ({navigation}) => {
                 data={settings}
                 renderItem={({ item }) => <SettingItem item={item} onNav={navigationHandler}/>}
             />
+            <Button title='ProfileScreen' onPress={() => {navigation.navigate('ProfileModal')}}/>
             <Button title='Log Out' onPress={logoutHandler}>SettingsView</Button>
         </View>
     );

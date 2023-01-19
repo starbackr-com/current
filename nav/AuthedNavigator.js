@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text, View } from "react-native";
-
-import SettingsView from "../views/SettingsView";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
@@ -15,6 +13,7 @@ import CustomButton from "../components/CustomButton";
 import { postEvent } from "../utils/nostr";
 import SettingsNavigator from "./SettingsNavigator";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import ProfileScreen from "../views/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -45,17 +44,17 @@ const TabNavigator = ({ navigation }) => {
                         <Ionicons name={iconName} size={size} color={color} />
                     );
                 },
-                headerStyle: { backgroundColor: colors.primary500 },
+                headerStyle: { backgroundColor: "#222222" },
                 headerTitleStyle: { color: "white" },
                 headerTintColor: "red",
                 tabBarActiveTintColor: colors.primary500,
                 tabBarInactiveTintColor: "gray",
                 tabBarStyle: {
-                    backgroundColor: "#18181b",
+                    backgroundColor: "#222222",
                     borderTopColor: colors.primary50,
                 },
-                headerShadowVisible: false,
                 tabBarShowLabel: false,
+                headerShadowVisible: false,
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />
@@ -115,6 +114,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="PostModal"
                     component={PostModal}
+                    options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="ProfileModal"
+                    component={ProfileScreen}
                     options={{ presentation: "modal" }}
                 />
             </Stack.Navigator>

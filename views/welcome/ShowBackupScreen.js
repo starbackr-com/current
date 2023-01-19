@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
 import CustomButton from "../../components/CustomButton";
 import { createWallet, loginToWallet } from "../../utils/wallet";
+import { postEvent } from "../../utils/nostr";
+import { setNip05 } from "../../utils/nostr/nip05";
 
 const Word = ({ word, index }) => {
     return (
@@ -45,6 +47,7 @@ const ShowBackupScreen = ({ route }) => {
         const { access_token } = await loginToWallet(privKey, username)
         await saveValue("privKey", privKey);
         await saveValue("username", username);
+        await setNip05(username, 'starbackr.me');
         dispatch(logIn({bearer: access_token, username}));
     };
     return (

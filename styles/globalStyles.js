@@ -15,6 +15,12 @@ export default globalStyles = StyleSheet.create({
         fontSize: 16,
         textAlign:'center'
     },
+    textBodyBold: {
+        fontFamily: 'Montserrat-Bold',
+        color: 'white',
+        fontSize: 16,
+        textAlign:'center'
+    },
     textH1: {
         fontFamily: 'Montserrat-Bold',
         color: 'white',

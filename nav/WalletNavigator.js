@@ -5,6 +5,7 @@ import WalletHomeScreen from "../views/wallet/WalletHomeScreen";
 import WalletInfoScreen from "../views/wallet/WalletInfoScreen";
 import WalletInvoiceScreen from "../views/wallet/WalletInvoiceScreen";
 import WalletReceiveScreen from "../views/wallet/WalletReceiveScreen";
+import WalletSendLnurlScreen from "../views/wallet/WalletSendLnurlScreen";
 import WalletSendScreen from "../views/wallet/WalletSendScreen";
 import WalletTransactionScreen from "../views/wallet/WalletTransactionScreen";
 
@@ -40,6 +41,7 @@ const WalletNavigator = () => {
             <Stack.Screen name="ScannerScreen" component={QrScanner} />
             <Stack.Screen name="WalletInfoScreen" component={WalletInfoScreen} />
             <Stack.Screen name="WalletTransactionScreen" component={WalletTransactionScreen} />
+            <Stack.Screen name="WalletSendLnurlScreen" component={WalletSendLnurlScreen} />
         </Stack.Navigator>
     );
 };

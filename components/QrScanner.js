@@ -30,10 +30,10 @@ const QrScanner = ({ navigation }) => {
     };
 
     if (hasPermission === null) {
-        return <Text>Requesting for camera permission</Text>;
+        return <View style={globalStyles.screenContainer}><Text>Requesting for camera permission...</Text></View>;
     }
     if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
+        return <View style={globalStyles.screenContainer}><Text>No permission to access camera...</Text></View>;
     }
 
     return (

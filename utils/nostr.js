@@ -1,31 +1,22 @@
-import {
-    relayInit,
-    generatePrivateKey,
-    getPublicKey,
-    getEventHash,
-    signEvent,
-} from "nostr-tools";
-
-import { store } from "../store/store";
-import { addMessage } from "../features/messagesSlice";
+import { getPublicKey, getEventHash, signEvent } from "nostr-tools";
 import { getValue } from "./secureStore";
 import relay from "./nostr/initRelay";
 import { Event } from "./nostr/Event";
 
-export const getEvents = async (url, pubkeys) => {
-    console.log(relay.status);
+let retries = 0;
 
-    setTimeout(() => {
-        relay.on("error", () => {
-            console.log(`failed to connect to ${relay.url}`);
-        });
+export const getEvents = async (url, pubkeys) => {
+    retries++;
+    if (relay.status === 1) {
+        retries = 0;
 
         let sub = relay.sub([
             {
                 authors: [
                     "d307643547703537dfdef811c3dea96f1f9e84c8249e200353425924a9908cf8",
                 ],
-                limit: 25,
+                kinds: [1],
+                limit: 100,
             },
             {
                 authors: [
@@ -36,18 +27,17 @@ export const getEvents = async (url, pubkeys) => {
         ]);
 
         sub.on("event", (event) => {
-            if (event.kind === 1) {
-                store.dispatch(addMessage({ event }));
-            }
-            if (event.kind === 0) {
-                const newEvent = new Event(event);
-                newEvent.save();
-            }
+            const newEvent = new Event(event);
+            newEvent.save();
         });
-        sub.on("eose", () => {
-            sub.unsub();
-        });
-    }, 5000);
+    } else if (retries > 20) {
+        alert("Cannot establish Relay connection...");
+        return;
+    } else {
+        setTimeout(() => {
+            getEvents();
+        }, 1000);
+    }
 };
 
 export const postEvent = async (content) => {
@@ -67,8 +57,6 @@ export const postEvent = async (content) => {
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, privKey);
-
-        console.log(event);
 
         let pub = relay.publish(event);
         pub.on("ok", () => {

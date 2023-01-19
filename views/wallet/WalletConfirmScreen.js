@@ -6,7 +6,7 @@ import globalStyles from "../../styles/globalStyles";
 
 
 const WalletConfirmScreen = ({ route, navigation }) => {
-    const invoice = route.params?.invoice;
+    const {invoice} = route.params;
     if (!invoice) {
         alert("Something went wrong");
         navigation.goBack();
@@ -18,7 +18,7 @@ const WalletConfirmScreen = ({ route, navigation }) => {
     ).value;
     const memo = decodedInvoice.find(
         (section) => section.name === "description"
-    ).value;
+    )?.value;
 
     const [sendPayment] = usePostPaymentMutation();
     return (
@@ -28,7 +28,7 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                 <Text style={globalStyles.textBody}>
                     Amount: {invoiceAmount / 1000} SATS
                 </Text>
-                <Text style={globalStyles.textBody}>Memo: {memo}</Text>
+                <Text style={globalStyles.textBody}>Memo: {memo || 'NA'}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 <CustomButton
@@ -36,6 +36,14 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                     buttonConfig={{
                         onPress: async () => {
                             const result = await sendPayment({ invoice });
+                            if (result.data?.decoded?.payment_hash) {
+                                alert('Success!')
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'WalletHomeScreen' }],
+                                  });
+                                  return
+                            }
                             alert(result.data?.message);
                         },
                     }}

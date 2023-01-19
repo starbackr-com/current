@@ -7,6 +7,10 @@ import globalStyles from "../../styles/globalStyles";
 const WalletSendScreen = ({ navigation, route }) => {
     const [inputText, setInputText] = useState("");
     const invoice = route.params?.data;
+
+    const mailRegex = /(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
+
+
     useEffect(() => {
         if (invoice) {
             setInputText(invoice);
@@ -14,13 +18,20 @@ const WalletSendScreen = ({ navigation, route }) => {
     }, []);
 
     const nextHandler = () => {
-        if (!inputText.includes("lnbc1")) {
+        const address = inputText.toLowerCase().match(mailRegex)
+        console.log(address)
+        if (!inputText.includes("lnbc") && !address && !inputText.includes('lnurl')) {
             alert(
-                "This is not a valid Lightning Invoice. Only sending to Lightning Wallets is support right now..."
+                "This is not a valid Lightning Invoice / Lightning Address / LNURL"
             );
             return;
+        } else if (address) {
+            navigation.navigate('WalletSendLnurlScreen', {address: address[0]})
+        } else if (inputText.includes('lnurl')) {
+            navigation.navigate('WalletSendLnurlScreen', {lnurl: inputText})
+        } else {
+            navigation.navigate("WalletConfirmScreen", { invoice: inputText });
         }
-        navigation.navigate("WalletConfirmScreen", { invoice: inputText });
     };
 
     return (
@@ -31,9 +42,10 @@ const WalletSendScreen = ({ navigation, route }) => {
                 label="Invoice/Address"
                 textInputConfig={{
                     placeholder: "Invoice/Address",
+                    autoCapitalize: false,
                     value: inputText,
                     onChangeText: (e) => {
-                        setInputText(e);
+                        setInputText(e.toLowerCase());
                     },
                 }}
             />

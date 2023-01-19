@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "../views/welcome/WelcomeScreen";
 import CreateKeysScreen from "../views/welcome/CreateKeysScreen";
 import ShowBackupScreen from "../views/welcome/ShowBackupScreen";
+import ImportKeysScreen from "../views/welcome/ImportKeysScreen";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,13 @@ const UnauthedNavigator = () => {
                 <Stack.Screen
                     name="ShowBackup"
                     component={ShowBackupScreen}
+                    options={{
+                        title: "",
+                    }}
+                />
+                <Stack.Screen
+                    name="ImportKeys"
+                    component={ImportKeysScreen}
                     options={{
                         title: "",
                     }}

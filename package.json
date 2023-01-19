@@ -8,6 +8,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/ngrok": "^4.1.0",
     "@noble/secp256k1": "^1.7.1",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/native": "^6.1.1",
@@ -21,7 +22,9 @@
     "expo": "~47.0.12",
     "expo-barcode-scanner": "~12.1.0",
     "expo-crypto": "~12.0.0",
+    "expo-dev-client": "~2.0.1",
     "expo-font": "~11.0.1",
+    "expo-image-picker": "~14.0.2",
     "expo-random": "~13.0.0",
     "expo-secure-store": "~12.0.0",
     "expo-splash-screen": "~0.17.5",
@@ -37,8 +40,8 @@
     "react-native-randombytes": "^3.6.1",
     "react-native-safe-area-context": "4.4.1",
     "react-native-screens": "~3.18.0",
-    "react-native-svg": "^13.7.0",
-    "react-native-webview": "^11.26.0",
+    "react-native-svg": "13.4.0",
+    "react-native-webview": "11.23.1",
     "react-native-webview-crypto": "^0.0.25",
     "react-qr-code": "^2.0.11",
     "react-redux": "^8.0.5",

@@ -63,7 +63,8 @@ export const walletApi = createApi({
                 body: {
                     invoice
                 }
-            })
+            }),
+            invalidatesTags: ['Balance']
         }),
         getTransactions: builder.mutation({
             query: (page) => ({
