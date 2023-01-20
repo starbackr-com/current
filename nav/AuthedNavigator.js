@@ -6,7 +6,6 @@ import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
 import colors from "../styles/colors";
-import ImportKeysScreen from "../views/welcome/ImportKeysScreen";
 import WalletNavigator from "./WalletNavigator";
 import Input from "../components/Input";
 import CustomButton from "../components/CustomButton";
@@ -14,11 +13,21 @@ import { postEvent } from "../utils/nostr";
 import SettingsNavigator from "./SettingsNavigator";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import ProfileScreen from "../views/ProfileScreen";
+import SearchScreen from "../views/SearchScreen";
+import globalStyles from "../styles/globalStyles";
+import { useGetWalletBalanceQuery } from "../services/walletApi";
+import { useIsFocused } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const TabNavigator = ({ navigation }) => {
+
+    const { data, refetch } = useGetWalletBalanceQuery(null, {
+        refetchOnFocus: true,
+        skip: !useIsFocused(),
+    });
+    console.log(data)
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -31,10 +40,10 @@ const TabNavigator = ({ navigation }) => {
                         iconName = focused ? "wallet" : "wallet-outline";
                     } else if (route.name === "Settings") {
                         iconName = focused ? "settings" : "settings-outline";
-                    } else if (route.name === "Test") {
+                    } else if (route.name === "Search") {
                         iconName = focused
-                            ? "search-circle"
-                            : "search-circle-outline";
+                            ? "heart-circle"
+                            : "heart-circle-outline";
                     } else if (route.name === "New") {
                         iconName = focused
                             ? "add-circle"
@@ -55,6 +64,7 @@ const TabNavigator = ({ navigation }) => {
                 },
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
+                headerRight: () => <Text style={[globalStyles.textBody, {marginRight: 12}]}>{data ? `${data.BTC.AvailableBalance} SATS` : undefined}</Text>
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />
@@ -71,7 +81,7 @@ const TabNavigator = ({ navigation }) => {
                     ),
                 })}
             />
-            <Tab.Screen name="Test" component={ImportKeysScreen} />
+            <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="Settings" component={SettingsNavigator} />
         </Tab.Navigator>
     );

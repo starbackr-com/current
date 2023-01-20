@@ -2,26 +2,24 @@ import { getPublicKey, getEventHash, signEvent } from "nostr-tools";
 import { getValue } from "./secureStore";
 import relay from "./nostr/initRelay";
 import { Event } from "./nostr/Event";
+import { store } from "../store/store";
 
 let retries = 0;
 
-export const getEvents = async (url, pubkeys) => {
+export const getEvents = async (url) => {
+    const pubkeys = store.getState().user.followedPubkeys
     retries++;
     if (relay.status === 1) {
         retries = 0;
 
         let sub = relay.sub([
             {
-                authors: [
-                    "d307643547703537dfdef811c3dea96f1f9e84c8249e200353425924a9908cf8",
-                ],
+                authors: pubkeys,
                 kinds: [1],
                 limit: 100,
             },
             {
-                authors: [
-                    "d307643547703537dfdef811c3dea96f1f9e84c8249e200353425924a9908cf8",
-                ],
+                authors: pubkeys,
                 kinds: [0],
             },
         ]);
@@ -30,10 +28,11 @@ export const getEvents = async (url, pubkeys) => {
             const newEvent = new Event(event);
             newEvent.save();
         });
-    } else if (retries > 20) {
+    } else if (retries > 10) {
         alert("Cannot establish Relay connection...");
         return;
     } else {
+        console.log('Retrying')
         setTimeout(() => {
             getEvents();
         }, 1000);

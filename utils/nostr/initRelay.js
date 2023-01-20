@@ -2,7 +2,7 @@ import {
     relayInit
 } from "nostr-tools";
 
-const relay = relayInit("wss://nostr-pub.wellorder.net");
+const relay = relayInit("wss://nostr1.starbackr.me");
 relay.connect()
 
 relay.on("error", () => {

@@ -3,9 +3,11 @@ import { decode } from "light-bolt11-decoder";
 import CustomButton from "../../components/CustomButton";
 import { usePostPaymentMutation } from "../../services/walletApi";
 import globalStyles from "../../styles/globalStyles";
+import { useState } from "react";
 
 
 const WalletConfirmScreen = ({ route, navigation }) => {
+    const [isLoading, setIsLoading] = useState(false);
     const {invoice} = route.params;
     if (!invoice) {
         alert("Something went wrong");
@@ -30,11 +32,13 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                 </Text>
                 <Text style={globalStyles.textBody}>Memo: {memo || 'NA'}</Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems:'center' }}>
+                {isLoading ? <Text style={globalStyles.textBody}>loading...</Text> : undefined}
                 <CustomButton
                     text="Send Payment!"
                     buttonConfig={{
                         onPress: async () => {
+                            setIsLoading(true)
                             const result = await sendPayment({ invoice });
                             if (result.data?.decoded?.payment_hash) {
                                 alert('Success!')
@@ -45,6 +49,7 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                                   return
                             }
                             alert(result.data?.message);
+                            setIsLoading(false)
                         },
                     }}
                 />

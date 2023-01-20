@@ -1,12 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Image, Pressable } from "react-native";
-import CustomButton from "../components/CustomButton";
+import { View, Text, Image, Pressable, Alert } from "react-native";
 import { decode } from "light-bolt11-decoder";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useState, useEffect } from "react";
+import { decodeLnurl } from "../utils/bitcoin/lnurl";
+import { usePostPaymentMutation } from "../services/walletApi";
+import CachedImage from 'expo-cached-image'
 
 const PostItem = ({ item, height, width, user }) => {
+    const [sendPayment] = usePostPaymentMutation();
     if (item.root === false) {
         return <></>;
     }
@@ -44,7 +46,7 @@ const PostItem = ({ item, height, width, user }) => {
         }
     };
 
-    const { content, created_at } = item;
+    const { content, created_at, pubkey } = item;
 
     const { imageURL, newMessage, invoice } = parseContent(content);
 
@@ -70,6 +72,52 @@ const PostItem = ({ item, height, width, user }) => {
             return;
         }
         alert("Unknown Tip-Format");
+    };
+
+    const zapHandler = async () => {
+        const dest = user.lud06.toLowerCase();
+        if (dest.includes("lnurl")) {
+            const url = decodeLnurl(dest);
+            const response = await fetch(url);
+            const { callback, maxSendable, minSendable } =
+                await response.json();
+            const amount = minSendable / 1000 > 210 ? minSendable / 1000 : 210;
+            Alert.alert(
+                "Zap",
+                `Do you want to send ${amount} SATS to ${
+                    user.name || user.pubkey
+                }?
+                
+(Hold Zap-Icon for custom amount)`,
+                [
+                    {
+                        text: "OK",
+                        onPress: async () => {
+                            const response = await fetch(
+                                `${callback}?amount=${amount * 1000}`
+                            );
+                            const data = await response.json();
+                            const invoice = data.pr;
+                            const result = await sendPayment({ invoice });
+                            if (result.data?.decoded?.payment_hash) {
+                                alert("Success!");
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: "WalletHomeScreen" }],
+                                });
+                                return;
+                            }
+                            alert(result.data?.message);
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                    },
+                ]
+            );
+        }
+        return;
     };
 
     const age = getAge(created_at);
@@ -103,7 +151,7 @@ const PostItem = ({ item, height, width, user }) => {
                             { textAlign: "left" },
                         ]}
                     >
-                        {user.name}
+                        {user?.name || pubkey}
                     </Text>
                     <Text
                         style={[globalStyles.textBody, { textAlign: "left" }]}
@@ -113,7 +161,7 @@ const PostItem = ({ item, height, width, user }) => {
                 </View>
 
                 {imageURL ? (
-                    <Image
+                    <CachedImage
                         style={{
                             width: "100%",
                             height: "30%",
@@ -121,6 +169,7 @@ const PostItem = ({ item, height, width, user }) => {
                             marginTop: 16,
                         }}
                         source={{ uri: imageURL }}
+                        cacheKey={`${imageURL}`}
                     />
                 ) : undefined}
                 <Text
@@ -163,7 +212,7 @@ const PostItem = ({ item, height, width, user }) => {
                 </View>
                 {user?.lud06 ? (
                     <Pressable
-                        style={{
+                        style={ ({pressed}) => [{
                             width: (width / 100) * 8,
                             height: (width / 100) * 8,
                             borderRadius: (width / 100) * 4,
@@ -171,8 +220,9 @@ const PostItem = ({ item, height, width, user }) => {
                             marginBottom: 16,
                             alignItems: "center",
                             justifyContent: "center",
-                        }}
-                        onPress={tipHandler}
+                        }, pressed ? {backgroundColor: '#faa200'} : undefined]}
+                        onPress={zapHandler}
+                        onLongPress={tipHandler}
                     >
                         <Ionicons
                             name="flash"
