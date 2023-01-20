@@ -4,8 +4,13 @@ import CustomButton from "../components/CustomButton";
 import { decode } from "light-bolt11-decoder";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState, useEffect } from "react";
 
 const PostItem = ({ item, height, width, user }) => {
+    if (item.root === false) {
+        return <></>;
+    }
+
     const navigation = useNavigation();
     const parseContent = (message) => {
         let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
@@ -55,16 +60,16 @@ const PostItem = ({ item, height, width, user }) => {
                 screen: "WalletSendLnurlScreen",
                 params: { lnurl: dest },
             });
-            return
+            return;
         }
         if (dest.includes("@")) {
             navigation.navigate("Wallet", {
                 screen: "WalletSendLnurlScreen",
                 params: { address: dest },
             });
-            return
+            return;
         }
-        alert('Unknown Tip-Format')
+        alert("Unknown Tip-Format");
     };
 
     const age = getAge(created_at);

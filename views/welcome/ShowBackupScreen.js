@@ -47,6 +47,7 @@ const ShowBackupScreen = ({ route }) => {
         const { access_token } = await loginToWallet(privKey, username)
         await saveValue("privKey", privKey);
         await saveValue("username", username);
+        await saveValue('mem', JSON.stringify(mem))
         await setNip05(username, 'starbackr.me');
         dispatch(logIn({bearer: access_token, username}));
     };

@@ -4,7 +4,7 @@ import { addMessage, addUser } from "../../features/messagesSlice";
 export class Event {
     constructor(eventData) {
         this.eventData = eventData;
-        this.id = eventData.id
+        this.id = eventData.id;
         this.content = eventData.content;
         this.created_at = eventData.created_at;
         this.kind = eventData.kind;
@@ -51,7 +51,7 @@ export class Event {
         const { id, pubkey, created_at, kind, tags, content, sig } = this;
         let root = !tags.some((tag) => {
             let response = tag.includes("e");
-            return response
+            return response;
         });
         try {
             const note = {
@@ -62,7 +62,7 @@ export class Event {
                 tags: JSON.stringify(tags),
                 content,
                 sig,
-                root
+                root,
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {

@@ -1,4 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
+import DisplayKeysScreen from "../views/settings/DisplayKeysScreen";
 import SettingsHomeScreen from "../views/settings/SettingsHomeScreen";
 
 
@@ -14,6 +15,10 @@ const SettingsNavigator = () => {
             <Stack.Screen
                 name="SettingsHomeScreen"
                 component={SettingsHomeScreen}
+            />
+            <Stack.Screen
+                name="Backup"
+                component={DisplayKeysScreen}
             />
         </Stack.Navigator>
     );
