@@ -41,12 +41,31 @@ const PostItem = ({ item, height, width, user }) => {
 
     const { content, created_at } = item;
 
-    const { imageURL ,newMessage, invoice } = parseContent(content);
+    const { imageURL, newMessage, invoice } = parseContent(content);
 
     let invoiceAmount;
     if (invoice) {
         invoiceAmount = decode(invoice[0]).sections[2].value / 1000;
     }
+
+    const tipHandler = () => {
+        const dest = user.lud06.toLowerCase();
+        if (dest.includes("lnurl")) {
+            navigation.navigate("Wallet", {
+                screen: "WalletSendLnurlScreen",
+                params: { lnurl: dest },
+            });
+            return
+        }
+        if (dest.includes("@")) {
+            navigation.navigate("Wallet", {
+                screen: "WalletSendLnurlScreen",
+                params: { address: dest },
+            });
+            return
+        }
+        alert('Unknown Tip-Format')
+    };
 
     const age = getAge(created_at);
 
@@ -72,7 +91,7 @@ const PostItem = ({ item, height, width, user }) => {
                     overflow: "hidden",
                 }}
             >
-                <View style={{maxHeight: '65%' , overflow:'hidden'}}>
+                <View style={{ maxHeight: "65%", overflow: "hidden" }}>
                     <Text
                         style={[
                             globalStyles.textBodyBold,
@@ -137,7 +156,7 @@ const PostItem = ({ item, height, width, user }) => {
                         />
                     ) : undefined}
                 </View>
-                {user?.lightningAddress ? (
+                {user?.lud06 ? (
                     <Pressable
                         style={{
                             width: (width / 100) * 8,
@@ -148,12 +167,7 @@ const PostItem = ({ item, height, width, user }) => {
                             alignItems: "center",
                             justifyContent: "center",
                         }}
-                        onPress={() => {
-                            navigation.navigate("Wallet", {
-                                screen: "WalletSendLnurlScreen",
-                                params: { address: user.lightningAddress },
-                            });
-                        }}
+                        onPress={tipHandler}
                     >
                         <Ionicons
                             name="flash"

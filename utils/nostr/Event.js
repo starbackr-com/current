@@ -38,7 +38,7 @@ export class Event {
                 picture: userData.picture,
                 about: userData.about,
                 display_name: userData.display_name,
-                lightningAddress: userData.lud06,
+                lud06: userData.lud06,
                 created_at,
             };
             store.dispatch(addUser({ user }));

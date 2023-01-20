@@ -27,8 +27,8 @@ const WalletSendScreen = ({ navigation, route }) => {
             return;
         } else if (address) {
             navigation.navigate('WalletSendLnurlScreen', {address: address[0]})
-        } else if (inputText.includes('lnurl')) {
-            navigation.navigate('WalletSendLnurlScreen', {lnurl: inputText})
+        } else if (inputText.toLowerCase().includes('lnurl')) {
+            navigation.navigate('WalletSendLnurlScreen', {lnurl: inputText.toLowerCase()})
         } else {
             navigation.navigate("WalletConfirmScreen", { invoice: inputText });
         }
