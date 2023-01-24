@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     messages: [],
     users: [],
-    relayReady: false
+    relayReady: false,
 };
 
 export const messageSlice = createSlice({

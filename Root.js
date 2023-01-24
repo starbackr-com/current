@@ -13,6 +13,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { init } from "./utils/database";
 import { getEvents } from "./utils/nostr";
+import { updateUsers } from "./utils/nostr/getNotes";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,12 +25,12 @@ const Root = () => {
     useEffect(() => {
         const prepare = async () => {
             try {
-                await getEvents("wss://nostr1.starbackr.me");
                 const privKey = await getValue("privKey");
                 const username = await getValue("username");
                 await loadAsync({
-                    "Montserrat-Regular": require("./assets//Montserrat-Regular.ttf"),
-                    "Montserrat-Bold": require("./assets//Montserrat-Bold.ttf"),
+                    "Montserrat-Regular": require("./assets/Montserrat-Regular.ttf"),
+                    "Montserrat-Bold": require("./assets/Montserrat-Bold.ttf"),
+                    "Satoshi-Symbol": require("./assets/Satoshi-Symbol.ttf"),
                 });
                 if (privKey) {
                     console.log("Initialising from storage...");
@@ -40,7 +41,7 @@ const Root = () => {
                     dispatch(logIn({ bearer: access_token, username }));
                 }
                 await init();
-                await new Promise((resolve) => setTimeout(resolve, 1000));
+                await updateUsers();
             } catch (e) {
                 console.warn(e);
             } finally {

@@ -1,6 +1,25 @@
 import { store } from "../../store/store";
 import { addMessage, addUser } from "../../features/messagesSlice";
 
+import * as SQLite from "expo-sqlite";
+
+import { db } from "../database";
+
+const parseContent = (message) => {
+    let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
+    let imageURL = message.match(imageRegex);
+    let invoiceRegex = /(lnbc\d+[munp][A-Za-z0-9]+)/g;
+    let invoice = message.match(invoiceRegex);
+    let newMessage = message
+        .replace(imageRegex, function (url) {
+            return "";
+        })
+        .replace(invoiceRegex, function (url) {
+            return "";
+        });
+    return { imageURL, newMessage, invoice };
+};
+
 export class Event {
     constructor(eventData) {
         this.eventData = eventData;
@@ -30,6 +49,17 @@ export class Event {
     saveUserData() {
         const { id, pubkey, created_at, content } = this;
         const userData = JSON.parse(content);
+        const sql = `INSERT OR REPLACE INTO users (id, pubkey, name, display_name, picture, about, created_at, lud06) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const params = [
+            id,
+            pubkey,
+            userData.name,
+            userData.display_name,
+            userData.picture,
+            userData.about,
+            created_at,
+            userData.lud06
+        ];
         try {
             const user = {
                 id,
@@ -45,10 +75,30 @@ export class Event {
         } catch (err) {
             console.log(err);
         }
+
+        try {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    sql,
+                    params,
+                    (_, result) => {
+                        console.log(result)
+                    },
+                    (_, error) => {
+                        console.error("Save user error", error);
+                        return false;
+                    }
+                );
+            });
+        } catch (e) {
+            console.error(e);
+            console.error(e.stack);
+        }
     }
 
     saveNote() {
         const { id, pubkey, created_at, kind, tags, content, sig } = this;
+        const { imageURL, newMessage, invoice } = parseContent(content);
         let root = !tags.some((tag) => {
             let response = tag.includes("e");
             return response;
@@ -60,9 +110,11 @@ export class Event {
                 created_at,
                 kind,
                 tags: JSON.stringify(tags),
-                content,
+                content: newMessage,
                 sig,
                 root,
+                image: imageURL ? imageURL[0] : undefined,
+                invoice
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {

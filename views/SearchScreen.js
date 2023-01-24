@@ -1,38 +1,78 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import globalStyles from '../styles/globalStyles'
-import { FlashList } from '@shopify/flash-list'
-import { useDispatch, useSelector } from 'react-redux'
-import CustomButton from '../components/CustomButton'
-import { Pressable } from 'react-native'
+import { View, Text } from "react-native";
+import React, { useState } from "react";
+import globalStyles from "../styles/globalStyles";
+import { FlashList } from "@shopify/flash-list";
+import { useDispatch, useSelector } from "react-redux";
+import CustomButton from "../components/CustomButton";
+import { Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from '../styles/colors'
-import { unfollowPubkey } from '../features/userSlice'
+import colors from "../styles/colors";
+import { followPubkey, unfollowPubkey } from "../features/userSlice";
+import Input from "../components/Input";
+import { bech32 } from "bech32";
+import { decodePubkey } from "../utils/nostr/keys";
+import { db, getUsersFromDb } from "../utils/database";
+import { updateUsers } from "../utils/nostr/getNotes";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-const UserItem = ({item}) => {
+const UserItem = ({ item }) => {
     const dispatch = useDispatch();
     const deleteHandler = () => {
-        dispatch(unfollowPubkey(item.pubkey))
+        dispatch(unfollowPubkey(item.pubkey));
     };
     return (
         <View>
-            <Text>{item.name || item.pubkey}</Text>
-            <Pressable onPress={deleteHandler}><Ionicons name='close-circle-outline' size={32} color={colors.primary500}/></Pressable>
+            <Text>{item.name || item.pubkey}</Text>
+            <Pressable onPress={deleteHandler}>
+                <Ionicons
+                    name="close-circle-outline"
+                    size={32}
+                    color={colors.primary500}
+                />
+            </Pressable>
         </View>
-    )
+    );
 };
 
 const SearchScreen = () => {
-    const following = useSelector(state => state.user.followedPubkeys)
-  return (
-    <View style={globalStyles.screenContainer}>
-      <Text style={globalStyles.textH1}>Following</Text>
-      <View style={{height:'100%', width: '100%'}}>
-      <FlashList data={following} renderItem={({item}) => <UserItem item={item}/>}/>
-      </View>
-      <CustomButton/>
-    </View>
-  )
-}
+    const [input, setInput] = useState("");
+    const dispatch = useDispatch();
+    const following = useSelector((state) => state.user.followedPubkeys);
 
-export default SearchScreen
+    const searchHandler = async () => {
+        // if (input.includes("npub")) {
+        //     const decoded = decodePubkey(input);
+        //     dispatch(followPubkey(decoded));
+        //     return;
+        // }
+        updateUsers();
+    };
+    return (
+        <View style={globalStyles.screenContainer}>
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    width: "80%",
+                    justifyContent: "center",
+                }}
+            >
+                <Input textInputConfig={{ onChangeText: setInput }} />
+                <CustomButton
+                    icon="add"
+                    buttonConfig={{ onPress: searchHandler }}
+                />
+            </View>
+            <View style={{ flex: 6, width: '100%' }}>
+                <View style={{ flex: 1, width: "100%", height: "100%" }}>
+                    <FlashList
+                        data={following}
+                        renderItem={({ item }) => <Text style={globalStyles.textBody}>{item}</Text>}
+                    />
+                </View>
+            </View>
+        </View>
+    );
+};
+
+export default SearchScreen;

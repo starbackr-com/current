@@ -17,9 +17,7 @@ export default Input
 
 const styles = StyleSheet.create({
     label: {
-        color: 'white',
         marginBottom: 6,
-        fontSize: 12
     },
     input: {
         width: '100%',

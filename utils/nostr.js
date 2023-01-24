@@ -16,11 +16,7 @@ export const getEvents = async (url) => {
             {
                 authors: pubkeys,
                 kinds: [1],
-                limit: 100,
-            },
-            {
-                authors: pubkeys,
-                kinds: [0],
+                limit: 200,
             },
         ]);
 
@@ -33,6 +29,38 @@ export const getEvents = async (url) => {
         return;
     } else {
         console.log('Retrying')
+        setTimeout(() => {
+            getEvents();
+        }, 1000);
+    }
+};
+
+export const getFeed = async (pubkeys) => {
+    retries++;
+    if (relay.status === 1) {
+        retries = 0;
+
+        let sub = relay.sub([
+            {
+                authors: pubkeys,
+                kinds: [1],
+                limit: 75,
+            },
+        ]);
+
+        sub.on("event", (event) => {
+            const newEvent = new Event(event);
+            newEvent.save();
+        });
+        sub.on("eose", () => {
+            sub.unsub();
+            return
+        });
+    } else if (retries > 10) {
+        alert("Cannot establish Relay connection...");
+        return;
+    } else {
+        console.log('Not connected to Relay, retrying in 5 seconds...')
         setTimeout(() => {
             getEvents();
         }, 1000);

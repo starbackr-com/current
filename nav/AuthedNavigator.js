@@ -54,7 +54,7 @@ const TabNavigator = ({ navigation }) => {
                     );
                 },
                 headerStyle: { backgroundColor: "#222222" },
-                headerTitleStyle: { color: "white" },
+                headerTitleStyle: { color: "white", fontFamily: 'Montserrat-Bold', },
                 headerTintColor: "red",
                 tabBarActiveTintColor: colors.primary500,
                 tabBarInactiveTintColor: "gray",
@@ -64,7 +64,7 @@ const TabNavigator = ({ navigation }) => {
                 },
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
-                headerRight: () => <Text style={[globalStyles.textBody, {marginRight: 12}]}>{data ? `${data.BTC.AvailableBalance} SATS` : undefined}</Text>
+                headerRight: () => <View style={{flexDirection:'row', marginRight: 12, alignItems: 'center', justifyContent: 'center'}}><Text style={globalStyles.textBody}>{data ? `${data.BTC.AvailableBalance}` : '----'}</Text><Text style={[globalStyles.textBody, {fontFamily: 'Satoshi-Symbol', marginLeft: 6, fontSize: 20}]}>S</Text></View>
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />

@@ -44,6 +44,7 @@ const ImportKeysScreen = () => {
         if (errorArray.length === 0 && mem.length === 12) {
             const privKey = await mnemonicToSeed(mem)
             await saveValue("privKey", privKey);
+            await saveValue('mem', JSON.stringify(mem))
             const pubKey = getPublicKey(privKey)
             const nip05 = await loginWithNip5(privKey);
         }

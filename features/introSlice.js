@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    twitterModalShown: false,
+    twitterModalShown: true,
 };
 
 export const introSlice = createSlice({

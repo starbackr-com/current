@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
 
 import PostItem from "../components/PostItem";
+import { getFeed } from "../utils/nostr";
 
 const HomeStack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const HomeScreen = ({ navigation }) => {
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
+    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
 
     const messages = useSelector((state) => state.messages.messages);
 
@@ -26,6 +28,10 @@ const HomeScreen = ({ navigation }) => {
             navigation.navigate("TwitterModal");
         }
     };
+
+    useEffect(() => {
+        getFeed(followedPubkeys);
+    }, [followedPubkeys]);
 
     return (
         <View style={globalStyles.screenContainer} onLayout={onLayoutView}>
@@ -45,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
                         )}
                         snapToAlignment="start"
                         decelerationRate="fast"
-                        snapToInterval={height / 100 * 80}
+                        snapToInterval={(height / 100) * 80}
                         estimatedItemSize={height / 2}
                         directionalLockEnabled
                     />

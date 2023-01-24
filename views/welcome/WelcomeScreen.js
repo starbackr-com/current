@@ -17,6 +17,10 @@ const WelcomeScreen = ({ navigation }) => {
         navigation.navigate("ImportKeys");
     };
 
+    const testHandler = async () => {
+        navigation.navigate("CreateProfileScreen", {username:'EggeTesting'});
+    };
+
     const createHandler = () => {
         navigation.navigate("CreateKeys");
     };
@@ -35,6 +39,10 @@ const WelcomeScreen = ({ navigation }) => {
             <CustomButton
                 text="Import keys"
                 buttonConfig={{ onPress: importHandler }}
+            />
+             <CustomButton
+                text="Testing"
+                buttonConfig={{ onPress: testHandler }}
             />
         </View>
     );

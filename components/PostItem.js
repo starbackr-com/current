@@ -1,34 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, Image, Pressable, Alert } from "react-native";
-import { decode } from "light-bolt11-decoder";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../services/walletApi";
-import CachedImage from 'expo-cached-image'
+import { useState, useEffect } from "react";
 
 const PostItem = ({ item, height, width, user }) => {
     const [sendPayment] = usePostPaymentMutation();
+    const navigation = useNavigation();
+
     if (item.root === false) {
         return <></>;
     }
-
-    const navigation = useNavigation();
-    const parseContent = (message) => {
-        let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
-        let imageURL = message.match(imageRegex);
-        let invoiceRegex = /(lnbc\d+[munp][A-Za-z0-9]+)/g;
-        let invoice = message.match(invoiceRegex);
-        let newMessage = message
-            .replace(imageRegex, function (url) {
-                return "";
-            })
-            .replace(invoiceRegex, function (url) {
-                return "";
-            });
-        return { imageURL, newMessage, invoice };
-    };
-
     const getAge = (timestamp) => {
         const now = new Date();
         const timePassedInMins = Math.floor(
@@ -46,14 +30,7 @@ const PostItem = ({ item, height, width, user }) => {
         }
     };
 
-    const { content, created_at, pubkey } = item;
-
-    const { imageURL, newMessage, invoice } = parseContent(content);
-
-    let invoiceAmount;
-    if (invoice) {
-        invoiceAmount = decode(invoice[0]).sections[2].value / 1000;
-    }
+    const { created_at, pubkey } = item;
 
     const tipHandler = () => {
         const dest = user.lud06.toLowerCase();
@@ -101,10 +78,6 @@ const PostItem = ({ item, height, width, user }) => {
                             const result = await sendPayment({ invoice });
                             if (result.data?.decoded?.payment_hash) {
                                 alert("Success!");
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: "WalletHomeScreen" }],
-                                });
                                 return;
                             }
                             alert(result.data?.message);
@@ -133,18 +106,19 @@ const PostItem = ({ item, height, width, user }) => {
             }}
         >
             <View
-                style={{
-                    backgroundColor: "#222222",
-                    marginBottom: 16,
-                    width: "85%",
-                    height: "80%",
-                    padding: 12,
-                    borderRadius: 10,
-                    justifyContent: "space-between",
-                    overflow: "hidden",
-                }}
+                style={[
+                    {
+                        backgroundColor: "#222222",
+                        marginBottom: 16,
+                        width: "85%",
+                        height: "80%",
+                        padding: 12,
+                        borderRadius: 10,
+                        justifyContent: "space-between",
+                    },
+                ]}
             >
-                <View style={{ maxHeight: "65%", overflow: "hidden" }}>
+                <View style={{ maxHeight: "60%" }}>
                     <Text
                         style={[
                             globalStyles.textBodyBold,
@@ -156,20 +130,19 @@ const PostItem = ({ item, height, width, user }) => {
                     <Text
                         style={[globalStyles.textBody, { textAlign: "left" }]}
                     >
-                        {newMessage}
+                        {item.content}
                     </Text>
                 </View>
 
-                {imageURL ? (
-                    <CachedImage
+                {item.image ? (
+                    <Image
                         style={{
                             width: "100%",
                             height: "30%",
                             borderRadius: 10,
                             marginTop: 16,
                         }}
-                        source={{ uri: imageURL }}
-                        cacheKey={`${imageURL}`}
+                        source={{ uri: item.image }}
                     />
                 ) : undefined}
                 <Text
@@ -212,15 +185,20 @@ const PostItem = ({ item, height, width, user }) => {
                 </View>
                 {user?.lud06 ? (
                     <Pressable
-                        style={ ({pressed}) => [{
-                            width: (width / 100) * 8,
-                            height: (width / 100) * 8,
-                            borderRadius: (width / 100) * 4,
-                            backgroundColor: colors.primary500,
-                            marginBottom: 16,
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }, pressed ? {backgroundColor: '#faa200'} : undefined]}
+                        style={({ pressed }) => [
+                            {
+                                width: (width / 100) * 8,
+                                height: (width / 100) * 8,
+                                borderRadius: (width / 100) * 4,
+                                backgroundColor: colors.primary500,
+                                marginBottom: 16,
+                                alignItems: "center",
+                                justifyContent: "center",
+                            },
+                            pressed
+                                ? { backgroundColor: "#faa200" }
+                                : undefined,
+                        ]}
                         onPress={zapHandler}
                         onLongPress={tipHandler}
                     >

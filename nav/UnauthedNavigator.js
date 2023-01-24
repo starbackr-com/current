@@ -5,6 +5,8 @@ import WelcomeScreen from "../views/welcome/WelcomeScreen";
 import CreateKeysScreen from "../views/welcome/CreateKeysScreen";
 import ShowBackupScreen from "../views/welcome/ShowBackupScreen";
 import ImportKeysScreen from "../views/welcome/ImportKeysScreen";
+import CreateProfileScreen from "../views/welcome/CreateProfileScreen";
+import SelectImage from "../views/welcome/SelectImage";
 
 const Stack = createStackNavigator();
 
@@ -45,6 +47,18 @@ const UnauthedNavigator = () => {
                     options={{
                         title: "",
                     }}
+                />
+                <Stack.Screen
+                    name="CreateProfileScreen"
+                    component={CreateProfileScreen}
+                    options={{
+                        title: "",
+                    }}
+                />
+                <Stack.Screen
+                    name="SelectImageScreen"
+                    component={SelectImage}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
             </Stack.Navigator>
         </>
