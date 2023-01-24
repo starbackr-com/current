@@ -32,10 +32,12 @@ export const messageSlice = createSlice({
                     );
                     if (existingUser) {
                         if (existingUser.created_at < user.created_at) {
+                            console.log('Updating User!')
                             return a.map((u) =>
                                 u.pubkey === user.pubkey ? user : u
                             );
                         } else {
+                            console.log('Old user is up to date!')
                             return a;
                         }
                     } else {

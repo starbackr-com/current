@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text, View } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
@@ -11,7 +11,6 @@ import Input from "../components/Input";
 import CustomButton from "../components/CustomButton";
 import { postEvent } from "../utils/nostr";
 import SettingsNavigator from "./SettingsNavigator";
-import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import ProfileScreen from "../views/ProfileScreen";
 import SearchScreen from "../views/SearchScreen";
 import globalStyles from "../styles/globalStyles";
@@ -21,13 +20,10 @@ import { useIsFocused } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = ({ navigation }) => {
-
-    const { data, refetch } = useGetWalletBalanceQuery(null, {
-        refetchOnFocus: true,
+const TabNavigator = () => {
+    const { data } = useGetWalletBalanceQuery(null, {
         skip: !useIsFocused(),
     });
-    console.log(data)
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -54,7 +50,10 @@ const TabNavigator = ({ navigation }) => {
                     );
                 },
                 headerStyle: { backgroundColor: "#222222" },
-                headerTitleStyle: { color: "white", fontFamily: 'Montserrat-Bold', },
+                headerTitleStyle: {
+                    color: "white",
+                    fontFamily: "Montserrat-Bold",
+                },
                 headerTintColor: "red",
                 tabBarActiveTintColor: colors.primary500,
                 tabBarInactiveTintColor: "gray",
@@ -64,7 +63,32 @@ const TabNavigator = ({ navigation }) => {
                 },
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
-                headerRight: () => <View style={{flexDirection:'row', marginRight: 12, alignItems: 'center', justifyContent: 'center'}}><Text style={globalStyles.textBody}>{data ? `${data.BTC.AvailableBalance}` : '----'}</Text><Text style={[globalStyles.textBody, {fontFamily: 'Satoshi-Symbol', marginLeft: 6, fontSize: 20}]}>S</Text></View>
+                headerRight: () => (
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            marginRight: 12,
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Text style={globalStyles.textBody}>
+                            {data ? `${data.BTC.AvailableBalance}` : "----"}
+                        </Text>
+                        <Text
+                            style={[
+                                globalStyles.textBody,
+                                {
+                                    fontFamily: "Satoshi-Symbol",
+                                    marginLeft: 6,
+                                    fontSize: 20,
+                                },
+                            ]}
+                        >
+                            S
+                        </Text>
+                    </View>
+                ),
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />

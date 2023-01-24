@@ -45,7 +45,7 @@ export const getFeed = async (pubkeys) => {
                 authors: pubkeys,
                 kinds: [1],
                 limit: 75,
-            },
+            }
         ]);
 
         sub.on("event", (event) => {

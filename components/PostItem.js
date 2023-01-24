@@ -5,8 +5,27 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../services/walletApi";
 import { useState, useEffect } from "react";
+import Animated, {
+    withSequence,
+    withTiming,
+    withDelay,
+    withRepeat,
+    useAnimatedStyle,
+} from "react-native-reanimated";
 
 const PostItem = ({ item, height, width, user }) => {
+    const [isLoading, setIsLoading] = useState();
+    const animatedStyle = useAnimatedStyle(() => ({
+        opacity: withRepeat(
+            withSequence(
+                withTiming(0.1, { duration: 1000 }),
+                withTiming(1, { duration: 1000 })
+            ),
+            -1,
+            true
+        ),
+    }));
+
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
 
@@ -52,8 +71,9 @@ const PostItem = ({ item, height, width, user }) => {
     };
 
     const zapHandler = async () => {
-        const dest = user.lud06.toLowerCase();
-        if (dest.includes("lnurl")) {
+        setIsLoading(true)
+        if (user.lud06) {
+            const dest = user.lud06.toLowerCase();
             const url = decodeLnurl(dest);
             const response = await fetch(url);
             const { callback, maxSendable, minSendable } =
@@ -77,15 +97,59 @@ const PostItem = ({ item, height, width, user }) => {
                             const invoice = data.pr;
                             const result = await sendPayment({ invoice });
                             if (result.data?.decoded?.payment_hash) {
+                                setIsLoading(false)
                                 alert("Success!");
                                 return;
                             }
                             alert(result.data?.message);
+                            setIsLoading(false)
                         },
                     },
                     {
                         text: "Cancel",
                         style: "cancel",
+                        onPress: () => {setIsLoading(false)}
+                    },
+                ]
+            );
+        } else if (user.lud16) {
+            const dest = user.lud16.toLowerCase();
+            const [username, domain] = dest.split("@");
+            const response = await fetch(
+                `https://${domain}/.well-known/lnurlp/${username}`
+            );
+            const { callback, minSendable } = await response.json();
+            const amount = minSendable / 1000 > 210 ? minSendable / 1000 : 210;
+            Alert.alert(
+                "Zap",
+                `Do you want to send ${amount} SATS to ${
+                    user.name || user.pubkey
+                }?
+                
+(Hold Zap-Icon for custom amount)`,
+                [
+                    {
+                        text: "OK",
+                        onPress: async () => {
+                            const response = await fetch(
+                                `${callback}?amount=${amount * 1000}`
+                            );
+                            const data = await response.json();
+                            const invoice = data.pr;
+                            const result = await sendPayment({ invoice });
+                            if (result.data?.decoded?.payment_hash) {
+                                setIsLoading(false)
+                                alert("Success!");
+                                return;
+                            }
+                            alert(result.data?.message);
+                            setIsLoading(false)
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                        onPress: () => {setIsLoading(false)}
                     },
                 ]
             );
@@ -183,7 +247,7 @@ const PostItem = ({ item, height, width, user }) => {
                         />
                     ) : undefined}
                 </View>
-                {user?.lud06 ? (
+                {user?.lud06 || user?.lud16 ? (
                     <Pressable
                         style={({ pressed }) => [
                             {
@@ -196,17 +260,19 @@ const PostItem = ({ item, height, width, user }) => {
                                 justifyContent: "center",
                             },
                             pressed
-                                ? { backgroundColor: "#faa200" }
+                                ? { backgroundColor: "#777777" }
                                 : undefined,
                         ]}
                         onPress={zapHandler}
                         onLongPress={tipHandler}
                     >
-                        <Ionicons
-                            name="flash"
-                            color="white"
-                            size={(width / 100) * 5}
-                        />
+                        <Animated.View style={isLoading ? animatedStyle : {opacity: 1}}>
+                            <Ionicons
+                                name="flash"
+                                color="white"
+                                size={(width / 100) * 5}
+                            />
+                        </Animated.View>
                     </Pressable>
                 ) : undefined}
                 <View

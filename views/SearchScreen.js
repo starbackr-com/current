@@ -11,8 +11,8 @@ import { followPubkey, unfollowPubkey } from "../features/userSlice";
 import Input from "../components/Input";
 import { bech32 } from "bech32";
 import { decodePubkey } from "../utils/nostr/keys";
-import { db, getUsersFromDb } from "../utils/database";
-import { updateUsers } from "../utils/nostr/getNotes";
+import { db, getUsersFromDb, hydrateFromDatabase } from "../utils/database";
+import { getUserData, updateUsers } from "../utils/nostr/getNotes";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const UserItem = ({ item }) => {
@@ -40,18 +40,19 @@ const SearchScreen = () => {
     const following = useSelector((state) => state.user.followedPubkeys);
 
     const searchHandler = async () => {
-        // if (input.includes("npub")) {
-        //     const decoded = decodePubkey(input);
-        //     dispatch(followPubkey(decoded));
-        //     return;
-        // }
+        if (input.includes("npub")) {
+            const decoded = decodePubkey(input);
+            await getUserData(decoded);
+            dispatch(followPubkey(decoded));
+            return;
+        }
+
         updateUsers();
     };
     return (
         <View style={globalStyles.screenContainer}>
             <View
                 style={{
-                    flex: 1,
                     flexDirection: "row",
                     width: "80%",
                     justifyContent: "center",
@@ -68,6 +69,7 @@ const SearchScreen = () => {
                     <FlashList
                         data={following}
                         renderItem={({ item }) => <Text style={globalStyles.textBody}>{item}</Text>}
+                        estimatedItemSize={50}
                     />
                 </View>
             </View>

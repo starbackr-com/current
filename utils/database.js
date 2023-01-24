@@ -1,4 +1,6 @@
 import * as SQLite from "expo-sqlite";
+import { addUser } from "../features/messagesSlice";
+import { store } from "../store/store";
 
 const openDatabase = () => SQLite.openDatabase("current.db");
 export const db = openDatabase();
@@ -35,7 +37,8 @@ const initArray = [
     picture TEXT,
     about TEXT,
     created_at INT,
-    lud06 TEXT)`,
+    lud06 TEXT,
+    lud16 TEXT)`,
 ];
 
 export const getUsersFromDb = () => {
@@ -55,4 +58,22 @@ export const getUsersFromDb = () => {
         });
     });
     return promise;
+};
+
+export const hydrateFromDatabase = async () => {
+    db.transaction((tx) => {
+        tx.executeSql(
+            "SELECT * FROM users",
+            [],
+            (_, { rows: { _array } }) => {
+                const users = _array.map((user) => {
+                    store.dispatch(addUser({user}));
+                });
+            },
+            (_, error) => {
+                console.log("Error querying users", error);
+                return false;
+            }
+        );
+    });
 };

@@ -49,7 +49,7 @@ export class Event {
     saveUserData() {
         const { id, pubkey, created_at, content } = this;
         const userData = JSON.parse(content);
-        const sql = `INSERT OR REPLACE INTO users (id, pubkey, name, display_name, picture, about, created_at, lud06) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT OR REPLACE INTO users (id, pubkey, name, display_name, picture, about, created_at, lud06, lud16) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const params = [
             id,
             pubkey,
@@ -58,7 +58,8 @@ export class Event {
             userData.picture,
             userData.about,
             created_at,
-            userData.lud06
+            userData.lud06,
+            userData.lud16
         ];
         try {
             const user = {
@@ -70,6 +71,7 @@ export class Event {
                 display_name: userData.display_name,
                 lud06: userData.lud06,
                 created_at,
+                lud16: userData.lud16
             };
             store.dispatch(addUser({ user }));
         } catch (err) {
@@ -77,6 +79,7 @@ export class Event {
         }
 
         try {
+            console.log(params)
             db.transaction((tx) => {
                 tx.executeSql(
                     sql,

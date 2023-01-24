@@ -28,6 +28,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                         borderColor: colors.primary500,
                         alignItems: "center",
                         justifyContent: "center",
+                        marginBottom: 32,
                     },
                     pressed ? { backgroundColor: "#222222" } : undefined,
                 ]}
@@ -52,7 +53,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                     />
                 )}
             </Pressable>
-            <Text style={globalStyles.textBody} >{username}</Text>
+            <Text style={[globalStyles.textBodyBold, {marginBottom: 16}]} >{username}</Text>
             <Input label='Bio'/>
         </View>
     );

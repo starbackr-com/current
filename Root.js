@@ -11,7 +11,7 @@ import AuthedNavigator from "./nav/AuthedNavigator";
 import { loginToWallet } from "./utils/wallet";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { init } from "./utils/database";
+import { hydrateFromDatabase, init } from "./utils/database";
 import { getEvents } from "./utils/nostr";
 import { updateUsers } from "./utils/nostr/getNotes";
 
@@ -41,7 +41,7 @@ const Root = () => {
                     dispatch(logIn({ bearer: access_token, username }));
                 }
                 await init();
-                await updateUsers();
+                await hydrateFromDatabase();
             } catch (e) {
                 console.warn(e);
             } finally {
