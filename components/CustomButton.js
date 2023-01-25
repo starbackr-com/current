@@ -4,13 +4,14 @@ import Pressable from 'react-native/Libraries/Components/Pressable/Pressable'
 import globalStyles from '../styles/globalStyles'
 import colors from '../styles/colors'
 import Ionicons from "@expo/vector-icons/Ionicons";
+import LoadingSpinner from './LoadingSpinner'
 
 
-const CustomButton = ({containerStyles, textStyles, text, buttonConfig, disabled, icon, iconColor}) => {
+const CustomButton = ({containerStyles, textStyles, text, buttonConfig, disabled, icon, iconColor, loading}) => {
   return (
     <Pressable style={({pressed}) => [styles.container, containerStyles, pressed ? styles.pressed : undefined, disabled ? styles.containerDisabled: undefined]} {...buttonConfig} disabled={disabled}>
       {icon ? <Ionicons name={icon} color={iconColor || colors.primary500} size={16}/> : undefined}
-      <Text style={[globalStyles.textBody, styles.text, textStyles, disabled ? styles.textDisabled : undefined]}>{text}</Text>
+      {!loading ? <Text style={[globalStyles.textBody, styles.text, textStyles, disabled ? styles.textDisabled : undefined]}>{text}</Text> : <LoadingSpinner size={16}/>}
     </Pressable>
   )
 }

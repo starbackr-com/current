@@ -42,6 +42,7 @@ const Root = () => {
                 }
                 await init();
                 await hydrateFromDatabase();
+                await updateUsers();
             } catch (e) {
                 console.warn(e);
             } finally {

@@ -79,13 +79,11 @@ export class Event {
         }
 
         try {
-            console.log(params)
             db.transaction((tx) => {
                 tx.executeSql(
                     sql,
                     params,
                     (_, result) => {
-                        console.log(result)
                     },
                     (_, error) => {
                         console.error("Save user error", error);

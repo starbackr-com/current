@@ -7,7 +7,7 @@ import { store } from "../store/store";
 let retries = 0;
 
 export const getEvents = async (url) => {
-    const pubkeys = store.getState().user.followedPubkeys
+    const pubkeys = store.getState().user.followedPubkeys;
     retries++;
     if (relay.status === 1) {
         retries = 0;
@@ -28,43 +28,64 @@ export const getEvents = async (url) => {
         alert("Cannot establish Relay connection...");
         return;
     } else {
-        console.log('Retrying')
+        console.log("Retrying");
         setTimeout(() => {
             getEvents();
         }, 1000);
     }
 };
 
+
 export const getFeed = async (pubkeys) => {
-    retries++;
-    if (relay.status === 1) {
-        retries = 0;
+    const promise = new Promise((resolve, reject) => {
+        if (relay.status === 1) {
+            let sub = relay.sub([
+                {
+                    authors: pubkeys,
+                    kinds: [1],
+                    limit: 75,
+                },
+            ]);
 
-        let sub = relay.sub([
-            {
-                authors: pubkeys,
-                kinds: [1],
-                limit: 75,
-            }
-        ]);
+            sub.on("event", (event) => {
+                const newEvent = new Event(event);
+                newEvent.save();
+            });
+            sub.on("eose", () => {
+                sub.unsub();
+                resolve();
+            });
+        } else {
+            reject('Not connected to Relay...')
+        }
+    });
+    return promise
+};
 
-        sub.on("event", (event) => {
-            const newEvent = new Event(event);
-            newEvent.save();
-        });
-        sub.on("eose", () => {
-            sub.unsub();
-            return
-        });
-    } else if (retries > 10) {
-        alert("Cannot establish Relay connection...");
-        return;
-    } else {
-        console.log('Not connected to Relay, retrying in 5 seconds...')
-        setTimeout(() => {
-            getEvents();
-        }, 1000);
-    }
+export const getReplies = async (parentId) => {
+    const promise = new Promise((resolve, reject) => {
+        const replies = []
+        if (relay.status === 1) {
+            let sub = relay.sub([
+                {
+                    kinds: [1],
+                    '#e': [parentId]
+                },
+            ]);
+
+            sub.on("event", (event) => {
+                replies.push(event)
+                console.log(event)
+            });
+            sub.on("eose", () => {
+                sub.unsub();
+                resolve(replies);
+            });
+        } else {
+            reject('Not connected to Relay...')
+        }
+    });
+    return promise
 };
 
 export const postEvent = async (content) => {

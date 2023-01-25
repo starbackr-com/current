@@ -24,28 +24,22 @@ export const messageSlice = createSlice({
             state.messages = updatedArray;
         },
         addUser: (state, action) => {
-            const newUser = action.payload.user
-            const updatedUsers = [...state.users, newUser].reduce(
-                (a, user) => {
-                    const existingUser = a.find(
-                        (u) => u.pubkey === user.pubkey
-                    );
-                    if (existingUser) {
-                        if (existingUser.created_at < user.created_at) {
-                            console.log('Updating User!')
-                            return a.map((u) =>
-                                u.pubkey === user.pubkey ? user : u
-                            );
-                        } else {
-                            console.log('Old user is up to date!')
-                            return a;
-                        }
+            const newUser = action.payload.user;
+            const updatedUsers = [...state.users, newUser].reduce((a, user) => {
+                const existingUser = a.find((u) => u.pubkey === user.pubkey);
+                if (existingUser) {
+                    if (existingUser.created_at < user.created_at) {
+                        return a.map((u) =>
+                            u.pubkey === user.pubkey ? user : u
+                        );
                     } else {
-                        return [...a, user];
+                        return a;
                     }
-                }, []
-            );
-            state.users = updatedUsers
+                } else {
+                    return [...a, user];
+                }
+            }, []);
+            state.users = updatedUsers;
         },
     },
 });

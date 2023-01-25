@@ -275,7 +275,7 @@ const PostItem = ({ item, height, width, user }) => {
                         </Animated.View>
                     </Pressable>
                 ) : undefined}
-                <View
+                <Pressable
                     style={{
                         width: (width / 100) * 8,
                         height: (width / 100) * 8,
@@ -285,13 +285,14 @@ const PostItem = ({ item, height, width, user }) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}
+                    onPress={() => {navigation.navigate('CommentScreen', {eventId: item.id})}}
                 >
                     <Ionicons
                         name="chatbubble-ellipses"
                         color="white"
                         size={(width / 100) * 5}
                     />
-                </View>
+                </Pressable>
                 <View
                     style={{
                         width: (width / 100) * 8,

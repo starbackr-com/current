@@ -7,12 +7,14 @@ import { FlashList } from "@shopify/flash-list";
 
 import PostItem from "../components/PostItem";
 import { getFeed } from "../utils/nostr";
+import CommentScreen from "./home/CommentScreen";
 
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
+    const [isFetching, setIsFetching] = useState(false);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
@@ -30,7 +32,11 @@ const HomeScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        getFeed(followedPubkeys);
+        try {
+            getFeed(followedPubkeys);
+        } catch{
+            console.log('No Homefeed!')
+        }
     }, [followedPubkeys]);
 
     return (
@@ -54,6 +60,12 @@ const HomeScreen = ({ navigation }) => {
                         snapToInterval={(height / 100) * 80}
                         estimatedItemSize={height / 2}
                         directionalLockEnabled
+                        onRefresh={async () => {
+                            setIsFetching(true)
+                            await getFeed(followedPubkeys)
+                            setIsFetching(false)
+                        }}
+                        refreshing={isFetching}
                     />
                 </View>
             ) : (
@@ -71,6 +83,7 @@ const HomeView = () => {
             }}
         >
             <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+            <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
         </HomeStack.Navigator>
     );
 };

@@ -9,38 +9,47 @@ import { saveValue } from "../../utils/secureStore";
 import { logIn } from "../../features/authSlice";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
+import { useState } from "react";
+import { generateMnemonic } from "../../utils/keys";
 
 const WelcomeScreen = ({ navigation }) => {
-    const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState();
 
     const importHandler = async () => {
         navigation.navigate("ImportKeys");
     };
 
     const testHandler = async () => {
-        navigation.navigate("CreateProfileScreen", {username:'EggeTesting'});
+        navigation.navigate("CreateProfileScreen", { username: "EggeTesting" });
     };
 
-    const createHandler = () => {
-        navigation.navigate("CreateKeys");
+    const createHandler = async () => {
+        setIsLoading(true);
+        const mem = await generateMnemonic();
+        navigation.navigate("ShowBackupScreen", { mem });
+        setIsLoading(false);
+        return;
     };
 
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textH1}>Welcome stranger!</Text>
             <Text style={globalStyles.textBody}>
-                Create a new key-pair or import one to get started.
+                Do you want to create a new key-pair or import an existing one?
             </Text>
             <CustomButton
-                text="Create new keys"
+                text="Start fresh"
                 buttonConfig={{ onPress: createHandler }}
-                containerStyles={{margin: 32}}
+                containerStyles={{ margin: 32, minWidth: '80%', justifyContent: 'center' }}
+                loading={isLoading}
             />
             <CustomButton
-                text="Import keys"
+                text="Import keys/backup"
                 buttonConfig={{ onPress: importHandler }}
+                containerStyles={{ margin: 32, minWidth: '80%', justifyContent: 'center' }}
+                disabled={isLoading}
             />
-             <CustomButton
+            <CustomButton
                 text="Testing"
                 buttonConfig={{ onPress: testHandler }}
             />

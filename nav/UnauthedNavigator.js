@@ -2,11 +2,11 @@ import { View, Text } from "react-native";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "../views/welcome/WelcomeScreen";
-import CreateKeysScreen from "../views/welcome/CreateKeysScreen";
 import ShowBackupScreen from "../views/welcome/ShowBackupScreen";
 import ImportKeysScreen from "../views/welcome/ImportKeysScreen";
 import CreateProfileScreen from "../views/welcome/CreateProfileScreen";
 import SelectImage from "../views/welcome/SelectImage";
+import UsernameScreen from "../views/welcome/UsernameScreen";
 
 const Stack = createStackNavigator();
 
@@ -17,7 +17,8 @@ const UnauthedNavigator = () => {
                 screenOptions={{
                     headerStyle: { backgroundColor: "#18181b" },
                     headerTitleStyle: { color: "white" },
-                    // headerLeft: ()=> null - Removes back button from nav
+                    headerTitle: () => null,
+                    headerLeft: () => null,
                 }}
             >
                 <Stack.Screen
@@ -28,14 +29,14 @@ const UnauthedNavigator = () => {
                     }}
                 />
                 <Stack.Screen
-                    name="CreateKeys"
-                    component={CreateKeysScreen}
+                    name="UsernameScreen"
+                    component={UsernameScreen}
                     options={{
                         title: "",
                     }}
                 />
                 <Stack.Screen
-                    name="ShowBackup"
+                    name="ShowBackupScreen"
                     component={ShowBackupScreen}
                     options={{
                         title: "",

@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Button } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import { mnemonicToSeed } from "../../utils/keys";
 import * as nostr from "nostr-tools";
@@ -35,27 +35,32 @@ const Word = ({ word, index }) => {
     );
 };
 
-const ShowBackupScreen = ({ route }) => {
+const ShowBackupScreen = ({ route, navigation }) => {
     const dispatch = useDispatch();
-    const {mem, username} = route.params;
+    const { mem } = route.params;
     const [postWallet, results] = usePostNewWalletMutation();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const saveHandler = async () => {
-        const privKey = await mnemonicToSeed(mem);
-        const pubKey = nostr.getPublicKey(privKey);
-        await createWallet(privKey, username);
-        const { access_token } = await loginToWallet(privKey, username)
-        await saveValue("privKey", privKey);
-        await saveValue("username", username);
-        await saveValue('mem', JSON.stringify(mem))
-        await setNip05(username, 'starbackr.me');
-        dispatch(logIn({bearer: access_token, username}));
+    const nextHandler = async () => {
+        setIsLoading(true);
+        try{
+            const privKey = await mnemonicToSeed(mem);
+        await saveValue("mem", JSON.stringify(mem));
+        navigation.navigate("UsernameScreen", { privKey });
+        setIsLoading(false)
+        } catch(e) {
+            console.log(e)
+            setIsLoading(false)
+        }
     };
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{flex: 2}}>
-                <Text style={globalStyles.textH1}>
-                    This is your Backup... Write it down!
+            <View style={{ flex: 4, alignItems: 'center' }}>
+                <Text style={globalStyles.textBodyBold}>Backup</Text>
+                <Text style={[globalStyles.textBody, {marginBottom: 16}]}>
+                    These 12 words can be used to restore your access to your
+                    account. Make sure to write them down. You can display your
+                    backup at any time in the settings.
                 </Text>
                 <FlatList
                     data={mem}
@@ -67,10 +72,11 @@ const ShowBackupScreen = ({ route }) => {
                     numColumns={2}
                 />
             </View>
-            <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{ flex: 1, justifyContent: "center" }}>
                 <CustomButton
-                    text="I have written it down"
-                    buttonConfig={{ onPress: saveHandler }}
+                    text="Next"
+                    buttonConfig={{ onPress: nextHandler }}
+                    loading={isLoading}
                 />
             </View>
         </View>

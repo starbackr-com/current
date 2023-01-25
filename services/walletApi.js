@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const walletApi = createApi({
     reducerPath: "walletApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://starbackr.me/",
+        baseUrl: "https:/getcurrent.io/",
         prepareHeaders: (headers, { getState }) => {
             const token = getState().auth.walletBearer;
             if (token) {
@@ -16,15 +16,14 @@ export const walletApi = createApi({
     }),
     tagTypes: ['Balance'],
     endpoints: (builder) => ({
-        postNewWallet: builder.mutation({
-            query: ({ login, password }) => ({
-                url: `create`,
+        postNewWallet: builder.mutation({   
+            query: ({ login, password, username }) => ({
+                url: `v2/users`,
                 method: "POST",
                 body: {
                     login,
                     password,
-                    partnerid: "starbackr",
-                    accounttype: "wallet",
+                    username
                 },
             }),
         }),
