@@ -1,5 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { addUser } from "../features/messagesSlice";
+import { followPubkey } from "../features/userSlice";
 import { store } from "../store/store";
 
 const openDatabase = () => SQLite.openDatabase("current.db");
@@ -38,7 +39,12 @@ const initArray = [
     about TEXT,
     created_at INT,
     lud06 TEXT,
-    lud16 TEXT)`,
+    lud16 TEXT,
+    nip05 TEXT)`,
+    `
+    CREATE TABLE IF NOT EXISTS followed_users (
+    pubkey TEXT PRIMARY KEY NOT NULL,
+    followed_at INT NOT NULL)`
 ];
 
 export const getUsersFromDb = () => {
@@ -68,6 +74,19 @@ export const hydrateFromDatabase = async () => {
             (_, { rows: { _array } }) => {
                 const users = _array.map((user) => {
                     store.dispatch(addUser({user}));
+                });
+            },
+            (_, error) => {
+                console.log("Error querying users", error);
+                return false;
+            }
+        );
+        tx.executeSql(
+            "SELECT pubkey FROM followed_users",
+            [],
+            (_, { rows: { _array } }) => {
+                const pubkeys = _array.map((row) => {
+                    store.dispatch(followPubkey(row.pubkey))
                 });
             },
             (_, error) => {

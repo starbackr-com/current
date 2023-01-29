@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
 
-const settings = ["General", "Backup", "Relays", "Security"];
+const settings = ["General", "Payments", "Backup", "Network", "Security & Privacy"];
 
 const SettingItem = ({ item, onNav }) => {
     return (

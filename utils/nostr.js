@@ -36,14 +36,15 @@ export const getEvents = async (url) => {
 };
 
 
-export const getFeed = async (pubkeys) => {
+export const getFeed = async (pubkeys, since) => {
     const promise = new Promise((resolve, reject) => {
         if (relay.status === 1) {
             let sub = relay.sub([
                 {
                     authors: pubkeys,
                     kinds: [1],
-                    limit: 75,
+                    limit: 50,
+                    ...(since) && {since: since} 
                 },
             ]);
 

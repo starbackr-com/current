@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text, View, Pressable } from "react-native";
+import { Text, View, Pressable, Image } from "react-native";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
@@ -16,14 +16,19 @@ import SearchScreen from "../views/SearchScreen";
 import globalStyles from "../styles/globalStyles";
 import { useGetWalletBalanceQuery } from "../services/walletApi";
 import { useIsFocused } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import PostMenuModal from "../views/PostMenuModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({navigation}) => {
     const { data } = useGetWalletBalanceQuery(null, {
         skip: !useIsFocused(),
     });
+
+    const pubKey = useSelector(state => state.auth.pubKey)
+    const user = useSelector(state => state.messages.users[pubKey])
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -89,6 +94,7 @@ const TabNavigator = () => {
                         </Text>
                     </View>
                 ),
+                headerLeft: () => <Pressable style={{width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 12}} onPress={() => {navigation.navigate('ProfileModal', {user: pubKey})}}><Image source={{uri: user?.picture}} style={{width: 26, height: 26}}/></Pressable>
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />
@@ -120,16 +126,47 @@ const PostModal = ({ navigation }) => {
                 inputStyle={{ flex: 3 }}
                 textInputConfig={{ onChangeText: setContent }}
             />
-            <View style={{ flex: 1, justifyContent: "center" }}>
-                <CustomButton
-                    text="Send"
-                    buttonConfig={{
-                        onPress: async () => {
-                            const result = await postEvent(content);
-                            navigation.goBack();
-                        },
+            <View
+                style={{
+                    flex: 1,
+                    width: "100%",
+                    justifyContent: "space-between",
+                    flexDirection: "row-reverse",
+                }}
+            >
+                <View style={{ flex: 1 }}>
+                    <CustomButton
+                        text="Send"
+                        buttonConfig={{
+                            onPress: async () => {
+                                const result = await postEvent(content);
+                                navigation.goBack();
+                            },
+                        }}
+                    />
+                </View>
+                <View
+                    style={{
+                        flex: 2,
+                        flexDirection: "row",
+                        width: "50%",
                     }}
-                />
+                >
+                    <Pressable style={{marginRight: 24}}>
+                        <Ionicons
+                            name="image"
+                            color={colors.primary500}
+                            size={24}
+                        />
+                    </Pressable>
+                    <Pressable>
+                        <Ionicons
+                            name="time"
+                            color={colors.primary500}
+                            size={24}
+                        />
+                    </Pressable>
+                </View>
             </View>
         </View>
     );
@@ -154,6 +191,11 @@ const AuthedNavigator = () => {
                     name="ProfileModal"
                     component={ProfileScreen}
                     options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="PostMenuModal"
+                    component={PostMenuModal}
+                    options={{ presentation: "transparentModal" }}
                 />
             </Stack.Navigator>
         </>

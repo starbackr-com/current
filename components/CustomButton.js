@@ -26,13 +26,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'center'
   },
   pressed: {
     backgroundColor: '#333333'
   },
   containerDisabled: {
     backgroundColor: '#333333',
+  },
+  text:{
+    textAlign: 'center'
   },
   textDisabled: {
     color: '#666666'

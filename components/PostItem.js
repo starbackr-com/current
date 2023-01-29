@@ -12,8 +12,11 @@ import Animated, {
     withRepeat,
     useAnimatedStyle,
 } from "react-native-reanimated";
+import globalStyles from "../styles/globalStyles";
+import { nip05 } from "nostr-tools";
 
 const PostItem = ({ item, height, width, user }) => {
+    const [profileActive, setProfileActive] = useState(false);
     const [isLoading, setIsLoading] = useState();
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
@@ -71,7 +74,7 @@ const PostItem = ({ item, height, width, user }) => {
     };
 
     const zapHandler = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         if (user.lud06) {
             const dest = user.lud06.toLowerCase();
             const url = decodeLnurl(dest);
@@ -97,18 +100,20 @@ const PostItem = ({ item, height, width, user }) => {
                             const invoice = data.pr;
                             const result = await sendPayment({ invoice });
                             if (result.data?.decoded?.payment_hash) {
-                                setIsLoading(false)
+                                setIsLoading(false);
                                 alert("Success!");
                                 return;
                             }
                             alert(result.data?.message);
-                            setIsLoading(false)
+                            setIsLoading(false);
                         },
                     },
                     {
                         text: "Cancel",
                         style: "cancel",
-                        onPress: () => {setIsLoading(false)}
+                        onPress: () => {
+                            setIsLoading(false);
+                        },
                     },
                 ]
             );
@@ -138,18 +143,20 @@ const PostItem = ({ item, height, width, user }) => {
                             const invoice = data.pr;
                             const result = await sendPayment({ invoice });
                             if (result.data?.decoded?.payment_hash) {
-                                setIsLoading(false)
+                                setIsLoading(false);
                                 alert("Success!");
                                 return;
                             }
                             alert(result.data?.message);
-                            setIsLoading(false)
+                            setIsLoading(false);
                         },
                     },
                     {
                         text: "Cancel",
                         style: "cancel",
-                        onPress: () => {setIsLoading(false)}
+                        onPress: () => {
+                            setIsLoading(false);
+                        },
                     },
                 ]
             );
@@ -182,6 +189,54 @@ const PostItem = ({ item, height, width, user }) => {
                     },
                 ]}
             >
+                {profileActive ? (
+                    <View
+                        style={{
+                            backgroundColor: "#222222",
+                            position: "absolute",
+                            right: 0,
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            zIndex: 100,
+                            opacity: 0.95,
+                            borderRadius: 10,
+                            padding: 12,
+                        }}
+                    >
+                        <View style={{ flexDirection: "row" }}>
+                            <Image
+                                style={{
+                                    width: (width / 100) * 16,
+                                    height: (width / 100) * 16,
+                                    borderRadius: (width / 100) * 8,
+                                    backgroundColor: colors.primary500,
+                                    borderColor: colors.primary500,
+                                    borderWidth: 2,
+                                }}
+                                source={{ uri: user.picture }}
+                            />
+                            <View style={{maxWidth: '60%'}}>
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyBold, {textAlign: 'left'}
+                                    ]}
+                                    numberOfLines={1}
+                                >
+                                    {user.name || user.pubkey}
+                                </Text>
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyBold
+                                    ]}
+                                    numberOfLines={1}
+                                >
+                                    {`${user.name}@${nip05}`}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                ) : undefined}
                 <View style={{ maxHeight: "60%" }}>
                     <Text
                         style={[
@@ -234,17 +289,23 @@ const PostItem = ({ item, height, width, user }) => {
                     }}
                 >
                     {user ? (
-                        <Image
-                            style={{
-                                width: (width / 100) * 8,
-                                height: (width / 100) * 8,
-                                borderRadius: (width / 100) * 4,
-                                backgroundColor: colors.primary500,
-                                borderColor: colors.primary500,
-                                borderWidth: 2,
+                        <Pressable
+                            onPress={() => {
+                                setProfileActive((prev) => !prev);
                             }}
-                            source={{ uri: user.picture }}
-                        />
+                        >
+                            <Image
+                                style={{
+                                    width: (width / 100) * 8,
+                                    height: (width / 100) * 8,
+                                    borderRadius: (width / 100) * 4,
+                                    backgroundColor: colors.primary500,
+                                    borderColor: colors.primary500,
+                                    borderWidth: 2,
+                                }}
+                                source={{ uri: user.picture }}
+                            />
+                        </Pressable>
                     ) : undefined}
                 </View>
                 {user?.lud06 || user?.lud16 ? (
@@ -266,7 +327,9 @@ const PostItem = ({ item, height, width, user }) => {
                         onPress={zapHandler}
                         onLongPress={tipHandler}
                     >
-                        <Animated.View style={isLoading ? animatedStyle : {opacity: 1}}>
+                        <Animated.View
+                            style={isLoading ? animatedStyle : { opacity: 1 }}
+                        >
                             <Ionicons
                                 name="flash"
                                 color="white"
@@ -285,7 +348,11 @@ const PostItem = ({ item, height, width, user }) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}
-                    onPress={() => {navigation.navigate('CommentScreen', {eventId: item.id})}}
+                    onPress={() => {
+                        navigation.navigate("CommentScreen", {
+                            eventId: item.id,
+                        });
+                    }}
                 >
                     <Ionicons
                         name="chatbubble-ellipses"
@@ -293,7 +360,7 @@ const PostItem = ({ item, height, width, user }) => {
                         size={(width / 100) * 5}
                     />
                 </Pressable>
-                <View
+                <Pressable
                     style={{
                         width: (width / 100) * 8,
                         height: (width / 100) * 8,
@@ -302,13 +369,14 @@ const PostItem = ({ item, height, width, user }) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}
+                    onPress={() => {navigation.navigate('PostMenuModal', {event: item})}}
                 >
                     <Ionicons
                         name="ellipsis-horizontal"
                         color="white"
                         size={(width / 100) * 5}
                     />
-                </View>
+                </Pressable>
             </View>
         </View>
     );

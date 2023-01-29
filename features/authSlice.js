@@ -14,10 +14,11 @@ export const authSlice = createSlice({
     reducers: {
         logIn: (state, action) => {
             state.isLoggedIn = true;
-            state.walletBearer = action.payload.bearer
+            state.walletBearer = action.payload.bearer;
             const now = new Date();
-            state.walletExpires = now.setHours(now.getHours() + 2)
-            state.address = action.payload.address
+            state.walletExpires = now.setHours(now.getHours() + 2);
+            state.address = action.payload.address;
+            state.pubKey = action.payload.pubKey;
         },
         setBearer: (state, action) => {
             state.walletBearer = action.payload;
@@ -27,7 +28,8 @@ export const authSlice = createSlice({
                 (state.pubKey = null),
                 (state.username = null),
                 (state.walletBearer = null);
-                (state.walletBearer = null);
+            state.walletBearer = null;
+            state.pubKey = null;
         },
     },
 });

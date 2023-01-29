@@ -28,10 +28,13 @@ const UsernameScreen = ({ navigation,  route }) => {
     };
 
     useEffect(() => {
-        setIsFetching(true);
-        let timer = setTimeout(() => {
-            fetchAvailableUsernames(username);
-        }, 1000);
+        let timer;
+        if (username.length >= 4) {
+            setIsFetching(true);
+            timer = setTimeout(() => {
+                fetchAvailableUsernames(username);
+            }, 1000);
+        }
         return () => {
             clearTimeout(timer);
         };
@@ -65,6 +68,7 @@ const UsernameScreen = ({ navigation,  route }) => {
                             setUsername(value.toLowerCase());
                         },
                         autoCapitalize: "none",
+                        autoCorrect: false
                     }}
                 />
                 {data?.names ? (

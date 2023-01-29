@@ -4,6 +4,7 @@ import {
     Pressable,
     useWindowDimensions,
     Image,
+    ScrollView,
 } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -18,16 +19,115 @@ import { publishKind0 } from "../../utils/nostr/publishNotes";
 import { getPublicKey } from "nostr-tools";
 import { saveValue } from "../../utils/secureStore";
 import { logIn } from "../../features/authSlice";
+import { SvgCss } from "react-native-svg";
+import { followPubkey } from "../../features/userSlice";
+import { followUser } from "../../utils/users";
 
 const defaultBio = `This profile was created using current | https://getcurrent.io`;
 
 const CreateProfileScreen = ({ navigation, route }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [bio, setBio] = useState("");
+    const [bio, setBio] = useState(`This profile was created using current | https://getcurrent.io`);
     const device = useWindowDimensions();
     const dispatch = useDispatch();
+    let data;
 
-    const { image, privKey, address } = route.params;
+    const { image, svg, svgId, privKey, address } = route.params;
+
+    if (image) {
+        data = (
+            <Pressable
+                style={({ pressed }) => [
+                    {
+                        width: device.width / 5,
+                        height: device.width / 5,
+                        borderRadius: device.width / 10,
+                        borderWidth: 2,
+                        borderColor: colors.primary500,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 32,
+                    },
+                    pressed ? { backgroundColor: "#222222" } : undefined,
+                ]}
+                onPress={() => {
+                    navigation.navigate("SelectImageScreen", {
+                        privKey,
+                        address,
+                    });
+                }}
+            >
+                <Image
+                    source={{ uri: image.uri }}
+                    style={{
+                        width: device.width / 5,
+                        height: device.width / 5,
+                        borderRadius: device.width / 10,
+                    }}
+                />
+            </Pressable>
+        );
+    } else if (svg) {
+        data = (
+            <Pressable
+                style={({ pressed }) => [
+                    {
+                        width: device.width / 5,
+                        height: device.width / 5,
+                        borderRadius: device.width / 10,
+                        borderWidth: 2,
+                        borderColor: colors.primary500,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 32,
+                    },
+                    pressed ? { backgroundColor: "#222222" } : undefined,
+                ]}
+                onPress={() => {
+                    navigation.navigate("SelectImageScreen", {
+                        privKey,
+                        address,
+                    });
+                }}
+            >
+                <SvgCss
+                    xml={svg}
+                    width={device.width / 5}
+                    height={device.width / 5}
+                />
+            </Pressable>
+        );
+    } else {
+        data = (
+            <Pressable
+                style={({ pressed }) => [
+                    {
+                        width: device.width / 5,
+                        height: device.width / 5,
+                        borderRadius: device.width / 10,
+                        borderWidth: 2,
+                        borderColor: colors.primary500,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 32,
+                    },
+                    pressed ? { backgroundColor: "#222222" } : undefined,
+                ]}
+                onPress={() => {
+                    navigation.navigate("SelectImageScreen", {
+                        privKey,
+                        address,
+                    });
+                }}
+            >
+                <Ionicons
+                    name="image-outline"
+                    size={32}
+                    color={colors.primary500}
+                />
+            </Pressable>
+        );
+    }
 
     const uploadImage = async (pubKey, bearer) => {
         const id = pubKey.slice(0, 16);
@@ -51,6 +151,28 @@ const CreateProfileScreen = ({ navigation, route }) => {
         console.log(data.data);
         return data.data;
     };
+
+    const uploadSvg = async (id, bearer) => {
+        try {
+            const response = await fetch(
+                `https://getcurrent.io/avatar?name=${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${bearer}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            if (data.error === true) {
+                throw new Error(`Error getting svg-image url: ${data}`)
+            };
+            return data.data;
+        } catch (err) {
+            console.log(err)
+        }
+    };
+
     const createProfileHandler = async () => {
         setIsLoading(true);
         let imageUrl;
@@ -62,49 +184,16 @@ const CreateProfileScreen = ({ navigation, route }) => {
         if (image) {
             imageUrl = await uploadImage(pubKey, access_token);
         }
-        publishKind0(address, bio, imageUrl);
-        dispatch(logIn({ bearer: access_token, address }));
+        if (svg) {
+            imageUrl = await uploadSvg(svgId, access_token);
+        }
+        await publishKind0(address, bio, imageUrl);
+        followUser(pubKey)
+        dispatch(logIn({ bearer: access_token, address, pubKey }));
     };
     return (
-        <View style={globalStyles.screenContainer}>
-            <Pressable
-                style={({ pressed }) => [
-                    {
-                        width: device.width / 5,
-                        height: device.width / 5,
-                        borderRadius: device.width / 10,
-                        borderWidth: 2,
-                        borderColor: colors.primary500,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginBottom: 32,
-                    },
-                    pressed ? { backgroundColor: "#222222" } : undefined,
-                ]}
-                onPress={() => {
-                    navigation.navigate("SelectImageScreen", {
-                        privKey,
-                        address,
-                    });
-                }}
-            >
-                {image ? (
-                    <Image
-                        source={{ uri: image.uri }}
-                        style={{
-                            width: device.width / 5,
-                            height: device.width / 5,
-                            borderRadius: device.width / 10,
-                        }}
-                    />
-                ) : (
-                    <Ionicons
-                        name="image-outline"
-                        size={32}
-                        color={colors.primary500}
-                    />
-                )}
-            </Pressable>
+        <ScrollView style={globalStyles.screenContainerScroll} contentContainerStyle={{alignItems: 'center'}} keyboardShouldPersistTaps='handled'>
+            {data}
             <Input
                 label="Name"
                 textInputConfig={{
@@ -118,7 +207,8 @@ const CreateProfileScreen = ({ navigation, route }) => {
                 textInputConfig={{
                     multiline: true,
                     onChangeText: setBio,
-                    defaultValue: defaultBio,
+                    value: bio
+
                 }}
                 inputStyle={{ height: "20%" }}
             />
@@ -127,7 +217,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                 buttonConfig={{ onPress: createProfileHandler }}
                 containerStyles={{ marginTop: 32 }}
             />
-        </View>
+        </ScrollView>
     );
 };
 

@@ -9,20 +9,17 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import colors from "../styles/colors";
 import { followPubkey, unfollowPubkey } from "../features/userSlice";
 import Input from "../components/Input";
-import { bech32 } from "bech32";
 import { decodePubkey } from "../utils/nostr/keys";
-import { db, getUsersFromDb, hydrateFromDatabase } from "../utils/database";
 import { getUserData, updateUsers } from "../utils/nostr/getNotes";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { followUser, unfollowUser } from "../utils/users";
 
-const UserItem = ({ item }) => {
-    const dispatch = useDispatch();
+const UserItem = ({ item, user }) => {
     const deleteHandler = () => {
-        dispatch(unfollowPubkey(item.pubkey));
+        unfollowUser(item)
     };
     return (
         <View>
-            <Text>{item.name || item.pubkey}</Text>
+            <Text style={globalStyles.textBody}>{user?.name || item}</Text>
             <Pressable onPress={deleteHandler}>
                 <Ionicons
                     name="close-circle-outline"
@@ -38,16 +35,17 @@ const SearchScreen = () => {
     const [input, setInput] = useState("");
     const dispatch = useDispatch();
     const following = useSelector((state) => state.user.followedPubkeys);
+    const users = useSelector((state) => state.messages.users);
 
     const searchHandler = async () => {
         if (input.includes("npub")) {
-            const decoded = decodePubkey(input);
-            await getUserData(decoded);
-            dispatch(followPubkey(decoded));
+            const decoded = await decodePubkey(input);
+            console.log(decoded);
+            await followUser(decoded);
             return;
         }
 
-        updateUsers();
+        // updateUsers();
     };
     return (
         <View style={globalStyles.screenContainer}>
@@ -64,12 +62,15 @@ const SearchScreen = () => {
                     buttonConfig={{ onPress: searchHandler }}
                 />
             </View>
-            <View style={{ flex: 6, width: '100%' }}>
+            <View style={{ flex: 6, width: "100%" }}>
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
                         data={following}
-                        renderItem={({ item }) => <Text style={globalStyles.textBody}>{item}</Text>}
+                        renderItem={({ item }) => (
+                            <UserItem item={item} user={users[item]} />
+                        )}
                         estimatedItemSize={50}
+                        extraData={users}
                     />
                 </View>
             </View>

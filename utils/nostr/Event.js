@@ -1,9 +1,12 @@
-import { store } from "../../store/store";
 import { addMessage, addUser } from "../../features/messagesSlice";
 
-import * as SQLite from "expo-sqlite";
-
 import { db } from "../database";
+
+let store
+
+export const injectStore = _store => {
+  store = _store
+}
 
 const parseContent = (message) => {
     let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
@@ -49,7 +52,7 @@ export class Event {
     saveUserData() {
         const { id, pubkey, created_at, content } = this;
         const userData = JSON.parse(content);
-        const sql = `INSERT OR REPLACE INTO users (id, pubkey, name, display_name, picture, about, created_at, lud06, lud16) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT OR REPLACE INTO users (id, pubkey, name, display_name, picture, about, created_at, lud06, lud16, nip05) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const params = [
             id,
             pubkey,
@@ -59,7 +62,8 @@ export class Event {
             userData.about,
             created_at,
             userData.lud06,
-            userData.lud16
+            userData.lud16,
+            userData.nip05
         ];
         try {
             const user = {
@@ -71,7 +75,8 @@ export class Event {
                 display_name: userData.display_name,
                 lud06: userData.lud06,
                 created_at,
-                lud16: userData.lud16
+                lud16: userData.lud16,
+                nip05: userData.nip05
             };
             store.dispatch(addUser({ user }));
         } catch (err) {

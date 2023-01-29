@@ -50,9 +50,7 @@ const HomeScreen = ({ navigation }) => {
                                 item={item}
                                 height={height}
                                 width={width}
-                                user={users.find(
-                                    (user) => user.pubkey === item.pubkey
-                                )}
+                                user={users[item.pubkey]}
                             />
                         )}
                         snapToAlignment="start"
@@ -66,6 +64,7 @@ const HomeScreen = ({ navigation }) => {
                             setIsFetching(false)
                         }}
                         refreshing={isFetching}
+                        extraData={users}
                     />
                 </View>
             ) : (

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     messages: [],
-    users: [],
+    users: {},
     relayReady: false,
 };
 
@@ -25,21 +25,14 @@ export const messageSlice = createSlice({
         },
         addUser: (state, action) => {
             const newUser = action.payload.user;
-            const updatedUsers = [...state.users, newUser].reduce((a, user) => {
-                const existingUser = a.find((u) => u.pubkey === user.pubkey);
-                if (existingUser) {
-                    if (existingUser.created_at < user.created_at) {
-                        return a.map((u) =>
-                            u.pubkey === user.pubkey ? user : u
-                        );
-                    } else {
-                        return a;
-                    }
-                } else {
-                    return [...a, user];
-                }
-            }, []);
-            state.users = updatedUsers;
+            const exists = state.users.hasOwnProperty(newUser.pubkey)
+            if (exists) {
+                console.log('Updated User')
+                state.users[newUser.pubkey] = state.users[newUser.pubkey].created_at < newUser.created_at ? newUser : state.users[newUser.pubkey]
+            } else
+            console.log('Added new user')
+            state.users[newUser.pubkey] = newUser
+            console.log(state.users[newUser.pubkey])
         },
     },
 });

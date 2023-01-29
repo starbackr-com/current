@@ -1,11 +1,9 @@
 import relay from "./initRelay";
-import { db, getUsersFromDb } from "../database";
 import { Event } from "./Event";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getData, storeData } from "../cache/asyncStorage";
+import { store } from "../../store/store";
 
 export const updateUsers = async (url) => {
-    const pubkeys = await getUsersFromDb();
+    const pubkeys = store.getState().user.followedPubkeys
     if (relay.status === 1) {
         let sub = relay.sub([
             {
@@ -27,28 +25,32 @@ export const updateUsers = async (url) => {
 };
 
 export const getUserData = (pubkey) => {
-        if (relay.status === 1) {
-            console.log(pubkey);
-            let lol = relay.sub([
-                {
-                    authors: [
-                        "d307643547703537dfdef811c3dea96f1f9e84c8249e200353425924a9908cf8",
-                    ],
-                    kinds: [0],
-                },
-            ]);
+    const promise = new Promise((resolve, reject) => {
+        try {
+            if (relay.status === 1) {
+                console.log(pubkey);
+                let lol = relay.sub([
+                    {
+                        authors: [pubkey],
+                        kinds: [0],
+                    },
+                ]);
 
-            lol.on("event", (event) => {
-                console.log(event);
-                const newEvent = new Event(event);
-                newEvent.save();
-            });
-            lol.on("eose", () => {
-                console.log("eose");
-                sub.unsub();
-                resolve();
-            });
-        } else {
-            reject("Not connected to a relay");
+                lol.on("event", (event) => {
+                    console.log(event)
+                    const newEvent = new Event(event);
+                    newEvent.save();
+                });
+                lol.on("eose", () => {
+                    sub.unsub();
+                    resolve();
+                });
+            } else {
+                throw new Error("Not connected to a relay");
+            }
+        } catch (e) {
+            reject(e);
         }
+    });
+    return promise
 };

@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { hydrateFromDatabase, init } from "./utils/database";
 import { getEvents } from "./utils/nostr";
 import { updateUsers } from "./utils/nostr/getNotes";
+import { getPublicKey } from "nostr-tools";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,14 +36,14 @@ const Root = () => {
                 if (privKey) {
                     console.log("Initialising from storage...");
                     const { access_token } = await loginToWallet(
-                        privKey,
-                        username
+                        privKey
                     );
-                    dispatch(logIn({ bearer: access_token, username }));
+                    const pubKey = await getPublicKey(privKey)
+                    dispatch(logIn({ bearer: access_token, username, pubKey }));
                 }
                 await init();
                 await hydrateFromDatabase();
-                await updateUsers();
+                updateUsers();
             } catch (e) {
                 console.warn(e);
             } finally {

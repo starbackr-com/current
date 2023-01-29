@@ -9,6 +9,12 @@ export default globalStyles = StyleSheet.create({
         backgroundColor: colors.backgroundPrimary,
         alignItems: 'center',
     },
+    screenContainerScroll: {
+        flex: 1,
+        paddingTop: 32,
+        paddingHorizontal: 16,
+        backgroundColor: colors.backgroundPrimary,
+    },
     textBody: {
         fontFamily: 'Montserrat-Regular',
         color: 'white',

@@ -50,7 +50,7 @@ const SelectImage = ({ navigation, route }) => {
     }, []);
 
     const pickImage = async () => {
-        setSelected(null)
+        setSelected(null);
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -65,7 +65,6 @@ const SelectImage = ({ navigation, route }) => {
 
     const confirmHandler = async () => {
         if (selected) {
-            
         }
     };
 
@@ -110,7 +109,7 @@ const SelectImage = ({ navigation, route }) => {
                     />
                 )}
             </Pressable>
-            <Text style={[globalStyles.textBody,{marginBottom: 16}]}>
+            <Text style={[globalStyles.textBody, { marginBottom: 16 }]}>
                 or select a randomly generated one...
             </Text>
             <View
@@ -126,15 +125,28 @@ const SelectImage = ({ navigation, route }) => {
                         }}
                         numColumns={2}
                         renderItem={({ item }) => (
-                            <Pressable onPress={() => {
-                                setImage(null)
-                                setSelected(item)}}>
+                            <Pressable
+                                onPress={() => {
+                                    setImage(null);
+                                    setSelected(item);
+                                }}
+                            >
                                 <SvgCss
-                                xml={svgs[item]}
-                                width={device.width / 6}
-                                height={device.width / 6}
-                                style={[{ margin: 6 }, selected === item ? {borderWidth: 2, borderColor: colors.primary500, backgroundColor: '#222222'} : undefined]}
-                            />
+                                    xml={svgs[item]}
+                                    width={device.width / 6}
+                                    height={device.width / 6}
+                                    style={[
+                                        { margin: 6 },
+                                        selected === item
+                                            ? {
+                                                  borderWidth: 2,
+                                                  borderColor:
+                                                      colors.primary500,
+                                                  backgroundColor: "#222222",
+                                              }
+                                            : undefined,
+                                    ]}
+                                />
                             </Pressable>
                         )}
                     />
@@ -148,6 +160,8 @@ const SelectImage = ({ navigation, route }) => {
                             image,
                             privKey,
                             address,
+                            svg: selected ? svgs[selected] : undefined,
+                            svgId: selected
                         });
                     },
                 }}
