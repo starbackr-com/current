@@ -22,7 +22,7 @@ const WalletReceiveScreen = ({ navigation }) => {
 
     return (
         <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textH1}>Receive a Payment</Text>
+            <Text style={globalStyles.textBodyBold}>Receive a Payment</Text>
             <View
                 style={{
                     flex: 5,
@@ -36,14 +36,14 @@ const WalletReceiveScreen = ({ navigation }) => {
                         autoFocus: true,
                         keyboardType: "numeric",
                         onChangeText: changeHandler,
+                        placeholder: 'in SATS'
                     }}
                     inputStyle={{ width: "50%", marginBottom: 12 }}
-                    label="Amount in USD"
+                    label="Amount"
                     invalid={error}
                 />
                 <Input
                     textInputConfig={{
-                        autoFocus: true,
                         onChangeText: setMemo,
                     }}
                     inputStyle={{ width: "50%", marginBottom: 12 }}
@@ -58,19 +58,18 @@ const WalletReceiveScreen = ({ navigation }) => {
                                 return;
                             }
                             const response = await postInvoice({
-                                amtinusd: amount,
-                                memo: memo,
+                                amount: amount,
+                                description: memo,
                             }).unwrap();
                             console.log(response);
                             navigation.navigate("WalletInvoiceScreen", {
-                                invoice: response.pay_req,
+                                invoice: response.payment_request,
                             });
                         },
                     }}
                 />
             </View>
             <View style={{ flex: 1 }}>
-                <CustomButton text="Use Bitcoin Address" />
                 <CustomButton
                     text="Back"
                     buttonConfig={{

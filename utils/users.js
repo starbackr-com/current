@@ -1,3 +1,4 @@
+import { removeAuthorsMessages } from "../features/messagesSlice";
 import { followPubkey, unfollowPubkey } from "../features/userSlice";
 import { store } from "../store/store";
 import { db } from "./database";
@@ -5,7 +6,6 @@ import { getUserData } from "./nostr/getNotes";
 
 export const followUser = async (pubkeyInHex) => {
     try {
-        getUserData(pubkeyInHex);
         store.dispatch(followPubkey(pubkeyInHex))
         const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
         const timeNow = new Date().getTime() / 1000;
@@ -35,6 +35,7 @@ export const followUser = async (pubkeyInHex) => {
 
 export const unfollowUser = async (pubkeyInHex) => {
     store.dispatch(unfollowPubkey(pubkeyInHex))
+    store.dispatch(removeAuthorsMessages(pubkeyInHex))
     const sql = `DELETE FROM followed_users WHERE pubkey = ?`;
     const params = [pubkeyInHex];
     try {

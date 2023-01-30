@@ -3,7 +3,7 @@ import { store } from "./store/store";
 import { Provider } from "react-redux";
 import PolyfillCrypto from "react-native-webview-crypto";
 import Root from "./Root";
-import { injectStore } from "./utils/nostr/Event";
+import { injectStore } from "./utils/nostrV2/Event";
 
 
 

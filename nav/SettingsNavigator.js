@@ -1,6 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import DisplayKeysScreen from "../views/settings/DisplayKeysScreen";
 import SettingsHomeScreen from "../views/settings/SettingsHomeScreen";
+import SettingsNetworkScreen from "../views/settings/SettingsNetworkScreen";
 
 
 const Stack = createStackNavigator();
@@ -19,6 +20,10 @@ const SettingsNavigator = () => {
             <Stack.Screen
                 name="Backup"
                 component={DisplayKeysScreen}
+            />
+            <Stack.Screen
+                name="Network"
+                component={SettingsNetworkScreen}
             />
         </Stack.Navigator>
     );

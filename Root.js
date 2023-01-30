@@ -12,9 +12,9 @@ import { loginToWallet } from "./utils/wallet";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { hydrateFromDatabase, init } from "./utils/database";
-import { getEvents } from "./utils/nostr";
-import { updateUsers } from "./utils/nostr/getNotes";
 import { getPublicKey } from "nostr-tools";
+import { initRelays } from "./utils/nostrV2/initRelays";
+import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,6 +26,7 @@ const Root = () => {
     useEffect(() => {
         const prepare = async () => {
             try {
+                await initRelays();
                 const privKey = await getValue("privKey");
                 const username = await getValue("username");
                 await loadAsync({
@@ -43,7 +44,7 @@ const Root = () => {
                 }
                 await init();
                 await hydrateFromDatabase();
-                updateUsers();
+                await updateFollowedUsers();
             } catch (e) {
                 console.warn(e);
             } finally {

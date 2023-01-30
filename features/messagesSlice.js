@@ -23,20 +23,21 @@ export const messageSlice = createSlice({
             updatedArray.sort((a, b) => b.created_at - a.created_at);
             state.messages = updatedArray;
         },
+        removeAuthorsMessages: (state, action) => {
+            const author = action.payload;
+            state.messages = state.messages.filter(message => message.pubkey !== author)
+        },
         addUser: (state, action) => {
             const newUser = action.payload.user;
             const exists = state.users.hasOwnProperty(newUser.pubkey)
             if (exists) {
-                console.log('Updated User')
                 state.users[newUser.pubkey] = state.users[newUser.pubkey].created_at < newUser.created_at ? newUser : state.users[newUser.pubkey]
             } else
-            console.log('Added new user')
             state.users[newUser.pubkey] = newUser
-            console.log(state.users[newUser.pubkey])
         },
     },
 });
 
-export const { addMessage, addUser } = messageSlice.actions;
+export const { addMessage, addUser, removeAuthorsMessages } = messageSlice.actions;
 
 export default messageSlice.reducer;

@@ -1,4 +1,3 @@
-import { View, Text, StyleSheet } from "react-native";
 import React,{useEffect} from "react";
 import Animated, {
     useAnimatedStyle,
@@ -8,7 +7,6 @@ import Animated, {
     cancelAnimation,
     Easing,
 } from "react-native-reanimated";
-import { useState } from "react";
 import colors from "../styles/colors";
 
 const LoadingSpinner = ({ size }) => {

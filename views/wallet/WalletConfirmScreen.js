@@ -39,7 +39,7 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                     buttonConfig={{
                         onPress: async () => {
                             setIsLoading(true)
-                            const result = await sendPayment({ invoice });
+                            const result = await sendPayment({ amount: invoiceAmount / 1000, invoice });
                             if (result.data?.decoded?.payment_hash) {
                                 alert('Success!')
                                 navigation.reset({
@@ -48,7 +48,7 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                                   });
                                   return
                             }
-                            alert(result.data?.message);
+                            console.log(result);
                             setIsLoading(false)
                         },
                     }}

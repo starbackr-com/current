@@ -1,17 +1,18 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
 
 import PostItem from "../components/PostItem";
-import { getFeed } from "../utils/nostr";
 import CommentScreen from "./home/CommentScreen";
+import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
+    const dispatch = useDispatch();
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
     const [isFetching, setIsFetching] = useState(false);
@@ -20,7 +21,6 @@ const HomeScreen = ({ navigation }) => {
     );
     const users = useSelector((state) => state.messages.users);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-
     const messages = useSelector((state) => state.messages.messages);
 
     const onLayoutView = (e) => {
@@ -32,11 +32,7 @@ const HomeScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        try {
-            getFeed(followedPubkeys);
-        } catch{
-            console.log('No Homefeed!')
-        }
+        getHomeFeed(followedPubkeys);
     }, [followedPubkeys]);
 
     return (
@@ -59,9 +55,9 @@ const HomeScreen = ({ navigation }) => {
                         estimatedItemSize={height / 2}
                         directionalLockEnabled
                         onRefresh={async () => {
-                            setIsFetching(true)
-                            await getFeed(followedPubkeys)
-                            setIsFetching(false)
+                            setIsFetching(true);
+                            dispatch(getHomeFeed());
+                            setIsFetching(false);
                         }}
                         refreshing={isFetching}
                         extraData={users}

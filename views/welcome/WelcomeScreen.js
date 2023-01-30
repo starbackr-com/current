@@ -20,7 +20,7 @@ const WelcomeScreen = ({ navigation }) => {
     };
 
     const testHandler = async () => {
-        navigation.navigate("CreateProfileScreen", { username: "EggeTesting" });
+        navigation.navigate("LoadingProfileScreen");
     };
 
     const createHandler = async () => {

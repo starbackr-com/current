@@ -7,48 +7,38 @@ import CustomButton from "../components/CustomButton";
 import { Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import colors from "../styles/colors";
-import { followPubkey, unfollowPubkey } from "../features/userSlice";
 import Input from "../components/Input";
 import { decodePubkey } from "../utils/nostr/keys";
-import { getUserData, updateUsers } from "../utils/nostr/getNotes";
 import { followUser, unfollowUser } from "../utils/users";
+import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
 
 const UserItem = ({ item, user }) => {
     const deleteHandler = () => {
         unfollowUser(item)
+        
     };
     return (
-        <View>
-            <Text style={globalStyles.textBody}>{user?.name || item}</Text>
-            <Pressable onPress={deleteHandler}>
-                <Ionicons
-                    name="close-circle-outline"
-                    size={32}
-                    color={colors.primary500}
-                />
-            </Pressable>
+        <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between', backgroundColor: '#222222', padding: 6, borderRadius: 10, alignItems: 'center', marginBottom: 6}}>
+            <Text style={[globalStyles.textBody, {overflow: 'hidden'}]}>{user?.name || item}</Text>
+                <CustomButton text='Unfollow' buttonConfig={{onPress: deleteHandler}}/>
         </View>
     );
 };
 
 const SearchScreen = () => {
     const [input, setInput] = useState("");
-    const dispatch = useDispatch();
     const following = useSelector((state) => state.user.followedPubkeys);
     const users = useSelector((state) => state.messages.users);
-
     const searchHandler = async () => {
         if (input.includes("npub")) {
             const decoded = await decodePubkey(input);
-            console.log(decoded);
             await followUser(decoded);
+            await updateFollowedUsers();
             return;
         }
-
-        // updateUsers();
     };
     return (
-        <View style={globalStyles.screenContainer}>
+        <View style={[globalStyles.screenContainer, {justifyContent: 'space-between'}]}>
             <View
                 style={{
                     flexDirection: "row",

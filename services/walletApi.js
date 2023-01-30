@@ -12,18 +12,17 @@ export const walletApi = createApi({
 
             return headers;
         },
-        
     }),
-    tagTypes: ['Balance'],
+    tagTypes: ["Balance"],
     endpoints: (builder) => ({
-        postNewWallet: builder.mutation({   
+        postNewWallet: builder.mutation({
             query: ({ login, password, username }) => ({
                 url: `v2/users`,
                 method: "POST",
                 body: {
                     login,
                     password,
-                    username
+                    username,
                 },
             }),
         }),
@@ -38,42 +37,44 @@ export const walletApi = createApi({
             }),
         }),
         getWalletBalance: builder.query({
-            query: () => `balance`,
-            providesTags: ['Balance']
+            query: () => `v2/balance`,
+            providesTags: ["Balance"],
         }),
         postInvoice: builder.mutation({
-            query: ({ amtinusd, memo }) => ({
-                url: `addinvoice`,
+            query: ({ amount, description }) => ({
+                url: `v2/invoices`,
                 method: "POST",
                 body: {
-                    amtinusd,
-                    memo,
+                    amount,
+                    description,
+                    description_hash: description,
                 },
             }),
-            invalidatesTags: ['Balance'],
+            invalidatesTags: ["Balance"],
         }),
         checkUsername: builder.query({
-            query: (username) => `.well-known/nostr.json?name=${username}`
+            query: (username) => `.well-known/nostr.json?name=${username}`,
         }),
         postPayment: builder.mutation({
-            query: ({invoice}) => ({
-                url: 'payinvoice',
-                method: 'POST',
+            query: ({ invoice, amount }) => ({
+                url: "v2/payments/bolt11",
+                method: "POST",
                 body: {
-                    invoice
-                }
+                    invoice,
+                    amount
+                },
             }),
-            invalidatesTags: ['Balance']
+            invalidatesTags: ["Balance"],
         }),
         getTransactions: builder.mutation({
             query: (page) => ({
-                url: 'txnhistory',
-                method: 'POST',
+                url: "txnhistory",
+                method: "POST",
                 body: {
                     limit: 100,
-                    offset: page ? page * 100 : 0
-                }
-            })
+                    offset: page ? page * 100 : 0,
+                },
+            }),
         }),
     }),
 });
@@ -86,5 +87,5 @@ export const {
     useCheckUsernameQuery,
     usePostPaymentMutation,
     useLazyGetWalletBalanceQuery,
-    useGetTransactionsMutation
+    useGetTransactionsMutation,
 } = walletApi;

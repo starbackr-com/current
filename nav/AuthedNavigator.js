@@ -9,7 +9,6 @@ import colors from "../styles/colors";
 import WalletNavigator from "./WalletNavigator";
 import Input from "../components/Input";
 import CustomButton from "../components/CustomButton";
-import { postEvent } from "../utils/nostr";
 import SettingsNavigator from "./SettingsNavigator";
 import ProfileScreen from "../views/ProfileScreen";
 import SearchScreen from "../views/SearchScreen";
@@ -78,7 +77,7 @@ const TabNavigator = ({navigation}) => {
                         }}
                     >
                         <Text style={globalStyles.textBody}>
-                            {data ? `${data.BTC.AvailableBalance}` : "----"}
+                            {data ? `${data.balance}` : "----"}
                         </Text>
                         <Text
                             style={[
@@ -139,8 +138,6 @@ const PostModal = ({ navigation }) => {
                         text="Send"
                         buttonConfig={{
                             onPress: async () => {
-                                const result = await postEvent(content);
-                                navigation.goBack();
                             },
                         }}
                     />

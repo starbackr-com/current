@@ -9,9 +9,9 @@ import { useIsFocused } from "@react-navigation/native";
 
 const WalletHomeScreen = ({ navigation: { navigate } }) => {
     const { data, refetch } = useGetWalletBalanceQuery(null, {
-        refetchOnFocus: true,
         skip: !useIsFocused(),
     });
+
     const device = useWindowDimensions();
     return (
         <View style={globalStyles.screenContainer}>
@@ -37,7 +37,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
             </View>
             <View style={{ flex: 4, justifyContent: "center" }}>
                 <Text style={[globalStyles.textH1]}>
-                    {data ? `${data.BTC?.AvailableBalance} SATS` : "Loading..."}
+                    {data ? `${data.balance} SATS` : "Loading..."}
                 </Text>
             </View>
             <View

@@ -1,16 +1,11 @@
-import { View, Text, FlatList, Button } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import React, { useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import { mnemonicToSeed } from "../../utils/keys";
-import * as nostr from "nostr-tools";
 import { usePostNewWalletMutation } from "../../services/walletApi";
 import { saveValue } from "../../utils/secureStore";
 import { useDispatch } from "react-redux";
-import { logIn } from "../../features/authSlice";
 import CustomButton from "../../components/CustomButton";
-import { createWallet, loginToWallet } from "../../utils/wallet";
-import { postEvent } from "../../utils/nostr";
-import { setNip05 } from "../../utils/nostr/nip05";
 
 const Word = ({ word, index }) => {
     return (
@@ -36,9 +31,7 @@ const Word = ({ word, index }) => {
 };
 
 const ShowBackupScreen = ({ route, navigation }) => {
-    const dispatch = useDispatch();
     const { mem } = route.params;
-    const [postWallet, results] = usePostNewWalletMutation();
     const [isLoading, setIsLoading] = useState(false);
 
     const nextHandler = async () => {
