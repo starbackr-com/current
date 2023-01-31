@@ -20,12 +20,42 @@ export const updateFollowedUsers = async () => {
                     });
                     sub.on("eose", () => {
                         sub.unsub();
-                        resolve();
+                        clearTimeout(timer)
+                        return resolve();
                     });
-                    setTimeout(() => {
-                        console.log(`${relay.url} timed out after 10 sec...`)
-                        reject();
-                    }, 10000)
+                    let timer = setTimeout(() => {
+                        console.log(`${relay.url} timed out after 5 sec...`)
+                        return reject();
+                    }, 5000)
+                })
+        )
+    );
+};
+
+export const getUserData = async (pubkeysInHex) => {
+    return Promise.allSettled(
+        connectedRelays.map(
+            (relay) =>
+                new Promise((resolve, reject) => {
+                    let sub = relay.sub([
+                        {
+                            authors: pubkeysInHex,
+                            kinds: [0],
+                        },
+                    ]);
+                    sub.on("event", (event) => {
+                        const newEvent = new Event(event);
+                        newEvent.save();
+                    });
+                    sub.on("eose", () => {
+                        sub.unsub();
+                        clearTimeout(timer)
+                        return resolve();
+                    });
+                    let timer = setTimeout(() => {
+                        console.log(`${relay.url} timed out after 5 sec...`)
+                        return reject();
+                    }, 5000)
                 })
         )
     );

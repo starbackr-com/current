@@ -54,7 +54,8 @@
     "readable-stream": "^1.0.33",
     "stream-browserify": "^1.0.0",
     "text-encoding": "^0.7.0",
-    "text-encoding-polyfill": "^0.6.7"
+    "text-encoding-polyfill": "^0.6.7",
+    "expo-clipboard": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

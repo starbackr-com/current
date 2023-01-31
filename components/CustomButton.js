@@ -7,9 +7,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import LoadingSpinner from './LoadingSpinner'
 
 
-const CustomButton = ({containerStyles, textStyles, text, buttonConfig, disabled, icon, iconColor, loading}) => {
+const CustomButton = ({containerStyles, textStyles, text, buttonConfig, disabled, icon, iconColor, loading, secondary}) => {
   return (
-    <Pressable style={({pressed}) => [styles.container, containerStyles, pressed ? styles.pressed : undefined, disabled ? styles.containerDisabled: undefined]} {...buttonConfig} disabled={disabled}>
+    <Pressable style={({pressed}) => [styles.container, containerStyles, pressed ? styles.pressed : undefined, secondary ? {borderColor: '#333333'} : undefined, disabled ? styles.containerDisabled: undefined]} {...buttonConfig} disabled={disabled}>
       {icon ? <Ionicons name={icon} color={iconColor || colors.primary500} size={16}/> : undefined}
       {!loading ? <Text style={[globalStyles.textBody, styles.text, textStyles, disabled ? styles.textDisabled : undefined]}>{text}</Text> : <LoadingSpinner size={16}/>}
     </Pressable>

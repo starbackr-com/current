@@ -71,10 +71,10 @@ const ProfileScreen = ({ route, navigation }) => {
                 <Text
                     style={[globalStyles.textBodyBold, { textAlign: "left" }]}
                 >
-                    {user?.name || "Egge"}
+                    {user?.name}
                 </Text>
                 <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
-                    {user.about}
+                    {user?.about}
                 </Text>
             </View>
             <CustomButton text="Load Feed" />

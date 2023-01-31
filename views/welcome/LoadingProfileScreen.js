@@ -13,7 +13,8 @@ import { followUser } from "../../utils/users";
 import { updateFollowedUsers } from "../../utils/nostrV2/getUserData";
 
 const LoadingProfileScreen = ({ route }) => {
-    const { image, svg, svgId, privKey, address, bio } = route.params;
+    const { image, svg, svgId, privKey, address, bio, publishProfile } =
+        route.params;
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -71,20 +72,21 @@ const LoadingProfileScreen = ({ route }) => {
             await saveValue("privKey", privKey);
             await saveValue("address", address);
             const { access_token } = await loginToWallet(privKey);
-            if (image) {
-                imageUrl = await uploadImage(pubKey, access_token);
-            }
-            if (svg) {
-                imageUrl = await uploadSvg(svgId, access_token);
-            }
             followUser(pubKey);
             try {
-                await publishKind0(address, bio, imageUrl);
+                if (publishProfile) {
+                    if (image) {
+                        imageUrl = await uploadImage(pubKey, access_token);
+                    }
+                    if (svg) {
+                        imageUrl = await uploadSvg(svgId, access_token);
+                    }
+                    await publishKind0(address, bio, imageUrl);
+                }
                 await updateFollowedUsers();
             } catch (error) {
-                console.log(`Failed to publish kind 0 event: ${error}`);
             } finally {
-                console.log(access_token)
+                console.log(access_token);
                 dispatch(logIn({ bearer: access_token, address, pubKey }));
             }
         } catch (error) {
@@ -99,8 +101,7 @@ const LoadingProfileScreen = ({ route }) => {
             ]}
         >
             <Text style={globalStyles.textBody}>
-                Uploading your image, creating your Lightning Wallet and
-                publishing your profile on the nostr network...
+                Deriving your nostr-keys...
             </Text>
             <LoadingSpinner size={100} />
         </View>

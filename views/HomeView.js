@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
@@ -12,7 +12,6 @@ import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
-    const dispatch = useDispatch();
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
     const [isFetching, setIsFetching] = useState(false);
@@ -56,7 +55,7 @@ const HomeScreen = ({ navigation }) => {
                         directionalLockEnabled
                         onRefresh={async () => {
                             setIsFetching(true);
-                            dispatch(getHomeFeed());
+                            getHomeFeed(followedPubkeys);
                             setIsFetching(false);
                         }}
                         refreshing={isFetching}

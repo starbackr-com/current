@@ -98,8 +98,11 @@ const PostItem = ({ item, height, width, user }) => {
                             );
                             const data = await response.json();
                             const invoice = data.pr;
-                            const result = await sendPayment({ invoice });
-                            if (result.data?.decoded?.payment_hash) {
+                            const result = await sendPayment({
+                                amount: 210,
+                                invoice,
+                            });
+                            if (result.data?.message?.status === 'SUCCEEDED') {
                                 setIsLoading(false);
                                 alert("Success!");
                                 return;
@@ -141,13 +144,16 @@ const PostItem = ({ item, height, width, user }) => {
                             );
                             const data = await response.json();
                             const invoice = data.pr;
-                            const result = await sendPayment({ invoice });
-                            if (result.data?.decoded?.payment_hash) {
+                            const result = await sendPayment({
+                                amount: 210,
+                                invoice,
+                            });
+                            if (result.data?.message?.status === 'SUCCEEDED') {
                                 setIsLoading(false);
                                 alert("Success!");
                                 return;
                             }
-                            alert(result.data?.message);
+                            console.log(result);
                             setIsLoading(false);
                         },
                     },
@@ -216,19 +222,18 @@ const PostItem = ({ item, height, width, user }) => {
                                 }}
                                 source={{ uri: user.picture }}
                             />
-                            <View style={{maxWidth: '60%'}}>
+                            <View style={{ maxWidth: "60%" }}>
                                 <Text
                                     style={[
-                                        globalStyles.textBodyBold, {textAlign: 'left'}
+                                        globalStyles.textBodyBold,
+                                        { textAlign: "left" },
                                     ]}
                                     numberOfLines={1}
                                 >
-                                    {user.name || user.pubkey}
+                                    {user.name || user.pubkey}
                                 </Text>
                                 <Text
-                                    style={[
-                                        globalStyles.textBodyBold
-                                    ]}
+                                    style={[globalStyles.textBodyBold]}
                                     numberOfLines={1}
                                 >
                                     {`${user.name}@${nip05}`}
@@ -369,7 +374,9 @@ const PostItem = ({ item, height, width, user }) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}
-                    onPress={() => {navigation.navigate('PostMenuModal', {event: item})}}
+                    onPress={() => {
+                        navigation.navigate("PostMenuModal", { event: item });
+                    }}
                 >
                     <Ionicons
                         name="ellipsis-horizontal"

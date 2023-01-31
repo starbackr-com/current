@@ -2,24 +2,25 @@
     "expo": {
         "name": "current",
         "slug": "current",
-        "version": "1.0.0",
+        "version": "0.0.1",
         "orientation": "portrait",
         "backgroundColor": "#18181b",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "dark",
-        "jsEngine": "hermes",
+        "jsEngine": "jsc",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
-            "backgroundColor": "#222222"
+            "backgroundColor": "#18181b"
         },
         "updates": {
             "fallbackToCacheTimeout": 0
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.anonymous.current"
+            "supportsTablet": false,
+            "bundleIdentifier": "io.getcurrent.current",
+            "buildNumber": "2"
         },
         "android": {
             "adaptiveIcon": {

@@ -3,6 +3,9 @@ import {
     useWindowDimensions,
     Image,
     ScrollView,
+    Switch,
+    View,
+    Text,
 } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -17,10 +20,15 @@ const CreateProfileScreen = ({ navigation, route }) => {
     const [bio, setBio] = useState(
         `This profile was created using current | https://getcurrent.io`
     );
+    const [checked, setChecked] = useState(true);
     const device = useWindowDimensions();
     let data;
 
     const { image, svg, svgId, privKey, address } = route.params;
+
+    const changeHandler = () => {
+        setChecked((prev) => !prev);
+    };
 
     if (image) {
         data = (
@@ -30,7 +38,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                         width: device.width / 5,
                         height: device.width / 5,
                         borderRadius: device.width / 10,
-                        borderWidth: 2,
+                        borderWidth: 1,
                         borderColor: colors.primary500,
                         alignItems: "center",
                         justifyContent: "center",
@@ -63,7 +71,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                         width: device.width / 5,
                         height: device.width / 5,
                         borderRadius: device.width / 10,
-                        borderWidth: 2,
+                        borderWidth: 1,
                         borderColor: colors.primary500,
                         alignItems: "center",
                         justifyContent: "center",
@@ -93,7 +101,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
                         width: device.width / 5,
                         height: device.width / 5,
                         borderRadius: device.width / 10,
-                        borderWidth: 2,
+                        borderWidth: 1,
                         borderColor: colors.primary500,
                         alignItems: "center",
                         justifyContent: "center",
@@ -139,13 +147,72 @@ const CreateProfileScreen = ({ navigation, route }) => {
                     onChangeText: setBio,
                     value: bio,
                 }}
-                inputStyle={{ height: "20%" }}
             />
+            <View style={{ width: "100%", marginTop: 32 }}>
+                <View
+                    style={[{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        backgroundColor: "#222222",
+                        borderColor: "#333333",
+                        borderWidth: 1,
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        borderRadius: 6,
+                        width: "100%",
+                        justifyContent: "space-evenly",
+                    }, checked ? {borderColor: colors.primary500} : undefined]}
+                >
+                    <Text style={[globalStyles.textBody, !checked ? {color: '#666666'} : undefined]}>
+                        Publish profile on nostr
+                    </Text>
+                    <Switch
+                        trackColor={{
+                            false: "#222222",
+                            true: colors.primary500,
+                        }}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={changeHandler}
+                        value={checked}
+                        style={{ marginLeft: 12 }}
+                    />
+                </View>
+                {!checked ? (
+                    <View
+                        style={{
+                            flexDirection: "column",
+                            alignItems: "center",
+                            marginTop: 6,
+                        }}
+                    >
+                        <Ionicons
+                            name="warning-outline"
+                            color={colors.primary500}
+                            size={32}
+                        />
+                        <Text style={globalStyles.textBodyS}>
+                            If you don't publish your profile to the nostr
+                            network, others won't be able to see your username,
+                            profile-picture and bio...
+                        </Text>
+                    </View>
+                ) : undefined}
+            </View>
             <CustomButton
                 text="Create Profile"
-                buttonConfig={{ onPress: () => {
-                    navigation.navigate('LoadingProfileScreen', {image, svg, svgId, privKey, address, bio})
-                } }}
+                buttonConfig={{
+                    onPress: () => {
+                        navigation.navigate("LoadingProfileScreen", {
+                            image,
+                            svg,
+                            svgId,
+                            privKey,
+                            address,
+                            bio,
+                            publishProfile: checked
+                        });
+                    },
+                }}
                 containerStyles={{ marginTop: 32 }}
             />
         </ScrollView>

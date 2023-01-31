@@ -42,8 +42,8 @@ const TabNavigator = ({navigation}) => {
                         iconName = focused ? "settings" : "settings-outline";
                     } else if (route.name === "Search") {
                         iconName = focused
-                            ? "heart-circle"
-                            : "heart-circle-outline";
+                            ? "search-circle"
+                            : "search-circle-outline";
                     } else if (route.name === "New") {
                         iconName = focused
                             ? "add-circle"
@@ -93,7 +93,7 @@ const TabNavigator = ({navigation}) => {
                         </Text>
                     </View>
                 ),
-                headerLeft: () => <Pressable style={{width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 12}} onPress={() => {navigation.navigate('ProfileModal', {user: pubKey})}}><Image source={{uri: user?.picture}} style={{width: 26, height: 26}}/></Pressable>
+                headerLeft: () => <Pressable style={{width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 12}} onPress={() => {navigation.navigate('ProfileModal', {user: pubKey})}}>{user?.picture ? <Image source={{uri: user?.picture}} style={{width: 26, height: 26, borderRadius: 13}}/> : <Ionicons name='person-circle-outline' color='white' size={24}/>}</Pressable>
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />

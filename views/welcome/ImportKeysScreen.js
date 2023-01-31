@@ -9,8 +9,10 @@ import { getPublicKey } from "nostr-tools";
 import { loginWithNip5 } from "../../utils/nostr/nip05";
 import { loginToWallet } from "../../utils/wallet";
 import { saveValue } from "../../utils/secureStore";
+import { useDispatch } from "react-redux";
+import { logIn } from "../../features/authSlice";
 
-const ImportKeysScreen = () => {
+const ImportKeysScreen = ({navigation}) => {
     const input1 = useRef();
     const input2 = useRef();
     const input3 = useRef();
@@ -26,27 +28,30 @@ const ImportKeysScreen = () => {
     const [words, setWords] = useState({});
     const [error, setError] = useState([]);
 
+    const dispatch = useDispatch();
+
     const onChangeHandler = (index, value) => {
         setWords({ ...words, [index]: value.toLowerCase() });
     };
 
     const submitHandler = async () => {
-        const errorArray = []
-        const mem = []
+        const errorArray = [];
+        const mem = [];
         for (const [key, value] of Object.entries(words)) {
             if (!wordlist.includes(value)) {
-                errorArray.push(key)
-                continue
+                errorArray.push(key);
+                continue;
             }
-            mem.push(value)
+            mem.push(value);
         }
-        setError(errorArray)
+        setError(errorArray);
         if (errorArray.length === 0 && mem.length === 12) {
-            const privKey = await mnemonicToSeed(mem)
+            const privKey = await mnemonicToSeed(mem);
             await saveValue("privKey", privKey);
-            await saveValue('mem', JSON.stringify(mem))
-            const pubKey = getPublicKey(privKey)
-            const nip05 = await loginWithNip5(privKey);
+            await saveValue("mem", JSON.stringify(mem));
+            const pubKey = getPublicKey(privKey);
+            const { access_token } = await loginToWallet(privKey);
+            dispatch(logIn({bearer: access_token, pubKey}))
         }
     };
     return (
@@ -61,7 +66,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('1') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("1")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "1",
                             ref: input1,
@@ -71,11 +81,16 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("1", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('2') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("2")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "2",
                             ref: input2,
@@ -85,7 +100,7 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("2", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
@@ -97,7 +112,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('3') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("3")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "3",
                             ref: input3,
@@ -107,11 +127,16 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("3", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('4') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("4")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "4",
                             ref: input4,
@@ -121,7 +146,7 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("4", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
@@ -133,7 +158,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('5') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("5")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "5",
                             ref: input5,
@@ -143,11 +173,16 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("5", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('6') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("6")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "6",
                             ref: input6,
@@ -157,7 +192,7 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("6", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
@@ -169,7 +204,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('7') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("7")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "7",
                             ref: input7,
@@ -179,11 +219,16 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("7", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('8') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("8")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "8",
                             ref: input8,
@@ -193,7 +238,7 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("8", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
@@ -205,7 +250,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('9') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("9")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "9",
                             ref: input9,
@@ -215,11 +265,16 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("9", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('10') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("10")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "10",
                             ref: input10,
@@ -229,7 +284,7 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("10", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
@@ -241,7 +296,12 @@ const ImportKeysScreen = () => {
                     }}
                 >
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('11') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("11")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "11",
                             ref: input11,
@@ -251,27 +311,45 @@ const ImportKeysScreen = () => {
                             onChangeText: (text) => {
                                 onChangeHandler("11", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                     <Input
-                        inputStyle={[{ width: "40%" }, error.includes('12') ? {borderColor: 'red'} : undefined]}
+                        inputStyle={[
+                            { width: "40%" },
+                            error.includes("12")
+                                ? { borderColor: "red" }
+                                : undefined,
+                        ]}
                         textInputConfig={{
                             placeholder: "12",
                             ref: input12,
                             onChangeText: (text) => {
                                 onChangeHandler("12", text);
                             },
-                            autoCapitalize: 'none'
+                            autoCapitalize: "none",
                         }}
                     />
                 </View>
                 <CustomButton
-                    text="Import keys"
+                    text="Restore from Backup"
                     buttonConfig={{ onPress: submitHandler }}
-                    containerStyles={{justifyContent: 'center'}}
+                    containerStyles={{ justifyContent: "center", marginBottom: 16 }}
+                />
+                <CustomButton
+                    text="Import nsec / key instead"
+                    buttonConfig={{ onPress: '' }}
+                    containerStyles={{ justifyContent: "center", marginBottom: 16 }}
+                    secondary
+                />
+                <CustomButton
+                    text="Go Back"
+                    buttonConfig={{ onPress: () => {navigation.goBack();} }}
+                    containerStyles={{ justifyContent: "center" }}
+                    secondary
                 />
             </ScrollView>
+            
         </View>
     );
 };

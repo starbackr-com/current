@@ -20,6 +20,7 @@ const UnauthedNavigator = () => {
                     headerTitleStyle: { color: "white" },
                     headerTitle: () => null,
                     headerLeft: () => null,
+                    // gestureEnabled: false
                 }}
             >
                 <Stack.Screen
