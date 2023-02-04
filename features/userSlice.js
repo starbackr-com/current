@@ -28,10 +28,15 @@ export const userSlice = createSlice({
             state.mutedPubkeys.push(newMute)
             console.log(state.mutedPubkeys)
         },
-        unmutePubkey: () => {}
+        unmutePubkey: () => {},
+        followMultiplePubkeys: (state, action) => {
+            const newFollows = action.payload
+            const deduped = newFollows.filter(pubkey => !state.followedPubkeys.includes(pubkey))
+            state.followedPubkeys = [...state.followedPubkeys, ...deduped]
+        }
     },
 });
 
-export const { followPubkey, unfollowPubkey, mutePubkey, unmutePubkey } = userSlice.actions;
+export const { followPubkey, unfollowPubkey, mutePubkey, unmutePubkey, followMultiplePubkeys } = userSlice.actions;
 
 export default userSlice.reducer;

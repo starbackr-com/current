@@ -3,6 +3,7 @@ import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import { relays } from "../../utils/nostrV2";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import VideoPlayer from "../../components/VideoPlayer";
 
 const RelayItem = ({ relay }) => {
     let status;
@@ -47,6 +48,7 @@ const SettingsNetworkScreen = () => {
                     <RelayItem relay={relay} key={relay.url} />
                 ))}
             </View>
+            {/* <VideoPlayer/> */}
         </View>
     );
 };

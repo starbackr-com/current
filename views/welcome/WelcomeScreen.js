@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import { generateMnemonic } from "../../utils/keys";
+import colors from "../../styles/colors";
 
 const WelcomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();
@@ -21,8 +22,21 @@ const WelcomeScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={globalStyles.screenContainer}>
-            <View style={{flex: 1}}>
+        <View
+            style={[
+                globalStyles.screenContainer,
+                { justifyContent: "space-around" },
+            ]}
+        >
+            <View style={{ flex: 1, alignItems: "center" }}>
+                    <Image
+                        source={require("../../assets/lightning_logo_negativ.png")}
+                        style={{
+                            height: 100,
+                            width: 100,
+                            borderRadius: 10
+                        }}
+                    />
                 <Text style={globalStyles.textH1}>Welcome, stranger!</Text>
                 <Text style={globalStyles.textBody}>
                     Do you want to create a new key-pair or import an existing

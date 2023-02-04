@@ -4,20 +4,23 @@ import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../services/walletApi";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Animated, {
     withSequence,
     withTiming,
-    withDelay,
     withRepeat,
     useAnimatedStyle,
 } from "react-native-reanimated";
 import globalStyles from "../styles/globalStyles";
-import { nip05 } from "nostr-tools";
+
+import reactStringReplace from "react-string-replace";
+import { useCallback } from "react";
 
 const PostItem = ({ item, height, width, user }) => {
     const [profileActive, setProfileActive] = useState(false);
     const [isLoading, setIsLoading] = useState();
+    const [sendPayment] = usePostPaymentMutation();
+    const navigation = useNavigation();
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
             withSequence(
@@ -29,20 +32,35 @@ const PostItem = ({ item, height, width, user }) => {
         ),
     }));
 
-    const [sendPayment] = usePostPaymentMutation();
-    const navigation = useNavigation();
+    const parseMentions = useCallback((event) => {
+        if (event.tags.length < 1) {
+            return event.content;
+        }
+        let content = event.content;
+        content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
+            return (
+                <Text
+                    style={{ color: colors.primary500 }}
+                    onPress={() => {
+                        console.log("Following...");
+                    }}
+                    key={i}
+                >
+                    {event.tags[i - 1][1]}
+                </Text>
+            );
+        });
+        return content;
+    }, [])
 
-    if (item.root === false) {
-        return <></>;
-    }
-    const getAge = (timestamp) => {
+    const getAge = useCallback((timestamp) => {
         const now = new Date();
         const timePassedInMins = Math.floor(
             (now - new Date(timestamp * 1000)) / 1000 / 60
         );
 
         if (timePassedInMins < 60) {
-            return "< 1h ago";
+            return `${timePassedInMins}min ago`;
         } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
             return `${Math.floor(timePassedInMins / 60)}h ago`;
         } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
@@ -50,7 +68,7 @@ const PostItem = ({ item, height, width, user }) => {
         } else {
             return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
         }
-    };
+    }, []);
 
     const { created_at, pubkey } = item;
 
@@ -102,7 +120,7 @@ const PostItem = ({ item, height, width, user }) => {
                                 amount: 210,
                                 invoice,
                             });
-                            if (result.data?.message?.status === 'SUCCEEDED') {
+                            if (result.data?.message?.status === "SUCCEEDED") {
                                 setIsLoading(false);
                                 alert("Success!");
                                 return;
@@ -148,7 +166,7 @@ const PostItem = ({ item, height, width, user }) => {
                                 amount: 210,
                                 invoice,
                             });
-                            if (result.data?.message?.status === 'SUCCEEDED') {
+                            if (result.data?.message?.status === "SUCCEEDED") {
                                 setIsLoading(false);
                                 alert("Success!");
                                 return;
@@ -236,7 +254,7 @@ const PostItem = ({ item, height, width, user }) => {
                                     style={[globalStyles.textBodyBold]}
                                     numberOfLines={1}
                                 >
-                                    {`${user.name}@${nip05}`}
+                                    {user.nip05}
                                 </Text>
                             </View>
                         </View>
@@ -254,7 +272,7 @@ const PostItem = ({ item, height, width, user }) => {
                     <Text
                         style={[globalStyles.textBody, { textAlign: "left" }]}
                     >
-                        {item.content}
+                        {item.mentions ? parseMentions(item) : item.content}
                     </Text>
                 </View>
 

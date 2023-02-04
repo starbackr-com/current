@@ -18,6 +18,7 @@ const LoadingProfileScreen = ({ route }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log(privKey);
         createProfileHandler();
     });
 
@@ -71,10 +72,12 @@ const LoadingProfileScreen = ({ route }) => {
             await createWallet(privKey, address);
             await saveValue("privKey", privKey);
             await saveValue("address", address);
-            const { access_token } = await loginToWallet(privKey);
-            followUser(pubKey);
+            const result = await loginToWallet(privKey);
+            const { access_token } = result;
+            await followUser(pubKey);
             try {
                 if (publishProfile) {
+                    console.log("Publishing...");
                     if (image) {
                         imageUrl = await uploadImage(pubKey, access_token);
                     }
@@ -86,7 +89,6 @@ const LoadingProfileScreen = ({ route }) => {
                 await updateFollowedUsers();
             } catch (error) {
             } finally {
-                console.log(access_token);
                 dispatch(logIn({ bearer: access_token, address, pubKey }));
             }
         } catch (error) {

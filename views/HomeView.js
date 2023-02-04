@@ -8,12 +8,17 @@ import { FlashList } from "@shopify/flash-list";
 import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
+import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
+import GetStartedItems from "../components/GetStartedItems";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
@@ -21,25 +26,38 @@ const HomeScreen = ({ navigation }) => {
     const users = useSelector((state) => state.messages.users);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const messages = useSelector((state) => state.messages.messages);
+    const rootNotes = messages.filter(message => message.root === true)
 
-    const onLayoutView = (e) => {
+    const onLayoutViewHeight = (e) => {
         setHeight(e.nativeEvent.layout.height);
-        setWidth(e.nativeEvent.layout.width);
         if (!twitterModalShown) {
             navigation.navigate("TwitterModal");
         }
     };
 
+    const onLayoutViewWidth = (e) => {
+        setWidth(e.nativeEvent.layout.width);
+    };
+
+    const loadHomefeed = async () => {
+        setIsLoading(true)
+        await getHomeFeed(followedPubkeys);
+        setIsLoading(false)
+        updateFollowedUsers();
+    };
+
     useEffect(() => {
-        getHomeFeed(followedPubkeys);
+        loadHomefeed();
     }, [followedPubkeys]);
 
     return (
-        <View style={globalStyles.screenContainer} onLayout={onLayoutView}>
-            {messages && height ? (
+        <View style={globalStyles.screenContainer} onLayout={onLayoutViewWidth}>
+            {/* <GetStartedItems/> */}
+            <View onLayout={onLayoutViewHeight} style={{flex:1 , width: '100%'}}>
+            {messages && height && !isLoading ? (
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
-                        data={messages}
+                        data={rootNotes}
                         renderItem={({ item }) => (
                             <PostItem
                                 item={item}
@@ -55,7 +73,7 @@ const HomeScreen = ({ navigation }) => {
                         directionalLockEnabled
                         onRefresh={async () => {
                             setIsFetching(true);
-                            getHomeFeed(followedPubkeys);
+                            await getHomeFeed(followedPubkeys);
                             setIsFetching(false);
                         }}
                         refreshing={isFetching}
@@ -63,8 +81,9 @@ const HomeScreen = ({ navigation }) => {
                     />
                 </View>
             ) : (
-                <Text>There is nothing here...</Text>
+                <LoadingSpinner size={32}/>
             )}
+            </View>
         </View>
     );
 };

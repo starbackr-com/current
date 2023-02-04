@@ -1,5 +1,5 @@
 import { removeAuthorsMessages } from "../features/messagesSlice";
-import { followPubkey, unfollowPubkey } from "../features/userSlice";
+import { followMultiplePubkeys, followPubkey, unfollowPubkey } from "../features/userSlice";
 import { store } from "../store/store";
 import { db } from "./database";
 import { getUserData } from "./nostr/getNotes";
@@ -54,4 +54,35 @@ export const unfollowUser = async (pubkeyInHex) => {
     } catch (e) {
         console.log(e);
     }
+};
+
+export const followMultipleUsers = async (pubkeysInHex) => {
+    store.dispatch(followMultiplePubkeys(pubkeysInHex))
+    pubkeysInHex.forEach(pubkey => {
+        try {
+            const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
+            const timeNow = new Date().getTime() / 1000;
+            const params = [pubkey, timeNow];
+            try {
+                db.transaction((tx) => {
+                    tx.executeSql(
+                        sql,
+                        params,
+                        (_, result) => {
+                            console.log(result)
+                        },
+                        (_, error) => {
+                            console.error("Save user error", error);
+                            return false;
+                        }
+                    );
+                });
+            } catch (e) {
+                console.error(e);
+                console.error(e.stack);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    })
 };

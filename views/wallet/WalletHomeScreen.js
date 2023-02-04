@@ -8,7 +8,7 @@ import CustomButton from "../../components/CustomButton";
 import { useIsFocused } from "@react-navigation/native";
 
 const WalletHomeScreen = ({ navigation: { navigate } }) => {
-    const { data, refetch } = useGetWalletBalanceQuery(null, {
+    const { data, error, refetch } = useGetWalletBalanceQuery(null, {
         skip: !useIsFocused(),
     });
 

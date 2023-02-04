@@ -1,4 +1,4 @@
-import { connectedRelays } from "./initRelays";
+import { connectedRelays } from "./relay";
 
 export const getReplies = async (parentId) => {
     const replies = {}

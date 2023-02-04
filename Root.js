@@ -13,7 +13,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { hydrateFromDatabase, init } from "./utils/database";
 import { getPublicKey } from "nostr-tools";
-import { initRelays } from "./utils/nostrV2/initRelays";
+import { initRelays } from "./utils/nostrV2";
 import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
 
 SplashScreen.preventAutoHideAsync();
@@ -36,7 +36,7 @@ const Root = () => {
                 });
                 if (privKey) {
                     console.log("Initialising from storage...");
-                    const { access_token } = await loginToWallet(
+                    const {data: {access_token}} = await loginToWallet(
                         privKey
                     );
                     const pubKey = await getPublicKey(privKey)

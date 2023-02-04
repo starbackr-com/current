@@ -1,6 +1,6 @@
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
-import { connectedRelays } from "./initRelays";
+import { connectedRelays } from "./relay";
 
 export const publishKind0 = async (address, bio, imageUrl) => {
     const username = address.split("@")[0];
@@ -36,7 +36,7 @@ export const publishKind0 = async (address, bio, imageUrl) => {
                 });
                 setTimeout(() => {
                     reject();
-                }, 10000)
+                }, 10000);
             });
         })
     );
@@ -53,7 +53,6 @@ export const postEvent = async (content) => {
             throw new Error("No privKey in secure storage found");
         }
         let pubKey = getPublicKey(privKey);
-        console.log(pubKey);
         let event = {
             kind: 1,
             pubkey: pubKey,
@@ -76,5 +75,52 @@ export const postEvent = async (content) => {
         });
     } catch (err) {
         console.log(err);
+    }
+};
+
+export const publishReply = async (content, parentEvent) => {
+    try {
+        const sk = await getValue("privKey");
+        if (!sk) {
+            throw new Error("No privKey in secure storage found");
+        }
+        let pk = getPublicKey(sk);
+        let event = {
+            kind: 1,
+            pubkey: pk,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [['e', parentEvent]],
+            content,
+        };
+        event.id = getEventHash(event);
+        event.sig = signEvent(event, sk);
+        const successes = await Promise.allSettled(
+            connectedRelays.map((relay) => {
+                return new Promise((resolve, reject) => {
+                    let pub = relay.publish(event);
+                    const timer = setTimeout(() => {
+                        reject()
+                    }, 10000)
+                    pub.on("ok", () => {
+                        clearTimeout(timer);
+                        resolve(relay.url);
+                        return;
+                    });
+                    pub.on("failed", (error) => {
+                        console.log(error);
+                        clearTimeout(timer);
+                        reject();
+                        return;
+                    });
+                });
+            })
+        ).then((result) =>
+            result
+                .filter((promise) => promise.status === "fulfilled")
+                .map((promise) => promise.value)
+        );
+        return { successes, event };
+    } catch (error) {
+        console.log(error);
     }
 };

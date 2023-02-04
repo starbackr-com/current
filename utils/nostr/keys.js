@@ -8,7 +8,7 @@ function buf2hex(buffer) {
         .join('');
   }
 
-export const decodePubkey = async (pubkey) => {
+export const decodePubkey = (pubkey) => {
     try {
         let { prefix: hrp, words: dataPart } = bech32.decode(pubkey, 2000);
         let requestByteArray = bech32.fromWords(dataPart);

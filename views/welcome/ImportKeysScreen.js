@@ -12,7 +12,7 @@ import { saveValue } from "../../utils/secureStore";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
 
-const ImportKeysScreen = ({navigation}) => {
+const ImportKeysScreen = ({ navigation }) => {
     const input1 = useRef();
     const input2 = useRef();
     const input3 = useRef();
@@ -51,7 +51,7 @@ const ImportKeysScreen = ({navigation}) => {
             await saveValue("mem", JSON.stringify(mem));
             const pubKey = getPublicKey(privKey);
             const { access_token } = await loginToWallet(privKey);
-            dispatch(logIn({bearer: access_token, pubKey}))
+            dispatch(logIn({ bearer: access_token, pubKey }));
         }
     };
     return (
@@ -334,22 +334,31 @@ const ImportKeysScreen = ({navigation}) => {
                 <CustomButton
                     text="Restore from Backup"
                     buttonConfig={{ onPress: submitHandler }}
-                    containerStyles={{ justifyContent: "center", marginBottom: 16 }}
+                    containerStyles={{
+                        justifyContent: "center",
+                        marginBottom: 16,
+                    }}
                 />
                 <CustomButton
                     text="Import nsec / key instead"
-                    buttonConfig={{ onPress: '' }}
-                    containerStyles={{ justifyContent: "center", marginBottom: 16 }}
+                    buttonConfig={{ onPress: () => {navigation.navigate('ImportSingleKeyScreen')} }}
+                    containerStyles={{
+                        justifyContent: "center",
+                        marginBottom: 16,
+                    }}
                     secondary
                 />
                 <CustomButton
                     text="Go Back"
-                    buttonConfig={{ onPress: () => {navigation.goBack();} }}
+                    buttonConfig={{
+                        onPress: () => {
+                            navigation.goBack();
+                        },
+                    }}
                     containerStyles={{ justifyContent: "center" }}
                     secondary
                 />
             </ScrollView>
-            
         </View>
     );
 };

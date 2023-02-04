@@ -2,14 +2,14 @@ import { addMessage, addUser } from "../../features/messagesSlice";
 
 import { db } from "../database";
 
-let store
+let store;
 
-export const injectStore = _store => {
-  store = _store
-}
+export const injectStore = (_store) => {
+    store = _store;
+};
 
 const parseContent = (message) => {
-    let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
+    let imageRegex = /(http(s?):)([\/|.|\w|\s|-|_])*\.(?:jpg|gif|png|jpeg)/g;
     let imageURL = message.match(imageRegex);
     let invoiceRegex = /(lnbc\d+[munp][A-Za-z0-9]+)/g;
     let invoice = message.match(invoiceRegex);
@@ -21,6 +21,21 @@ const parseContent = (message) => {
             return "";
         });
     return { imageURL, newMessage, invoice };
+};
+
+const parseMentions = (event) => {
+    if (event.tags.length < 1) {
+        return {};
+    }
+    let content = event.content;
+    let matches = content.match(/#\[([0-9]+)]/g);
+    if (!matches) {
+        return {};
+    }
+    let mentions = matches.map((match, i) => {
+        return { index: i, type: event.tags[i][0], mention: event.tags[i][1] };
+    });
+    return { mentions };
 };
 
 export class Event {
@@ -63,7 +78,7 @@ export class Event {
             created_at,
             userData.lud06,
             userData.lud16,
-            userData.nip05
+            userData.nip05,
         ];
         try {
             const user = {
@@ -76,7 +91,7 @@ export class Event {
                 lud06: userData.lud06,
                 created_at,
                 lud16: userData.lud16,
-                nip05: userData.nip05
+                nip05: userData.nip05,
             };
             store.dispatch(addUser({ user }));
         } catch (err) {
@@ -88,8 +103,7 @@ export class Event {
                 tx.executeSql(
                     sql,
                     params,
-                    (_, result) => {
-                    },
+                    (_, result) => {},
                     (_, error) => {
                         console.error("Save user error", error);
                         return false;
@@ -105,6 +119,7 @@ export class Event {
     saveNote() {
         const { id, pubkey, created_at, kind, tags, content, sig } = this;
         const { imageURL, newMessage, invoice } = parseContent(content);
+        const { mentions } = parseMentions(this);
         let root = !tags.some((tag) => {
             let response = tag.includes("e");
             return response;
@@ -115,12 +130,13 @@ export class Event {
                 pubkey,
                 created_at,
                 kind,
-                tags: JSON.stringify(tags),
+                tags,
                 content: newMessage,
                 sig,
                 root,
                 image: imageURL ? imageURL[0] : undefined,
-                invoice
+                invoice,
+                mentions,
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {

@@ -4,8 +4,15 @@ import globalStyles from "../../styles/globalStyles";
 import { useDispatch } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
+import { dbLogout } from "../../utils/database";
 
-const settings = ["General", "Payments", "Backup", "Network", "Security & Privacy"];
+const settings = [
+    "General",
+    "Payments",
+    "Backup",
+    "Network",
+    "Security & Privacy",
+];
 
 const SettingItem = ({ item, onNav }) => {
     return (
@@ -22,7 +29,7 @@ const SettingItem = ({ item, onNav }) => {
                 pressed ? { backgroundColor: "#333333" } : undefined,
             ]}
             onPress={() => {
-                onNav(item)
+                onNav(item);
             }}
         >
             <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
@@ -32,16 +39,18 @@ const SettingItem = ({ item, onNav }) => {
     );
 };
 
-const SettingsHomeScreen = ({navigation}) => {
+const SettingsHomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const navigationHandler = (route) => {
-        navigation.navigate(route)
+        navigation.navigate(route);
     };
-    const logoutHandler = () => {
-        deleteValue('privKey')
-        deleteValue('username')
-        dispatch(logOut())
-    }
+    const logoutHandler = async () => {
+        await deleteValue("privKey");
+        await deleteValue("username");
+        await dbLogout();
+
+        dispatch(logOut());
+    };
 
     return (
         <View style={globalStyles.screenContainer}>
@@ -49,10 +58,19 @@ const SettingsHomeScreen = ({navigation}) => {
             <FlatList
                 style={{ width: "100%" }}
                 data={settings}
-                renderItem={({ item }) => <SettingItem item={item} onNav={navigationHandler}/>}
+                renderItem={({ item }) => (
+                    <SettingItem item={item} onNav={navigationHandler} />
+                )}
             />
-            <Button title='ProfileScreen' onPress={() => {navigation.navigate('ProfileModal')}}/>
-            <Button title='Log Out' onPress={logoutHandler}>SettingsView</Button>
+            <Button
+                title="ProfileScreen"
+                onPress={() => {
+                    navigation.navigate("ProfileModal");
+                }}
+            />
+            <Button title="Log Out" onPress={logoutHandler}>
+                SettingsView
+            </Button>
         </View>
     );
 };

@@ -8,6 +8,7 @@ import CreateProfileScreen from "../views/welcome/CreateProfileScreen";
 import SelectImage from "../views/welcome/SelectImage";
 import UsernameScreen from "../views/welcome/UsernameScreen";
 import LoadingProfileScreen from "../views/welcome/LoadingProfileScreen";
+import ImportSingleKeyScreen from "../views/welcome/ImportSingleKeyScreen";
 
 const Stack = createStackNavigator();
 
@@ -47,6 +48,13 @@ const UnauthedNavigator = () => {
                 <Stack.Screen
                     name="ImportKeys"
                     component={ImportKeysScreen}
+                    options={{
+                        title: "",
+                    }}
+                />
+                <Stack.Screen
+                    name="ImportSingleKeyScreen"
+                    component={ImportSingleKeyScreen}
                     options={{
                         title: "",
                     }}

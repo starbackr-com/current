@@ -21,13 +21,13 @@ import PostMenuModal from "../views/PostMenuModal";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = ({navigation}) => {
+const TabNavigator = ({ navigation }) => {
     const { data } = useGetWalletBalanceQuery(null, {
         skip: !useIsFocused(),
     });
 
-    const pubKey = useSelector(state => state.auth.pubKey)
-    const user = useSelector(state => state.messages.users[pubKey])
+    const pubKey = useSelector((state) => state.auth.pubKey);
+    const user = useSelector((state) => state.messages.users[pubKey]);
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -93,7 +93,40 @@ const TabNavigator = ({navigation}) => {
                         </Text>
                     </View>
                 ),
-                headerLeft: () => <Pressable style={{width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 12}} onPress={() => {navigation.navigate('ProfileModal', {user: pubKey})}}>{user?.picture ? <Image source={{uri: user?.picture}} style={{width: 26, height: 26, borderRadius: 13}}/> : <Ionicons name='person-circle-outline' color='white' size={24}/>}</Pressable>
+                headerLeft: () => (
+                    <Pressable
+                        style={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: 13,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginLeft: 12,
+                        }}
+                        onPress={() => {
+                            navigation.navigate("ProfileModal", {
+                                user: pubKey,
+                            });
+                        }}
+                    >
+                        {user?.picture ? (
+                            <Image
+                                source={{ uri: user?.picture }}
+                                style={{
+                                    width: 26,
+                                    height: 26,
+                                    borderRadius: 13,
+                                }}
+                            />
+                        ) : (
+                            <Ionicons
+                                name="person-circle-outline"
+                                color="white"
+                                size={24}
+                            />
+                        )}
+                    </Pressable>
+                ),
             })}
         >
             <Tab.Screen name="Home" component={HomeView} />
@@ -137,8 +170,7 @@ const PostModal = ({ navigation }) => {
                     <CustomButton
                         text="Send"
                         buttonConfig={{
-                            onPress: async () => {
-                            },
+                            onPress: async () => {},
                         }}
                     />
                 </View>
@@ -149,7 +181,7 @@ const PostModal = ({ navigation }) => {
                         width: "50%",
                     }}
                 >
-                    <Pressable style={{marginRight: 24}}>
+                    <Pressable style={{ marginRight: 24 }}>
                         <Ionicons
                             name="image"
                             color={colors.primary500}

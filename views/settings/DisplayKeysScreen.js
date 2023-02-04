@@ -1,8 +1,9 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList,Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { getValue } from "../../utils/secureStore";
+import colors from "../../styles/colors";
 
 const Word = ({ word, index }) => {
     return (
@@ -27,23 +28,49 @@ const Word = ({ word, index }) => {
     );
 };
 
-const DisplayKeysScreen = () => {
+const DisplayKeysScreen = ({navigation}) => {
+    const placeholder = [
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+        "****",
+    ];
 
-    const [mem, setMem] = useState(['****','****','****','****','****','****','****','****','****','****','****','****',]);
+    const [mem, setMem] = useState();
+
+    const [show, setShow] = useState(false);
+
+    let keys;
+
+    useEffect(() => {
+        getKeysFromStore();
+    }, []);
+
+    const getKeysFromStore = async () => {
+        keys = await getValue("mem");
+        setMem(JSON.parse(keys));
+    };
 
     showHandler = async () => {
-        const keys = await getValue('mem');
-        setMem(JSON.parse(keys))
-    }
+        setShow((prev) => !prev);
+    };
 
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{flex: 2}}>
-                <Text style={globalStyles.textH1}>
+            <View style={{ flex: 3 }}>
+                <Text style={globalStyles.textBodyBold}>
                     This is your Backup... Write it down!
                 </Text>
                 <FlatList
-                    data={mem}
+                    data={show ? mem : placeholder}
                     renderItem={({ item, index }) => (
                         <Word word={item} index={index} />
                     )}
@@ -51,11 +78,16 @@ const DisplayKeysScreen = () => {
                     columnWrapperStyle={{ justifyContent: "space-between" }}
                     numColumns={2}
                 />
+                {show ? <Pressable><Text style={[globalStyles.textBodyS]}>Copy Keys</Text></Pressable> : undefined}
             </View>
-            <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{ flex: 1, justifyContent: "center" }}>
                 <CustomButton
-                    text={'Show keys'}
+                    text={show ? "Hide Keys" : "Show Keys"}
                     buttonConfig={{ onPress: showHandler }}
+                />
+                <CustomButton
+                    text='Back'
+                    buttonConfig={{ onPress: () => {navigation.goBack()} }}
                 />
             </View>
         </View>

@@ -1,5 +1,6 @@
 export * from './Event'
 export * from './getHomeFeed'
 export * from './getReplies'
-export * from './initRelays'
+export * from './relay'
 export * from './publishEvents'
+export * from './getUserData'

@@ -44,7 +44,7 @@ const initArray = [
     `
     CREATE TABLE IF NOT EXISTS followed_users (
     pubkey TEXT PRIMARY KEY NOT NULL,
-    followed_at INT NOT NULL)`
+    followed_at INT NOT NULL)`,
 ];
 
 export const getUsersFromDb = () => {
@@ -73,7 +73,7 @@ export const hydrateFromDatabase = async () => {
             [],
             (_, { rows: { _array } }) => {
                 const users = _array.map((user) => {
-                    store.dispatch(addUser({user}));
+                    store.dispatch(addUser({ user }));
                 });
             },
             (_, error) => {
@@ -86,7 +86,7 @@ export const hydrateFromDatabase = async () => {
             [],
             (_, { rows: { _array } }) => {
                 const pubkeys = _array.map((row) => {
-                    store.dispatch(followPubkey(row.pubkey))
+                    store.dispatch(followPubkey(row.pubkey));
                 });
             },
             (_, error) => {
@@ -94,5 +94,11 @@ export const hydrateFromDatabase = async () => {
                 return false;
             }
         );
+    });
+};
+
+export const dbLogout = async () => {
+    db.transaction((tx) => {
+        tx.executeSql("DELETE FROM followed_users");
     });
 };

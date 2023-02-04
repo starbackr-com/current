@@ -22,14 +22,17 @@
     "buffer": "^4.9.2",
     "events": "^1.1.1",
     "expo": "~47.0.12",
+    "expo-av": "~13.0.2",
     "expo-barcode-scanner": "~12.1.0",
     "expo-cached-image": "^47.1.0",
+    "expo-clipboard": "~4.0.1",
     "expo-crypto": "~12.0.0",
     "expo-dev-client": "~2.0.1",
     "expo-file-system": "~15.1.1",
     "expo-font": "~11.0.1",
     "expo-image-manipulator": "~11.0.0",
     "expo-image-picker": "~14.0.2",
+    "expo-linking": "~3.3.0",
     "expo-random": "~13.0.0",
     "expo-secure-store": "~12.0.0",
     "expo-splash-screen": "~0.17.5",
@@ -51,11 +54,11 @@
     "react-native-webview-crypto": "^0.0.25",
     "react-qr-code": "^2.0.11",
     "react-redux": "^8.0.5",
+    "react-string-replace": "^1.1.0",
     "readable-stream": "^1.0.33",
     "stream-browserify": "^1.0.0",
     "text-encoding": "^0.7.0",
-    "text-encoding-polyfill": "^0.6.7",
-    "expo-clipboard": "~4.0.1"
+    "text-encoding-polyfill": "^0.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -16,7 +16,7 @@ const UsernameScreen = ({ navigation,  route }) => {
         skip,
     });
 
-    const {privKey} = route.params
+    const {privKey, isImport, publishProfile} = route.params
  
     const fetchAvailableUsernames = async (username) => {
         const response = await fetch(
@@ -45,6 +45,11 @@ const UsernameScreen = ({ navigation,  route }) => {
     };
 
     const nextHandler = (address) => {
+        if (isImport && !publishProfile) {
+            console.log(privKey)
+            navigation.navigate('LoadingProfileScreen', {privKey, address, publishProfile: false})
+            return;
+        }
         navigation.navigate('CreateProfileScreen', {privKey, address})
     };
 

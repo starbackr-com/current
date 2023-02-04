@@ -4,11 +4,11 @@ import { TextInput } from 'react-native-gesture-handler'
 import globalStyles from '../styles/globalStyles'
 import colors from '../styles/colors'
 
-const Input = ({label, textInputConfig, labelStyle, inputStyle, invalid}) => {
+const Input = ({label, textInputConfig, labelStyle, inputStyle, invalid, alignment}) => {
   return (
     <>
       {label ? <Text style={[globalStyles.textBody,styles.label, labelStyle]}>{label}</Text> : undefined}
-      <TextInput style={[globalStyles.textBody,styles.input, inputStyle, invalid ? {borderColor: 'darkred'} : undefined]} {...textInputConfig}/>
+      <TextInput style={[globalStyles.textBody,styles.input, inputStyle, invalid ? {borderColor: 'darkred'} : undefined, alignment ? {textAlign: alignment} : {textAlign: 'left'}]} {...textInputConfig}/>
     </>
   )
 }
@@ -27,6 +27,5 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 8,
         color: 'white',
-        textAlign: 'center'
     }
 })

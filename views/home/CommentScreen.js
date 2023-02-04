@@ -1,18 +1,32 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text, KeyboardAvoidingView, Pressable } from "react-native";
+import React, {useEffect, useState} from "react";
 import globalStyles from "../../styles/globalStyles";
-import { useEffect } from "react";
-import { useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { getReplies } from "../../utils/nostrV2/getReplies";
+import { getReplies, getUserData, publishReply } from "../../utils/nostrV2";
 import colors from "../../styles/colors";
 import { useSelector } from "react-redux";
-import { getUserData } from "../../utils/nostrV2/getUserData";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import Input from "../../components/Input";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const ReplyItem = ({ event, user }) => {
+    const getAge = (timestamp) => {
+        const now = new Date();
+        const timePassedInMins = Math.floor(
+            (now - new Date(timestamp * 1000)) / 1000 / 60
+        );
+
+        if (timePassedInMins < 60) {
+            return `${timePassedInMins}min ago`;
+        } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
+            return `${Math.floor(timePassedInMins / 60)}h ago`;
+        } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
+            return `${Math.floor(timePassedInMins / 1440)}d ago`;
+        } else {
+            return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
+        }
+    };
     return (
         <View
             style={{
@@ -34,6 +48,14 @@ const ReplyItem = ({ event, user }) => {
             <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                 {event.content}
             </Text>
+            <Text
+                style={[
+                    globalStyles.textBodyS,
+                    { textAlign: "right", marginTop: 12 },
+                ]}
+            >
+                {getAge(event.created_at)}
+            </Text>
         </View>
     );
 };
@@ -41,6 +63,8 @@ const ReplyItem = ({ event, user }) => {
 const CommentScreen = ({ route }) => {
     const { eventId } = route?.params;
     const [replies, setReplies] = useState();
+    const [reply, setReply] = useState();
+    const [sending, setSending] = useState(false);
 
     const users = useSelector((state) => state.messages.users);
 
@@ -50,21 +74,53 @@ const CommentScreen = ({ route }) => {
             (key) => response[key].pubkey
         );
         const array = Object.keys(response).map((key) => response[key]);
+        const firstOrderReplies = array
+            .filter(
+                (item) =>
+                    item.tags.filter((item) => item[0] === "e").length <= 1
+            )
+            .sort((a, b) => {
+                return a.created_at < b.created_at ? 1 : -1;
+            });
 
-        setReplies(array);
+        setReplies(firstOrderReplies);
         getUserData(pubkeys);
     };
+
+    const submitHandler = async () => {
+        if (reply.length < 1) {
+            console.log("Comment to short!");
+            return;
+        }
+        setSending(true);
+        try {
+            const data = await publishReply(reply, eventId);
+            const newArray = [data.event, ...replies];
+            setReplies(newArray);
+            setReply("");
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setSending(false);
+        }
+    };
+
     useEffect(() => {
         getAllReplies();
     }, []);
+
+    const headerHeight = useHeaderHeight();
     return (
-        <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textH1}>Comments</Text>
+        <KeyboardAvoidingView
+            style={globalStyles.screenContainer}
+            behavior="padding"
+            keyboardVerticalOffset={headerHeight}
+        >
             <View
                 style={{
-                    flex: 2,
+                    flex: 4,
                     width: "100%",
-                    borderColor: colors.backgroundSecondary,
+                    borderColor: colors.primary500,
                     borderWidth: 1,
                     padding: 6,
                     borderRadius: 10,
@@ -91,19 +147,42 @@ const CommentScreen = ({ route }) => {
                     </View>
                 )}
             </View>
-            <View style={{ flex: 1 }}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        width: "80%",
-                    }}
-                >
-                    <Input />
-                    <Ionicons name="send" size={32} color={colors.primary500} />
+            <View
+                style={{
+                    flex: 1,
+                    width: "100%",
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+            >
+                <View style={{ width: "60%", flex: 1 }}>
+                    <Input
+                        inputStyle={{ height: "80%" }}
+                        textInputConfig={{
+                            onChangeText: setReply,
+                            value: reply,
+                            multiline: true
+                        }}
+                        alignment='left'
+                    />
                 </View>
+                <Pressable
+                    onPress={submitHandler}
+                    style={{ marginLeft: 12 }}
+                    disabled={sending}
+                >
+                    {!sending ? (
+                        <Ionicons
+                            name="send"
+                            size={24}
+                            color={colors.primary500}
+                        />
+                    ) : (
+                        <LoadingSpinner size={24} />
+                    )}
+                </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
