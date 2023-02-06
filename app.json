@@ -1,40 +1,44 @@
 {
-    "expo": {
-        "name": "current",
-        "slug": "current",
-        "version": "0.0.1",
-        "orientation": "portrait",
-        "backgroundColor": "#18181b",
-        "icon": "./assets/icon.png",
-        "userInterfaceStyle": "dark",
-        "jsEngine": "jsc",
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#18181b"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            "supportsTablet": false,
-            "bundleIdentifier": "io.getcurrent.current",
-            "buildNumber": "8"
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#FFFFFF"
-            }
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "extra": {
-            "eas": {
-                "projectId": "04522974-aa48-4b3e-ad26-71be0648d73c"
-            }
-        }
+  "expo": {
+    "name": "current",
+    "slug": "current",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "backgroundColor": "#18181b",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "jsEngine": "jsc",
+    "owner": "lightningdigitalentertainment",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#18181b"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "io.getcurrent.current",
+      "buildNumber": "9"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "io.getcurrent.current"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "04522974-aa48-4b3e-ad26-71be0648d73c"
+      }
     }
+  }
 }

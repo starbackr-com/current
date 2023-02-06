@@ -9,7 +9,7 @@ export const injectStore = (_store) => {
 };
 
 const parseContent = (message) => {
-    let imageRegex = /(http(s?):)([\/|.|\w|\s|-|_])*\.(?:jpg|gif|png|jpeg)/g;
+    let imageRegex = /(http(s?):)([\/|.|\w|\s|\-|_])*\.(?:jpg|gif|png|jpeg)/g;
     let imageURL = message.match(imageRegex);
     let invoiceRegex = /(lnbc\d+[munp][A-Za-z0-9]+)/g;
     let invoice = message.match(invoiceRegex);

@@ -2,6 +2,7 @@ import { registerRootComponent } from 'expo';
 
 import App from './App';
 import "react-native-get-random-values";
+import 'big-integer'
 
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

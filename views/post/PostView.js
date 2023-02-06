@@ -148,9 +148,6 @@ const PostModal = ({ navigation, route }) => {
                                             imageURL
                                         );
                                     }
-                                } catch (e) {
-                                    console.log(e);
-                                } finally {
                                     const result = await publishEvent(postContent);
                                     if (result.successes.length > 0) {
                                         let newEvent = new Event(result.event)
@@ -158,8 +155,10 @@ const PostModal = ({ navigation, route }) => {
                                         navigation.navigate('MainTabNav')
                                         return;
                                     }
-                                    alert('Soemthing went wrong...')
+                                    alert('Something went wrong...')
                                     setSending(false);
+                                } catch (e) {
+                                    console.log(e);
                                 }
                             },
                         }}

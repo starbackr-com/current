@@ -104,7 +104,7 @@ const TabNavigator = ({ navigation }) => {
                         }}
                         onPress={() => {
                             navigation.navigate("ProfileModal", {
-                                user: pubKey,
+                                user,
                             });
                         }}
                     >

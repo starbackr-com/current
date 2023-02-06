@@ -271,7 +271,7 @@ const PostItem = ({ item, height, width, user }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                setProfileActive((prev) => !prev);
+                                navigation.navigate('ProfileModal', {user})
                             }}
                         >
                             <Image
@@ -284,9 +284,8 @@ const PostItem = ({ item, height, width, user }) => {
                                     borderWidth: 2,
                                 }}
                                 cachePolicy='memory-disk'
-                                source={{ uri: user.picture }}
+                                source={user.picture || require('../assets//user_placeholder.jpg')}
                                 contentFit='contain'
-                                placeholder={require('../assets/user_placeholder.jpg')}
                             />
                         </Pressable>
                     ) : undefined}
