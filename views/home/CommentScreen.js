@@ -1,5 +1,5 @@
 import { View, Text, KeyboardAvoidingView, Pressable } from "react-native";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import { FlashList } from "@shopify/flash-list";
 import { getReplies, getUserData, publishReply } from "../../utils/nostrV2";
@@ -60,7 +60,7 @@ const ReplyItem = ({ event, user }) => {
     );
 };
 
-const CommentScreen = ({ route }) => {
+const CommentScreen = ({ route, navigation }) => {
     const { eventId } = route?.params;
     const [replies, setReplies] = useState();
     const [reply, setReply] = useState();
@@ -116,6 +116,16 @@ const CommentScreen = ({ route }) => {
             behavior="padding"
             keyboardVerticalOffset={headerHeight}
         >
+            <View style={{alignItems: 'flex-start', width: '100%', }}>
+                <Ionicons
+                    name="arrow-back"
+                    size={28}
+                    color={colors.primary500}
+                    style={{marginBottom: 12}}
+                    onPress={() => {navigation.goBack()}}
+                />
+            </View>
+
             <View
                 style={{
                     flex: 4,
@@ -134,6 +144,7 @@ const CommentScreen = ({ route }) => {
                         )}
                         estimatedItemSize={80}
                         extraData={users}
+                        inverted
                     />
                 ) : (
                     <View
@@ -161,9 +172,9 @@ const CommentScreen = ({ route }) => {
                         textInputConfig={{
                             onChangeText: setReply,
                             value: reply,
-                            multiline: true
+                            multiline: true,
                         }}
-                        alignment='left'
+                        alignment="left"
                     />
                 </View>
                 <Pressable

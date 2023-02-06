@@ -18,7 +18,6 @@ const LoadingProfileScreen = ({ route }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(privKey);
         createProfileHandler();
     });
 
@@ -58,6 +57,7 @@ const LoadingProfileScreen = ({ route }) => {
             );
             const data = await response.json();
             if (data.error === true) {
+                console.log(data)
                 throw new Error(`Error getting svg-image url: ${data}`);
             }
             return data.data;
@@ -73,7 +73,7 @@ const LoadingProfileScreen = ({ route }) => {
             await saveValue("privKey", privKey);
             await saveValue("address", address);
             const result = await loginToWallet(privKey);
-            const { access_token } = result;
+            const { access_token } = result.data;
             await followUser(pubKey);
             try {
                 if (publishProfile) {

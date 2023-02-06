@@ -11,7 +11,6 @@ import * as ImagePicker from "expo-image-picker";
 import { SvgCss } from "react-native-svg";
 import { useEffect } from "react";
 import { getPublicKey } from "nostr-tools";
-import { FlashList } from "@shopify/flash-list";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { FlatList } from "react-native";
 import CustomButton from "../../components/CustomButton";

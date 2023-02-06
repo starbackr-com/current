@@ -2,11 +2,11 @@ import { addMessage, addUser } from "../../features/messagesSlice";
 
 import { db } from "../database";
 
-let store
+let store;
 
-export const injectStore = _store => {
-  store = _store
-}
+export const injectStore = (_store) => {
+    store = _store;
+};
 
 const parseContent = (message) => {
     let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
@@ -63,7 +63,7 @@ export class Event {
             created_at,
             userData.lud06,
             userData.lud16,
-            userData.nip05
+            userData.nip05,
         ];
         try {
             const user = {
@@ -76,7 +76,7 @@ export class Event {
                 lud06: userData.lud06,
                 created_at,
                 lud16: userData.lud16,
-                nip05: userData.nip05
+                nip05: userData.nip05,
             };
             store.dispatch(addUser({ user }));
         } catch (err) {
@@ -88,8 +88,7 @@ export class Event {
                 tx.executeSql(
                     sql,
                     params,
-                    (_, result) => {
-                    },
+                    (_, result) => {},
                     (_, error) => {
                         console.error("Save user error", error);
                         return false;
@@ -120,7 +119,7 @@ export class Event {
                 sig,
                 root,
                 image: imageURL ? imageURL[0] : undefined,
-                invoice
+                invoice,
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {

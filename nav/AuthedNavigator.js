@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text, View, Pressable, Image } from "react-native";
@@ -7,8 +7,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
 import colors from "../styles/colors";
 import WalletNavigator from "./WalletNavigator";
-import Input from "../components/Input";
-import CustomButton from "../components/CustomButton";
 import SettingsNavigator from "./SettingsNavigator";
 import ProfileScreen from "../views/ProfileScreen";
 import SearchScreen from "../views/SearchScreen";
@@ -17,6 +15,7 @@ import { useGetWalletBalanceQuery } from "../services/walletApi";
 import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import PostMenuModal from "../views/PostMenuModal";
+import PostView from "../views/post/PostView";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -138,7 +137,7 @@ const TabNavigator = ({ navigation }) => {
                     tabBarButton: (props) => (
                         <Pressable
                             {...props}
-                            onPress={() => navigation.navigate("PostModal")}
+                            onPress={() => navigation.navigate("PostView")}
                         />
                     ),
                 })}
@@ -149,57 +148,6 @@ const TabNavigator = ({ navigation }) => {
     );
 };
 
-const PostModal = ({ navigation }) => {
-    const [content, setContent] = useState();
-    return (
-        <View style={[globalStyles.screenContainer]}>
-            <Text style={globalStyles.textH1}>Create a post</Text>
-            <Input
-                inputStyle={{ flex: 3 }}
-                textInputConfig={{ onChangeText: setContent }}
-            />
-            <View
-                style={{
-                    flex: 1,
-                    width: "100%",
-                    justifyContent: "space-between",
-                    flexDirection: "row-reverse",
-                }}
-            >
-                <View style={{ flex: 1 }}>
-                    <CustomButton
-                        text="Send"
-                        buttonConfig={{
-                            onPress: async () => {},
-                        }}
-                    />
-                </View>
-                <View
-                    style={{
-                        flex: 2,
-                        flexDirection: "row",
-                        width: "50%",
-                    }}
-                >
-                    <Pressable style={{ marginRight: 24 }}>
-                        <Ionicons
-                            name="image"
-                            color={colors.primary500}
-                            size={24}
-                        />
-                    </Pressable>
-                    <Pressable>
-                        <Ionicons
-                            name="time"
-                            color={colors.primary500}
-                            size={24}
-                        />
-                    </Pressable>
-                </View>
-            </View>
-        </View>
-    );
-};
 
 const AuthedNavigator = () => {
     return (
@@ -212,8 +160,8 @@ const AuthedNavigator = () => {
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen
-                    name="PostModal"
-                    component={PostModal}
+                    name="PostView"
+                    component={PostView}
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen

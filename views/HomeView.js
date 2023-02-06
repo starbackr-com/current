@@ -11,6 +11,7 @@ import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
 import GetStartedItems from "../components/GetStartedItems";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useCallback } from "react";
 
 
 const HomeStack = createStackNavigator();
@@ -46,6 +47,15 @@ const HomeScreen = ({ navigation }) => {
         updateFollowedUsers();
     };
 
+    const renderPost = useCallback(({ item }) => (
+        <PostItem
+            item={item}
+            height={height}
+            width={width}
+            user={users[item.pubkey]}
+        />
+    ), [height, width, users])
+
     useEffect(() => {
         loadHomefeed();
     }, [followedPubkeys]);
@@ -58,14 +68,7 @@ const HomeScreen = ({ navigation }) => {
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
                         data={rootNotes}
-                        renderItem={({ item }) => (
-                            <PostItem
-                                item={item}
-                                height={height}
-                                width={width}
-                                user={users[item.pubkey]}
-                            />
-                        )}
+                        renderItem={renderPost}
                         snapToAlignment="start"
                         decelerationRate="fast"
                         snapToInterval={(height / 100) * 80}

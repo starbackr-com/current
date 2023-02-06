@@ -20,7 +20,7 @@
         "ios": {
             "supportsTablet": false,
             "bundleIdentifier": "io.getcurrent.current",
-            "buildNumber": "6"
+            "buildNumber": "8"
         },
         "android": {
             "adaptiveIcon": {

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Image, Pressable, Alert } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
@@ -12,6 +12,7 @@ import Animated, {
     useAnimatedStyle,
 } from "react-native-reanimated";
 import globalStyles from "../styles/globalStyles";
+import {Image} from 'expo-image'
 
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
@@ -71,6 +72,7 @@ const PostItem = ({ item, height, width, user }) => {
     }, []);
 
     const { created_at, pubkey } = item;
+    const blurhash = 'LEHLh[WB2yk8pyoJadR*.7kCMdnj'
 
     const tipHandler = () => {
         const dest = user.lud06.toLowerCase();
@@ -213,53 +215,6 @@ const PostItem = ({ item, height, width, user }) => {
                     },
                 ]}
             >
-                {profileActive ? (
-                    <View
-                        style={{
-                            backgroundColor: "#222222",
-                            position: "absolute",
-                            right: 0,
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            zIndex: 100,
-                            opacity: 0.95,
-                            borderRadius: 10,
-                            padding: 12,
-                        }}
-                    >
-                        <View style={{ flexDirection: "row" }}>
-                            <Image
-                                style={{
-                                    width: (width / 100) * 16,
-                                    height: (width / 100) * 16,
-                                    borderRadius: (width / 100) * 8,
-                                    backgroundColor: colors.primary500,
-                                    borderColor: colors.primary500,
-                                    borderWidth: 2,
-                                }}
-                                source={{ uri: user.picture }}
-                            />
-                            <View style={{ maxWidth: "60%" }}>
-                                <Text
-                                    style={[
-                                        globalStyles.textBodyBold,
-                                        { textAlign: "left" },
-                                    ]}
-                                    numberOfLines={1}
-                                >
-                                    {user.name || user.pubkey}
-                                </Text>
-                                <Text
-                                    style={[globalStyles.textBodyBold]}
-                                    numberOfLines={1}
-                                >
-                                    {user.nip05}
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : undefined}
                 <View style={{ maxHeight: "60%" }}>
                     <Text
                         style={[
@@ -284,7 +239,9 @@ const PostItem = ({ item, height, width, user }) => {
                             borderRadius: 10,
                             marginTop: 16,
                         }}
-                        source={{ uri: item.image }}
+                        source={item.image}
+                        placeholder={blurhash}
+                        transition={1000}
                     />
                 ) : undefined}
                 <Text
@@ -326,7 +283,10 @@ const PostItem = ({ item, height, width, user }) => {
                                     borderColor: colors.primary500,
                                     borderWidth: 2,
                                 }}
+                                cachePolicy='memory-disk'
                                 source={{ uri: user.picture }}
+                                contentFit='contain'
+                                placeholder={require('../assets/user_placeholder.jpg')}
                             />
                         </Pressable>
                     ) : undefined}
