@@ -12,13 +12,12 @@ import Animated, {
     useAnimatedStyle,
 } from "react-native-reanimated";
 import globalStyles from "../styles/globalStyles";
-import {Image} from 'expo-image'
+import { Image } from "expo-image";
 
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
 
-const PostItem = ({ item, height, width, user }) => {
-    const [profileActive, setProfileActive] = useState(false);
+const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
@@ -43,16 +42,18 @@ const PostItem = ({ item, height, width, user }) => {
                 <Text
                     style={{ color: colors.primary500 }}
                     onPress={() => {
-                        console.log("Following...");
+                        navigation.navigate("ProfileModal", {
+                            pubkey: event.tags[i - 1][1],
+                        });
                     }}
                     key={i}
                 >
-                    {event.tags[i - 1][1]}
+                    {event.mentions[i - 1].mention}
                 </Text>
             );
         });
         return content;
-    }, [])
+    }, []);
 
     const getAge = useCallback((timestamp) => {
         const now = new Date();
@@ -72,36 +73,37 @@ const PostItem = ({ item, height, width, user }) => {
     }, []);
 
     const { created_at, pubkey } = item;
-    const blurhash = 'LEHLh[WB2yk8pyoJadR*.7kCMdnj'
-
-    const tipHandler = () => {
-        const dest = user.lud06.toLowerCase();
-        if (dest.includes("lnurl")) {
-            navigation.navigate("Wallet", {
-                screen: "WalletSendLnurlScreen",
-                params: { lnurl: dest },
-            });
-            return;
-        }
-        if (dest.includes("@")) {
-            navigation.navigate("Wallet", {
-                screen: "WalletSendLnurlScreen",
-                params: { address: dest },
-            });
-            return;
-        }
-        alert("Unknown Tip-Format");
-    };
+    const blurhash = "LEHLh[WB2yk8pyoJadR*.7kCMdnj";
 
     const zapHandler = async () => {
+        if (!zapAmount) {
+            Alert.alert(
+                "No Zap-Amount set!",
+                `In order to Zap a post you will need to set a default Zap-Amount first`,
+                [
+                    {
+                        text: "Settings",
+                        onPress: () => {
+                            navigation.navigate('Settings', {screen: 'Payments'})
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                        onPress: () => {
+                            return;
+                        },
+                    },
+                ]
+            );
+        }
         setIsLoading(true);
-        if (user.lud06) {
+        if (user.lud06 && zapAmount) {
             const dest = user.lud06.toLowerCase();
             const url = decodeLnurl(dest);
             const response = await fetch(url);
-            const { callback, maxSendable, minSendable } =
-                await response.json();
-            const amount = minSendable / 1000 > 210 ? minSendable / 1000 : 210;
+            const { callback, minSendable } = await response.json();
+            const amount = minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -119,12 +121,12 @@ const PostItem = ({ item, height, width, user }) => {
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
-                                amount: 210,
+                                amount,
                                 invoice,
                             });
                             if (result.data?.message?.status === "SUCCEEDED") {
                                 setIsLoading(false);
-                                alert("Success!");
+                                zapSuccess();
                                 return;
                             }
                             alert(result.data?.message);
@@ -140,14 +142,14 @@ const PostItem = ({ item, height, width, user }) => {
                     },
                 ]
             );
-        } else if (user.lud16) {
+        } else if (user.lud16 && zapAmount) {
             const dest = user.lud16.toLowerCase();
             const [username, domain] = dest.split("@");
             const response = await fetch(
                 `https://${domain}/.well-known/lnurlp/${username}`
             );
             const { callback, minSendable } = await response.json();
-            const amount = minSendable / 1000 > 210 ? minSendable / 1000 : 210;
+            const amount = minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -165,7 +167,7 @@ const PostItem = ({ item, height, width, user }) => {
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
-                                amount: 210,
+                                amount,
                                 invoice,
                             });
                             if (result.data?.message?.status === "SUCCEEDED") {
@@ -271,7 +273,9 @@ const PostItem = ({ item, height, width, user }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate('ProfileModal', {user})
+                                navigation.navigate("ProfileModal", {
+                                    pubkey: user.pubkey,
+                                });
                             }}
                         >
                             <Image
@@ -283,9 +287,12 @@ const PostItem = ({ item, height, width, user }) => {
                                     borderColor: colors.primary500,
                                     borderWidth: 2,
                                 }}
-                                cachePolicy='memory-disk'
-                                source={user.picture || require('../assets//user_placeholder.jpg')}
-                                contentFit='contain'
+                                cachePolicy="memory-disk"
+                                source={
+                                    user.picture ||
+                                    require("../assets//user_placeholder.jpg")
+                                }
+                                contentFit="contain"
                             />
                         </Pressable>
                     ) : undefined}
@@ -307,7 +314,6 @@ const PostItem = ({ item, height, width, user }) => {
                                 : undefined,
                         ]}
                         onPress={zapHandler}
-                        onLongPress={tipHandler}
                     >
                         <Animated.View
                             style={isLoading ? animatedStyle : { opacity: 1 }}

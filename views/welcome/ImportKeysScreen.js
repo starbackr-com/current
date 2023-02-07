@@ -6,7 +6,6 @@ import CustomButton from "../../components/CustomButton";
 import wordlist from "../../utils/wordlist.json";
 import { mnemonicToSeed } from "../../utils/keys";
 import { getPublicKey } from "nostr-tools";
-import { loginWithNip5 } from "../../utils/nostr/nip05";
 import { loginToWallet } from "../../utils/wallet";
 import { saveValue } from "../../utils/secureStore";
 import { useDispatch } from "react-redux";

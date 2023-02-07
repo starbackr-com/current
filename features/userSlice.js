@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     followedPubkeys: [],
-    mutedPubkeys: []
+    mutedPubkeys: [],
+    zapAmount: null
 };
 
 export const userSlice = createSlice({
@@ -33,10 +34,14 @@ export const userSlice = createSlice({
             const newFollows = action.payload
             const deduped = newFollows.filter(pubkey => !state.followedPubkeys.includes(pubkey))
             state.followedPubkeys = [...state.followedPubkeys, ...deduped]
+        },
+        setZapAmount: (state, action) => {
+            console.log(action.payload)
+            state.zapAmount = action.payload
         }
     },
 });
 
-export const { followPubkey, unfollowPubkey, mutePubkey, unmutePubkey, followMultiplePubkeys } = userSlice.actions;
+export const { followPubkey, unfollowPubkey, mutePubkey, unmutePubkey, followMultiplePubkeys, setZapAmount } = userSlice.actions;
 
 export default userSlice.reducer;

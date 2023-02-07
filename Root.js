@@ -15,6 +15,7 @@ import { hydrateFromDatabase, init } from "./utils/database";
 import { getPublicKey } from "nostr-tools";
 import { initRelays } from "./utils/nostrV2";
 import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
+import { hydrateStore } from "./utils/cache/asyncStorage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,6 +46,7 @@ const Root = () => {
                 await init();
                 await hydrateFromDatabase();
                 await updateFollowedUsers();
+                await hydrateStore();
             } catch (e) {
                 console.warn(e);
             } finally {

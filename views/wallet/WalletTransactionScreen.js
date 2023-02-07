@@ -8,6 +8,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const WalletTransactionScreen = () => {
     const [trigger, result] = useGetTransactionsMutation();
+    console.log(result)
     useEffect(() => {
         console.log('Ran')
         trigger();

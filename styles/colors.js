@@ -1,5 +1,6 @@
 export default colors = {
     primary500: '#faa200',
+    primary600: '#CC8500',
     secondary500: '#777777',
 
 

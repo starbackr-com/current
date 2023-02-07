@@ -15,6 +15,7 @@ import { publishEvent } from "../../utils/nostrV2/publishEvents";
 import { addMessage } from "../../features/messagesSlice";
 import { event } from "react-native-reanimated";
 import { Event } from "../../utils/nostrV2/Event";
+import BackButton from "../../components/BackButton";
 
 const Stack = createStackNavigator();
 
@@ -84,6 +85,9 @@ const PostModal = ({ navigation, route }) => {
             behavior="padding"
             keyboardVerticalOffset={headerHeight}
         >
+            <View style={{width: '100%', flexDirection: 'row', marginBottom: 12}}>
+            <BackButton onPress={() => {navigation.goBack()}}/>
+            </View>
             <Input
                 inputStyle={{ flex: 3, maxHeight: "50%" }}
                 textInputConfig={{
@@ -138,7 +142,6 @@ const PostModal = ({ navigation, route }) => {
                                 let postContent = content;
                                 try {
                                     if (image) {
-                                        uploadImage(pubKey, walletBearer);
                                         let imageURL = await uploadImage(
                                             pubKey,
                                             walletBearer

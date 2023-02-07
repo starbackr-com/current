@@ -9,6 +9,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import Input from "../../components/Input";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
+import BackButton from "../../components/BackButton";
 
 const ReplyItem = ({ event, user }) => {
     const getAge = (timestamp) => {
@@ -74,10 +75,11 @@ const CommentScreen = ({ route, navigation }) => {
             (key) => response[key].pubkey
         );
         const array = Object.keys(response).map((key) => response[key]);
+        array.forEach(item => {console.log(item)})
         const firstOrderReplies = array
             .filter(
                 (item) =>
-                    item.tags.filter((item) => item[0] === "e").length <= 1
+                    item.tags.filter((item) => item[0] === "e").length === 1
             )
             .sort((a, b) => {
                 return a.created_at < b.created_at ? 1 : -1;
@@ -116,14 +118,8 @@ const CommentScreen = ({ route, navigation }) => {
             behavior="padding"
             keyboardVerticalOffset={headerHeight}
         >
-            <View style={{alignItems: 'flex-start', width: '100%', }}>
-                <Ionicons
-                    name="arrow-back"
-                    size={28}
-                    color={colors.primary500}
-                    style={{marginBottom: 12}}
-                    onPress={() => {navigation.goBack()}}
-                />
+            <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 12 }}>
+                <BackButton onPress={() => {navigation.goBack()}}/>
             </View>
 
             <View
@@ -140,7 +136,7 @@ const CommentScreen = ({ route, navigation }) => {
                     <FlashList
                         data={replies}
                         renderItem={({ item }) => (
-                            <ReplyItem event={item} user={users[item.pubkey]} />
+                            <ReplyItem event={item} user={users[item.pubkey]} secondOrder={secondOrderReplies.includes()}/>
                         )}
                         estimatedItemSize={80}
                         extraData={users}

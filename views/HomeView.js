@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,10 +9,10 @@ import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
-import GetStartedItems from "../components/GetStartedItems";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useCallback } from "react";
-
+import Lottie from "lottie-react-native";
+import { storeData } from "../utils/cache/asyncStorage";
 
 const HomeStack = createStackNavigator();
 
@@ -21,18 +21,22 @@ const HomeScreen = ({ navigation }) => {
     const [width, setWidth] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+    const [playAnimation, setPlayAnimation] = useState(false);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
-    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const {followedPubkeys, zapAmount} = useSelector((state) => state.user);
     const messages = useSelector((state) => state.messages.messages);
-    const rootNotes = messages.filter(message => message.root === true)
+    const rootNotes = messages.filter((message) => message.root === true);
+
+    const animation = useRef();
 
     const onLayoutViewHeight = (e) => {
         setHeight(e.nativeEvent.layout.height);
         if (!twitterModalShown) {
             navigation.navigate("TwitterModal");
+            storeData('twitterModalShown', "true");
         }
     };
 
@@ -41,51 +45,90 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const loadHomefeed = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         await getHomeFeed(followedPubkeys);
-        setIsLoading(false)
+        setIsLoading(false);
         updateFollowedUsers();
     };
 
-    const renderPost = useCallback(({ item }) => (
-        <PostItem
-            item={item}
-            height={height}
-            width={width}
-            user={users[item.pubkey]}
-        />
-    ), [height, width, users])
+    const renderPost = useCallback(
+        ({ item }) => (
+            <PostItem
+                item={item}
+                height={height}
+                width={width}
+                user={users[item.pubkey]}
+                zapSuccess={playZapAnimation}
+                zapAmount={zapAmount}
+            />
+        ),
+        [height, width, users, zapAmount]
+    );
+
+    const playZapAnimation = () => {
+        setPlayAnimation(true);
+        setTimeout(() => {
+            setPlayAnimation(false)
+        },1000)
+    };
 
     useEffect(() => {
-        loadHomefeed();
+        const timer = setTimeout(() => {loadHomefeed()}, 500)
+        return () => {clearTimeout(timer)};
     }, [followedPubkeys]);
 
     return (
         <View style={globalStyles.screenContainer} onLayout={onLayoutViewWidth}>
             {/* <GetStartedItems/> */}
-            <View onLayout={onLayoutViewHeight} style={{flex:1 , width: '100%'}}>
-            {messages && height && !isLoading ? (
-                <View style={{ flex: 1, width: "100%", height: "100%" }}>
-                    <FlashList
-                        data={rootNotes}
-                        renderItem={renderPost}
-                        snapToAlignment="start"
-                        decelerationRate="fast"
-                        snapToInterval={(height / 100) * 80}
-                        estimatedItemSize={height / 2}
-                        directionalLockEnabled
-                        onRefresh={async () => {
-                            setIsFetching(true);
-                            await getHomeFeed(followedPubkeys);
-                            setIsFetching(false);
+            <View
+                onLayout={onLayoutViewHeight}
+                style={{ flex: 1, width: "100%" }}
+            >
+                {messages && height && !isLoading ? (
+                    <View style={{ flex: 1, width: "100%", height: "100%" }}>
+                        <FlashList
+                            data={rootNotes}
+                            renderItem={renderPost}
+                            snapToAlignment="start"
+                            decelerationRate="fast"
+                            snapToInterval={(height / 100) * 80}
+                            estimatedItemSize={height / 2}
+                            directionalLockEnabled
+                            onRefresh={async () => {
+                                setIsFetching(true);
+                                await getHomeFeed(followedPubkeys);
+                                setIsFetching(false);
+                            }}
+                            refreshing={isFetching}
+                            extraData={[users,zapAmount]}
+                        />
+                    </View>
+                ) : (
+                    <LoadingSpinner size={32} />
+                )}
+                {playAnimation ? <View
+                    style={{
+                        position: "absolute",
+                        right: 0,
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Lottie
+                        autoPlay
+                        loop={false}
+                        ref={animation}
+                        style={{
+                            position: "absolute",
+                            width: width/100*80,
+                            height: width/100*80,
                         }}
-                        refreshing={isFetching}
-                        extraData={users}
+                        source={require("../assets/zap-success.json")}
                     />
-                </View>
-            ) : (
-                <LoadingSpinner size={32}/>
-            )}
+                </View> : undefined}
             </View>
         </View>
     );

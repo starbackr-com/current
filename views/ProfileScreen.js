@@ -6,10 +6,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { getUsersPosts } from "../utils/nostrV2";
+import { getUserData, getUsersPosts } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
+import { followUser } from "../utils/users";
+
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -63,11 +65,21 @@ const PostItem = ({ event, user }) => {
 };
 
 const ProfileScreen = ({ route, navigation }) => {
-    const { user } = route.params;
+    const { pubkey } = route.params;
     const [feed, setFeed] = useState();
     const [copied, setCopied] = useState();
 
-    const followedPubkeys = useSelector(state => state.user.followedPubkeys)
+    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const users = useSelector((state) => state.messages.users);
+
+    const user = users[pubkey]
+
+    useEffect(() => {
+        if (!user) {
+            console.log('Getting user data')
+            getUserData([pubkey]);
+        }
+    }, []);
 
     const getFeed = async () => {
         console.log(user.pubkey);
@@ -82,13 +94,13 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const copyHandler = async () => {
         await Clipboard.setStringAsync(npub);
-        setCopied(true)
+        setCopied(true);
         setTimeout(() => {
-            setCopied(false)
-        }, 1000)
+            setCopied(false);
+        }, 1000);
     };
 
-    const npub = encodePubkey(user?.pubkey);
+    const npub = encodePubkey(pubkey);
 
     return (
         <View
@@ -100,9 +112,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 },
             ]}
         >
-            <View
-                style={{ width: "100%", height: "10%" }}
-            />
+            <View style={{ width: "100%", height: "10%" }} />
             <Pressable
                 style={{
                     position: "absolute",
@@ -154,7 +164,7 @@ const ProfileScreen = ({ route, navigation }) => {
                             { textAlign: "left" },
                         ]}
                     >
-                        {user?.name}
+                        {user?.name || pubkey}
                     </Text>
                     <Text
                         style={[globalStyles.textBody, { textAlign: "left" }]}
@@ -162,11 +172,17 @@ const ProfileScreen = ({ route, navigation }) => {
                         {user?.about}
                     </Text>
                     <Text
-                        style={[globalStyles.textBodyS, { textAlign: "left", color: 'grey'}, copied ? {color: colors.primary500} : undefined]} onPress={copyHandler}
+                        style={[
+                            globalStyles.textBodyS,
+                            { textAlign: "left", color: "grey" },
+                            copied ? { color: colors.primary500 } : undefined,
+                        ]}
+                        onPress={copyHandler}
                     >
-                        {`${npub.slice(0, 32)}...`}<Ionicons name='clipboard'/>
+                        {`${npub.slice(0, 32)}...`}
+                        <Ionicons name="clipboard" />
                     </Text>
-                    {/* {!followedPubkeys.includes(user.pubkey) ? <CustomButton text='Follow'/> : <CustomButton text='Unfollow'/>} */}
+                    {!followedPubkeys.includes(pubkey) ? <CustomButton text='Follow' buttonConfig={{onPress: () => {followUser(pubkey)}}}/> : <CustomButton text='Unfollow'/>}
                 </View>
             </View>
             <View
@@ -178,7 +194,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 }}
             >
                 {feed ? (
-                    <View style={{flex: 1, width: '94%'}}>
+                    <View style={{ flex: 1, width: "94%" }}>
                         <FlashList
                             data={feed}
                             renderItem={({ item }) => (

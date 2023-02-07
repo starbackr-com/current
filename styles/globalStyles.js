@@ -33,6 +33,12 @@ export default globalStyles = StyleSheet.create({
         fontSize: 16,
         textAlign:'center'
     },
+    textBodyError: {
+        fontFamily: 'Montserrat-Regular',
+        color: 'red',
+        fontSize: 16,
+        textAlign:'center'
+    },
     textH1: {
         fontFamily: 'Montserrat-Bold',
         color: 'white',

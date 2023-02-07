@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CustomButton from "../../components/CustomButton";
 import Input from "../../components/Input";
 import globalStyles from "../../styles/globalStyles";

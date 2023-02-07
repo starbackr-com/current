@@ -2,7 +2,6 @@ import { removeAuthorsMessages } from "../features/messagesSlice";
 import { followMultiplePubkeys, followPubkey, unfollowPubkey } from "../features/userSlice";
 import { store } from "../store/store";
 import { db } from "./database";
-import { getUserData } from "./nostr/getNotes";
 
 export const followUser = async (pubkeyInHex) => {
     try {

@@ -11,10 +11,9 @@ import { followMultipleUsers } from "../../utils/users";
 import { decodePubkey } from "../../utils/nostr/keys";
 import { useDispatch } from "react-redux";
 import { setTwitterModal } from "../../features/introSlice";
+import {twitterRegex} from '../../constants'
 
 const Stack = createStackNavigator();
-
-const twitterRegex = /^@?(\w){1,15}$/;
 
 const CustomHeader = ({ navigation }) => {
     return (
@@ -22,7 +21,8 @@ const CustomHeader = ({ navigation }) => {
             onPress={() => {
                 navigation.navigate("Home");
             }}
-        >
+            style={{alignItems:'center'}}
+        ><Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>Close</Text>
             <Ionicons name="chevron-down" size={32} color={colors.primary500} />
         </Pressable>
     );
@@ -82,7 +82,7 @@ const EnterHandleScreen = ({ navigation }) => {
                 text="Skip"
                 buttonConfig={{
                     onPress: () => {
-                        navigation.navigate("RecommendedUsers");
+                        navigation.navigate("ChooseUsers", {handle: ''});
                     },
                 }}
                 containerStyles={{ margin: 16 }}
@@ -190,7 +190,7 @@ const ChooseUserScreen = ({ route, navigation }) => {
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textBody}>
-                People you follow on Twitter:
+                {handle.length < 1 ? 'Recommended users:' : 'People you follow on Twitter:'}
             </Text>
             {list ? (
                 <View

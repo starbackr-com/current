@@ -37,7 +37,6 @@ const ImportSingleKeyScreen = ({ navigation }) => {
         }
         try {
             const result = await loginToWallet(privKey);
-            console.log(result)
             const pk = getPublicKey(privKey);
             if (result.data.access_token) {
                 await saveValue("privKey", privKey);
@@ -84,33 +83,34 @@ const ImportSingleKeyScreen = ({ navigation }) => {
                         },
                     ]
                 );
+            } else {
+                Alert.alert(
+                    "Update Profile?",
+                    `We couldn't find any profile data on the connected relays... Do you want to update it? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
+                    [
+                        {
+                            text: "Update Profile Data",
+                            onPress: () => {
+                                navigation.navigate("UsernameScreen", {
+                                    privKey,
+                                    publishProfile: true,
+                                    isImport: true,
+                                });
+                            },
+                        },
+                        {
+                            text: "Do not update!",
+                            onPress: () => {
+                                navigation.navigate("UsernameScreen", {
+                                    privKey,
+                                    publishProfile: false,
+                                    isImport: true,
+                                });
+                            },
+                        }
+                    ]
+                );
             }
-            Alert.alert(
-                "Update Profile?",
-                `We couldn't find any profile data on the connected relays... Do you want to update it? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
-                [
-                    {
-                        text: "Update Profile Data",
-                        onPress: () => {
-                            navigation.navigate("UsernameScreen", {
-                                privKey,
-                                publishProfile: true,
-                                isImport: true,
-                            });
-                        },
-                    },
-                    {
-                        text: "Do not update!",
-                        onPress: () => {
-                            navigation.navigate("UsernameScreen", {
-                                privKey,
-                                publishProfile: false,
-                                isImport: true,
-                            });
-                        },
-                    }
-                ]
-            );
         }
     };
 

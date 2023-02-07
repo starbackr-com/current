@@ -1,24 +1,26 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, Keyboard } from "react-native";
+import React, { useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
-import { generateMnemonic } from "../../utils/keys";
-import { useCheckUsernameQuery } from "../../services/walletApi";
 import CustomButton from "../../components/CustomButton";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
-const UsernameScreen = ({ navigation,  route }) => {
-    const [skip, setSkip] = useState(true);
+const UsernameScreen = ({ navigation, route }) => {
+    const [error, setError] = useState(false);
     const [username, setUsername] = useState("");
     const [available, setAvailable] = useState();
     const [isFetching, setIsFetching] = useState();
-    const { data, error, isLoading } = useCheckUsernameQuery(username, {
-        skip,
-    });
 
-    const {privKey, isImport, publishProfile} = route.params
- 
-    const fetchAvailableUsernames = async (username) => {
+    const { privKey, isImport, publishProfile } = route.params;
+
+    const fetchAvailableUsernames = async () => {
+        setError(false)
+        if (!username.match(/^[a-z0-9]{4,32}$/i)) {
+            setError(true)
+            return;
+        }
+        Keyboard.dismiss();
+        setIsFetching(true);
         const response = await fetch(
             `https://getcurrent.io/checkuser?name=${username}`
         );
@@ -27,30 +29,17 @@ const UsernameScreen = ({ navigation,  route }) => {
         setIsFetching(false);
     };
 
-    useEffect(() => {
-        let timer;
-        if (username.length >= 4) {
-            setIsFetching(true);
-            timer = setTimeout(() => {
-                fetchAvailableUsernames(username);
-            }, 1000);
-        }
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [username]);
-
-    const createKeysHandler = async (address) => {
-        navigate("ShowBackup", { mem, address });
-    };
-
     const nextHandler = (address) => {
         if (isImport && !publishProfile) {
-            console.log(privKey)
-            navigation.navigate('LoadingProfileScreen', {privKey, address, publishProfile: false})
+            console.log(privKey);
+            navigation.navigate("LoadingProfileScreen", {
+                privKey,
+                address,
+                publishProfile: false,
+            });
             return;
         }
-        navigation.navigate('CreateProfileScreen', {privKey, address})
+        navigation.navigate("CreateProfileScreen", { privKey, address });
     };
 
     return (
@@ -64,37 +53,32 @@ const UsernameScreen = ({ navigation,  route }) => {
             </Text>
             <View></View>
             <View style={{ width: "100%", alignItems: "center", margin: 32 }}>
-                <Input
-                    label="Choose Username"
-                    inputStyle={{ width: "50%" }}
-                    textInputConfig={{
-                        value: username,
-                        onChangeText: (value) => {
-                            setUsername(value.toLowerCase());
-                        },
-                        autoCapitalize: "none",
-                        autoCorrect: false
-                    }}
-                />
-                {data?.names ? (
-                    <Text
-                        style={[
-                            globalStyles.textBody,
-                            { color: "red", fontSize: 12, marginTop: 8 },
-                        ]}
-                    >
-                        Username already taken!
-                    </Text>
-                ) : undefined}
+                <View style={{ width: "60%", flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
+                    <Input
+                        textInputConfig={{
+                            value: username,
+                            onChangeText: (value) => {
+                                setUsername(value.toLowerCase());
+                            },
+                            autoCapitalize: "none",
+                            autoCorrect: false,
+                        }}
+                    />
+                    <CustomButton
+                        icon="search"
+                        containerStyles={{ marginLeft: 6 }}
+                        buttonConfig={{ onPress: fetchAvailableUsernames }}
+                    />
+                </View>
             </View>
             {isFetching ? <LoadingSpinner size={50} /> : undefined}
             <View style={{ width: "100%", alignItems: "center" }}>
-                {available && !isFetching ? (
+                {available && available.length > 0 && !isFetching && !error ? (
                     <Text style={[globalStyles.textBody, { marginBottom: 32 }]}>
                         Select your username
                     </Text>
                 ) : undefined}
-                {available && !isFetching
+                {available && available.length > 0 && !isFetching && !error
                     ? available.map((nip05) => (
                           <CustomButton
                               key={nip05}
@@ -109,6 +93,8 @@ const UsernameScreen = ({ navigation,  route }) => {
                           />
                       ))
                     : undefined}
+                    {available && available.length === 0 && !isFetching && !error ? <Text style={globalStyles.textBody}>That username is taken...</Text> : undefined}
+                    {error ? <Text style={globalStyles.textBodyError}>Usernames must be between 4 and 32 chars and can only contain a-z, 0-9</Text> : undefined}
             </View>
         </View>
     );
