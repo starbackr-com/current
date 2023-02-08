@@ -66,15 +66,11 @@ export const walletApi = createApi({
             }),
             invalidatesTags: ["Balance"],
         }),
-        getTransactions: builder.mutation({
-            query: (page) => ({
-                url: "txnhistory",
-                method: "POST",
-                body: {
-                    limit: 100,
-                    offset: page ? page * 100 : 0,
-                },
-            }),
+        getIncomingTransactions: builder.query({
+            query: () => `v2/invoices/incoming`,
+        }),
+        getOutgoingTransactions: builder.query({
+            query: () => `v2/invoices/outgoing`,
         }),
     }),
 });
@@ -87,5 +83,6 @@ export const {
     useCheckUsernameQuery,
     usePostPaymentMutation,
     useLazyGetWalletBalanceQuery,
-    useGetTransactionsMutation,
+    useGetIncomingTransactionsQuery,
+    useGetOutgoingTransactionsQuery
 } = walletApi;

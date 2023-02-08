@@ -69,6 +69,7 @@ const ProfileScreen = ({ route, navigation }) => {
     const [feed, setFeed] = useState();
     const [copied, setCopied] = useState();
 
+    const loggedInPubkey = useSelector((state) => state.auth.pubKey)
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const users = useSelector((state) => state.messages.users);
 
@@ -182,7 +183,7 @@ const ProfileScreen = ({ route, navigation }) => {
                         {`${npub.slice(0, 32)}...`}
                         <Ionicons name="clipboard" />
                     </Text>
-                    {!followedPubkeys.includes(pubkey) ? <CustomButton text='Follow' buttonConfig={{onPress: () => {followUser(pubkey)}}}/> : <CustomButton text='Unfollow'/>}
+                    {loggedInPubkey !== pubkey ? !followedPubkeys.includes(pubkey) ? <CustomButton text='Follow' buttonConfig={{onPress: () => {followUser(pubkey)}}}/> : <CustomButton text='Unfollow'/> : undefined}
                 </View>
             </View>
             <View

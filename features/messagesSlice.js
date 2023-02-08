@@ -25,19 +25,29 @@ export const messageSlice = createSlice({
         },
         removeAuthorsMessages: (state, action) => {
             const author = action.payload;
-            state.messages = state.messages.filter(message => message.pubkey !== author)
+            state.messages = state.messages.filter(
+                (message) => message.pubkey !== author
+            );
         },
         addUser: (state, action) => {
             const newUser = action.payload.user;
-            const exists = state.users.hasOwnProperty(newUser.pubkey)
+            const exists = state.users.hasOwnProperty(newUser.pubkey);
             if (exists) {
-                state.users[newUser.pubkey] = state.users[newUser.pubkey].created_at < newUser.created_at ? newUser : state.users[newUser.pubkey]
-            } else
-            state.users[newUser.pubkey] = newUser
+                state.users[newUser.pubkey] =
+                    state.users[newUser.pubkey].created_at < newUser.created_at
+                        ? newUser
+                        : state.users[newUser.pubkey];
+            } else state.users[newUser.pubkey] = newUser;
+        },
+        clearStore: (state) => {
+            state.messages = [];
+            state.users = {};
+            state.relayReady = false;
         },
     },
 });
 
-export const { addMessage, addUser, removeAuthorsMessages } = messageSlice.actions;
+export const { addMessage, addUser, removeAuthorsMessages, clearStore } =
+    messageSlice.actions;
 
 export default messageSlice.reducer;

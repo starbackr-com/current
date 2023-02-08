@@ -3,7 +3,7 @@ import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import { relays } from "../../utils/nostrV2";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import VideoPlayer from "../../components/VideoPlayer";
+import CustomButton from "../../components/CustomButton";
 
 const RelayItem = ({ relay }) => {
     let status;
@@ -38,7 +38,7 @@ const RelayItem = ({ relay }) => {
     );
 };
 
-const SettingsNetworkScreen = () => {
+const SettingsNetworkScreen = ({navigation}) => {
     console.log(relays);
     return (
         <View style={globalStyles.screenContainer}>
@@ -48,7 +48,7 @@ const SettingsNetworkScreen = () => {
                     <RelayItem relay={relay} key={relay.url} />
                 ))}
             </View>
-            {/* <VideoPlayer/> */}
+            <CustomButton text='Back' buttonConfig={{onPress: () => {navigation.goBack();}}}/>
         </View>
     );
 };

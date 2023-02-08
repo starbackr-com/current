@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
@@ -12,6 +12,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
+import { setTwitterModal } from "../features/introSlice";
 
 const HomeStack = createStackNavigator();
 
@@ -30,11 +31,13 @@ const HomeScreen = ({ navigation }) => {
     const rootNotes = messages.filter((message) => message.root === true);
 
     const animation = useRef();
+    const dispatch = useDispatch();
 
     const onLayoutViewHeight = (e) => {
         setHeight(e.nativeEvent.layout.height);
         if (!twitterModalShown) {
             navigation.navigate("TwitterModal");
+            dispatch(setTwitterModal());
             storeData('twitterModalShown', "true");
         }
     };

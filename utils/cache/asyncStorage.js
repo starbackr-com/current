@@ -25,8 +25,32 @@ export const getData = async (key) => {
 
 export const hydrateStore = async () => {
     const zapAmount = await getData('zapAmount')
-    store.dispatch(setZapAmount(zapAmount))
     const twitterModalShown = await getData('twitterModalShown')
-    store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)))
+    if (zapAmount) {
+        store.dispatch(setZapAmount(zapAmount))
+    }
+    if (twitterModalShown) {
+        store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)))
+    }
 
 };
+
+export const getAllKeys = async () => {
+    let keys = []
+    try {
+      keys = await AsyncStorage.getAllKeys()
+    } catch(e) {
+    }
+  
+    console.log(keys)
+  }
+
+  export const removeData = async (keys) => {
+    try {
+      await AsyncStorage.multiRemove(keys)
+    } catch(e) {
+      // remove error
+    }
+  
+    console.log(`Removed ${keys} from AsyncStorage`)
+  }

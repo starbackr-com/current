@@ -4,13 +4,12 @@ import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton";
-import { useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { setZapAmount } from "../../features/userSlice";
 import { storeData } from "../../utils/cache/asyncStorage";
 
-const SettingsPaymentsScreen = () => {
+const SettingsPaymentsScreen = ({ navigation }) => {
     const { zapAmount } = useSelector((state) => state.user);
     const [zapValueInput, setZapValueInput] = useState();
     const dispatch = useDispatch();
@@ -28,20 +27,32 @@ const SettingsPaymentsScreen = () => {
         }
     };
     return (
-        <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textH1}>Payments</Text>
-            <Input
-                textInputConfig={{
-                    value: zapValueInput,
-                    onChangeText: setZapValueInput,
-                }}
-                label="Default Zap Value"
-            />
-            <CustomButton
-                text="Save"
-                buttonConfig={{ onPress: submitHandler }}
-            />
-            <CustomButton text="Back" secondary />
+        <View style={[globalStyles.screenContainer]}>
+            <Text style={globalStyles.textH2}>Payment Settings</Text>
+            <View style={{ flex: 2, width: '80%'}}>
+                <Input
+                    textInputConfig={{
+                        value: zapValueInput,
+                        onChangeText: setZapValueInput,
+                    }}
+                    label="Default Zap Value"
+                />
+            </View>
+            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+                <CustomButton
+                    text="Save"
+                    buttonConfig={{ onPress: submitHandler }}
+                />
+                <CustomButton
+                    text="Back"
+                    secondary
+                    buttonConfig={{
+                        onPress: () => {
+                            navigation.goBack();
+                        },
+                    }}
+                />
+            </View>
         </View>
     );
 };

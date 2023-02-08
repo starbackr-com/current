@@ -1,20 +1,18 @@
 import { View, Text, FlatList, Pressable, Button } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
+import { clearStore } from "../../features/messagesSlice";
+import { clearUserStore } from "../../features/userSlice";
 import { dbLogout } from "../../utils/database";
 import colors from "../../styles/colors";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
+import CustomButton from "../../components/CustomButton";
+import {removeData} from '../../utils/cache/asyncStorage'
 
-const settings = [
-    "General",
-    "Payments",
-    "Backup",
-    "Network",
-    "Security & Privacy",
-];
+const settings = ["Payments", "Backup", "Network"];
 
 const SettingItem = ({ item, onNav }) => {
     return (
@@ -25,8 +23,8 @@ const SettingItem = ({ item, onNav }) => {
                     backgroundColor: "#222222",
                     paddingVertical: 16,
                     paddingHorizontal: 8,
-                    borderBottomColor: "white",
-                    borderBottomWidth: 1,
+                    borderRadius: 10,
+                    marginBottom: 16,
                 },
                 pressed ? { backgroundColor: "#333333" } : undefined,
             ]}
@@ -46,27 +44,48 @@ const SettingsHomeScreen = ({ navigation }) => {
     const navigationHandler = (route) => {
         navigation.navigate(route);
     };
+
+    const loggedIn = useSelector((state) => state.auth.loggedIn);
+    console.log(loggedIn);
     const logoutHandler = async () => {
         await deleteValue("privKey");
         await deleteValue("username");
-        await deleteValue('mem')
+        await deleteValue("mem");
         await dbLogout();
-
+        await removeData(['twitterModalShown', 'zapAmount']);
+        dispatch(clearStore());
+        dispatch(clearUserStore());
         dispatch(logOut());
     };
 
     return (
         <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textH1}>Settings</Text>
-            <FlatList
-                style={{ width: "100%" }}
-                data={settings}
-                renderItem={({ item }) => (
-                    <SettingItem item={item} onNav={navigationHandler} />
-                )}
-            />
-            <Button title="Log Out" onPress={logoutHandler}/>
-            <Text style={[globalStyles.textBody, {color: colors.primary500}]} onPress={() => {Linking.openURL('https://app.getcurrent.io/terms-and-privacy')}}>Terms and Privacy</Text>
+            <View style={{ width: "100%", flex: 1 }}>
+                <FlatList
+                    style={{ width: "100%", flexGrow: 0 }}
+                    data={settings}
+                    renderItem={({ item }) => (
+                        <SettingItem item={item} onNav={navigationHandler} />
+                    )}
+                />
+                <CustomButton
+                    text="Log Out"
+                    buttonConfig={{ onPress: logoutHandler }}
+                />
+            </View>
+            <Text
+                style={[
+                    globalStyles.textBody,
+                    { color: colors.primary500, marginBottom: 16 },
+                ]}
+                onPress={() => {
+                    Linking.openURL(
+                        "https://app.getcurrent.io/terms-and-privacy"
+                    );
+                }}
+            >
+                Terms and Privacy
+            </Text>
         </View>
     );
 };

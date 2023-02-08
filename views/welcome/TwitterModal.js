@@ -1,4 +1,5 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import globalStyles from "../../styles/globalStyles";
@@ -11,7 +12,8 @@ import { followMultipleUsers } from "../../utils/users";
 import { decodePubkey } from "../../utils/nostr/keys";
 import { useDispatch } from "react-redux";
 import { setTwitterModal } from "../../features/introSlice";
-import {twitterRegex} from '../../constants'
+import { twitterRegex } from "../../constants";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Stack = createStackNavigator();
 
@@ -21,9 +23,14 @@ const CustomHeader = ({ navigation }) => {
             onPress={() => {
                 navigation.navigate("Home");
             }}
-            style={{alignItems:'center'}}
-        ><Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>Close</Text>
+            style={{ alignItems: "center" }}
+        >
             <Ionicons name="chevron-down" size={32} color={colors.primary500} />
+            <Text
+                style={[globalStyles.textBodyS, { color: colors.primary500 }]}
+            >
+                Close
+            </Text>
         </Pressable>
     );
 };
@@ -82,7 +89,7 @@ const EnterHandleScreen = ({ navigation }) => {
                 text="Skip"
                 buttonConfig={{
                     onPress: () => {
-                        navigation.navigate("ChooseUsers", {handle: ''});
+                        navigation.navigate("ChooseUsers", { handle: "" });
                     },
                 }}
                 containerStyles={{ margin: 16 }}
@@ -99,6 +106,7 @@ const UserCard = ({ data, isSelected, onClick }) => {
     useEffect(() => {
         setImage(data.profile);
     }, []);
+
     return (
         <Pressable
             style={[
@@ -142,6 +150,7 @@ const UserCard = ({ data, isSelected, onClick }) => {
 const ChooseUserScreen = ({ route, navigation }) => {
     const [list, setList] = useState();
     const [selected, setSelected] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     const { handle } = route.params;
@@ -190,7 +199,9 @@ const ChooseUserScreen = ({ route, navigation }) => {
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textBody}>
-                {handle.length < 1 ? 'Recommended users:' : 'People you follow on Twitter:'}
+                {handle.length < 1
+                    ? "Recommended users:"
+                    : "People you follow on Twitter:"}
             </Text>
             {list ? (
                 <View
@@ -222,7 +233,9 @@ const ChooseUserScreen = ({ route, navigation }) => {
                         )}
                     />
                 </View>
-            ) : undefined}
+            ) : (
+                <LoadingSpinner size={32} />
+            )}
             <View style={{ flex: 1, justifyContent: "center" }}>
                 <CustomButton
                     text={`Follow ${
