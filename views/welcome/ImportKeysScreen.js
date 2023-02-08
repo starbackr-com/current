@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { Text, View, ScrollView, Alert } from "react-native";
 import React, { useRef, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
@@ -10,6 +10,7 @@ import { loginToWallet } from "../../utils/wallet";
 import { saveValue } from "../../utils/secureStore";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
+import { getOldKind0 } from "../../utils/nostrV2/getUserData";
 
 const ImportKeysScreen = ({ navigation }) => {
     const input1 = useRef();
@@ -45,12 +46,100 @@ const ImportKeysScreen = ({ navigation }) => {
         }
         setError(errorArray);
         if (errorArray.length === 0 && mem.length === 12) {
-            const privKey = await mnemonicToSeed(mem);
-            await saveValue("privKey", privKey);
-            await saveValue("mem", JSON.stringify(mem));
-            const pubKey = getPublicKey(privKey);
-            const { access_token } = await loginToWallet(privKey);
-            dispatch(logIn({ bearer: access_token, pubKey }));
+            try {
+                const privKey = await mnemonicToSeed(mem);
+                const pubKey = getPublicKey(privKey);
+                const result = await loginToWallet(privKey);
+                const access_token = result?.data?.access_token;
+                if (access_token) {
+                    await saveValue("privKey", privKey);
+                    await saveValue("mem", JSON.stringify(mem));
+                    dispatch(followPubkey(pubKey));
+                    dispatch(logIn({ bearer: access_token, pubKey }));
+                    return;
+                } else {
+                    const data = await getOldKind0(pubKey);
+                    const events = [];
+                    let mostRecent
+                    data.map((item) => item.map((event) => events.push(event)));
+                    if (events.length >= 1) {
+                        mostRecent = events.reduce(
+                            (p, c) => {
+                                let r = c.created_at > p.created_at ? c : p;
+                                return r;
+                            },
+                            { created_at: 0 }
+                        );
+                        Alert.alert(
+                            "Update Profile?",
+                            `A profile for this key already exists. Do you want to update it or keep the old one? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
+                            [
+                                {
+                                    text: "Keep old data",
+                                    onPress: () => {
+                                        navigation.navigate("UsernameScreen", {
+                                            privKey,
+                                            publishProfile: false,
+                                            isImport: true,
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Update Lightning Address",
+                                    onPress: () => {},
+                                },
+                                {
+                                    text: "Update everything",
+                                    onPress: () => {},
+                                },
+                            ]
+                        );
+                    } else {
+                        Alert.alert(
+                            "Create Profile?",
+                            `We couldn't find a profile for this key on the connected relays... Do you want to create one? (If you don't, you will not be able to receive zaps on those relays.)`,
+                            [
+                                {
+                                    text: "Create Profile",
+                                    onPress: () => {
+                                        navigation.navigate("UsernameScreen", {
+                                            privKey,
+                                            publishProfile: true,
+                                            isImport: true,
+                                            updateData: 'all'
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Update Tip Address only",
+                                    onPress: () => {
+                                        navigation.navigate("UsernameScreen", {
+                                            privKey,
+                                            publishProfile: true,
+                                            isImport: true,
+                                            updateData: 'ln',
+                                            oldData: mostRecent
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Continue without",
+                                    onPress: () => {
+                                        navigation.navigate("UsernameScreen", {
+                                            privKey,
+                                            publishProfile: false,
+                                            isImport: true,
+                                            updateData: 'none'
+                                        });
+                                    },
+                                },
+                            ]
+                        );
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     };
     return (
@@ -340,7 +429,11 @@ const ImportKeysScreen = ({ navigation }) => {
                 />
                 <CustomButton
                     text="Import nsec / key instead"
-                    buttonConfig={{ onPress: () => {navigation.navigate('ImportSingleKeyScreen')} }}
+                    buttonConfig={{
+                        onPress: () => {
+                            navigation.navigate("ImportSingleKeyScreen");
+                        },
+                    }}
                     containerStyles={{
                         justifyContent: "center",
                         marginBottom: 16,
@@ -351,7 +444,10 @@ const ImportKeysScreen = ({ navigation }) => {
                     text="Go Back"
                     buttonConfig={{
                         onPress: () => {
-                            navigation.goBack();
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Welcome' }],
+                              });
                         },
                     }}
                     containerStyles={{ justifyContent: "center" }}

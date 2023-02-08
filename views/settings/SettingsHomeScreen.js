@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
 import { dbLogout } from "../../utils/database";
+import colors from "../../styles/colors";
+import * as Linking from 'expo-linking';
 
 const settings = [
     "General",
@@ -47,6 +49,7 @@ const SettingsHomeScreen = ({ navigation }) => {
     const logoutHandler = async () => {
         await deleteValue("privKey");
         await deleteValue("username");
+        await deleteValue('mem')
         await dbLogout();
 
         dispatch(logOut());
@@ -62,15 +65,8 @@ const SettingsHomeScreen = ({ navigation }) => {
                     <SettingItem item={item} onNav={navigationHandler} />
                 )}
             />
-            <Button
-                title="ProfileScreen"
-                onPress={() => {
-                    navigation.navigate("ProfileModal");
-                }}
-            />
-            <Button title="Log Out" onPress={logoutHandler}>
-                SettingsView
-            </Button>
+            <Button title="Log Out" onPress={logoutHandler}/>
+            <Text style={[globalStyles.textBody, {color: colors.primary500}]} onPress={() => {Linking.openURL('https://app.getcurrent.io/terms-and-privacy')}}>Terms and Privacy</Text>
         </View>
     );
 };

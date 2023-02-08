@@ -24,7 +24,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
     const device = useWindowDimensions();
     let data;
 
-    const { image, svg, svgId, privKey, address } = route.params;
+    const { image, svg, svgId, privKey, address, updateData, oldData } = route.params;
 
     const changeHandler = () => {
         setChecked((prev) => !prev);
@@ -135,10 +135,18 @@ const CreateProfileScreen = ({ navigation, route }) => {
             <Input
                 label="Name"
                 textInputConfig={{
-                    value: address.split("@")[0],
+                    value: updateData === 'all' ? JSON.parse(oldData.content).name : address.split("@")[0],
                     editable: false,
                 }}
-                inputStyle={{ marginBottom: 16 }}
+                inputStyle={{ marginBottom: 16, color: colors.primary600 }}
+            />
+            <Input
+                label="Tip Address"
+                textInputConfig={{
+                    value: updateData === 'all' || updateData === 'ln' ? JSON.parse(oldData.content).lud16 : address,
+                    editable: false,
+                }}
+                inputStyle={{ marginBottom: 16, color: colors.primary600}}
             />
             <Input
                 label="Bio"

@@ -38,79 +38,110 @@ const ImportSingleKeyScreen = ({ navigation }) => {
         try {
             const result = await loginToWallet(privKey);
             const pk = getPublicKey(privKey);
-            if (result.data.access_token) {
+            if (result?.data?.access_token) {
                 await saveValue("privKey", privKey);
                 access_token = result.data.access_token;
                 dispatch(followPubkey(pk));
                 dispatch(logIn({ bearer: access_token, pubKey: pk }));
                 return;
-            }
-        } catch (err) {
-            console.log(privKey);
-            const pk = getPublicKey(privKey);
-            const data = await getOldKind0(pk);
-            const events = [];
-            data.map((item) => item.map((event) => events.push(event)));
-            if (events.length >= 1) {
-                const mostRecent = events.reduce(
-                    (p, c) => {
-                        let r = c.created_at > p.created_at ? c : p;
-                        return r;
-                    },
-                    { created_at: 0 }
-                );
-                Alert.alert(
-                    "Update Profile?",
-                    `A profile for this key already exists. Do you want to update it or keep the old one? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
-                    [
-                        {
-                            text: "Keep old data",
-                            onPress: () => {
-                                navigation.navigate("UsernameScreen", {
-                                    privKey,
-                                    publishProfile: false,
-                                    isImport: true,
-                                });
-                            },
-                        },
-                        {
-                            text: "Update Lightning Address",
-                            onPress: () => {},
-                        },
-                        {
-                            text: "Update everything",
-                            onPress: () => {},
-                        },
-                    ]
-                );
             } else {
-                Alert.alert(
-                    "Update Profile?",
-                    `We couldn't find any profile data on the connected relays... Do you want to update it? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
-                    [
-                        {
-                            text: "Update Profile Data",
-                            onPress: () => {
-                                navigation.navigate("UsernameScreen", {
-                                    privKey,
-                                    publishProfile: true,
-                                    isImport: true,
-                                });
-                            },
+                const data = await getOldKind0(pk);
+                const events = [];
+                let mostRecent;
+                data.map((item) => item.map((event) => events.push(event)));
+                if (events.length >= 1) {
+                    mostRecent = events.reduce(
+                        (p, c) => {
+                            let r = c.created_at > p.created_at ? c : p;
+                            return r;
                         },
-                        {
-                            text: "Do not update!",
-                            onPress: () => {
-                                navigation.navigate("UsernameScreen", {
-                                    privKey,
-                                    publishProfile: false,
-                                    isImport: true,
-                                });
+                        { created_at: 0 }
+                    );
+                    Alert.alert(
+                        "Update Profile?",
+                        `A profile for this key already exists. Do you want to update it or keep the old one? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
+                        [
+                            {
+                                text: "Keep old data",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: false,
+                                        isImport: true,
+                                        updateData: 'none',
+                                    });
+                                },
                             },
-                        }
-                    ]
-                );
+                            {
+                                text: "Update Lightning Address",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: true,
+                                        isImport: true,
+                                        updateData: 'ln',
+                                        oldData: mostRecent
+                                    });
+                                },
+                            },
+                            {
+                                text: "Update everything",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: true,
+                                        isImport: true,
+                                        updateData: 'all',
+                                    });
+                                },
+                            },
+                        ]
+                    );
+                } else {
+                    Alert.alert(
+                        "Create Profile?",
+                        `We couldn't find a profile for this key on the connected relays... Do you want to create one? (If you don't, you will not be able to receive zaps on those relays.)`,
+                        [
+                            {
+                                text: "Create Profile",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: true,
+                                        isImport: true,
+                                        updateData: "all",
+                                    });
+                                },
+                            },
+                            {
+                                text: "Update Tip Address only",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: true,
+                                        isImport: true,
+                                        updateData: "ln",
+                                        oldData: mostRecent,
+                                    });
+                                },
+                            },
+                            {
+                                text: "Continue without",
+                                onPress: () => {
+                                    navigation.navigate("UsernameScreen", {
+                                        privKey,
+                                        publishProfile: false,
+                                        isImport: true,
+                                        updateData: "none",
+                                    });
+                                },
+                            },
+                        ]
+                    );
+                }
             }
+        } catch (e) {
+            console.log(e);
         }
     };
 

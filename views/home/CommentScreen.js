@@ -136,7 +136,7 @@ const CommentScreen = ({ route, navigation }) => {
                     <FlashList
                         data={replies}
                         renderItem={({ item }) => (
-                            <ReplyItem event={item} user={users[item.pubkey]} secondOrder={secondOrderReplies.includes()}/>
+                            <ReplyItem event={item} user={users[item.pubkey]}/>
                         )}
                         estimatedItemSize={80}
                         extraData={users}

@@ -9,6 +9,7 @@ import SelectImage from "../views/welcome/SelectImage";
 import UsernameScreen from "../views/welcome/UsernameScreen";
 import LoadingProfileScreen from "../views/welcome/LoadingProfileScreen";
 import ImportSingleKeyScreen from "../views/welcome/ImportSingleKeyScreen";
+import EULAScreen from "../views/welcome/EULAScreen";
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,13 @@ const UnauthedNavigator = () => {
                 <Stack.Screen
                     name="LoadingProfileScreen"
                     component={LoadingProfileScreen}
+                    options={{
+                        title: "",
+                    }}
+                />
+                <Stack.Screen
+                    name="EULA"
+                    component={EULAScreen}
                     options={{
                         title: "",
                     }}

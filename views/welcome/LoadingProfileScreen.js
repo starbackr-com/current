@@ -13,7 +13,7 @@ import { followUser } from "../../utils/users";
 import { updateFollowedUsers } from "../../utils/nostrV2/getUserData";
 
 const LoadingProfileScreen = ({ route }) => {
-    const { image, svg, svgId, privKey, address, bio, publishProfile } =
+    const { image, svg, svgId, privKey, address, bio, publishProfile, mem } =
         route.params;
     const dispatch = useDispatch();
 
@@ -57,7 +57,7 @@ const LoadingProfileScreen = ({ route }) => {
             );
             const data = await response.json();
             if (data.error === true) {
-                console.log(data)
+                console.log(data);
                 throw new Error(`Error getting svg-image url: ${data}`);
             }
             return data.data;
@@ -70,6 +70,9 @@ const LoadingProfileScreen = ({ route }) => {
         try {
             const pubKey = await getPublicKey(privKey);
             await createWallet(privKey, address);
+            if (mem) {
+                await saveValue("mem", mem);
+            }
             await saveValue("privKey", privKey);
             await saveValue("address", address);
             const result = await loginToWallet(privKey);

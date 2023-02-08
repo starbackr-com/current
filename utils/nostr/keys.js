@@ -36,3 +36,13 @@ export const encodePubkey = (pubkeyInHex) => {
         console.log(err);
     }
 };
+
+export const encodeSeckey = (skInKey) => {
+    try {
+        let words = bech32.toWords(toByteArray(skInKey))
+        const encoded = bech32.encode('nsec', words)
+        return encoded;
+    } catch (err) {
+        console.log(err);
+    }
+};

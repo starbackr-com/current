@@ -44,5 +44,11 @@ export default globalStyles = StyleSheet.create({
         color: 'white',
         fontSize: 32,
         marginBottom:32
+    },
+    textH2: {
+        fontFamily: 'Montserrat-Bold',
+        color: 'white',
+        fontSize: 24,
+        marginBottom:32
     }
 })

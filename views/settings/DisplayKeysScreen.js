@@ -1,9 +1,11 @@
-import { View, Text, FlatList,Pressable } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { getValue } from "../../utils/secureStore";
 import colors from "../../styles/colors";
+import { encodeSeckey } from "../../utils/nostr/keys";
+import Input from "../../components/Input";
 
 const Word = ({ word, index }) => {
     return (
@@ -28,7 +30,7 @@ const Word = ({ word, index }) => {
     );
 };
 
-const DisplayKeysScreen = ({navigation}) => {
+const DisplayKeysScreen = ({ navigation }) => {
     const placeholder = [
         "****",
         "****",
@@ -44,7 +46,9 @@ const DisplayKeysScreen = ({navigation}) => {
         "****",
     ];
 
+    const keyPlaceholder = 'nsec1*************************************************'
     const [mem, setMem] = useState();
+    const [sk, setSk] = useState();
 
     const [show, setShow] = useState(false);
 
@@ -56,7 +60,13 @@ const DisplayKeysScreen = ({navigation}) => {
 
     const getKeysFromStore = async () => {
         keys = await getValue("mem");
-        setMem(JSON.parse(keys));
+        if (keys) {
+            setMem(JSON.parse(keys));
+        } else {
+            const sk = await getValue('privKey')
+            const nsec = encodeSeckey(sk)
+            setSk(nsec)
+        }
     };
 
     showHandler = async () => {
@@ -65,11 +75,11 @@ const DisplayKeysScreen = ({navigation}) => {
 
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{ flex: 3 }}>
+            <View style={{ flex: 3, width: '100%', alignItems: 'center' }}>
                 <Text style={globalStyles.textBodyBold}>
                     This is your Backup... Write it down!
                 </Text>
-                <FlatList
+                {mem ? <FlatList
                     data={show ? mem : placeholder}
                     renderItem={({ item, index }) => (
                         <Word word={item} index={index} />
@@ -77,8 +87,13 @@ const DisplayKeysScreen = ({navigation}) => {
                     style={{ width: "100%", flexGrow: 0 }}
                     columnWrapperStyle={{ justifyContent: "space-between" }}
                     numColumns={2}
-                />
-                {show ? <Pressable><Text style={[globalStyles.textBodyS]}>Copy Keys</Text></Pressable> : undefined}
+                /> : undefined}
+                {sk ? <Input textInputConfig={{editable: false, value: show ? sk : keyPlaceholder, multiline: true}} inputStyle={{width: '90%'}}/> : undefined}
+                {show ? (
+                    <Pressable>
+                        <Text style={[globalStyles.textBodyS]}>Copy Keys</Text>
+                    </Pressable>
+                ) : undefined}
             </View>
             <View style={{ flex: 1, justifyContent: "center" }}>
                 <CustomButton
@@ -86,8 +101,12 @@ const DisplayKeysScreen = ({navigation}) => {
                     buttonConfig={{ onPress: showHandler }}
                 />
                 <CustomButton
-                    text='Back'
-                    buttonConfig={{ onPress: () => {navigation.goBack()} }}
+                    text="Back"
+                    buttonConfig={{
+                        onPress: () => {
+                            navigation.goBack();
+                        },
+                    }}
                 />
             </View>
         </View>

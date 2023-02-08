@@ -10,13 +10,13 @@ const WelcomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();
 
     const importHandler = async () => {
-        navigation.navigate("ImportKeys");
+        navigation.navigate("EULA");
     };
 
     const createHandler = async () => {
         setIsLoading(true);
         const mem = await generateMnemonic();
-        navigation.navigate("ShowBackupScreen", { mem });
+        navigation.navigate("EULA", { mem });
         setIsLoading(false);
         return;
     };
@@ -29,14 +29,14 @@ const WelcomeScreen = ({ navigation }) => {
             ]}
         >
             <View style={{ flex: 1, alignItems: "center" }}>
-                    <Image
-                        source={require("../../assets/lightning_logo_negativ.png")}
-                        style={{
-                            height: 100,
-                            width: 100,
-                            borderRadius: 10
-                        }}
-                    />
+                <Image
+                    source={require("../../assets/lightning_logo_negativ.png")}
+                    style={{
+                        height: 100,
+                        width: 100,
+                        borderRadius: 10,
+                    }}
+                />
                 <Text style={globalStyles.textH1}>Welcome, stranger!</Text>
                 <Text style={globalStyles.textBody}>
                     Do you want to create a new key-pair or import an existing

@@ -32,9 +32,9 @@ export const loginToWallet = async (privKey) => {
         const pubKey = await getPublicKey(privKey)
         const password = secp256k1.utils.bytesToHex(sha256(utf8Encoder.encode(privKey)))
         const result = await store.dispatch(walletApi.endpoints.postLogin.initiate({login: pubKey, password: password}))
-        if (result?.error?.status === 400) {
-            throw new Error(`Invalid Credentials`)
-        }
+        // if (result?.error?.status === 400) {
+        //     throw new Error(`Invalid Credentials`)
+        // }
         return result
     } catch (err) {
         console.log(err)

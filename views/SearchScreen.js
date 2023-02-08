@@ -213,7 +213,7 @@ const SearchScreen = ({navigation}) => {
                     <Text style={globalStyles.textBodyError}>{error}</Text>
                 ) : undefined}
             </View>
-            <CustomButton text='Find people I follow' buttonConfig={{onPress: () => {navigation.navigate("TwitterModal");}}}/>
+            <CustomButton text='Find people I follow on Twitter' buttonConfig={{onPress: () => {navigation.navigate("TwitterModal");}}}/>
         </View>
     );
 };

@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
-
 import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";

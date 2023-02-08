@@ -11,7 +11,8 @@ const UsernameScreen = ({ navigation, route }) => {
     const [available, setAvailable] = useState();
     const [isFetching, setIsFetching] = useState();
 
-    const { privKey, isImport, publishProfile } = route.params;
+    const { privKey, isImport, publishProfile, updateData, oldData } = route.params;
+    console.log(oldData)
 
     const fetchAvailableUsernames = async () => {
         setError(false)
@@ -30,12 +31,20 @@ const UsernameScreen = ({ navigation, route }) => {
     };
 
     const nextHandler = (address) => {
-        if (isImport && !publishProfile) {
-            console.log(privKey);
+        if (isImport && updateData === 'none') {
             navigation.navigate("LoadingProfileScreen", {
                 privKey,
                 address,
                 publishProfile: false,
+            });
+            return;
+        } else if (isImport && updateData === 'ln') {
+            navigation.navigate("CreateProfileScreen", {
+                privKey,
+                address,
+                publishProfile: true,
+                oldData,
+                updateData
             });
             return;
         }

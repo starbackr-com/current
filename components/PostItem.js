@@ -172,7 +172,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                             });
                             if (result.data?.message?.status === "SUCCEEDED") {
                                 setIsLoading(false);
-                                alert("Success!");
+                                zapSuccess();
                                 return;
                             }
                             console.log(result);
