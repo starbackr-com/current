@@ -108,9 +108,9 @@ const ResultCard = ({ pk }) => {
             <Text style={globalStyles.textBodyBold}>{user?.name || pk}</Text>
             <Text style={globalStyles.textBody}>{user?.about}</Text>
             {followedPubkeys.includes(pk) ? (
-                <CustomButton text="Follow" />
+                <CustomButton text="Follow" buttonConfig={{onPress: () => {followUser(pk)}}}/>
             ) : (
-                <CustomButton text="Unfollow" />
+                <CustomButton text="Unfollow" buttonConfig={{onPress: () => {unfollowUser(pk)}}}/>
             )}
         </View>
     );
