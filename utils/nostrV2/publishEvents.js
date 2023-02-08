@@ -75,7 +75,7 @@ export const publishEvent = async (content) => {
                         return;
                     });
                     pub.on("failed", (error) => {
-                        console.log(error);
+                        cconsole.log(`${error} from ${relay.url}`);
                         clearTimeout(timer);
                         reject();
                         return;

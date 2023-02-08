@@ -30,7 +30,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "io.getcurrent.current"
+      "package": "io.getcurrent.current",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

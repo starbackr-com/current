@@ -15,11 +15,10 @@ import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import { SvgCss } from "react-native-svg";
+import { useEffect } from "react";
 
 const CreateProfileScreen = ({ navigation, route }) => {
-    const [bio, setBio] = useState(
-        `This profile was created using current | https://getcurrent.io`
-    );
+    const [bio, setBio] = useState();
     const [checked, setChecked] = useState(true);
     const device = useWindowDimensions();
     let data;
@@ -29,6 +28,14 @@ const CreateProfileScreen = ({ navigation, route }) => {
     const changeHandler = () => {
         setChecked((prev) => !prev);
     };
+
+    useEffect(() => {
+        if (oldData && JSON.parse(oldData?.content)?.about.length > 0) {
+            setBio(JSON.parse(oldData.content)?.about || 'This profile was created using current | https://getcurrent.io')
+        } 
+    }, [])
+
+    console.log(JSON.parse(oldData.content).lud16)
 
     if (image) {
         data = (
