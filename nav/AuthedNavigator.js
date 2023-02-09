@@ -16,6 +16,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import PostMenuModal from "../views/PostMenuModal";
 import PostView from "../views/post/PostView";
+import FullScreenImage from "../components/Images/FullScreenImage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -168,6 +169,11 @@ const AuthedNavigator = () => {
                     name="ProfileModal"
                     component={ProfileScreen}
                     options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="ImageModal"
+                    component={FullScreenImage}
+                    options={{ presentation: "transparentModal" }}
                 />
                 <Stack.Screen
                     name="PostMenuModal"

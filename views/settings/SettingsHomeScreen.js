@@ -11,6 +11,7 @@ import colors from "../../styles/colors";
 import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import {removeData} from '../../utils/cache/asyncStorage'
+import FeedImage from "../../components/Images/FeedImage";
 
 const settings = ["Payments", "Backup", "Network"];
 
@@ -72,6 +73,7 @@ const SettingsHomeScreen = ({ navigation }) => {
                     text="Log Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
+                <FeedImage/>
             </View>
             <Text
                 style={[
