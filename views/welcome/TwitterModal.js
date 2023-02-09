@@ -99,13 +99,8 @@ const EnterHandleScreen = ({ navigation }) => {
 };
 
 const UserCard = ({ data, isSelected, onClick }) => {
-    const [image, setImage] = useState();
-    const fallbackImg =
-        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
-
-    useEffect(() => {
-        setImage(data.profile);
-    }, []);
+    const [error, setError]=useState(false);
+    const fallbackImg = "https://i.current.fyi/profile/default/placeholder.png";
 
     return (
         <Pressable
@@ -125,7 +120,7 @@ const UserCard = ({ data, isSelected, onClick }) => {
             onPress={onClick}
         >
             <Image
-                source={{ uri: image }}
+                source={{ uri: data.profile }}
                 style={{
                     width: 40,
                     height: 40,
@@ -133,8 +128,13 @@ const UserCard = ({ data, isSelected, onClick }) => {
                     marginLeft: 5,
                 }}
                 onError={() => {
-                    setImage(fallbackImg);
+                    setError(true);
                 }}
+                source={
+                error
+                  ? fallbackImg
+                  : { uri: data.profile }
+               }
             />
             <Text
                 style={[globalStyles.textBodyS, { flex: 1, flexWrap: "wrap" }]}

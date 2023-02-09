@@ -32,10 +32,10 @@ const CreateProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (oldData && JSON.parse(oldData?.content)?.about.length > 0) {
             setBio(JSON.parse(oldData.content)?.about || 'This profile was created using current | https://getcurrent.io')
-        } 
+        }
     }, [])
 
-    console.log(JSON.parse(oldData.content).lud16)
+    //console.log(JSON.parse(oldData.content).lud16)
 
     if (image) {
         data = (
