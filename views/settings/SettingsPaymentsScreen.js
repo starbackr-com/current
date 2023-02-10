@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, KeyboardAvoidingView } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
@@ -8,11 +8,15 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { setZapAmount } from "../../features/userSlice";
 import { storeData } from "../../utils/cache/asyncStorage";
+import { useHeaderHeight } from "@react-navigation/elements";
+
 
 const SettingsPaymentsScreen = ({ navigation }) => {
     const { zapAmount } = useSelector((state) => state.user);
     const [zapValueInput, setZapValueInput] = useState();
     const dispatch = useDispatch();
+
+    const headerHeight = useHeaderHeight();
 
     useEffect(() => {
         setZapValueInput(zapAmount);
@@ -27,7 +31,7 @@ const SettingsPaymentsScreen = ({ navigation }) => {
         }
     };
     return (
-        <View style={[globalStyles.screenContainer]}>
+        <KeyboardAvoidingView style={[globalStyles.screenContainer]} keyboardVerticalOffset={headerHeight} behavior='padding'>
             <Text style={globalStyles.textH2}>Payment Settings</Text>
             <View style={{ flex: 2, width: '80%'}}>
                 <Input
@@ -53,7 +57,7 @@ const SettingsPaymentsScreen = ({ navigation }) => {
                     }}
                 />
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

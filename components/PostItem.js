@@ -111,9 +111,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
                     user.name || user.pubkey
-                }?
-                
-(Hold Zap-Icon for custom amount)`,
+                }?`,
                 [
                     {
                         text: "OK",
@@ -157,9 +155,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
                     user.name || user.pubkey
-                }?
-                
-(Hold Zap-Icon for custom amount)`,
+                }?`,
                 [
                     {
                         text: "OK",
