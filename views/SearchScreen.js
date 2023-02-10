@@ -2,10 +2,9 @@ import { View, Text } from "react-native";
 import React, { useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import { FlashList } from "@shopify/flash-list";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import CustomButton from "../components/CustomButton";
 import { Pressable } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import colors from "../styles/colors";
 import Input from "../components/Input";
 import { decodePubkey } from "../utils/nostr/keys";
@@ -13,6 +12,7 @@ import { followUser, unfollowUser } from "../utils/users";
 import { getUserData, updateFollowedUsers } from "../utils/nostrV2/getUserData";
 import { Image } from "expo-image";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useNavigation } from "@react-navigation/native";
 
 const hexRegex = /^[0-9a-f]{64}$/i;
 
@@ -89,6 +89,7 @@ const FollowerScreen = () => {
 const ResultCard = ({ pk }) => {
     const user = useSelector((state) => state.messages.users[pk]);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const navigation = useNavigation();
     return (
         <View
             style={{
@@ -99,24 +100,44 @@ const ResultCard = ({ pk }) => {
                 alignItems: "center",
             }}
         >
-            <Image
-                source={
-                    user?.picture || require("../assets/user_placeholder.jpg")
-                }
-                style={{ height: 50, width: 50, borderRadius: 25 }}
-            />
-            <Text style={globalStyles.textBodyBold}>{user?.name || pk}</Text>
-            <Text style={globalStyles.textBody}>{user?.about}</Text>
+            <Pressable style={{borderWidth: 1, borderColor: colors.primary500, alignItems: 'center', borderRadius: 10, marginBottom: 12, padding: 6, backgroundColor: colors.backgroundPrimary}} onPress={() => {navigation.navigate('ProfileModal', {pubkey: pk})}}>
+                <Image
+                    source={
+                        user?.picture ||
+                        require("../assets/user_placeholder.jpg")
+                    }
+                    style={{ height: 50, width: 50, borderRadius: 25 }}
+                />
+                <Text style={globalStyles.textBodyBold}>
+                    {user?.name || pk}
+                </Text>
+                <Text style={globalStyles.textBody}>{user?.about}</Text>
+            </Pressable>
+
             {followedPubkeys.includes(pk) ? (
-                <CustomButton text="Follow" buttonConfig={{onPress: () => {followUser(pk)}}}/>
+                <CustomButton
+                    text="Unfollow"
+                    buttonConfig={{
+                        onPress: () => {
+                            unfollowUser(pk);
+                        },
+                    }}
+                />
             ) : (
-                <CustomButton text="Unfollow" buttonConfig={{onPress: () => {unfollowUser(pk)}}}/>
+                <CustomButton
+                    text="Follow"
+                    buttonConfig={{
+                        onPress: () => {
+                            followUser(pk);
+                        },
+                    }}
+                />
             )}
         </View>
     );
 };
 
-const SearchScreen = ({navigation}) => {
+const SearchScreen = ({ navigation }) => {
     const [input, setInput] = useState();
     const [result, setResult] = useState();
     const [error, setError] = useState();
@@ -206,14 +227,28 @@ const SearchScreen = ({navigation}) => {
                     buttonConfig={{ onPress: searchHandler }}
                 />
             </View>
-            <View style={{ flex: 1, justifyContent: "center", width: '100%', alignItems: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    width: "100%",
+                    alignItems: "center",
+                }}
+            >
                 {result ? <ResultCard pk={result} /> : undefined}
                 {isLoading ? <LoadingSpinner size={64} /> : undefined}
                 {error ? (
                     <Text style={globalStyles.textBodyError}>{error}</Text>
                 ) : undefined}
             </View>
-            <CustomButton text='Find people I follow on Twitter' buttonConfig={{onPress: () => {navigation.navigate("TwitterModal");}}}/>
+            <CustomButton
+                text="Find people I follow on Twitter"
+                buttonConfig={{
+                    onPress: () => {
+                        navigation.navigate("TwitterModal");
+                    },
+                }}
+            />
         </View>
     );
 };
