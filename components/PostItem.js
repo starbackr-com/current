@@ -33,11 +33,14 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     }));
 
     const parseMentions = useCallback((event) => {
-        if (event.tags.length < 1) {
+        if (event.mentions.length < 1) {
             return event.content;
         }
         let content = event.content;
         content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
+            console.log(i)
+            console.log(event.mentions[i - 1])
+            console.log(event)
             return (
                 <Text
                     style={{ color: colors.primary500 }}
@@ -48,7 +51,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     }}
                     key={i}
                 >
-                    {event.mentions[i - 1].mention}
+                    {event.mentions[i - 1]?.mention}
                 </Text>
             );
         });

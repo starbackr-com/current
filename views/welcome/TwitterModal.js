@@ -67,7 +67,7 @@ const EnterHandleScreen = ({ navigation }) => {
                         setError(false);
                         setHandle(e);
                     },
-                    autoCapitalize: false,
+                    autoCapitalize: "none",
                     autoCorrect: false,
                     autoComplete: "off",
                 }}
@@ -99,7 +99,7 @@ const EnterHandleScreen = ({ navigation }) => {
 };
 
 const UserCard = ({ data, isSelected, onClick }) => {
-    const [error, setError]=useState(false);
+    const [error, setError] = useState(false);
     const fallbackImg = "https://i.current.fyi/profile/default/placeholder.png";
 
     return (
@@ -120,7 +120,6 @@ const UserCard = ({ data, isSelected, onClick }) => {
             onPress={onClick}
         >
             <Image
-                source={{ uri: data.profile }}
                 style={{
                     width: 40,
                     height: 40,
@@ -130,11 +129,7 @@ const UserCard = ({ data, isSelected, onClick }) => {
                 onError={() => {
                     setError(true);
                 }}
-                source={
-                error
-                  ? fallbackImg
-                  : { uri: data.profile }
-               }
+                source={error ? fallbackImg : { uri: data.profile }}
             />
             <Text
                 style={[globalStyles.textBodyS, { flex: 1, flexWrap: "wrap" }]}
