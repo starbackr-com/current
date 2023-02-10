@@ -1,6 +1,7 @@
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
 import { connectedRelays } from "./relay";
+const allSettled = require('promise.allsettled');
 
 export const publishKind0 = async (address, bio, imageUrl) => {
     const username = address.split("@")[0];
@@ -24,7 +25,7 @@ export const publishKind0 = async (address, bio, imageUrl) => {
     };
     event.id = getEventHash(event);
     event.sig = signEvent(event, privKey);
-    const successes = await Promise.allSettled(
+    const successes = await allSettled(
         connectedRelays.map((relay) => {
             return new Promise((resolve, reject) => {
                 let pub = relay.publish(event);
@@ -62,7 +63,7 @@ export const publishEvent = async (content) => {
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, privKey);
-        const successes = await Promise.allSettled(
+        const successes = await allSettled(
             connectedRelays.map((relay) => {
                 return new Promise((resolve, reject) => {
                     let pub = relay.publish(event);
@@ -109,7 +110,7 @@ export const publishReply = async (content, parentEvent) => {
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, sk);
-        const successes = await Promise.allSettled(
+        const successes = await allSettled(
             connectedRelays.map((relay) => {
                 return new Promise((resolve, reject) => {
                     let pub = relay.publish(event);

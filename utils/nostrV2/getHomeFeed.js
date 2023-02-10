@@ -1,9 +1,10 @@
 import { connectedRelays } from "./relay";
 import { Event } from "./Event";
+const allSettled = require('promise.allsettled');
 
 export const getHomeFeed = async (pubkeys) => {
     console.log('Homefeed...')
-    return Promise.allSettled(
+    return allSettled(
         connectedRelays.map((relay) => new Promise((resolve, reject) => {
             let sub = relay.sub([
                 {

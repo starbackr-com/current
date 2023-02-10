@@ -42,7 +42,9 @@
     "expo-status-bar": "~1.4.2",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
     "light-bolt11-decoder": "^2.1.0",
+    "lottie-react-native": "5.1.4",
     "nostr-tools": "^1.2.0",
+    "promise.allsettled": "^1.0.6",
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-gesture-handler": "~2.8.0",
@@ -60,8 +62,7 @@
     "readable-stream": "^1.0.33",
     "stream-browserify": "^1.0.0",
     "text-encoding": "^0.7.0",
-    "text-encoding-polyfill": "^0.6.7",
-    "lottie-react-native": "5.1.4"
+    "text-encoding-polyfill": "^0.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

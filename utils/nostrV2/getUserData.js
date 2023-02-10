@@ -1,10 +1,11 @@
 import { store } from "../../store/store";
 import { Event } from "./Event";
 import { connectedRelays } from "./relay";
+const allSettled = require('promise.allsettled');
 
 export const updateFollowedUsers = async () => {
     const pubkeys = store.getState().user.followedPubkeys;
-    return Promise.allSettled(
+    return allSettled(
         connectedRelays.map(
             (relay) =>
                 new Promise((resolve, reject) => {
@@ -33,7 +34,7 @@ export const updateFollowedUsers = async () => {
 };
 
 export const getUserData = async (pubkeysInHex) => {
-    return Promise.allSettled(
+    return allSettled(
         connectedRelays.map(
             (relay) =>
                 new Promise((resolve, reject) => {
@@ -62,7 +63,7 @@ export const getUserData = async (pubkeysInHex) => {
 };
 
 export const getOldKind0 = async (pubkeyInHex) => {
-    return Promise.allSettled(
+    return allSettled(
         connectedRelays.map(
             (relay) =>
                 new Promise((resolve, reject) => {
@@ -96,4 +97,3 @@ export const getOldKind0 = async (pubkeyInHex) => {
             .map((promise) => promise.value)
     );
 };
-

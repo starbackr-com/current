@@ -7,7 +7,7 @@
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "jsEngine": "jsc",
+    "jsEngine": "hermes",
     "owner": "lightningdigitalentertainment",
     "splash": {
       "image": "./assets/splash.png",
@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "17"
+      "buildNumber": "18"
     },
     "android": {
       "adaptiveIcon": {

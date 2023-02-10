@@ -1,4 +1,6 @@
 import { relayInit } from "nostr-tools";
+const allSettled = require('promise.allsettled');
+
 
 export let relays;
 export let connectedRelays;
@@ -9,7 +11,7 @@ export const initRelays = async () => {
     const urls = data.result;
 
     relays = urls.map((url) => relayInit(url.relay));
-    connectedRelays = await Promise.allSettled(
+    connectedRelays = await allSettled(
         relays.map((relay) => {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -44,7 +46,7 @@ export const initRelays = async () => {
 
 export const reconnectRelays = async () => {
     const unconnectedRelays = relays.filter((relay) => relay.status !== 1);
-    const reconnectedRelays = await Promise.allSettled(
+    const reconnectedRelays = await allSettled(
         unconnectedRelays.map(
             (relay) =>
                 new Promise(async (resolve, reject) => {

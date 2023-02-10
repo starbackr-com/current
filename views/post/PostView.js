@@ -89,7 +89,7 @@ const PostModal = ({ navigation, route }) => {
             <BackButton onPress={() => {navigation.goBack()}}/>
             </View>
             <Input
-                inputStyle={{ flex: 3, maxHeight: "50%" }}
+                inputStyle={{ flex: 3, maxHeight: "30%" }}
                 textInputConfig={{
                     onChangeText: setContent,
                     multiline: true,

@@ -1,8 +1,9 @@
 import { connectedRelays } from "./relay";
+const allSettled = require('promise.allsettled');
 
 export const getReplies = async (parentId) => {
     const replies = {}
-    await Promise.allSettled(
+    await allSettled(
         connectedRelays.map((relay) => new Promise((resolve, reject) => {
             let events = []
             let sub = relay.sub([
