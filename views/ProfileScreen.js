@@ -83,7 +83,6 @@ const ProfileScreen = ({ route, navigation }) => {
     }, []);
 
     const getFeed = async () => {
-        console.log(user.pubkey);
         const response = await getUsersPosts(user.pubkey);
         const array = Object.keys(response)
             .map((key) => response[key])
@@ -110,6 +109,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 {
                     paddingHorizontal: 0,
                     paddingTop: 0,
+                    alignItems: 'center'
                 },
             ]}
         >
@@ -135,15 +135,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     color={colors.primary500}
                 />
             </Pressable>
-            <View style={{ alignItems: "flex-start", width: "100%" }}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        padding: 12,
-                    }}
-                >
+            <View style={{ width: "100%", alignItems: 'center' }}>
                     <Image
                         style={{
                             width: 74,
@@ -157,18 +149,16 @@ const ProfileScreen = ({ route, navigation }) => {
                             require("../assets/user_placeholder.jpg")
                         }
                     />
-                </View>
                 <View style={{ padding: 12 }}>
                     <Text
                         style={[
                             globalStyles.textBodyBold,
-                            { textAlign: "left" },
                         ]}
                     >
                         {user?.name || pubkey}
                     </Text>
                     <Text
-                        style={[globalStyles.textBody, { textAlign: "left" }]}
+                        style={[globalStyles.textBody]}
                     >
                         {user?.about}
                     </Text>

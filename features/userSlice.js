@@ -18,9 +18,11 @@ export const userSlice = createSlice({
             state.followedPubkeys = [...state.followedPubkeys, newFollow];
         },
         unfollowPubkey: (state, action) => {
+            console.log(state.followedPubkeys.length)
             const newArray = state.followedPubkeys.filter(
                 (pubkey) => pubkey !== action.payload
             );
+            console.log(newArray.length)
             state.followedPubkeys = newArray;
         },
         mutePubkey: (state, action) => {

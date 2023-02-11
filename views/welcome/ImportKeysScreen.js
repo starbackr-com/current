@@ -11,6 +11,7 @@ import { saveValue } from "../../utils/secureStore";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
 import { getOldKind0 } from "../../utils/nostrV2/getUserData";
+import { followPubkey } from "../../features/userSlice";
 
 const ImportKeysScreen = ({ navigation }) => {
     const input1 = useRef();
