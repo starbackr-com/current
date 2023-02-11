@@ -1,15 +1,38 @@
-import { View, Text, Button } from 'react-native'
-import React from 'react'
-import { Image } from 'expo-image'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, Button, Pressable } from "react-native";
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Image } from "expo-image";
+import colors from "../../styles/colors";
 
-const FeedImage = () => {
-  const navigation = useNavigation();
-  return (
-    <View>
-      <Button title='Image' onPress={() => {navigation.navigate('ImageModal', {imageUri: ['https://pbs.twimg.com/media/FodTWXvWIAAQxn9?format=jpg&name=large','https://pbs.twimg.com/media/Foc4UTYWYAEPLXb?format=jpg&name=large']})}}/>
-    </View>
-  )
-}
+const FeedImage = ({ size, images }) => {
+    const navigation = useNavigation();
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+    return (
+        <Pressable
+            style={{ height: size, width: size, borderRadius: size / 10 }}
+            onPress={() => {
+                navigation.navigate("ImageModal", { imageUri: images });
+            }}
+        >
+            <Image
+                source={images[0]}
+                style={{ height: size, width: size, borderRadius: size / 10 }}
+                contentFit="cover"
+                placeholder={blurhash}
+            />
+            {images.length > 1 ? (
+                <Text
+                    style={{
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0,
+                        backgroundColor: colors.primary500,
+                    }}
+                >{`+${images.length - 1}`}</Text>
+            ) : undefined}
+        </Pressable>
+    );
+};
 
-export default FeedImage
+export default FeedImage;

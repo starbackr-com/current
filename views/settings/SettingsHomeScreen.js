@@ -73,7 +73,7 @@ const SettingsHomeScreen = ({ navigation }) => {
                     text="Log Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
-                <FeedImage/>
+                <FeedImage size={100} images={['https://pbs.twimg.com/media/FodTWXvWIAAQxn9?format=jpg&name=large','https://pbs.twimg.com/media/Foc4UTYWYAEPLXb?format=jpg&name=large' , 'https://pbs.twimg.com/media/FopBqndWYAIb9UX?format=jpg&name=large']}/>
             </View>
             <Text
                 style={[

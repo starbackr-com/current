@@ -16,6 +16,7 @@ import { Image } from "expo-image";
 
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
+import FeedImage from "./Images/FeedImage";
 
 const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const [isLoading, setIsLoading] = useState();
@@ -38,9 +39,9 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
         }
         let content = event.content;
         content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-            console.log(i)
-            console.log(event.mentions[i - 1])
-            console.log(event)
+            console.log(i);
+            console.log(event.mentions[i - 1]);
+            console.log(event);
             return (
                 <Text
                     style={{ color: colors.primary500 }}
@@ -87,7 +88,9 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "Settings",
                         onPress: () => {
-                            navigation.navigate('Settings', {screen: 'Payments'})
+                            navigation.navigate("Settings", {
+                                screen: "Payments",
+                            });
                         },
                     },
                     {
@@ -106,7 +109,8 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             const url = decodeLnurl(dest);
             const response = await fetch(url);
             const { callback, minSendable } = await response.json();
-            const amount = minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+            const amount =
+                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -150,7 +154,8 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 `https://${domain}/.well-known/lnurlp/${username}`
             );
             const { callback, minSendable } = await response.json();
-            const amount = minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+            const amount =
+                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -196,7 +201,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     return (
         <View
             style={{
-                height: (height / 100) * 80,
+                height: (height / 100) * 90,
                 width: width - 32,
                 justifyContent: "space-between",
                 flexDirection: "row",
@@ -209,7 +214,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         backgroundColor: "#222222",
                         marginBottom: 16,
                         width: "85%",
-                        height: "80%",
+                        height: "90%",
                         padding: 12,
                         borderRadius: 10,
                         justifyContent: "space-between",
@@ -230,21 +235,13 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     >
                         {item.mentions ? parseMentions(item) : item.content}
                     </Text>
+                    {item.image ? (
+                        <FeedImage
+                            size={((width - 32) / 100) * 70}
+                            images={[item.image]}
+                        />
+                    ) : undefined}
                 </View>
-
-                {item.image ? (
-                    <Image
-                        style={{
-                            width: "100%",
-                            height: "30%",
-                            borderRadius: 10,
-                            marginTop: 16,
-                        }}
-                        source={item.image}
-                        placeholder={blurhash}
-                        transition={1000}
-                    />
-                ) : undefined}
                 <Text
                     style={[
                         globalStyles.textBody,

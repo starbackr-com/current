@@ -13,6 +13,7 @@ import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
+import GetStartedItems from '../components/GetStartedItems'
 
 const HomeStack = createStackNavigator();
 
@@ -93,7 +94,7 @@ const HomeScreen = ({ navigation }) => {
                             renderItem={renderPost}
                             snapToAlignment="start"
                             decelerationRate="fast"
-                            snapToInterval={(height / 100) * 80}
+                            snapToInterval={(height / 100) * 90}
                             estimatedItemSize={height / 2}
                             directionalLockEnabled
                             onRefresh={async () => {

@@ -134,7 +134,7 @@ export class Event {
                 content: newMessage,
                 sig,
                 root,
-                image: imageURL ? imageURL[0] : undefined,
+                image: imageURL ? imageURL : undefined,
                 invoice,
                 mentions,
             };
