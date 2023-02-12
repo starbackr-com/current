@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "current",
+    "name": "Current",
     "slug": "current",
     "version": "0.0.1",
     "orientation": "portrait",
@@ -23,15 +23,15 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "17"
+      "buildNumber": "20"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 2
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"
