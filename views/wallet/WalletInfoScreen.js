@@ -10,7 +10,11 @@ import Input from "../../components/Input";
 
 const WalletInfoScreen = ({ navigation }) => {
     const username = useSelector((state) => state.auth.username);
-    let lnurl = encodeLnurl("https://getcurrent.io/.well-known/lnurlp/egge");
+    let lnurl;
+    if (username) {
+        const [name, domain] = username.split('@')
+        lnurl = encodeLnurl(`https://${domain}/.well-known/lnurlp/${username}`)
+    }
     return (
         <ScrollView style={globalStyles.screenContainerScroll}>
             <View style={{ alignItems: "center" }}>
@@ -32,9 +36,9 @@ const WalletInfoScreen = ({ navigation }) => {
                     inputStyle={{ marginBottom: 16 }}
                 />
                 <Text style={globalStyles.textBody}>Static Tip QR Code (LNURL)</Text>
-                <View style={styles.qrContainer}>
+                {lnurl ? <View style={styles.qrContainer}>
                     <QRCode value={lnurl} />
-                </View>
+                </View> : undefined}
             </View>
             <View style={{height:32}}></View>
         </ScrollView>
