@@ -10,10 +10,11 @@ import Input from "../../components/Input";
 
 const WalletInfoScreen = ({ navigation }) => {
     const username = useSelector((state) => state.auth.username);
+    console.log(username)
     let lnurl;
     if (username) {
         const [name, domain] = username.split('@')
-        lnurl = encodeLnurl(`https://${domain}/.well-known/lnurlp/${username}`)
+        lnurl = encodeLnurl(`https://${domain}/.well-known/lnurlp/${name}`)
     }
     return (
         <ScrollView style={globalStyles.screenContainerScroll}>

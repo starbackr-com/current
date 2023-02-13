@@ -158,6 +158,7 @@ const ProfileScreen = ({ route, navigation }) => {
                         {user?.name || pubkey}
                     </Text>
                     {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
+                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user.lud16}</Text>
                     <Text
                         style={[globalStyles.textBody]}
                     >
@@ -166,7 +167,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     <Text
                         style={[
                             globalStyles.textBodyS,
-                            { textAlign: "left", color: "grey" },
+                            { textAlign: "center", color: "grey", marginBottom: 24 },
                             copied ? { color: colors.primary500 } : undefined,
                         ]}
                         onPress={copyHandler}

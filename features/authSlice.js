@@ -17,7 +17,7 @@ export const authSlice = createSlice({
             state.walletBearer = action.payload.bearer;
             const now = new Date();
             state.walletExpires = now.setHours(now.getHours() + 2);
-            state.address = action.payload.address;
+            state.username = action.payload.username;
             state.pubKey = action.payload.pubKey;
         },
         setBearer: (state, action) => {
