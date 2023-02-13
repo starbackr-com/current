@@ -10,7 +10,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import colors from "../../styles/colors";
 import CustomButton from "../../components/CustomButton";
 
-const TxItem = ({ type, amount, memo }) => {
+const TxItem = ({ type, amount, memo, item }) => {
+    if (type === 'in') {
+        console.log(item)
+    }
     return (
         <View
             style={{
@@ -45,6 +48,8 @@ const TxItem = ({ type, amount, memo }) => {
 const WalletTransactionScreen = ({navigation}) => {
     const { data: incoming } = useGetIncomingTransactionsQuery();
     const { data: outgoing } = useGetOutgoingTransactionsQuery();
+
+    const renderCard = () => {};
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textBodyS}>Incoming</Text>
@@ -67,6 +72,7 @@ const WalletTransactionScreen = ({navigation}) => {
                     data={outgoing}
                     renderItem={({ item }) => (
                         <TxItem
+                            item={item}
                             type="out"
                             amount={item.amount}
                             memo={item.memo}

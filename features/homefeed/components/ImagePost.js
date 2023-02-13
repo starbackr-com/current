@@ -293,7 +293,7 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         borderBottomRightRadius: 10,
                         borderBottomLeftRadius: 10,
                     }, pressed ? {backgroundColor: '#333333'} : undefined]}
-                    onPress={() => {navigation.navigate('ReadMoreModal', {content})}}
+                    onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content})} : undefined}
                 >
                     <Text
                         onTextLayout={textLayout}

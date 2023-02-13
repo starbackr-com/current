@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "current",
+    "name": "Current",
     "slug": "current",
     "version": "0.0.1",
     "orientation": "portrait",
@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "17"
+      "buildNumber": "21"
     },
     "android": {
       "adaptiveIcon": {

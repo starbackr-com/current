@@ -217,7 +217,7 @@ const SearchScreen = ({ navigation }) => {
                 <Input
                     textInputConfig={{
                         onChangeText: setInput,
-                        autoCapitalize: false,
+                        autoCapitalize: 'none',
                         autocorrect: false,
                     }}
                 />
