@@ -19,7 +19,7 @@ const parseContent = (message) => {
         })
         .replace(invoiceRegex, function (url) {
             return "";
-        });
+        }).trim();
     return { imageURL, newMessage, invoice };
 };
 
@@ -137,6 +137,7 @@ export class Event {
                 image: imageURL ? imageURL : undefined,
                 invoice,
                 mentions,
+                type: imageURL ? 'image' : 'text'
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {

@@ -13,7 +13,8 @@ import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
-import GetStartedItems from '../components/GetStartedItems'
+import GetStartedItems from "../components/GetStartedItems";
+import ImagePost from "../features/homefeed/components/ImagePost";
 
 const HomeStack = createStackNavigator();
 
@@ -27,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
-    const {followedPubkeys, zapAmount} = useSelector((state) => state.user);
+    const { followedPubkeys, zapAmount } = useSelector((state) => state.user);
     const messages = useSelector((state) => state.messages.messages);
     const rootNotes = messages.filter((message) => message.root === true);
 
@@ -39,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
         if (!twitterModalShown) {
             navigation.navigate("TwitterModal");
             dispatch(setTwitterModal());
-            storeData('twitterModalShown', "true");
+            storeData("twitterModalShown", "true");
         }
     };
 
@@ -55,29 +56,48 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const renderPost = useCallback(
-        ({ item }) => (
-            <PostItem
-                item={item}
-                height={height}
-                width={width}
-                user={users[item.pubkey]}
-                zapSuccess={playZapAnimation}
-                zapAmount={zapAmount}
-            />
-        ),
+        ({ item }) => {
+            if (item.type === "image") {
+                return (
+                    <ImagePost
+                        item={item}
+                        height={height}
+                        width={width}
+                        user={users[item.pubkey]}
+                        zapSuccess={playZapAnimation}
+                        zapAmount={zapAmount}
+                    />
+                );
+            } else {
+                return (
+                    <PostItem
+                        item={item}
+                        height={height}
+                        width={width}
+                        user={users[item.pubkey]}
+                        zapSuccess={playZapAnimation}
+                        zapAmount={zapAmount}
+                    />
+                );
+            }
+        },
         [height, width, users, zapAmount]
     );
 
     const playZapAnimation = () => {
         setPlayAnimation(true);
         setTimeout(() => {
-            setPlayAnimation(false)
-        },1000)
+            setPlayAnimation(false);
+        }, 1000);
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {loadHomefeed()}, 500)
-        return () => {clearTimeout(timer)};
+        const timer = setTimeout(() => {
+            loadHomefeed();
+        }, 500);
+        return () => {
+            clearTimeout(timer);
+        };
     }, [followedPubkeys]);
 
     return (
@@ -103,35 +123,38 @@ const HomeScreen = ({ navigation }) => {
                                 setIsFetching(false);
                             }}
                             refreshing={isFetching}
-                            extraData={[users,zapAmount]}
+                            extraData={[users, zapAmount]}
+                            getItemType={(item) => item.type}
                         />
                     </View>
                 ) : (
                     <LoadingSpinner size={32} />
                 )}
-                {playAnimation ? <View
-                    style={{
-                        position: "absolute",
-                        right: 0,
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Lottie
-                        autoPlay
-                        loop={false}
-                        ref={animation}
+                {playAnimation ? (
+                    <View
                         style={{
                             position: "absolute",
-                            width: width/100*80,
-                            height: width/100*80,
+                            right: 0,
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
-                        source={require("../assets/zap-success.json")}
-                    />
-                </View> : undefined}
+                    >
+                        <Lottie
+                            autoPlay
+                            loop={false}
+                            ref={animation}
+                            style={{
+                                position: "absolute",
+                                width: (width / 100) * 80,
+                                height: (width / 100) * 80,
+                            }}
+                            source={require("../assets/zap-success.json")}
+                        />
+                    </View>
+                ) : undefined}
             </View>
         </View>
     );

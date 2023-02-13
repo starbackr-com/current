@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import PostMenuModal from "../views/PostMenuModal";
 import PostView from "../views/post/PostView";
 import FullScreenImage from "../components/Images/FullScreenImage";
+import ReadMoreModal from "../features/homefeed/components/ReadMoreModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -68,13 +69,14 @@ const TabNavigator = ({ navigation }) => {
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
                 headerRight: () => (
-                    <View
+                    <Pressable
                         style={{
                             flexDirection: "row",
                             marginRight: 12,
                             alignItems: "center",
                             justifyContent: "center",
                         }}
+                        onPress={() => {navigation.navigate('Wallet');}}
                     >
                         <Text style={globalStyles.textBody}>
                             {data ? `${data.balance}` : "----"}
@@ -91,7 +93,7 @@ const TabNavigator = ({ navigation }) => {
                         >
                             S
                         </Text>
-                    </View>
+                    </Pressable>
                 ),
                 headerLeft: () => (
                     <Pressable
@@ -173,6 +175,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="ImageModal"
                     component={FullScreenImage}
+                    options={{ presentation: "transparentModal" }}
+                />
+                <Stack.Screen
+                    name="ReadMoreModal"
+                    component={ReadMoreModal}
                     options={{ presentation: "transparentModal" }}
                 />
                 <Stack.Screen

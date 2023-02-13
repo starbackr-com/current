@@ -13,7 +13,7 @@ export const walletApi = createApi({
             return headers;
         },
     }),
-    tagTypes: ["Balance"],
+    tagTypes: ["Balance", "Transaction"],
     endpoints: (builder) => ({
         postNewWallet: builder.mutation({
             query: ({ login, password, username }) => ({
@@ -50,7 +50,7 @@ export const walletApi = createApi({
                     description_hash: description,
                 },
             }),
-            invalidatesTags: ["Balance"],
+            invalidatesTags: ["Balance", "Transaction"],
         }),
         checkUsername: builder.query({
             query: (username) => `.well-known/nostr.json?name=${username}`,
@@ -61,16 +61,18 @@ export const walletApi = createApi({
                 method: "POST",
                 body: {
                     invoice,
-                    amount
+                    amount,
                 },
             }),
             invalidatesTags: ["Balance"],
         }),
         getIncomingTransactions: builder.query({
             query: () => `v2/invoices/incoming`,
+            providesTags: ["Transaction"],
         }),
         getOutgoingTransactions: builder.query({
             query: () => `v2/invoices/outgoing`,
+            providesTags: ["Transaction"],
         }),
     }),
 });
@@ -84,5 +86,5 @@ export const {
     usePostPaymentMutation,
     useLazyGetWalletBalanceQuery,
     useGetIncomingTransactionsQuery,
-    useGetOutgoingTransactionsQuery
+    useGetOutgoingTransactionsQuery,
 } = walletApi;
