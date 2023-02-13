@@ -82,7 +82,7 @@ export const getOldKind0 = async (pubkeyInHex) => {
                         allEvents.push(event);
                     });
                     sub.on("eose", () => {
-                        console.log('eose!')
+                        console.log("eose!");
                         sub.unsub();
                         clearTimeout(timer);
                         resolve(allEvents);
@@ -97,3 +97,53 @@ export const getOldKind0 = async (pubkeyInHex) => {
     );
 };
 
+export const getKind3Followers = async (pubkeyInHex) => {
+    const events = await Promise.allSettled(
+        connectedRelays.map(
+            (relay) =>
+                new Promise((resolve, reject) => {
+                    const allEvents = [];
+                    let sub = relay.sub([
+                        {
+                            authors: [pubkeyInHex],
+                            kinds: [3],
+                        },
+                    ]);
+                    let timer = setTimeout(() => {
+                        console.log(`${relay.url} timed out after 5 sec...`);
+                        reject();
+                        return;
+                    }, 5000);
+                    sub.on("event", (event) => {
+                        allEvents.push(event);
+                    });
+                    sub.on("eose", () => {
+                        console.log("eose!");
+                        sub.unsub();
+                        clearTimeout(timer);
+                        resolve(allEvents);
+                        return;
+                    });
+                })
+        )
+    ).then((result) =>
+        result
+            .filter((promise) => promise.status === "fulfilled")
+            .map((promise) => promise.value)
+    );
+    const array = [];
+    try {
+        events.forEach((event) =>
+            event[0]?.tags.forEach((tag) => array.push(tag[1]))
+        );
+        const deduped = [];
+        array.forEach((key) => {
+            if (!deduped.includes(key)) {
+                deduped.push(key);
+            }
+        });
+        return deduped;
+    } catch (e) {
+        console.log(e);
+    }
+};

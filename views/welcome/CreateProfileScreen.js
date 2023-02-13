@@ -35,8 +35,6 @@ const CreateProfileScreen = ({ navigation, route }) => {
         }
     }, [])
 
-    //console.log(JSON.parse(oldData.content).lud16)
-
     if (image) {
         data = (
             <Pressable
@@ -142,7 +140,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
             <Input
                 label="Name"
                 textInputConfig={{
-                    value: updateData === 'all' ? JSON.parse(oldData.content).name : address.split("@")[0],
+                    value: updateData === 'none' || updateData === 'ln' ? JSON.parse(oldData.content).name : address.split("@")[0],
                     editable: false,
                 }}
                 inputStyle={{ marginBottom: 16, color: colors.primary600 }}
@@ -150,7 +148,7 @@ const CreateProfileScreen = ({ navigation, route }) => {
             <Input
                 label="Tip Address"
                 textInputConfig={{
-                    value: updateData === 'all' || updateData === 'ln' ? JSON.parse(oldData.content).lud16 : address,
+                    value: updateData === 'none' || updateData === 'ln' ? JSON.parse(oldData.content).lud16 || address : address,
                     editable: false,
                 }}
                 inputStyle={{ marginBottom: 16, color: colors.primary600}}
