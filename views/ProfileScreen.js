@@ -68,6 +68,7 @@ const ProfileScreen = ({ route, navigation }) => {
     const { pubkey } = route.params;
     const [feed, setFeed] = useState();
     const [copied, setCopied] = useState();
+    const [verified, setVerified] = useState(false);
 
     const loggedInPubkey = useSelector((state) => state.auth.pubKey)
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
@@ -75,10 +76,25 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const user = users[pubkey]
 
+    const verifyNip05 = async (pubkey, nip05) => {
+        try {
+            const [name, domain] = nip05.split('@')
+            const response = await fetch(`https://${domain}/.well-known/nostr.json?name=${name}`)
+            const data = await response.json();
+            if (Object.values(data.names).includes(pubkey)) {
+                setVerified(true);
+            }
+        }
+        catch(e) {console.log(e)}
+    };
+
     useEffect(() => {
         if (!user) {
             console.log('Getting user data')
             getUserData([pubkey]);
+        }
+        if (user?.nip05) {
+            verifyNip05(user.pubkey, user.nip05)
         }
     }, []);
 
@@ -158,7 +174,7 @@ const ProfileScreen = ({ route, navigation }) => {
                         {user?.name || pubkey}
                     </Text>
                     {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
-                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user.lud16}</Text>
+                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user.nip05}<Ionicons name={verified ? 'checkbox' : 'close-circle'}/> </Text>
                     <Text
                         style={[globalStyles.textBody]}
                     >
