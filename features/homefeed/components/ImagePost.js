@@ -260,7 +260,8 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         width: "85%",
                         height: "90%",
                         borderRadius: 10,
-                        justifyContent: "space-evenly",
+                        justifyContent: "space-between",
+                        backgroundColor: colors.backgroundSecondary
                     },
                 ]}
             >
@@ -270,6 +271,8 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         padding: 12,
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
+                        borderBottomWidth: 1,
+                        borderColor: colors.primary500
                     }}
                 >
                     <Text
@@ -292,6 +295,8 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         padding: 12,
                         borderBottomRightRadius: 10,
                         borderBottomLeftRadius: 10,
+                        borderTopWidth: 1,
+                        borderColor: colors.primary500
                     }, pressed && hasMore ? {backgroundColor: '#333333'} : undefined]}
                     onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content, author: user?.name || pubkey})} : undefined}
                 >

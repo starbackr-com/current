@@ -29,7 +29,6 @@ const Root = () => {
             try {
                 await initRelays();
                 const privKey = await getValue("privKey");
-                const username = await getValue("username");
                 await loadAsync({
                     "Montserrat-Regular": require("./assets/Montserrat-Regular.ttf"),
                     "Montserrat-Bold": require("./assets/Montserrat-Bold.ttf"),
@@ -37,10 +36,11 @@ const Root = () => {
                 });
                 if (privKey) {
                     console.log("Initialising from storage...");
-                    const {data: {access_token}} = await loginToWallet(
+                    const {data: {access_token, username}} = await loginToWallet(
                         privKey
                     );
                     const pubKey = await getPublicKey(privKey)
+                    console.log(username)
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
                 }
                 await init();

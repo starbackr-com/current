@@ -28,9 +28,6 @@ const getAge = (timestamp) => {
 }; 
 
 const TxItem = ({ type, amount, memo, item }) => {
-    if (type === 'in') {
-        console.log(item)
-    }
     let status = 'red';
 
     if (item.status === 'created') {
@@ -61,11 +58,12 @@ const TxItem = ({ type, amount, memo, item }) => {
                     flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    overflow: 'hidden'
                 }}
             >
                 <Text style={globalStyles.textBody}>{amount}</Text>
-                <Text style={globalStyles.textBody}>{memo || ""}</Text>
-                <Text style={globalStyles.textBodyS}>{getAge(item.createdat)}</Text>
+                <Text style={[globalStyles.textBodyS, {maxWidth: '80%'}]}>{memo || ""}</Text>
+                <Text style={[globalStyles.textBodyS]}>{getAge(item.createdat)}</Text>
             </View>
         </View>
     );
@@ -74,8 +72,6 @@ const TxItem = ({ type, amount, memo, item }) => {
 const WalletTransactionScreen = ({navigation}) => {
     const { data: incoming } = useGetIncomingTransactionsQuery();
     const { data: outgoing } = useGetOutgoingTransactionsQuery();
-
-    const renderCard = () => {};
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textBodyS}>Incoming</Text>

@@ -11,7 +11,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
 
-const ReplyItem = ({ event, user }) => {
+const ReplyItem = ({ event, user, replies }) => {
+    if (event.tags.length > 2) {
+        console.log(event)
+    }
     const getAge = (timestamp) => {
         const now = new Date();
         const timePassedInMins = Math.floor(
@@ -64,18 +67,19 @@ const ReplyItem = ({ event, user }) => {
 const CommentScreen = ({ route, navigation }) => {
     const { eventId } = route?.params;
     const [replies, setReplies] = useState();
+    const [allReplies, setAllReplies] = useState();
     const [reply, setReply] = useState();
     const [sending, setSending] = useState(false);
 
     const users = useSelector((state) => state.messages.users);
 
     const getAllReplies = async () => {
-        const response = await getReplies(eventId);
+        const response = await getReplies([eventId]);
         const pubkeys = Object.keys(response).map(
             (key) => response[key].pubkey
         );
         const array = Object.keys(response).map((key) => response[key]);
-        array.forEach(item => {console.log(item)})
+        setAllReplies(array)
         const firstOrderReplies = array
             .filter(
                 (item) =>
@@ -136,7 +140,7 @@ const CommentScreen = ({ route, navigation }) => {
                     <FlashList
                         data={replies}
                         renderItem={({ item }) => (
-                            <ReplyItem event={item} user={users[item.pubkey]}/>
+                            <ReplyItem event={item} user={users[item.pubkey]} replies={allReplies.filter(reply => reply.tags.filter(tag => tag[0] === 'e').length > 1)}/>
                         )}
                         estimatedItemSize={80}
                         extraData={users}

@@ -1,6 +1,6 @@
 import { connectedRelays } from "./relay";
 
-export const getReplies = async (parentId) => {
+export const getReplies = async (parentIds) => {
     const replies = {}
     await Promise.allSettled(
         connectedRelays.map((relay) => new Promise((resolve, reject) => {
@@ -8,7 +8,7 @@ export const getReplies = async (parentId) => {
             let sub = relay.sub([
                 {
                     kinds: [1],
-                    '#e': [parentId]
+                    '#e': parentIds
                 },
             ]);
             sub.on("event", (event) => {
