@@ -157,6 +157,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     >
                         {user?.name || pubkey}
                     </Text>
+                    {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
                     <Text
                         style={[globalStyles.textBody]}
                     >
