@@ -292,15 +292,15 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         padding: 12,
                         borderBottomRightRadius: 10,
                         borderBottomLeftRadius: 10,
-                    }, pressed ? {backgroundColor: '#333333'} : undefined]}
-                    onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content})} : undefined}
+                    }, pressed && hasMore ? {backgroundColor: '#333333'} : undefined]}
+                    onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content, author: user?.name || pubkey})} : undefined}
                 >
                     <Text
                         onTextLayout={textLayout}
-                        style={{
+                        style={[globalStyles.textBody,{
                             opacity: 0,
                             position: "absolute",
-                        }}
+                        }]}
                     >
                         {content}
                     </Text>

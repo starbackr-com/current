@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect } from "react";
+import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import { FlashList } from "@shopify/flash-list";
 import {
@@ -10,9 +10,34 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import colors from "../../styles/colors";
 import CustomButton from "../../components/CustomButton";
 
+const getAge = (timestamp) => {
+    const now = new Date();
+    const timePassedInMins = Math.floor(
+        (now - new Date(timestamp * 1000)) / 1000 / 60
+    );
+
+    if (timePassedInMins < 60) {
+        return `${timePassedInMins}min ago`;
+    } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
+        return `${Math.floor(timePassedInMins / 60)}h ago`;
+    } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
+        return `${Math.floor(timePassedInMins / 1440)}d ago`;
+    } else {
+        return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
+    }
+}; 
+
 const TxItem = ({ type, amount, memo, item }) => {
     if (type === 'in') {
         console.log(item)
+    }
+    let status = 'red';
+
+    if (item.status === 'created') {
+        status = 'grey'
+    }
+    if (item.status === 'paid' && type === 'in') {
+        status = 'green'
     }
     return (
         <View
@@ -28,7 +53,7 @@ const TxItem = ({ type, amount, memo, item }) => {
         >
             <Ionicons
                 name={type === "in" ? "arrow-down" : "arrow-up"}
-                color={type === "in" ? "green" : "red"}
+                color={status}
                 size={24}
             />
             <View
@@ -40,6 +65,7 @@ const TxItem = ({ type, amount, memo, item }) => {
             >
                 <Text style={globalStyles.textBody}>{amount}</Text>
                 <Text style={globalStyles.textBody}>{memo || ""}</Text>
+                <Text style={globalStyles.textBodyS}>{getAge(item.createdat)}</Text>
             </View>
         </View>
     );
@@ -58,6 +84,7 @@ const WalletTransactionScreen = ({navigation}) => {
                     data={incoming}
                     renderItem={({ item }) => (
                         <TxItem
+                            item={item}
                             type="in"
                             amount={item.amount}
                             memo={item.memo}
@@ -81,7 +108,7 @@ const WalletTransactionScreen = ({navigation}) => {
                     estimatedItemSize={32}
                 />
             </View>
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
               <CustomButton text='Back' secondary buttonConfig={{onPress: () => {navigation.goBack()}}}/>
             </View>
         </View>
