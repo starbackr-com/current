@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setTwitterModal } from '../../features/introSlice';
+import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
 import { setZapAmount } from '../../features/userSlice';
 import { store } from '../../store/store';
 
@@ -26,11 +26,16 @@ export const getData = async (key) => {
 export const hydrateStore = async () => {
     const zapAmount = await getData('zapAmount')
     const twitterModalShown = await getData('twitterModalShown')
+    const getStartedItemsShown = await getData('getStartedItemsShown')
     if (zapAmount) {
         store.dispatch(setZapAmount(zapAmount))
     }
     if (twitterModalShown) {
         store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)))
+    }
+    if (getStartedItemsShown) {
+        const array = JSON.parse(getStartedItemsShown)
+        array.forEach(id => store.dispatch(setGetStartedItems(id)))
     }
 
 };

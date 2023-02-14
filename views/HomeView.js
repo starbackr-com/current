@@ -102,8 +102,8 @@ const HomeScreen = ({ navigation }) => {
     }, [followedPubkeys]);
 
     return (
-        <View style={globalStyles.screenContainer} onLayout={onLayoutViewWidth}>
-            {/* <GetStartedItems/> */}
+        <View style={[globalStyles.screenContainer, {paddingTop: 12}]} onLayout={onLayoutViewWidth}>
+            <GetStartedItems/>
             <View
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}

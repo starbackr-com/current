@@ -60,6 +60,12 @@ const SettingsHomeScreen = ({ navigation }) => {
         dispatch(resetAll());
     };
 
+    const introHandler = async () => {
+        await removeData(['twitterModalShown', 'getStartedItemsShown']);
+        dispatch(resetAll());
+    };
+
+
     return (
         <View style={globalStyles.screenContainer}>
             <View style={{ width: "100%", flex: 1 }}>
@@ -71,9 +77,15 @@ const SettingsHomeScreen = ({ navigation }) => {
                     )}
                 />
                 <CustomButton
+                    text="Reset Intro"
+                    buttonConfig={{ onPress: introHandler }}
+                    containerStyles={{marginBottom: 16}}
+                />
+                <CustomButton
                     text="Log Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
+                
             </View>
             <Text
                 style={[
