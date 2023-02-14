@@ -57,7 +57,10 @@ const GetStartedItems = () => {
             id: 1,
             name: "Publish your first post",
             function: async () => {
-                navigation.navigate("PostView");
+                navigation.navigate('PostView', {
+                    screen: 'PostModal',
+                    params: {prefilledContent: 'PV nostr! This is my first post, so shoot me a Zap!'},
+                  });
                 dispatch(setGetStartedItems(1));
                 const getStartedItemsShown = await getData('getStartedItemsShown')
                 if (!getStartedItemsShown) {

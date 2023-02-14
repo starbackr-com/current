@@ -93,7 +93,7 @@ const ProfileScreen = ({ route, navigation }) => {
             console.log('Getting user data')
             getUserData([pubkey]);
         }
-        if (user?.nip05 && user?.nip05) {
+        if (user && user?.nip05) {
             verifyNip05(user.pubkey, user.nip05)
         }
     }, []);

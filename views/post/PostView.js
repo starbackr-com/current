@@ -1,5 +1,5 @@
-import { View, Pressable, KeyboardAvoidingView } from "react-native";
-import React, { useState } from "react";
+import { View, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
@@ -10,10 +10,8 @@ import globalStyles from "../../styles/globalStyles";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
-import { addMessage } from "../../features/messagesSlice";
-import { event } from "react-native-reanimated";
 import { Event } from "../../utils/nostrV2/Event";
 import BackButton from "../../components/BackButton";
 
@@ -28,6 +26,13 @@ const PostModal = ({ navigation, route }) => {
     const { pubKey, walletBearer } = useSelector((state) => state.auth);
 
     const expiresAt = route?.params?.expiresAt;
+    const prefilledContent = route?.params?.prefilledContent;
+    
+    useEffect(() => {
+        if (prefilledContent) {
+            setContent(prefilledContent)
+        }
+    },[])
 
     const resizeImage = async (image) => {
         const manipResult = await manipulateAsync(
@@ -82,7 +87,7 @@ const PostModal = ({ navigation, route }) => {
     return (
         <KeyboardAvoidingView
             style={[globalStyles.screenContainer]}
-            behavior="padding"
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={headerHeight}
         >
             <View style={{width: '100%', flexDirection: 'row', marginBottom: 12}}>
@@ -92,6 +97,7 @@ const PostModal = ({ navigation, route }) => {
                 inputStyle={{ flex: 3, maxHeight: "30%" }}
                 textInputConfig={{
                     onChangeText: setContent,
+                    value: content,
                     multiline: true,
                     placeholder: "What's on your mind?",
                     autoFocus: true,
@@ -216,7 +222,7 @@ const PostExpiryModal = ({ navigation }) => {
     );
 };
 
-const PostView = () => {
+const PostView = ({route}) => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="PostModal" component={PostModal} />

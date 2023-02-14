@@ -55,7 +55,6 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
         });
 
         content = reactStringReplace(content, /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/, (m, i) => {
-            console.log(m)
             return (
                 <Text style={{ color: colors.primary500 }} onPress={() => {Linking.openURL(m)}}>
                     {m}
