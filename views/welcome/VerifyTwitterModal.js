@@ -27,7 +27,7 @@ const VerifyTwitterModal = ({navigation}) => {
         setError(false);
         try {
             let content = `#[0] Verifying My Public Key: "${handle}"`;
-            let tweetIntent = `https://twitter.com/intent/tweet?text=Verifying%20my%20account%20on%20nostr%0A%0AMy%20Public%20Key%3A%20%22${pk}%22%0A%0AFind%20others%20at%20https%3A%2F%2Fnostr.directory%20%40nostrdirectory%20%23nostr`
+            let tweetIntent = `https://twitter.com/intent/tweet?text=Verifying%20my%20account%20on%20nostr%20using%20%40getcurrent_io%0A%0AMy%20Public%20Key%3A%20%22${pk}%22%0A%0AFind%20others%20at%20https%3A%2F%2Fnostr.directory%20%40nostrdirectory%20%23nostr`
             const { successes, event } = await publishEvent(content, [
                 [
                     "p",
