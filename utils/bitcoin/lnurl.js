@@ -17,9 +17,9 @@ export const decodeLnurl = (lnurl) => {
 export const encodeLnurl = (string) => {
     try {
         let words = bech32.toWords(utf8Decoder.encode(string))
-        let encoded = bech32.encode('lnurl', words)
+        let encoded = bech32.encode('lnurl', words, 500)
         return encoded
     } catch (err) {
-        console.log("Something went wrong while decoding LNURL...");
+        console.log(err);
     }
 };

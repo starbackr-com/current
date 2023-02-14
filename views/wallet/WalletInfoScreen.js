@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
 import QRCode from "react-qr-code";
-import CustomButton from "../../components/CustomButton";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 import { encodeLnurl } from "../../utils/bitcoin/lnurl";
 import BackButton from "../../components/BackButton";
@@ -21,6 +21,7 @@ const WalletInfoScreen = ({ navigation }) => {
 
     if (username) {
         const [name, domain] = username.split('@')
+        console.log(`https://${domain}/.well-known/lnurlp/${name}`)
         lnurl = encodeLnurl(`https://${domain}/.well-known/lnurlp/${name}`)
 
           copyAddress = async () => {
@@ -44,26 +45,24 @@ const WalletInfoScreen = ({ navigation }) => {
                     />
                 </View>
                 <Text
-                    style={[globalStyles.textBody, {color: colors.primary500, marginTop: 30, marginBottom: 30}]}
+                    style={[globalStyles.textBody, {color: colors.primary500, marginTop: 16, marginBottom: 16}]}
                     onPress={copyAddress}
                 >
                   {'Lightning Address: '}
-                  {username}
+                  {username}<Ionicons name="clipboard" />
                 </Text>
 
 
                 {lnurl ? <View style={styles.qrContainer}>
-                    <Text style={globalStyles.textBody}>Static Tip QR Code (LNURL)</Text>
                     <QRCode value={lnurl}  onPress={copyLnurl} />
 
                 </View> : undefined}
                 <Text
-                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 30}]}
+                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 16}]}
                     onPress={copyLnurl}
                 >
-                   {lnurl}
+                   {lnurl}<Ionicons name="clipboard" />
                 </Text>
-                    <Text style={globalStyles.textBody}>Touch to copy</Text>
             </View>
             <View style={{height:32}}></View>
         </ScrollView>

@@ -23,10 +23,6 @@ export const authSlice = createSlice({
         setBearer: (state, action) => {
             state.walletBearer = action.payload;
         },
-        setUsername: (state, username) => {
-            state.username = username;
-        },
-
         logOut: (state) => {
             state.isLoggedIn = false,
             state.pubKey = null,
@@ -37,6 +33,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const { logIn, setBearer, setUsername, logOut } = authSlice.actions;
+export const { logIn, setBearer, logOut } = authSlice.actions;
 
 export default authSlice.reducer;
