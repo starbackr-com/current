@@ -17,6 +17,9 @@ import { Image } from "expo-image";
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
 import FeedImage from "./Images/FeedImage";
+import { httpRegex } from "../constants";
+import * as Linking from "expo-linking";
+
 
 const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const [isLoading, setIsLoading] = useState();
@@ -34,14 +37,8 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     }));
 
     const parseMentions = useCallback((event) => {
-        if (event.mentions.length < 1) {
-            return event.content;
-        }
         let content = event.content;
         content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-            console.log(i);
-            console.log(event.mentions[i - 1]);
-            console.log(event);
             return (
                 <Text
                     style={{ color: colors.primary500 }}
@@ -53,6 +50,15 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     key={i}
                 >
                     {event.mentions[i - 1]?.mention}
+                </Text>
+            );
+        });
+
+        content = reactStringReplace(content, /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/, (m, i) => {
+            console.log(m)
+            return (
+                <Text style={{ color: colors.primary500 }} onPress={() => {Linking.openURL(m)}}>
+                    {m}
                 </Text>
             );
         });
@@ -233,7 +239,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     <Text
                         style={[globalStyles.textBody, { textAlign: "left" }]}
                     >
-                        {item.mentions ? parseMentions(item) : item.content}
+                        {parseMentions(item)}
                     </Text>
                     {item.image ? (
                         <FeedImage
