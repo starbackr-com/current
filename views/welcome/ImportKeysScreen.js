@@ -52,11 +52,12 @@ const ImportKeysScreen = ({ navigation }) => {
                 const pubKey = getPublicKey(privKey);
                 const result = await loginToWallet(privKey);
                 const access_token = result?.data?.access_token;
+                const username = result?.data?.username;
                 if (access_token) {
                     await saveValue("privKey", privKey);
                     await saveValue("mem", JSON.stringify(mem));
                     dispatch(followPubkey(pubKey));
-                    dispatch(logIn({ bearer: access_token, pubKey }));
+                    dispatch(logIn({ bearer: access_token, username, pubKey }));
                     return;
                 } else {
                     const data = await getOldKind0(pubKey);
