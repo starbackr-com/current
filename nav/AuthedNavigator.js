@@ -18,6 +18,7 @@ import PostMenuModal from "../views/PostMenuModal";
 import PostView from "../views/post/PostView";
 import FullScreenImage from "../components/Images/FullScreenImage";
 import ReadMoreModal from "../features/homefeed/components/ReadMoreModal";
+import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -160,6 +161,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="TwitterModal"
                     component={TwitterModal}
+                    options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="VerifyTwitterModal"
+                    component={VerifyTwitterModal}
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen

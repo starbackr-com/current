@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     twitterModalShown: false,
-    getStartedItems: [0,1,2]
+    getStartedItems: [0,1,2,3]
 };
 
 export const introSlice = createSlice({
@@ -18,7 +18,7 @@ export const introSlice = createSlice({
         },
         resetAll: (state) => {
             state.twitterModalShown = false
-            state.getStartedItems = [0,1,2]
+            state.getStartedItems = [0,1,2,3]
         }
     },
 });

@@ -3,12 +3,12 @@ import React from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as Linking from "expo-linking";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../styles/colors";
-import globalStyles from "../styles/globalStyles";
+import colors from "../../../styles/colors";
+import globalStyles from "../../../styles/globalStyles";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { setGetStartedItems } from "../features/introSlice";
-import {getData, storeData} from '../utils/cache/asyncStorage'
+import { setGetStartedItems } from "../../introSlice";
+import {getData, storeData} from '../../../utils/cache/asyncStorage'
 
 const ToDoItem = ({ item }) => {
     return (
@@ -88,6 +88,24 @@ const GetStartedItems = () => {
             },
             icon: "logo-bitcoin",
         },
+        {
+            id: 3,
+            name: "Verify Pubkey on Twitter",
+            function: async () => {
+                navigation.navigate("VerifyTwitterModal");
+                dispatch(setGetStartedItems(3));
+                const getStartedItemsShown = await getData('getStartedItemsShown')
+                if (!getStartedItemsShown) {
+                    storeData('getStartedItemsShown', JSON.stringify([3]))
+                } else {
+                    const array = JSON.parse(getStartedItemsShown)
+                    array.push(3)
+                    storeData('getStartedItemsShown', JSON.stringify(array))
+                    console.log(array)
+                }
+            },
+            icon: "logo-twitter",
+        },
     ];
 
     const listToShow = list.filter((item) => itemsToShow.includes(item.id))
@@ -98,6 +116,7 @@ const GetStartedItems = () => {
                 data={listToShow}
                 renderItem={({ item }) => <ToDoItem item={item} />}
                 ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+                showsHorizontalScrollIndicator={false}
             />
         </View>
     );

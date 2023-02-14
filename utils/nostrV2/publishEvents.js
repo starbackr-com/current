@@ -46,7 +46,7 @@ export const publishKind0 = async (address, bio, imageUrl) => {
         .map((promise) => promise.value);
 };
 
-export const publishEvent = async (content) => {
+export const publishEvent = async (content, tags) => {
     try {
         let privKey = await getValue("privKey");
         if (!privKey) {
@@ -57,7 +57,7 @@ export const publishEvent = async (content) => {
             kind: 1,
             pubkey: pubKey,
             created_at: Math.floor(Date.now() / 1000),
-            tags: [],
+            tags: tags || [],
             content,
         };
         event.id = getEventHash(event);

@@ -20,6 +20,7 @@ const FeedImage = ({ size, images }) => {
                 style={{ height: size, width: size }}
                 contentFit="cover"
                 placeholder={blurhash}
+                cachePolicy='memory-disk'
             />
             {images.length > 1 ? (
                 <Text

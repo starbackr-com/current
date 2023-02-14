@@ -13,7 +13,7 @@ import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
-import GetStartedItems from "../components/GetStartedItems";
+import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
 import {ActivityIndicator} from 'react-native';
 
