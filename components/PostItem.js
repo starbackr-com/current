@@ -274,9 +274,10 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate("ProfileModal", {
-                                    pubkey: user.pubkey,
-                                });
+                                navigation.navigate('Profile', {
+                                    screen: 'ProfileScreen',
+                                    params: {pubkey: user.pubkey},
+                                  });
                             }}
                         >
                             <Image

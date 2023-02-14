@@ -65,7 +65,7 @@ const PostItem = ({ event, user }) => {
 };
 
 const ProfileScreen = ({ route, navigation }) => {
-    const { pubkey } = route.params;
+    const {pubkey} = route.params
     const [feed, setFeed] = useState();
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
@@ -173,7 +173,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     >
                         {user?.name || pubkey}
                     </Text>
-                    {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
+                    {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {}}>{`${followedPubkeys.length} following`}</Text> : undefined}
                     <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user?.nip05}<Ionicons name={verified ? 'checkbox' : 'close-circle'}/> </Text>
                     <Text
                         style={[globalStyles.textBody]}
@@ -220,6 +220,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     </View>
                 )}
             </View>
+            {pubkey === loggedInPubkey ? <View style={{position: 'absolute', right: 32, top: 32}}><Text style={[globalStyles.textBodyS,{color: colors.primary500}]} onPress={() => {navigation.navigate('EditProfileScreen')}}>Edit Profile</Text></View> : undefined}
         </View>
     );
 };
