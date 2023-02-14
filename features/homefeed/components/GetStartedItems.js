@@ -59,7 +59,7 @@ const GetStartedItems = () => {
             function: async () => {
                 navigation.navigate('PostView', {
                     screen: 'PostModal',
-                    params: {prefilledContent: 'just setting up my nostr account on Current, shoot me a Zap!'},
+                    params: {prefilledContent: 'just setting up my nostr account on Current App, shoot me a Zap!'},
                   });
                 dispatch(setGetStartedItems(1));
                 const getStartedItemsShown = await getData('getStartedItemsShown')
