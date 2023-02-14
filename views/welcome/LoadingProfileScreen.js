@@ -11,6 +11,7 @@ import { logIn } from "../../features/authSlice";
 import { useDispatch } from "react-redux";
 import { followMultipleUsers, followUser } from "../../utils/users";
 import { getKind3Followers, updateFollowedUsers } from "../../utils/nostrV2/getUserData";
+import { setUsername } from "../../features/authSlice";
 
 const LoadingProfileScreen = ({ route }) => {
     const { image, svg, svgId, privKey, address, bio, publishProfile, mem } =
@@ -76,6 +77,8 @@ const LoadingProfileScreen = ({ route }) => {
             await saveValue("privKey", privKey);
             await saveValue("address", address);
             const result = await loginToWallet(privKey);
+            console.log(result);
+            dispatch(setUsername(result.data.username));
             const { access_token } = result.data;
             await followUser(pubKey);
             try {

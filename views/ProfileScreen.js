@@ -93,7 +93,7 @@ const ProfileScreen = ({ route, navigation }) => {
             console.log('Getting user data')
             getUserData([pubkey]);
         }
-        if (user?.nip05) {
+        if (user?.nip05 && user?.nip05) {
             verifyNip05(user.pubkey, user.nip05)
         }
     }, []);
@@ -174,7 +174,7 @@ const ProfileScreen = ({ route, navigation }) => {
                         {user?.name || pubkey}
                     </Text>
                     {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
-                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user.nip05}<Ionicons name={verified ? 'checkbox' : 'close-circle'}/> </Text>
+                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user?.nip05}<Ionicons name={verified ? 'checkbox' : 'close-circle'}/> </Text>
                     <Text
                         style={[globalStyles.textBody]}
                     >

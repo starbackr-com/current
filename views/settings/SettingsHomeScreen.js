@@ -4,6 +4,7 @@ import globalStyles from "../../styles/globalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
+import { resetAll } from "../../features/introSlice";
 import { clearStore } from "../../features/messagesSlice";
 import { clearUserStore } from "../../features/userSlice";
 import { dbLogout } from "../../utils/database";
@@ -56,6 +57,7 @@ const SettingsHomeScreen = ({ navigation }) => {
         dispatch(clearStore());
         dispatch(clearUserStore());
         dispatch(logOut());
+        dispatch(resetAll());
     };
 
     return (

@@ -15,6 +15,7 @@ import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
+import {ActivityIndicator} from 'react-native';
 
 const HomeStack = createStackNavigator();
 
@@ -128,7 +129,13 @@ const HomeScreen = ({ navigation }) => {
                         />
                     </View>
                 ) : (
-                    <LoadingSpinner size={32} />
+                    <ActivityIndicator  style={{
+                        container: {
+                          flex: 1,
+                          justifyContent: 'center',
+                        },
+
+                    }} size={90}/>
                 )}
                 {playAnimation ? (
                     <View
