@@ -89,6 +89,7 @@ const TabNavigator = ({ navigation }) => {
                                     fontFamily: "Satoshi-Symbol",
                                     marginLeft: 6,
                                     fontSize: 20,
+                                    color: colors.primary500
                                 },
                             ]}
                         >
