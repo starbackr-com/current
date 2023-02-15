@@ -93,7 +93,8 @@ export const publishEvent = async (content, tags) => {
     }
 };
 
-export const publishReply = async (content, parentEvent) => {
+export const publishReply = async (content, rootId, replyId, type) => {
+    console.log([['e', rootId, '', 'root'], replyId ? ['e', replyId, '', 'reply'] : null])
     try {
         const sk = await getValue("privKey");
         if (!sk) {
@@ -104,7 +105,7 @@ export const publishReply = async (content, parentEvent) => {
             kind: 1,
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
-            tags: [['e', parentEvent]],
+            tags: replyId ? [['e', rootId, '', 'root'], ['e', replyId, 'reply']] : [['e', rootId, '', 'root']],
             content,
         };
         event.id = getEventHash(event);

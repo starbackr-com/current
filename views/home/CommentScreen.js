@@ -10,11 +10,11 @@ import Input from "../../components/Input";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
+import { useNavigation } from "@react-navigation/native";
 
-const ReplyItem = ({ event, user, replies }) => {
-    if (event.tags.length > 2) {
-        console.log(event)
-    }
+const ReplyItem = ({ event, user, replies, rootId }) => {
+    console.log(`Root ID: ${rootId}`);
+    const navigation = useNavigation();
     const getAge = (timestamp) => {
         const now = new Date();
         const timePassedInMins = Math.floor(
@@ -32,12 +32,19 @@ const ReplyItem = ({ event, user, replies }) => {
         }
     };
     return (
-        <View
+        <Pressable
             style={{
                 backgroundColor: colors.backgroundSecondary,
                 padding: 6,
                 borderRadius: 6,
                 marginBottom: 12,
+            }}
+            onPress={() => {
+                navigation.push("CommentScreen", {
+                    eventId: event.id,
+                    rootId: rootId,
+                    type: "reply",
+                });
             }}
         >
             <Text
@@ -52,20 +59,38 @@ const ReplyItem = ({ event, user, replies }) => {
             <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                 {event.content}
             </Text>
-            <Text
-                style={[
-                    globalStyles.textBodyS,
-                    { textAlign: "right", marginTop: 12 },
-                ]}
+            <View
+                style={{
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
             >
-                {getAge(event.created_at)}
-            </Text>
-        </View>
+                    <Text
+                        style={[
+                            globalStyles.textBodyS,
+                            { color: colors.primary500 },
+                        ]}
+                    >
+                        <Ionicons name="chatbubble-outline" />
+                        
+                    </Text>
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { textAlign: "right", marginTop: 12 },
+                    ]}
+                >
+                    {getAge(event.created_at)}
+                </Text>
+            </View>
+        </Pressable>
     );
 };
 
 const CommentScreen = ({ route, navigation }) => {
-    const { eventId } = route?.params;
+    const { eventId, type, rootId } = route?.params;
     const [replies, setReplies] = useState();
     const [allReplies, setAllReplies] = useState();
     const [reply, setReply] = useState();
@@ -75,11 +100,18 @@ const CommentScreen = ({ route, navigation }) => {
 
     const getAllReplies = async () => {
         const response = await getReplies([eventId]);
+        console.log(response)
         const pubkeys = Object.keys(response).map(
             (key) => response[key].pubkey
         );
         const array = Object.keys(response).map((key) => response[key]);
-        setAllReplies(array)
+        console.log(array);
+        setAllReplies(array);
+        if (type === "reply") {
+            setReplies(array);
+            getUserData(pubkeys);
+            return;
+        }
         const firstOrderReplies = array
             .filter(
                 (item) =>
@@ -100,10 +132,17 @@ const CommentScreen = ({ route, navigation }) => {
         }
         setSending(true);
         try {
-            const data = await publishReply(reply, eventId);
-            const newArray = [data.event, ...replies];
-            setReplies(newArray);
-            setReply("");
+            if (type === "root") {
+                const data = await publishReply(reply, rootId);
+                const newArray = [data.event, ...replies];
+                setReplies(newArray);
+                setReply("");
+            } else if (type === "reply") {
+                const data = await publishReply(reply, rootId, eventId);
+                const newArray = [data.event, ...replies];
+                setReplies(newArray);
+                setReply("");
+            }
         } catch (e) {
             console.log(e);
         } finally {
@@ -122,8 +161,18 @@ const CommentScreen = ({ route, navigation }) => {
             behavior="padding"
             keyboardVerticalOffset={headerHeight}
         >
-            <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 12 }}>
-                <BackButton onPress={() => {navigation.goBack()}}/>
+            <View
+                style={{
+                    alignItems: "flex-start",
+                    width: "100%",
+                    marginBottom: 12,
+                }}
+            >
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                />
             </View>
 
             <View
@@ -140,7 +189,14 @@ const CommentScreen = ({ route, navigation }) => {
                     <FlashList
                         data={replies}
                         renderItem={({ item }) => (
-                            <ReplyItem event={item} user={users[item.pubkey]} replies={allReplies.filter(reply => reply.tags.filter(tag => tag[0] === 'e').length > 1)}/>
+                            <ReplyItem
+                                event={item}
+                                user={users[item.pubkey]}
+                                replies={allReplies.filter(
+                                    (reply) => reply.repliesTo === item.id
+                                )}
+                                rootId={rootId}
+                            />
                         )}
                         estimatedItemSize={80}
                         extraData={users}
