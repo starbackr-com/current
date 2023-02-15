@@ -1,6 +1,5 @@
 const checkReply = (tags) => {
     const eTags = tags.filter(tag => tag[0] === 'e')
-    console.log(eTags.length)
     if (eTags.length < 2) {
         return undefined
     }

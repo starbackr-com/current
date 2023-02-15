@@ -12,8 +12,23 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
 
-const ReplyItem = ({ event, user, replies, rootId }) => {
-    console.log(`Root ID: ${rootId}`);
+const createReplyTree = (dataset) => {
+    const hashTable = Object.create(null);
+    dataset.forEach(
+        (aData) => (hashTable[aData.id] = { ...aData, replies: [] })
+    );
+    const dataTree = [];
+    dataset.forEach((aData) => {
+        if (aData.repliesTo)
+            hashTable[aData.repliesTo].replies.push(hashTable[aData.id]);
+        else dataTree.push(hashTable[aData.id]);
+    });
+    return dataTree;
+};
+
+const ReplyItem = ({ event, user, rootId, replies }) => {
+    console.log(event.id);
+    console.log(rootId);
     const navigation = useNavigation();
     const getAge = (timestamp) => {
         const now = new Date();
@@ -44,6 +59,7 @@ const ReplyItem = ({ event, user, replies, rootId }) => {
                     eventId: event.id,
                     rootId: rootId,
                     type: "reply",
+                    nestedReplies: replies,
                 });
             }}
         >
@@ -67,15 +83,15 @@ const ReplyItem = ({ event, user, replies, rootId }) => {
                     alignItems: "center",
                 }}
             >
-                    <Text
-                        style={[
-                            globalStyles.textBodyS,
-                            { color: colors.primary500 },
-                        ]}
-                    >
-                        <Ionicons name="chatbubble-outline" />
-                        
-                    </Text>
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { color: colors.primary500 },
+                    ]}
+                >
+                    <Ionicons name="chatbubble-outline" />
+                    {replies.length}
+                </Text>
                 <Text
                     style={[
                         globalStyles.textBodyS,
@@ -90,7 +106,8 @@ const ReplyItem = ({ event, user, replies, rootId }) => {
 };
 
 const CommentScreen = ({ route, navigation }) => {
-    const { eventId, type, rootId } = route?.params;
+    const { eventId, type, rootId, nestedReplies } = route?.params;
+    console.log(type)
     const [replies, setReplies] = useState();
     const [allReplies, setAllReplies] = useState();
     const [reply, setReply] = useState();
@@ -99,30 +116,20 @@ const CommentScreen = ({ route, navigation }) => {
     const users = useSelector((state) => state.messages.users);
 
     const getAllReplies = async () => {
-        const response = await getReplies([eventId]);
-        console.log(response)
-        const pubkeys = Object.keys(response).map(
-            (key) => response[key].pubkey
-        );
-        const array = Object.keys(response).map((key) => response[key]);
-        console.log(array);
-        setAllReplies(array);
-        if (type === "reply") {
-            setReplies(array);
-            getUserData(pubkeys);
-            return;
+        if (type === "root") {
+            const response = await getReplies([eventId]);
+            const pubkeys = Object.keys(response).map(
+                (key) => response[key].pubkey
+            );
+            const array = Object.keys(response).map((key) => response[key]);
+            const replyTree = createReplyTree(array);
+            const secondArray = Object.keys(replyTree).map(
+                (key) => replyTree[key]
+            );
+            setReplies(secondArray);
+        } else {
+            setReplies(nestedReplies);
         }
-        const firstOrderReplies = array
-            .filter(
-                (item) =>
-                    item.tags.filter((item) => item[0] === "e").length === 1
-            )
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-
-        setReplies(firstOrderReplies);
-        getUserData(pubkeys);
     };
 
     const submitHandler = async () => {
@@ -139,6 +146,7 @@ const CommentScreen = ({ route, navigation }) => {
                 setReply("");
             } else if (type === "reply") {
                 const data = await publishReply(reply, rootId, eventId);
+                data.event.replies = []
                 const newArray = [data.event, ...replies];
                 setReplies(newArray);
                 setReply("");
@@ -157,7 +165,7 @@ const CommentScreen = ({ route, navigation }) => {
     const headerHeight = useHeaderHeight();
     return (
         <KeyboardAvoidingView
-            style={globalStyles.screenContainer}
+            style={[globalStyles.screenContainer, { paddingHorizontal: 0 }]}
             behavior="padding"
             keyboardVerticalOffset={headerHeight}
         >
@@ -166,6 +174,7 @@ const CommentScreen = ({ route, navigation }) => {
                     alignItems: "flex-start",
                     width: "100%",
                     marginBottom: 12,
+                    paddingHorizontal: 16
                 }}
             >
                 <BackButton
@@ -179,8 +188,6 @@ const CommentScreen = ({ route, navigation }) => {
                 style={{
                     flex: 4,
                     width: "100%",
-                    borderColor: colors.primary500,
-                    borderWidth: 1,
                     padding: 6,
                     borderRadius: 10,
                 }}
@@ -192,9 +199,7 @@ const CommentScreen = ({ route, navigation }) => {
                             <ReplyItem
                                 event={item}
                                 user={users[item.pubkey]}
-                                replies={allReplies.filter(
-                                    (reply) => reply.repliesTo === item.id
-                                )}
+                                replies={item.replies}
                                 rootId={rootId}
                             />
                         )}
@@ -220,6 +225,7 @@ const CommentScreen = ({ route, navigation }) => {
                     width: "100%",
                     flexDirection: "row",
                     alignItems: "center",
+                    paddingHorizontal: 16
                 }}
             >
                 <View style={{ width: "60%", flex: 1 }}>
