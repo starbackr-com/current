@@ -58,7 +58,7 @@ const SettingsPaymentsScreen = ({ navigation }) => {
                     secondary
                     buttonConfig={{
                         onPress: () => {
-                            navigation.goBack();
+                            navigation.navigate('SettingsHomeScreen');
                         },
                     }}
                 />
