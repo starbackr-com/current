@@ -10,11 +10,26 @@ import Input from "../../components/Input";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
+import { useNavigation } from "@react-navigation/native";
 
-const ReplyItem = ({ event, user, replies }) => {
-    if (event.tags.length > 2) {
-        console.log(event)
-    }
+const createReplyTree = (dataset) => {
+    const hashTable = Object.create(null);
+    dataset.forEach(
+        (aData) => (hashTable[aData.id] = { ...aData, replies: [] })
+    );
+    const dataTree = [];
+    dataset.forEach((aData) => {
+        if (aData.repliesTo)
+            hashTable[aData.repliesTo].replies.push(hashTable[aData.id]);
+        else dataTree.push(hashTable[aData.id]);
+    });
+    return dataTree;
+};
+
+const ReplyItem = ({ event, user, rootId, replies }) => {
+    console.log(event.id);
+    console.log(rootId);
+    const navigation = useNavigation();
     const getAge = (timestamp) => {
         const now = new Date();
         const timePassedInMins = Math.floor(
@@ -32,12 +47,20 @@ const ReplyItem = ({ event, user, replies }) => {
         }
     };
     return (
-        <View
+        <Pressable
             style={{
                 backgroundColor: colors.backgroundSecondary,
                 padding: 6,
                 borderRadius: 6,
                 marginBottom: 12,
+            }}
+            onPress={() => {
+                navigation.push("CommentScreen", {
+                    eventId: event.id,
+                    rootId: rootId,
+                    type: "reply",
+                    nestedReplies: replies,
+                });
             }}
         >
             <Text
@@ -46,26 +69,48 @@ const ReplyItem = ({ event, user, replies }) => {
                     { textAlign: "left", width: "50%" },
                 ]}
                 numberOfLines={1}
+                onPress={() => {navigation.navigate("ProfileModal", {
+                    pubkey: event.pubkey,
+                });}}
             >
                 {user?.name || event.pubkey}
             </Text>
             <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                 {event.content}
             </Text>
-            <Text
-                style={[
-                    globalStyles.textBodyS,
-                    { textAlign: "right", marginTop: 12 },
-                ]}
+            <View
+                style={{
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
             >
-                {getAge(event.created_at)}
-            </Text>
-        </View>
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { color: colors.primary500 },
+                    ]}
+                >
+                    <Ionicons name="chatbubble-outline" />
+                    {replies.length}
+                </Text>
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { textAlign: "right", marginTop: 12 },
+                    ]}
+                >
+                    {getAge(event.created_at)}
+                </Text>
+            </View>
+        </Pressable>
     );
 };
 
 const CommentScreen = ({ route, navigation }) => {
-    const { eventId } = route?.params;
+    const { eventId, type, rootId, nestedReplies } = route?.params;
+    console.log(type)
     const [replies, setReplies] = useState();
     const [allReplies, setAllReplies] = useState();
     const [reply, setReply] = useState();
@@ -74,23 +119,21 @@ const CommentScreen = ({ route, navigation }) => {
     const users = useSelector((state) => state.messages.users);
 
     const getAllReplies = async () => {
-        const response = await getReplies([eventId]);
-        const pubkeys = Object.keys(response).map(
-            (key) => response[key].pubkey
-        );
-        const array = Object.keys(response).map((key) => response[key]);
-        setAllReplies(array)
-        const firstOrderReplies = array
-            .filter(
-                (item) =>
-                    item.tags.filter((item) => item[0] === "e").length === 1
-            )
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-
-        setReplies(firstOrderReplies);
-        getUserData(pubkeys);
+        if (type === "root") {
+            const response = await getReplies([eventId]);
+            const pubkeys = Object.keys(response).map(
+                (key) => response[key].pubkey
+            );
+            const array = Object.keys(response).map((key) => response[key]);
+            const replyTree = createReplyTree(array);
+            const secondArray = Object.keys(replyTree).map(
+                (key) => replyTree[key]
+            );
+            setReplies(secondArray);
+            getUserData(pubkeys)
+        } else {
+            setReplies(nestedReplies);
+        }
     };
 
     const submitHandler = async () => {
@@ -100,10 +143,19 @@ const CommentScreen = ({ route, navigation }) => {
         }
         setSending(true);
         try {
-            const data = await publishReply(reply, eventId);
-            const newArray = [data.event, ...replies];
-            setReplies(newArray);
-            setReply("");
+            if (type === "root") {
+                const data = await publishReply(reply, rootId);
+                data.event.replies = []
+                const newArray = [data.event, ...replies];
+                setReplies(newArray);
+                setReply("");
+            } else if (type === "reply") {
+                const data = await publishReply(reply, rootId, eventId);
+                data.event.replies = []
+                const newArray = [data.event, ...replies];
+                setReplies(newArray);
+                setReply("");
+            }
         } catch (e) {
             console.log(e);
         } finally {
@@ -118,20 +170,30 @@ const CommentScreen = ({ route, navigation }) => {
     const headerHeight = useHeaderHeight();
     return (
         <KeyboardAvoidingView
-            style={globalStyles.screenContainer}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={[globalStyles.screenContainer, { paddingHorizontal: 0 }]}
+            behavior="padding"
+
             keyboardVerticalOffset={headerHeight}
         >
-            <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 12 }}>
-                <BackButton onPress={() => {navigation.goBack()}}/>
+            <View
+                style={{
+                    alignItems: "flex-start",
+                    width: "100%",
+                    marginBottom: 12,
+                    paddingHorizontal: 16
+                }}
+            >
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                />
             </View>
 
             <View
                 style={{
                     flex: 4,
                     width: "100%",
-                    borderColor: colors.primary500,
-                    borderWidth: 1,
                     padding: 6,
                     borderRadius: 10,
                 }}
@@ -140,7 +202,12 @@ const CommentScreen = ({ route, navigation }) => {
                     <FlashList
                         data={replies}
                         renderItem={({ item }) => (
-                            <ReplyItem event={item} user={users[item.pubkey]} replies={allReplies.filter(reply => reply.tags.filter(tag => tag[0] === 'e').length > 1)}/>
+                            <ReplyItem
+                                event={item}
+                                user={users[item.pubkey]}
+                                replies={item.replies}
+                                rootId={rootId}
+                            />
                         )}
                         estimatedItemSize={80}
                         extraData={users}
@@ -164,6 +231,7 @@ const CommentScreen = ({ route, navigation }) => {
                     width: "100%",
                     flexDirection: "row",
                     alignItems: "center",
+                    paddingHorizontal: 16
                 }}
             >
                 <View style={{ width: "60%", flex: 1 }}>
