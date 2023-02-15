@@ -340,8 +340,6 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     onPress={() => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
-                            rootId: item.id,
-                            type: 'root'
                         });
                     }}
                 >
