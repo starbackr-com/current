@@ -43,19 +43,22 @@ export const getUserData = async (pubkeysInHex) => {
                             kinds: [0],
                         },
                     ]);
+                    let timer = setTimeout(() => {
+                        console.log(`${relay.url} timed out after 3 sec...`);
+                        reject();
+                        return;
+                    }, 3000);
                     sub.on("event", (event) => {
+                        console.log(event)
                         const newEvent = new Event(event);
                         newEvent.save();
                     });
                     sub.on("eose", () => {
                         sub.unsub();
                         clearTimeout(timer);
-                        return resolve();
+                        resolve();
+                        return;
                     });
-                    let timer = setTimeout(() => {
-                        console.log(`${relay.url} timed out after 5 sec...`);
-                        return reject();
-                    }, 5000);
                 })
         )
     );

@@ -2,8 +2,7 @@ import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
 import { connectedRelays } from "./relay";
 
-export const publishKind0 = async (address, bio, imageUrl) => {
-    const username = address.split("@")[0];
+export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
     let privKey = await getValue("privKey");
     if (!privKey) {
         throw new Error("No privKey in secure storage found");
@@ -15,11 +14,11 @@ export const publishKind0 = async (address, bio, imageUrl) => {
         created_at: Math.floor(Date.now() / 1000),
         tags: [],
         content: JSON.stringify({
-            name: username,
-            nip05: address,
+            name: name || nip05.split("@")[0],
+            nip05: nip05,
             about: bio,
             picture: imageUrl,
-            lud16: address,
+            lud16: lud16,
         }),
     };
     event.id = getEventHash(event);

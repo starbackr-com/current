@@ -87,7 +87,7 @@ const LoadingProfileScreen = ({ route }) => {
                     if (svg) {
                         imageUrl = await uploadSvg(svgId, access_token);
                     }
-                    await publishKind0(address, bio, imageUrl);
+                    await publishKind0(address, bio, imageUrl, address);
                 }
                 try {
                     const oldFollowers = await getKind3Followers(pubKey)
