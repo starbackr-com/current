@@ -6,6 +6,7 @@ import {
     Switch,
     View,
     Text,
+    Alert,
 } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -23,7 +24,8 @@ const CreateProfileScreen = ({ navigation, route }) => {
     const device = useWindowDimensions();
     let data;
 
-    const { image, svg, svgId, privKey, address, updateData, oldData } = route.params;
+    const { image, svg, svgId, privKey, address, updateData, oldData } =
+        route.params;
 
     const changeHandler = () => {
         setChecked((prev) => !prev);
@@ -31,9 +33,12 @@ const CreateProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (oldData && JSON.parse(oldData?.content)?.about.length > 0) {
-            setBio(JSON.parse(oldData.content)?.about || 'This profile was created using current | https://getcurrent.io')
+            setBio(
+                JSON.parse(oldData.content)?.about ||
+                    "This profile was created using current | https://getcurrent.io"
+            );
         }
-    }, [])
+    }, []);
 
     if (image) {
         data = (
@@ -140,7 +145,10 @@ const CreateProfileScreen = ({ navigation, route }) => {
             <Input
                 label="Name"
                 textInputConfig={{
-                    value: updateData === 'none' || updateData === 'ln' ? JSON.parse(oldData.content).name : address.split("@")[0],
+                    value:
+                        updateData === "none" || updateData === "ln"
+                            ? JSON.parse(oldData.content).name
+                            : address.split("@")[0],
                     editable: false,
                 }}
                 inputStyle={{ marginBottom: 16, color: colors.primary600 }}
@@ -148,10 +156,13 @@ const CreateProfileScreen = ({ navigation, route }) => {
             <Input
                 label="Tip Address"
                 textInputConfig={{
-                    value: updateData === 'none' || updateData === 'ln' ? JSON.parse(oldData.content).lud16 || address : address,
+                    value:
+                        updateData === "none" || updateData === "ln"
+                            ? JSON.parse(oldData.content).lud16 || address
+                            : address,
                     editable: false,
                 }}
-                inputStyle={{ marginBottom: 16, color: colors.primary600}}
+                inputStyle={{ marginBottom: 16, color: colors.primary600 }}
             />
             <Input
                 label="Bio"
@@ -163,20 +174,30 @@ const CreateProfileScreen = ({ navigation, route }) => {
             />
             <View style={{ width: "100%", marginTop: 32 }}>
                 <View
-                    style={[{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        backgroundColor: "#222222",
-                        borderColor: "#333333",
-                        borderWidth: 1,
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                        borderRadius: 6,
-                        width: "100%",
-                        justifyContent: "space-evenly",
-                    }, checked ? {borderColor: colors.primary500} : undefined]}
+                    style={[
+                        {
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor: "#222222",
+                            borderColor: "#333333",
+                            borderWidth: 1,
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 6,
+                            width: "100%",
+                            justifyContent: "space-evenly",
+                        },
+                        checked
+                            ? { borderColor: colors.primary500 }
+                            : undefined,
+                    ]}
                 >
-                    <Text style={[globalStyles.textBody, !checked ? {color: '#666666'} : undefined]}>
+                    <Text
+                        style={[
+                            globalStyles.textBody,
+                            !checked ? { color: "#666666" } : undefined,
+                        ]}
+                    >
                         Publish profile on nostr
                     </Text>
                     <Switch
@@ -215,15 +236,42 @@ const CreateProfileScreen = ({ navigation, route }) => {
                 text="Create Profile"
                 buttonConfig={{
                     onPress: () => {
-                        navigation.navigate("LoadingProfileScreen", {
-                            image,
-                            svg,
-                            svgId,
-                            privKey,
-                            address,
-                            bio,
-                            publishProfile: checked
-                        });
+                        if (!image && !svg) {
+                            Alert.alert(
+                                "No profile picture!",
+                                "Looks like you did not pick a profile image. Are you sure you want to continue?",
+                                [
+                                    {
+                                        text: "Continue",
+                                        onPress: async () => {
+                                            navigation.navigate("LoadingProfileScreen", {
+                                                image,
+                                                svg,
+                                                svgId,
+                                                privKey,
+                                                address,
+                                                bio,
+                                                publishProfile: checked,
+                                            });
+                                        },
+                                    },
+                                    {
+                                        text: "Cancel",
+                                        style: "cancel",
+                                    },
+                                ]
+                            );
+                        } else {
+                            navigation.navigate("LoadingProfileScreen", {
+                                image,
+                                svg,
+                                svgId,
+                                privKey,
+                                address,
+                                bio,
+                                publishProfile: checked,
+                            });
+                        }
                     },
                 }}
                 containerStyles={{ marginTop: 32 }}
