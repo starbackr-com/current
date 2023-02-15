@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Pressable } from "react-native";
+import { View, Text, KeyboardAvoidingView, Pressable, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import { FlashList } from "@shopify/flash-list";
@@ -119,7 +119,7 @@ const CommentScreen = ({ route, navigation }) => {
     return (
         <KeyboardAvoidingView
             style={globalStyles.screenContainer}
-            behavior="padding"
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={headerHeight}
         >
             <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 12 }}>
