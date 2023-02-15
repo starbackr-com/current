@@ -69,6 +69,9 @@ const ReplyItem = ({ event, user, rootId, replies }) => {
                     { textAlign: "left", width: "50%" },
                 ]}
                 numberOfLines={1}
+                onPress={() => {navigation.navigate("ProfileModal", {
+                    pubkey: event.pubkey,
+                });}}
             >
                 {user?.name || event.pubkey}
             </Text>
