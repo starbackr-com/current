@@ -130,6 +130,7 @@ const CommentScreen = ({ route, navigation }) => {
                 (key) => replyTree[key]
             );
             setReplies(secondArray);
+            getUserData(pubkeys)
         } else {
             setReplies(nestedReplies);
         }
