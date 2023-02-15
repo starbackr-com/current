@@ -141,6 +141,7 @@ const CommentScreen = ({ route, navigation }) => {
         try {
             if (type === "root") {
                 const data = await publishReply(reply, rootId);
+                data.event.replies = []
                 const newArray = [data.event, ...replies];
                 setReplies(newArray);
                 setReply("");
