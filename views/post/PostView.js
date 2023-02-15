@@ -27,7 +27,7 @@ const PostModal = ({ navigation, route }) => {
 
     const expiresAt = route?.params?.expiresAt;
     const prefilledContent = route?.params?.prefilledContent;
-    
+
     useEffect(() => {
         if (prefilledContent) {
             setContent(prefilledContent)
@@ -193,11 +193,7 @@ const PostModal = ({ navigation, route }) => {
                             navigation.navigate("PostExpiryModal");
                         }}
                     >
-                        <Ionicons
-                            name="time"
-                            color={colors.primary500}
-                            size={24}
-                        />
+                        
                     </Pressable>
                 </View>
             </View>
