@@ -1,5 +1,4 @@
 import { connectedRelays } from "./relay";
-import { Reply } from "./Reply";
 
 export const getReplies = async (parentIds) => {
     const replies = {}
@@ -13,8 +12,7 @@ export const getReplies = async (parentIds) => {
                 },
             ]);
             sub.on("event", (event) => {
-                const reply = new Reply(event)
-                events.push(reply)
+                events.push(event)
             });
             sub.on("eose", () => {
                 sub.unsub();
