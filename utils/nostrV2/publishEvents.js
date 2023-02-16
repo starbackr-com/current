@@ -59,6 +59,18 @@ export const publishEvent = async (content, tags) => {
             tags: tags || [],
             content,
         };
+
+        try {
+            let tags = (event.tags? event.tags: []);
+            const hashtags = event.content.split(' ').filter(v=> v.startsWith('#'));
+            console.log(hashtags);
+            hashtags.forEach(tag => {tags.push(["t", tag.replace(/^#/, '')]);});
+            event.tags = tags;
+
+        } catch (e) {
+              console.log('error in setting up hashtags', e);
+        }
+
         event.id = getEventHash(event);
         event.sig = signEvent(event, privKey);
         const successes = await Promise.allSettled(
@@ -92,7 +104,8 @@ export const publishEvent = async (content, tags) => {
     }
 };
 
-export const publishReply = async (content, parentEvent) => {
+export const publishReply = async (content, rootId, replyId, type) => {
+    console.log([['e', rootId, '', 'root'], replyId ? ['e', replyId, '', 'reply'] : null])
     try {
         const sk = await getValue("privKey");
         if (!sk) {
@@ -103,9 +116,21 @@ export const publishReply = async (content, parentEvent) => {
             kind: 1,
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
-            tags: [['e', parentEvent]],
+            tags: replyId ? [['e', rootId, '', 'root'], ['e', replyId, 'reply']] : [['e', rootId, '', 'root']],
             content,
         };
+
+        try {
+            let tags = (event.tags? event.tags: []);
+            const hashtags = event.content.split(' ').filter(v=> v.startsWith('#'));
+            console.log(hashtags);
+            hashtags.forEach(tag => {tags.push(["t", tag.replace(/^#/, '')]);});
+            event.tags = tags;
+
+        } catch (e) {
+              console.log('error in setting up hashtags', e);
+        }
+
         event.id = getEventHash(event);
         event.sig = signEvent(event, sk);
         const successes = await Promise.allSettled(
