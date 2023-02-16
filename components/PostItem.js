@@ -20,7 +20,6 @@ import FeedImage from "./Images/FeedImage";
 import { httpRegex } from "../constants";
 import * as Linking from "expo-linking";
 
-
 const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
@@ -43,8 +42,9 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 <Text
                     style={{ color: colors.primary500 }}
                     onPress={() => {
-                        navigation.navigate("ProfileModal", {
-                            pubkey: event.tags[i - 1][1],
+                        navigation.navigate("Profile", {
+                            screen: "ProfileScreen",
+                            params: { pubkey: event.tags[i - 1][1] },
                         });
                     }}
                     key={i}
@@ -54,13 +54,22 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             );
         });
 
-        content = reactStringReplace(content, /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/, (m, i) => {
-            return (
-                <Text style={{ color: colors.primary500 }} onPress={() => {Linking.openURL(m)}}>
-                    {m}
-                </Text>
-            );
-        });
+        content = reactStringReplace(
+            content,
+            /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/,
+            (m, i) => {
+                return (
+                    <Text
+                        style={{ color: colors.primary500 }}
+                        onPress={() => {
+                            Linking.openURL(m);
+                        }}
+                    >
+                        {m}
+                    </Text>
+                );
+            }
+        );
         return content;
     }, []);
 
@@ -274,10 +283,10 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate('Profile', {
-                                    screen: 'ProfileScreen',
-                                    params: {pubkey: user.pubkey},
-                                  });
+                                navigation.navigate("Profile", {
+                                    screen: "ProfileScreen",
+                                    params: { pubkey: user.pubkey },
+                                });
                             }}
                         >
                             <Image
