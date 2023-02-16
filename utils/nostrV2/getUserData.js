@@ -49,7 +49,6 @@ export const getUserData = async (pubkeysInHex) => {
                         return;
                     }, 3000);
                     sub.on("event", (event) => {
-                        console.log(event)
                         const newEvent = new Event(event);
                         newEvent.save();
                     });
