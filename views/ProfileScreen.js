@@ -11,7 +11,7 @@ import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
-
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -70,33 +70,37 @@ const ProfileScreen = ({ route, navigation }) => {
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
 
-    const loggedInPubkey = useSelector((state) => state.auth.pubKey)
+    const loggedInPubkey = useSelector((state) => state.auth.pubKey);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const users = useSelector((state) => state.messages.users);
 
-    const user = users[pubkey]
+    const user = users[pubkey];
 
     const verifyNip05 = async (pubkey, nip05) => {
         try {
-            const [name, domain] = nip05.split('@')
-            const response = await fetch(`https://${domain}/.well-known/nostr.json?name=${name}`)
+            const [name, domain] = nip05.split("@");
+            const response = await fetch(
+                `https://${domain}/.well-known/nostr.json?name=${name}`
+            );
             const data = await response.json();
             if (Object.values(data.names).includes(pubkey)) {
                 setVerified(true);
             }
+        } catch (e) {
+            console.log(e);
         }
-        catch(e) {console.log(e)}
     };
 
     useEffect(() => {
-        if (!user) {
-            console.log('Getting user data')
-            getUserData([pubkey]);
-        }
+        getUserData([pubkey]);
         if (user && user?.nip05) {
-            verifyNip05(user.pubkey, user.nip05)
+            verifyNip05(user.pubkey, user.nip05);
         }
     }, []);
+
+    useFocusEffect(() => {
+        
+    });
 
     const getFeed = async () => {
         const response = await getUsersPosts(user.pubkey);
@@ -125,7 +129,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 {
                     paddingHorizontal: 0,
                     paddingTop: 0,
-                    alignItems: 'center'
+                    alignItems: "center",
                 },
             ]}
         >
@@ -151,39 +155,53 @@ const ProfileScreen = ({ route, navigation }) => {
                     color={colors.primary500}
                 />
             </Pressable>
-            <View style={{ width: "100%", alignItems: 'center' }}>
-                    <Image
-                        style={{
-                            width: 74,
-                            height: 74,
-                            borderRadius: 37,
-                            borderColor: colors.primary500,
-                            borderWidth: 1,
-                        }}
-                        source={
-                            user?.picture ||
-                            require("../assets/user_placeholder.jpg")
-                        }
-                    />
+            <View style={{ width: "100%", alignItems: "center" }}>
+                <Image
+                    style={{
+                        width: 74,
+                        height: 74,
+                        borderRadius: 37,
+                        borderColor: colors.primary500,
+                        borderWidth: 1,
+                    }}
+                    source={
+                        user?.picture ||
+                        require("../assets/user_placeholder.jpg")
+                    }
+                />
                 <View style={{ padding: 12 }}>
+                    <Text style={[globalStyles.textBodyBold]}>
+                        {user?.name || pubkey}
+                    </Text>
+                    {pubkey === loggedInPubkey ? (
+                        <Text
+                            style={[
+                                globalStyles.textBodyS,
+                                { color: colors.primary500 },
+                            ]}
+                            onPress={() => {}}
+                        >{`${followedPubkeys.length} following`}</Text>
+                    ) : undefined}
                     <Text
                         style={[
-                            globalStyles.textBodyBold,
+                            globalStyles.textBody,
+                            { color: colors.primary500 },
                         ]}
                     >
-                        {user?.name || pubkey}
+                        {user?.nip05}
+                        <Ionicons
+                            name={verified ? "checkbox" : "close-circle"}
+                        />{" "}
                     </Text>
-                    {pubkey === loggedInPubkey ? <Text style={[globalStyles.textBodyS, {color: colors.primary500}]} onPress={() => {navigation.navigate}}>{`${followedPubkeys.length} following`}</Text> : undefined}
-                    <Text style={[globalStyles.textBody, {color: colors.primary500}]} >{user?.nip05}<Ionicons name={verified ? 'checkbox' : 'close-circle'}/> </Text>
-                    <Text
-                        style={[globalStyles.textBody]}
-                    >
-                        {user?.about}
-                    </Text>
+                    <Text style={[globalStyles.textBody]}>{user?.about}</Text>
                     <Text
                         style={[
                             globalStyles.textBodyS,
-                            { textAlign: "center", color: "grey", marginBottom: 24 },
+                            {
+                                textAlign: "center",
+                                color: "grey",
+                                marginBottom: 24,
+                            },
                             copied ? { color: colors.primary500 } : undefined,
                         ]}
                         onPress={copyHandler}
@@ -191,7 +209,20 @@ const ProfileScreen = ({ route, navigation }) => {
                         {`${npub.slice(0, 32)}...`}
                         <Ionicons name="clipboard" />
                     </Text>
-                    {loggedInPubkey !== pubkey ? !followedPubkeys.includes(pubkey) ? <CustomButton text='Follow' buttonConfig={{onPress: () => {followUser(pubkey)}}}/> : <CustomButton text='Unfollow'/> : undefined}
+                    {loggedInPubkey !== pubkey ? (
+                        !followedPubkeys.includes(pubkey) ? (
+                            <CustomButton
+                                text="Follow"
+                                buttonConfig={{
+                                    onPress: () => {
+                                        followUser(pubkey);
+                                    },
+                                }}
+                            />
+                        ) : (
+                            <CustomButton text="Unfollow" />
+                        )
+                    ) : undefined}
                 </View>
             </View>
             <View
@@ -220,6 +251,18 @@ const ProfileScreen = ({ route, navigation }) => {
                     </View>
                 )}
             </View>
+            {pubkey === loggedInPubkey ? (
+                <View style={{ position: "absolute", right: 32, top: 32 }}>
+                    <CustomButton
+                        text="Edit"
+                        buttonConfig={{
+                            onPress: () => {
+                                navigation.navigate("EditProfileScreen");
+                            },
+                        }}
+                    />
+                </View>
+            ) : undefined}
         </View>
     );
 };

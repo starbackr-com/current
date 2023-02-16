@@ -19,6 +19,7 @@ import PostView from "../views/post/PostView";
 import FullScreenImage from "../components/Images/FullScreenImage";
 import ReadMoreModal from "../features/homefeed/components/ReadMoreModal";
 import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
+import ProfileNavigator from "./ProfileNavigator";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -108,9 +109,10 @@ const TabNavigator = ({ navigation }) => {
                             marginLeft: 12,
                         }}
                         onPress={() => {
-                            navigation.navigate("ProfileModal", {
-                                pubkey: pubKey,
-                            });
+                            navigation.navigate('Profile', {
+                                screen: 'ProfileScreen',
+                                params: {pubkey: pubKey},
+                              });
                         }}
                     >
                         {user?.picture ? (
@@ -175,8 +177,8 @@ const AuthedNavigator = () => {
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen
-                    name="ProfileModal"
-                    component={ProfileScreen}
+                    name="Profile"
+                    component={ProfileNavigator}
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen

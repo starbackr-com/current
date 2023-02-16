@@ -80,8 +80,9 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 <Text
                     style={{ color: colors.primary500 }}
                     onPress={() => {
-                        navigation.navigate("ProfileModal", {
-                            pubkey: event.tags[i - 1][1],
+                        navigation.navigate("Profile", {
+                            screen: "ProfileScreen",
+                            params: { pubkey: event.tags[i - 1][1] },
                         });
                     }}
                     key={i}
@@ -232,10 +233,10 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const age = getAge(created_at);
 
     const NUM_LINES = 2;
-    let content = item.content
+    let content = item.content;
 
     if (item.mentions) {
-        content = parseMentions(item)
+        content = parseMentions(item);
     }
 
     const textLayout = (e) => {
@@ -261,7 +262,7 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         height: "90%",
                         borderRadius: 10,
                         justifyContent: "space-between",
-                        backgroundColor: colors.backgroundSecondary
+                        backgroundColor: colors.backgroundSecondary,
                     },
                 ]}
             >
@@ -272,7 +273,7 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
                         borderBottomWidth: 1,
-                        borderColor: colors.primary500
+                        borderColor: colors.primary500,
                     }}
                 >
                     <Text
@@ -291,21 +292,39 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     images={[item.image]}
                 />
                 <Pressable
-                    style={({pressed}) => [{backgroundColor: colors.backgroundSecondary,
-                        padding: 12,
-                        borderBottomRightRadius: 10,
-                        borderBottomLeftRadius: 10,
-                        borderTopWidth: 1,
-                        borderColor: colors.primary500
-                    }, pressed && hasMore ? {backgroundColor: '#333333'} : undefined]}
-                    onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content, author: user?.name || pubkey})} : undefined}
+                    style={({ pressed }) => [
+                        {
+                            backgroundColor: colors.backgroundSecondary,
+                            padding: 12,
+                            borderBottomRightRadius: 10,
+                            borderBottomLeftRadius: 10,
+                            borderTopWidth: 1,
+                            borderColor: colors.primary500,
+                        },
+                        pressed && hasMore
+                            ? { backgroundColor: "#333333" }
+                            : undefined,
+                    ]}
+                    onPress={
+                        hasMore
+                            ? () => {
+                                  navigation.navigate("ReadMoreModal", {
+                                      content,
+                                      author: user?.name || pubkey,
+                                  });
+                              }
+                            : undefined
+                    }
                 >
                     <Text
                         onTextLayout={textLayout}
-                        style={[globalStyles.textBody,{
-                            opacity: 0,
-                            position: "absolute",
-                        }]}
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                opacity: 0,
+                                position: "absolute",
+                            },
+                        ]}
                     >
                         {content}
                     </Text>
@@ -328,7 +347,17 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     </Text>
                     {hasMore && (
                         <View>
-                            <Text style={[globalStyles.textBodyS, {color: colors.primary500, textAlign: 'left'}]}>{readMoreText}</Text>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        color: colors.primary500,
+                                        textAlign: "left",
+                                    },
+                                ]}
+                            >
+                                {readMoreText}
+                            </Text>
                         </View>
                     )}
                     <Text
@@ -359,8 +388,9 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate("ProfileModal", {
-                                    pubkey: user.pubkey,
+                                navigation.navigate("Profile", {
+                                    screen: "ProfileScreen",
+                                    params: { pubkey: user.pubkey },
                                 });
                             }}
                         >
