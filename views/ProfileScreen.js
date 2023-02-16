@@ -11,6 +11,7 @@ import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -96,6 +97,10 @@ const ProfileScreen = ({ route, navigation }) => {
             verifyNip05(user.pubkey, user.nip05);
         }
     }, []);
+
+    useFocusEffect(() => {
+        
+    });
 
     const getFeed = async () => {
         const response = await getUsersPosts(user.pubkey);
@@ -248,17 +253,14 @@ const ProfileScreen = ({ route, navigation }) => {
             </View>
             {pubkey === loggedInPubkey ? (
                 <View style={{ position: "absolute", right: 32, top: 32 }}>
-                    <Text
-                        style={[
-                            globalStyles.textBodyS,
-                            { color: colors.primary500 },
-                        ]}
-                        onPress={() => {
-                            navigation.navigate("EditProfileScreen");
+                    <CustomButton
+                        text="Edit"
+                        buttonConfig={{
+                            onPress: () => {
+                                navigation.navigate("EditProfileScreen");
+                            },
                         }}
-                    >
-                        Edit Profile
-                    </Text>
+                    />
                 </View>
             ) : undefined}
         </View>

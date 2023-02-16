@@ -1,4 +1,10 @@
-import { View, Text, Pressable, useWindowDimensions } from "react-native";
+import {
+    View,
+    Text,
+    Pressable,
+    useWindowDimensions,
+    Alert,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import { ScrollView } from "react-native-gesture-handler";
@@ -11,6 +17,7 @@ import { useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getUserData, publishKind0 } from "../../utils/nostrV2";
+import BackButton from '../../components/BackButton'
 
 const uploadImage = async (localUri, pubKey, bearer) => {
     const id = pubKey.slice(0, 16);
@@ -41,6 +48,7 @@ const EditProfileScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
     const [newImage, setNewImage] = useState(false);
     const [selected, setSelected] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState();
     const [lud16, setLud16] = useState();
     const [nip05, setNip05] = useState();
@@ -50,8 +58,7 @@ const EditProfileScreen = ({ navigation }) => {
 
     const bearer = useSelector((state) => state.auth.walletBearer);
     const pk = useSelector((state) => state.auth.pubKey);
-    const profiledata = useSelector(state => state.messages.users[pk])
-    console.log(profiledata)
+    const profiledata = useSelector((state) => state.messages.users[pk]);
     const resizeImage = async (image) => {
         const manipResult = await manipulateAsync(
             image.localUri || image.uri,
@@ -76,26 +83,61 @@ const EditProfileScreen = ({ navigation }) => {
     };
 
     const submitHandler = async () => {
-        let imageUri = profiledata.picture
-        if (newImage) {
-            imageUri = await uploadImage(image.uri, pk, bearer);
+        setIsLoading(true);
+        try {
+            let imageUri = profiledata.picture;
+            if (newImage) {
+                imageUri = await uploadImage(image.uri, pk, bearer);
+            }
+            const successes = await publishKind0(
+                nip05,
+                bio,
+                imageUri,
+                lud16,
+                name
+            );
+            await getUserData(pk);
+            setIsLoading(false);
+            if (successes.length > 1) {
+                Alert.alert(
+                    "Profile Updated!",
+                    `Your profile was updated on ${successes.length} relays!`,
+                    [
+                        {
+                            text: "Okay!",
+                            onPress: () => {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'MainTabNav' }],
+                                  });
+                            },
+                        },
+                    ]
+                );
+            } else {
+                alert("There was a problem updating your profile...");
+            }
+        } catch (e) {
+            console.log(e);
         }
-        publishKind0(nip05, bio, imageUri, lud16, name)
     };
 
     useEffect(() => {
-        setBio(profiledata.about)
-        setName(profiledata.name)
-        setLud16(profiledata.lud16 || profiledata.lud06)
-        setImage(profiledata.picture)
-        setNip05(profiledata.nip05)
-    }, [])
+        setBio(profiledata.about);
+        setName(profiledata.name);
+        setLud16(profiledata.lud16 || profiledata.lud06);
+        setImage(profiledata.picture);
+        setNip05(profiledata.nip05);
+    }, []);
 
     return (
         <ScrollView
             style={globalStyles.screenContainerScroll}
             contentContainerStyle={{ alignItems: "center" }}
         >
+            <View style={{width: '100%', alignItems: 'flex-start'}}>
+                <BackButton onPress={() => {navigation.goBack()}}/>
+            </View>
             <Pressable
                 style={({ pressed }) => [
                     {
@@ -114,7 +156,7 @@ const EditProfileScreen = ({ navigation }) => {
             >
                 {image ? (
                     <Image
-                        source={image.uri || image}
+                        source={image.uri || image}
                         style={{
                             width: device.width / 5,
                             height: device.width / 5,
@@ -134,26 +176,44 @@ const EditProfileScreen = ({ navigation }) => {
             <Text style={[globalStyles.textBodyS, { marginBottom: 32 }]}>
                 Profile Picture
             </Text>
-            <View style={{width: '80%', marginBottom: 32}}>
-                <Input label="Name" textInputConfig={{value: name, onChangeText: setName}} inputStyle={{marginBottom: 12}}/>
-                <Input label="Lightning Address" textInputConfig={{value: lud16, onChangeText: setLud16}} inputStyle={{marginBottom: 12}}/>
-                <Input label="NIP05" textInputConfig={{value: nip05, onChangeText: setNip05}} inputStyle={{marginBottom: 12}}/>
-                <Input label="Bio" textInputConfig={{multiline: true, value: bio, onChangeText: setBio }} inputStyle={{height: 64}}/>
+            <View style={{ width: "80%", marginBottom: 32 }}>
+                <Input
+                    label="Name"
+                    textInputConfig={{ value: name, onChangeText: setName }}
+                    inputStyle={{ marginBottom: 12 }}
+                />
+                <Input
+                    label="Lightning Address"
+                    textInputConfig={{ value: lud16, onChangeText: setLud16 }}
+                    inputStyle={{ marginBottom: 12 }}
+                />
+                <Input
+                    label="NIP05"
+                    textInputConfig={{ value: nip05, onChangeText: setNip05 }}
+                    inputStyle={{ marginBottom: 12 }}
+                />
+                <Input
+                    label="Bio"
+                    textInputConfig={{
+                        multiline: true,
+                        value: bio,
+                        onChangeText: setBio,
+                    }}
+                    inputStyle={{ height: 64 }}
+                />
             </View>
-            <View style={{flexDirection: 'row', width: '80%', justifyContent: 'space-evenly'}}>
-            <CustomButton
-                text="Save"
-                buttonConfig={{ onPress: submitHandler }}
-            />
-            <CustomButton
-                text="Back"
-                buttonConfig={{
-                    onPress: () => {
-                        navigation.goBack();
-                    },
+            <View
+                style={{
+                    flexDirection: "row",
+                    width: "80%",
+                    justifyContent: "space-evenly",
                 }}
-                secondary
-            />
+            >
+                <CustomButton
+                    text="Save"
+                    buttonConfig={{ onPress: submitHandler }}
+                    loading={isLoading}
+                />
             </View>
         </ScrollView>
     );
