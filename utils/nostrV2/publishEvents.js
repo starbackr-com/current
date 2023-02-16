@@ -163,3 +163,48 @@ export const publishReply = async (content, rootId, replyId, type) => {
         console.log(error);
     }
 };
+
+export const createZapEvent = async (content, tags) => {
+
+        try {
+
+
+
+          const sk = await getValue("privKey");
+          let pk = getPublicKey(sk);
+
+          let addrelays = [];
+          connectedRelays.map((relay) => { addrelays.push(relay.url); console.log(relay.url); });
+
+          tags.push(['relays', addrelays[0], addrelays[1], addrelays[2], addrelays[3] ]);
+
+
+          let event = {
+              kind: 9734,
+              pubkey: pk,
+              created_at: Math.floor(Date.now() / 1000),
+              tags: tags,
+          };
+
+          if (content) {
+
+            event.content = content;
+          } else {
+            event.content = '';
+          }
+          event.id = getEventHash(event);
+          event.sig = signEvent(event, sk);
+
+          return event;
+
+
+        } catch (e) {
+
+          console.log('error: ', e);
+          return;
+
+        }
+
+
+
+};
