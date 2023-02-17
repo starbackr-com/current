@@ -21,7 +21,15 @@ import FeedImage from "./Images/FeedImage";
 import { httpRegex } from "../constants";
 import * as Linking from "expo-linking";
 
-const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
+const PostItem = ({
+    item,
+    height,
+    width,
+    user,
+    zapSuccess,
+    zapAmount,
+    zaps,
+}) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
@@ -55,14 +63,23 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             );
         });
 
-
-        content = reactStringReplace(content, /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/, (m, i) => {
-            return (
-                <Text style={{ color: colors.primary500 }} onPress={() => {Linking.openURL(m)}} key={m}>
-                    {m}
-                </Text>
-            );
-        });
+        content = reactStringReplace(
+            content,
+            /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/,
+            (m, i) => {
+                return (
+                    <Text
+                        style={{ color: colors.primary500 }}
+                        onPress={() => {
+                            Linking.openURL(m);
+                        }}
+                        key={m}
+                    >
+                        {m}
+                    </Text>
+                );
+            }
+        );
         return content;
     }, []);
 
@@ -115,10 +132,11 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             const dest = user.lud06.toLowerCase();
             const url = decodeLnurl(dest);
             const response = await fetch(url);
-            const { callback, minSendable, allowsNostr, nostrPubkey } = await response.json();
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-            console.log('checking', amount);
+            console.log("checking", amount);
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -131,18 +149,19 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                             let response;
                             if (allowsNostr && nostrPubkey) {
                                 let tags = [];
-                                tags.push((['p', nostrPubkey]));
-                                tags.push(['e', item.id]);
-                                tags.push(['amount', (amount * 1000) ]);
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
 
-                                const zapevent = await createZapEvent('', tags);
+                                const zapevent = await createZapEvent("", tags);
 
                                 console.log(zapevent);
 
                                 response = await fetch(
-                                    `${callback}?amount=${amount * 1000}&nostr=${JSON.stringify(zapevent)}`
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
                                 );
-
                             } else {
                                 response = await fetch(
                                     `${callback}?amount=${amount * 1000}`
@@ -178,12 +197,13 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             const response = await fetch(
                 `https://${domain}/.well-known/lnurlp/${username}`
             );
-            const { callback, minSendable, allowsNostr, nostrPubkey } = await response.json();
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
 
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
 
-            console.log('checking else', amount);
+            console.log("checking else", amount);
 
             Alert.alert(
                 "Zap",
@@ -194,22 +214,22 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "OK",
                         onPress: async () => {
-
                             let response;
                             if (allowsNostr && nostrPubkey) {
                                 let tags = [];
-                                tags.push((['p', nostrPubkey]));
-                                tags.push(['e', item.id]);
-                                tags.push(['amount', (amount * 1000) ]);
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
 
-                                const zapevent = await createZapEvent('', tags);
+                                const zapevent = await createZapEvent("", tags);
 
                                 console.log(zapevent);
 
                                 response = await fetch(
-                                    `${callback}?amount=${amount * 1000}&nostr=${JSON.stringify(zapevent)}`
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
                                 );
-
                             } else {
                                 response = await fetch(
                                     `${callback}?amount=${amount * 1000}`
@@ -289,14 +309,53 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         />
                     ) : undefined}
                 </View>
-                <Text
-                    style={[
-                        globalStyles.textBody,
-                        { textAlign: "right", padding: 4 },
-                    ]}
+                <View
+                    style={{
+                        width: "100%",
+                        alignItems: "center",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                    }}
                 >
-                    {age}
-                </Text>
+                    {zaps ? (
+                        // <Pressable onPress={() => {navigation.navigate('ZapListModal', {zaps})}}>
+                        <Pressable>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        textAlign: "left",
+                                        padding: 4,
+                                        color: colors.primary500,
+                                    },
+                                ]}
+                            >
+                                {zaps.amount}{" "}
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyS,
+                                        {
+                                            fontFamily: "Satoshi-Symbol",
+                                            color: colors.primary500,
+                                        },
+                                    ]}
+                                >
+                                    S
+                                </Text>
+                            </Text>
+                        </Pressable>
+                    ) : (
+                        <View></View>
+                    )}
+                    <Text
+                        style={[
+                            globalStyles.textBody,
+                            { textAlign: "right", padding: 4 },
+                        ]}
+                    >
+                        {age}
+                    </Text>
+                </View>
             </View>
             <View
                 style={{
@@ -384,7 +443,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
                             rootId: item.id,
-                            type: 'root'
+                            type: "root",
                         });
                     }}
                 >

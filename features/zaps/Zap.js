@@ -10,6 +10,7 @@ export class Zap {
         this.sig = eventData.sig;
         this.tags = eventData.tags;
         this.receiver = this.tags.filter((tag) => tag[0] === "p");
+        this.toEvent = this.tags.filter((tag) => tag[0] === "e")[0][1];
         this.invoice = this.tags.filter((tag) => tag[0] === "bolt11")[0][1];
         this.request = JSON.parse(
             this.tags.filter((tag) => tag[0] === "description")[0][1]

@@ -15,7 +15,8 @@ import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
-import {ActivityIndicator} from 'react-native';
+import { ActivityIndicator } from "react-native";
+import { getZaps } from "../features/zaps/utils/getZaps";
 
 const HomeStack = createStackNavigator();
 
@@ -25,6 +26,7 @@ const HomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [playAnimation, setPlayAnimation] = useState(false);
+    const [zaps, setZaps] = useState();
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
@@ -49,41 +51,48 @@ const HomeScreen = ({ navigation }) => {
         setWidth(e.nativeEvent.layout.width);
     };
 
+    const loadZaps = async () => {
+    };
+
     const loadHomefeed = async () => {
         setIsLoading(true);
-        await getHomeFeed(followedPubkeys);
+        const postObj = await getHomeFeed(followedPubkeys);
+        const postArray = Object.keys(postObj).map((key) => postObj[key]);
+        const arrayOfIds = postArray.map((event) => event.id);
+        const allZaps = await getZaps(arrayOfIds);
+        console.log(allZaps)
+        setZaps(allZaps);
         setIsLoading(false);
         updateFollowedUsers();
     };
 
-    const renderPost = useCallback(
-        ({ item }) => {
-            if (item.type === "image") {
-                return (
-                    <ImagePost
-                        item={item}
-                        height={height}
-                        width={width}
-                        user={users[item.pubkey]}
-                        zapSuccess={playZapAnimation}
-                        zapAmount={zapAmount}
-                    />
-                );
-            } else {
-                return (
-                    <PostItem
-                        item={item}
-                        height={height}
-                        width={width}
-                        user={users[item.pubkey]}
-                        zapSuccess={playZapAnimation}
-                        zapAmount={zapAmount}
-                    />
-                );
-            }
-        },
-        [height, width, users, zapAmount]
-    );
+    const renderPost = ({ item }) => {
+        if (item.type === "image") {
+            return (
+                <ImagePost
+                    item={item}
+                    height={height}
+                    width={width}
+                    user={users[item.pubkey]}
+                    zapSuccess={playZapAnimation}
+                    zapAmount={zapAmount}
+                    zaps={zaps ? zaps[item.id] : null}
+                />
+            );
+        } else {
+            return (
+                <PostItem
+                    item={item}
+                    height={height}
+                    width={width}
+                    user={users[item.pubkey]}
+                    zapSuccess={playZapAnimation}
+                    zapAmount={zapAmount}
+                    zaps={zaps ? zaps[item.id] : null}
+                />
+            );
+        }
+    };
 
     const playZapAnimation = () => {
         setPlayAnimation(true);
@@ -102,8 +111,11 @@ const HomeScreen = ({ navigation }) => {
     }, [followedPubkeys]);
 
     return (
-        <View style={[globalStyles.screenContainer, {paddingTop: 12}]} onLayout={onLayoutViewWidth}>
-            <GetStartedItems/>
+        <View
+            style={[globalStyles.screenContainer, { paddingTop: 12 }]}
+            onLayout={onLayoutViewWidth}
+        >
+            <GetStartedItems />
             <View
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}
@@ -120,22 +132,24 @@ const HomeScreen = ({ navigation }) => {
                             directionalLockEnabled
                             onRefresh={async () => {
                                 setIsFetching(true);
-                                await getHomeFeed(followedPubkeys);
+                                await loadHomefeed();
                                 setIsFetching(false);
                             }}
                             refreshing={isFetching}
-                            extraData={[users, zapAmount]}
+                            extraData={[users, zapAmount, zaps]}
                             getItemType={(item) => item.type}
                         />
                     </View>
                 ) : (
-                    <ActivityIndicator  style={{
-                        container: {
-                          flex: 1,
-                          justifyContent: 'center',
-                        },
-
-                    }} size={90}/>
+                    <ActivityIndicator
+                        style={{
+                            container: {
+                                flex: 1,
+                                justifyContent: "center",
+                            },
+                        }}
+                        size={90}
+                    />
                 )}
                 {playAnimation ? (
                     <View
