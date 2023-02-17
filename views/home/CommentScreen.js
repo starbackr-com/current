@@ -11,6 +11,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
+import ZapItem from "../../features/zaps/components/ZapItem";
 
 const createReplyTree = (dataset) => {
     try {
@@ -72,8 +73,9 @@ const ReplyItem = ({ event, user, rootId, replies }) => {
                 ]}
                 numberOfLines={1}
                 onPress={() => {
-                    navigation.navigate("ProfileModal", {
-                        pubkey: event.pubkey,
+                    navigation.navigate("Profile", {
+                        screen: "ProfileScreen",
+                        params: { pubkey: event.pubkey },
                     });
                 }}
             >
@@ -121,6 +123,28 @@ const CommentScreen = ({ route, navigation }) => {
 
     const users = useSelector((state) => state.messages.users);
 
+    const renderItem = ({ item }) => {
+        if (item.kind === 1) {
+            return (
+                <ReplyItem
+                    event={item}
+                    user={users[item.pubkey]}
+                    replies={item.replies}
+                    rootId={rootId}
+                />
+            );
+        } else if (item.kind === 9735) {
+            return (
+                <ZapItem
+                    event={item}
+                    user={users[item.payer]}
+                    replies={item.replies}
+                    rootId={rootId}
+                />
+            );
+        }
+    };
+
     const getAllReplies = async () => {
         if (type === "root") {
             const response = await getReplies([eventId]);
@@ -132,7 +156,7 @@ const CommentScreen = ({ route, navigation }) => {
                 const replyTree = createReplyTree(array);
                 const secondArray = Object.keys(replyTree).map(
                     (key) => replyTree[key]
-                );
+                ).sort((a,b) => b.created_at - a.created_at);
                 setReplies(secondArray);
                 getUserData(pubkeys);
             }
@@ -208,14 +232,7 @@ const CommentScreen = ({ route, navigation }) => {
                 {replies ? (
                     <FlashList
                         data={replies}
-                        renderItem={({ item }) => (
-                            <ReplyItem
-                                event={item}
-                                user={users[item.pubkey]}
-                                replies={item.replies}
-                                rootId={rootId}
-                            />
-                        )}
+                        renderItem={renderItem}
                         estimatedItemSize={80}
                         extraData={users}
                         inverted

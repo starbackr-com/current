@@ -3552,11 +3552,6 @@ expo-barcode-scanner@~12.3.1:
   dependencies:
     expo-image-loader "~4.1.0"
 
-expo-cached-image@^47.1.0:
-  version "47.1.0"
-  resolved "https://registry.yarnpkg.com/expo-cached-image/-/expo-cached-image-47.1.0.tgz#a196782c1015163d00c4233a3711229970223e4c"
-  integrity sha512-IJ4dEabRgrZOHq0SMKYB4lZRURZdxA7qXl3oOCU3d4DieAHIdYbRj2fz8RzJcsQkDBNM8VNTDjBYA8ITCTSblw==
-
 expo-clipboard@~4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-4.1.1.tgz#4d7d593f1612302fc2dd4f60ba3b430e62b838f0"
@@ -3648,10 +3643,10 @@ expo-image-picker@~14.1.1:
   dependencies:
     expo-image-loader "~4.1.0"
 
-expo-image@1.0.0-rc.0:
-  version "1.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-1.0.0-rc.0.tgz#d01d52821d42d859a8d0b949324d3283033f032b"
-  integrity sha512-cWzJGLf+ulaYLf2Jr4f5z6R945ZDy5x+KxFr28q6CmbYDCk9zHCQWxVPQlnz1LtCRpHb5WAWTdhvJtWCRc+FpA==
+expo-image@~1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-1.0.0-rc.1.tgz#27d4e4a4048ec0beaf9fa4d133f4e79358543797"
+  integrity sha512-OC8pW4jkcGMiU8NyAPjKaOJZmS4Dp9Q+VnIeFxa+tUuU5/QbSjvqi5SJanAA1VVX61Ov6UCwfD2TTv/DhN/dTA==
 
 expo-json-utils@~0.5.0:
   version "0.5.1"
