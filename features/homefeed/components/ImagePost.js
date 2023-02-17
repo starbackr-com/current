@@ -49,7 +49,15 @@ const FeedImage = ({ size, images }) => {
     );
 };
 
-const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount, zaps }) => {
+const ImagePost = ({
+    item,
+    height,
+    width,
+    user,
+    zapSuccess,
+    zapAmount,
+    zaps,
+}) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
@@ -405,51 +413,53 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount, zaps }) =
                         </View>
                     )}
                     <View
-                    style={{
-                        width: "100%",
-                        alignItems: "center",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    {zaps ? (
-                        <View>
-                            <Text
-                                style={[
-                                    globalStyles.textBodyS,
-                                    {
-                                        textAlign: "left",
-                                        padding: 4,
-                                        color: colors.primary500,
-                                    },
-                                ]}
+                        style={{
+                            width: "100%",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        {zaps ? (
+                            <Pressable
+                                style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
                             >
-                                {zaps.amount}{" "}
                                 <Text
                                     style={[
-                                        globalStyles.textBodyS,
+                                        globalStyles.textBodS,
                                         {
-                                            fontFamily: "Satoshi-Symbol",
+                                            textAlign: "left",
                                             color: colors.primary500,
+                                            alignItems: "center",
+                                            justifyContent: "center",
                                         },
                                     ]}
                                 >
-                                    S
+                                    <Ionicons
+                                        name="flash-outline"
+                                        style={{
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    />
+                                    {" "}{zaps.amount}
                                 </Text>
-                            </Text>
-                        </View>
-                    ) : (
-                        <View></View>
-                    )}
-                    <Text
-                        style={[
-                            globalStyles.textBody,
-                            { textAlign: "right", padding: 4 },
-                        ]}
-                    >
-                        {age}
-                    </Text>
-                </View>
+                            </Pressable>
+                        ) : (
+                            <View></View>
+                        )}
+                        <Text
+                            style={[
+                                globalStyles.textBodyS,
+                                { textAlign: "right", padding: 4 },
+                            ]}
+                        >
+                            {age}
+                        </Text>
+                    </View>
                 </Pressable>
             </View>
             <View
@@ -538,7 +548,7 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount, zaps }) =
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
                             rootId: item.id,
-                            type: 'root'
+                            type: "root",
                         });
                     }}
                 >

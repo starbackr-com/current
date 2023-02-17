@@ -319,29 +319,31 @@ const PostItem = ({
                 >
                     {zaps ? (
                         // <Pressable onPress={() => {navigation.navigate('ZapListModal', {zaps})}}>
-                        <Pressable>
+                        <Pressable
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
                             <Text
                                 style={[
                                     globalStyles.textBodyS,
                                     {
                                         textAlign: "left",
-                                        padding: 4,
                                         color: colors.primary500,
+                                        alignItems: "center",
+                                        justifyContent: "center",
                                     },
                                 ]}
                             >
-                                {zaps.amount}{" "}
-                                <Text
-                                    style={[
-                                        globalStyles.textBodyS,
-                                        {
-                                            fontFamily: "Satoshi-Symbol",
-                                            color: colors.primary500,
-                                        },
-                                    ]}
-                                >
-                                    S
-                                </Text>
+                                <Ionicons
+                                    name="flash-outline"
+                                    style={{
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                />
+                                {" "}{zaps.amount}
                             </Text>
                         </Pressable>
                     ) : (
@@ -349,7 +351,7 @@ const PostItem = ({
                     )}
                     <Text
                         style={[
-                            globalStyles.textBody,
+                            globalStyles.textBodyS,
                             { textAlign: "right", padding: 4 },
                         ]}
                     >
