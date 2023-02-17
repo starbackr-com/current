@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../services/walletApi";
 import { useState } from "react";
+import { createZapEvent } from "../utils/nostrV2/publishEvents";
 import Animated, {
     withSequence,
     withTiming,
@@ -114,9 +115,10 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             const dest = user.lud06.toLowerCase();
             const url = decodeLnurl(dest);
             const response = await fetch(url);
-            const { callback, minSendable } = await response.json();
+            const { callback, minSendable, allowsNostr, nostrPubkey } = await response.json();
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+            console.log('checking', amount);
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -126,9 +128,26 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "OK",
                         onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push((['p', nostrPubkey]));
+                                tags.push(['e', item.id]);
+                                tags.push(['amount', (amount * 1000) ]);
+
+                                const zapevent = await createZapEvent('', tags);
+
+                                console.log(zapevent);
+
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}&nostr=${JSON.stringify(zapevent)}`
+                                );
+
+                            } else {
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}`
+                                );
+                            }
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
@@ -159,9 +178,13 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             const response = await fetch(
                 `https://${domain}/.well-known/lnurlp/${username}`
             );
-            const { callback, minSendable } = await response.json();
+            const { callback, minSendable, allowsNostr, nostrPubkey } = await response.json();
+
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+
+            console.log('checking else', amount);
+
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -171,9 +194,27 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "OK",
                         onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
+
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push((['p', nostrPubkey]));
+                                tags.push(['e', item.id]);
+                                tags.push(['amount', (amount * 1000) ]);
+
+                                const zapevent = await createZapEvent('', tags);
+
+                                console.log(zapevent);
+
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}&nostr=${JSON.stringify(zapevent)}`
+                                );
+
+                            } else {
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}`
+                                );
+                            }
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
