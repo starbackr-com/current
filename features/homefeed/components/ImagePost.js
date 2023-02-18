@@ -147,70 +147,7 @@ const ImagePost = ({
             );
         }
         setIsLoading(true);
-        if (user.lud06 && zapAmount) {
-            const dest = user.lud06.toLowerCase();
-            const url = decodeLnurl(dest);
-            const response = await fetch(url);
-            const { callback, minSendable, allowsNostr, nostrPubkey } =
-                await response.json();
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-            console.log("checking", amount);
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${amount} SATS to ${
-                    user.name || user.pubkey
-                }?`,
-                [
-                    {
-                        text: "OK",
-                        onPress: async () => {
-                            let response;
-                            if (allowsNostr && nostrPubkey) {
-                                let tags = [];
-                                tags.push(["p", nostrPubkey]);
-                                tags.push(["e", item.id]);
-                                // tags.push(["amount", amount * 1000]);
-
-                                const zapevent = await createZapEvent("", tags);
-
-                                console.log(zapevent);
-
-                                response = await fetch(
-                                    `${callback}?amount=${
-                                        amount * 1000
-                                    }&nostr=${JSON.stringify(zapevent)}`
-                                );
-                            } else {
-                                response = await fetch(
-                                    `${callback}?amount=${amount * 1000}`
-                                );
-                            }
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
-                            alert(result.data?.message);
-                            setIsLoading(false);
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            setIsLoading(false);
-                        },
-                    },
-                ]
-            );
-        } else if (user.lud16 && zapAmount) {
+        if (user.lud16 && zapAmount) {
             const dest = user.lud16.toLowerCase();
             const [username, domain] = dest.split("@");
             const response = await fetch(
@@ -260,13 +197,85 @@ const ImagePost = ({
                                 amount,
                                 invoice,
                             });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
                             console.log(result);
                             setIsLoading(false);
+                            if (!result.data.error) {
+                                //zapSuccess();
+                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
+                                    user.name || user.pubkey
+                                } `)
+                            } else {
+                              alert('Zap Failed');
+                            }
+                            return;
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                        onPress: () => {
+                            setIsLoading(false);
+                        },
+                    },
+                ]
+            );
+        } else if (user.lud06 && zapAmount) {
+            console.log(user.lud06);
+            const dest = user.lud06.toLowerCase();
+            const url = decodeLnurl(dest);
+            const response = await fetch(url);
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
+            const amount =
+                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+            console.log("checking", amount);
+            Alert.alert(
+                "Zap",
+                `Do you want to send ${amount} SATS to ${
+                    user.name || user.pubkey
+                }?`,
+                [
+                    {
+                        text: "OK",
+                        onPress: async () => {
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
+
+                                const zapevent = await createZapEvent("", tags);
+
+                                console.log(zapevent);
+
+                                response = await fetch(
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
+                                );
+                            } else {
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}`
+                                );
+                            }
+                            const data = await response.json();
+                            const invoice = data.pr;
+                            const result = await sendPayment({
+                                amount,
+                                invoice,
+                            });
+                            console.log(result);
+                            setIsLoading(false);
+                            if (!result.data.error) {
+                                //zapSuccess();
+                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
+                                    user.name || user.pubkey
+                                } `)
+                            } else {
+                              alert('Zap Failed');
+                            }
+                            return;
                         },
                     },
                     {
