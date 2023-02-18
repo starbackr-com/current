@@ -163,7 +163,7 @@ const PostItem = ({
     const age = getAge(created_at);
 
     const textLayout = (e) => {
-        const lineHeight = e.nativeEvent.lines[0].height;
+        const lineHeight = e.nativeEvent.lines[0]?.height || 16;
         const containerHeight = (((height / 100) * 90) / 100) * 90;
         const maxLines = containerHeight / lineHeight;
         const numOfLines = e.nativeEvent.lines.length;
@@ -232,7 +232,14 @@ const PostItem = ({
                         {content}
                     </Text>
                     {hasMore && (
-                        <View>
+                        <Pressable
+                            onPress={() => {
+                                navigation.navigate("ReadMoreModal", {
+                                    event: item,
+                                    author: user?.name || pubkey,
+                                });
+                            }}
+                        >
                             <Text
                                 style={[
                                     globalStyles.textBodyS,
@@ -244,7 +251,7 @@ const PostItem = ({
                             >
                                 {readMoreText}
                             </Text>
-                        </View>
+                        </Pressable>
                     )}
                     {item.image ? (
                         <FeedImage

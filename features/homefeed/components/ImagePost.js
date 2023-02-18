@@ -359,7 +359,7 @@ const ImagePost = ({
                         hasMore
                             ? () => {
                                   navigation.navigate("ReadMoreModal", {
-                                      content,
+                                      event: item,
                                       author: user?.name || pubkey,
                                   });
                               }
