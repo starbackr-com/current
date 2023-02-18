@@ -105,7 +105,6 @@ const PostItem = ({
 
     const zapHandler = async () => {
         if (!zapAmount) {
-            zapSuccess();
             Alert.alert(
                 "No Zap-Amount set!",
                 `In order to Zap a post you will need to set a default Zap-Amount first`,
@@ -168,9 +167,11 @@ const PostItem = ({
                                     }&nostr=${JSON.stringify(zapevent)}`
                                 );
                             } else {
-                                response = await fetch(
-                                    `${callback}?amount=${amount * 1000}`
-                                );
+                                    console.log('inside not zap wallet');
+                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
+                                setIsLoading(false);
+                                return;
+
                             }
                             const data = await response.json();
                             const invoice = data.pr;
@@ -180,7 +181,7 @@ const PostItem = ({
                             });
                             console.log(result);
                             setIsLoading(false);
-                            if (!result.data.error) {
+                              if (result.data && !result.data.error) {
                                 //zapSuccess();
                                 alert(`🤑 🎉 Zap success: ${amount} SATS to ${
                                     user.name || user.pubkey
@@ -239,9 +240,11 @@ const PostItem = ({
                                     }&nostr=${JSON.stringify(zapevent)}`
                                 );
                             } else {
-                                response = await fetch(
-                                    `${callback}?amount=${amount * 1000}`
-                                );
+                                    console.log('inside not zap wallet');
+                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
+                                setIsLoading(false);
+                                return;
+
                             }
                             const data = await response.json();
                             const invoice = data.pr;
@@ -251,7 +254,7 @@ const PostItem = ({
                             });
                             console.log(result);
                             setIsLoading(false);
-                            if (!result.data.error) {
+                            if (result.data && !result.data.error) {
                                 //zapSuccess();
                                 alert(`🤑 🎉 Zap success: ${amount} SATS to ${
                                     user.name || user.pubkey
