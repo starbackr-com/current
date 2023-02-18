@@ -32,7 +32,7 @@ const PostItem = ({
     const navigation = useNavigation();
     const [hasMore, setHasMore] = useState(false);
     const [numOfLines, setNumOfLines] = useState();
-    const [textContainerHeight, setTextContaienrHeight] = useState()
+    const [textContainerHeight, setTextContaienrHeight] = useState();
     const readMoreText = "Read More...";
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
@@ -109,9 +109,14 @@ const PostItem = ({
                                     }&nostr=${JSON.stringify(zapevent)}`
                                 );
                             } else {
-                                response = await fetch(
-                                    `${callback}?amount=${amount * 1000}`
+                                console.log("inside not zap wallet");
+                                alert(
+                                    `Oops..! ${
+                                        user.name || user.pubkey
+                                    }'s wallet does not support Zaps!`
                                 );
+                                setIsLoading(false);
+                                return;
                             }
                             const data = await response.json();
                             const invoice = data.pr;
@@ -120,14 +125,22 @@ const PostItem = ({
                                 invoice,
                             });
                             console.log(result);
-                            if (!result.data.error) {
+                            setIsLoading(false);
+                            if (result.data && !result.data.error) {
+                                //zapSuccess();
                                 alert(
-                                    `⚡ 🎉 Zap success: ${amount} SATS to ${name} `
+                                    `🤑 🎉 Zap success: ${amount} SATS to ${
+                                        user.name || user.pubkey
+                                    } `
+                                );
+                            } else {
+                                alert(
+                                    `Oops..! ${
+                                        user.name || user.pubkey
+                                    }'s wallet does not support Zaps!`
                                 );
                                 setIsLoading(false);
-                            } else {
-                                alert("Zap Failed");
-                                setIsLoading(false);
+                                return;
                             }
                             return;
                         },
@@ -135,6 +148,9 @@ const PostItem = ({
                     {
                         text: "Cancel",
                         style: "cancel",
+                        onPress: () => {
+                            setIsLoading(false);
+                        },
                     },
                 ]
             );
@@ -147,15 +163,15 @@ const PostItem = ({
     const age = getAge(created_at);
 
     const textLayout = (e) => {
-        const lineHeight = e.nativeEvent.lines[0].height
-        const containerHeight = ((height / 100 * 90 / 100) * 90);
-        const maxLines = containerHeight / lineHeight
-        const numOfLines = e.nativeEvent.lines.length
-        console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`)
+        const lineHeight = e.nativeEvent.lines[0].height;
+        const containerHeight = (((height / 100) * 90) / 100) * 90;
+        const maxLines = containerHeight / lineHeight;
+        const numOfLines = e.nativeEvent.lines.length;
+        console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`);
         if (numOfLines > maxLines - 5) {
             setHasMore(true);
         } else {
-            setHasMore(false)
+            setHasMore(false);
         }
         setNumOfLines(maxLines - 5);
     };
