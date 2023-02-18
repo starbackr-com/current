@@ -18,7 +18,6 @@ import FeedImage from "./Images/FeedImage";
 import { getAge } from "../features/shared/utils/getAge";
 import { useParseContent } from "../hooks/useParseContent";
 
-
 const PostItem = ({
     item,
     height,
@@ -31,6 +30,10 @@ const PostItem = ({
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
+    const [hasMore, setHasMore] = useState(false);
+    const [numOfLines, setNumOfLines] = useState();
+    const [textContainerHeight, setTextContaienrHeight] = useState()
+    const readMoreText = "Read More...";
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
             withSequence(
@@ -42,7 +45,7 @@ const PostItem = ({
         ),
     }));
 
-    const content = useParseContent(item)
+    const content = useParseContent(item);
 
     const { created_at, pubkey } = item;
     const blurhash = "LEHLh[WB2yk8pyoJadR*.7kCMdnj";
@@ -71,8 +74,8 @@ const PostItem = ({
         }
         setIsLoading(true);
         try {
-            const dest = user.lud06 || user.lud16
-            const name = user.name || user.pubkey.slice(0,12)
+            const dest = user.lud06 || user.lud16;
+            const name = user.name || user.pubkey.slice(0, 12);
             const url = dest.includes("@")
                 ? `https://${dest.split("@")[1]}/.well-known/lnurlp/${
                       dest.split("@")[0]
@@ -81,54 +84,60 @@ const PostItem = ({
             const response = await fetch(url);
             const { callback, minSendable, allowsNostr, nostrPubkey } =
                 await response.json();
-    
+
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-    
-            Alert.alert("Zap", `Do you want to send ${zapAmount} SATS to ${name}?`, [
-                {
-                    text: "Yes!",
-                    onPress: async () => {
-                        let response;
-                        if (allowsNostr && nostrPubkey) {
-                            let tags = [];
-                            tags.push(["p", nostrPubkey]);
-                            tags.push(["e", item.id]);
-                            // tags.push(["amount", amount * 1000]);
-    
-                            const zapevent = await createZapEvent("", tags);
-                            response = await fetch(
-                                `${callback}?amount=${
-                                    amount * 1000
-                                }&nostr=${JSON.stringify(zapevent)}`
-                            );
-                        } else {
-                            response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
-                        }
-                        const data = await response.json();
-                        const invoice = data.pr;
-                        const result = await sendPayment({
-                            amount,
-                            invoice,
-                        });
-                        console.log(result)
-                        if (!result.data.error) {
-                            alert(`⚡ 🎉 Zap success: ${amount} SATS to ${name} `);
-                            setIsLoading(false);
-                        } else {
-                            alert("Zap Failed");
-                            setIsLoading(false);
-                        }
-                        return;
+
+            Alert.alert(
+                "Zap",
+                `Do you want to send ${zapAmount} SATS to ${name}?`,
+                [
+                    {
+                        text: "Yes!",
+                        onPress: async () => {
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
+
+                                const zapevent = await createZapEvent("", tags);
+                                response = await fetch(
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
+                                );
+                            } else {
+                                response = await fetch(
+                                    `${callback}?amount=${amount * 1000}`
+                                );
+                            }
+                            const data = await response.json();
+                            const invoice = data.pr;
+                            const result = await sendPayment({
+                                amount,
+                                invoice,
+                            });
+                            console.log(result);
+                            if (!result.data.error) {
+                                alert(
+                                    `⚡ 🎉 Zap success: ${amount} SATS to ${name} `
+                                );
+                                setIsLoading(false);
+                            } else {
+                                alert("Zap Failed");
+                                setIsLoading(false);
+                            }
+                            return;
+                        },
                     },
-                },
-                {
-                    text: "Cancel",
-                    style: "cancel",
-                },
-            ]);
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                    },
+                ]
+            );
         } catch (e) {
             console.log(e);
             setIsLoading(false);
@@ -137,6 +146,20 @@ const PostItem = ({
 
     const age = getAge(created_at);
 
+    const textLayout = (e) => {
+        const lineHeight = e.nativeEvent.lines[0].height
+        const containerHeight = ((height / 100 * 90 / 100) * 90);
+        const maxLines = containerHeight / lineHeight
+        const numOfLines = e.nativeEvent.lines.length
+        console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`)
+        if (numOfLines > maxLines - 5) {
+            setHasMore(true);
+        } else {
+            setHasMore(false)
+        }
+        setNumOfLines(maxLines - 5);
+    };
+
     return (
         <View
             style={{
@@ -144,7 +167,7 @@ const PostItem = ({
                 width: width - 32,
                 justifyContent: "space-between",
                 flexDirection: "row",
-                alignItems: 'flex-start'
+                alignItems: "center",
             }}
         >
             <View
@@ -153,13 +176,14 @@ const PostItem = ({
                         backgroundColor: "#222222",
                         marginBottom: 16,
                         width: "85%",
-                        maxHeight: "90%",
+                        height: "90%",
                         padding: 12,
                         borderRadius: 10,
+                        justifyContent: "space-between",
                     },
                 ]}
             >
-                <View style={{ maxHeight: "60%" }}>
+                <View>
                     <Text
                         style={[
                             globalStyles.textBodyBold,
@@ -169,10 +193,43 @@ const PostItem = ({
                         {user?.name || pubkey}
                     </Text>
                     <Text
-                        style={[globalStyles.textBody, { textAlign: "left" }]}
+                        onTextLayout={textLayout}
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                opacity: 0,
+                                position: "absolute",
+                            },
+                        ]}
                     >
                         {content}
                     </Text>
+                    <Text
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                textAlign: "left",
+                            },
+                        ]}
+                        numberOfLines={numOfLines}
+                    >
+                        {content}
+                    </Text>
+                    {hasMore && (
+                        <View>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        color: colors.primary500,
+                                        textAlign: "left",
+                                    },
+                                ]}
+                            >
+                                {readMoreText}
+                            </Text>
+                        </View>
+                    )}
                     {item.image ? (
                         <FeedImage
                             size={((width - 32) / 100) * 70}
@@ -213,8 +270,8 @@ const PostItem = ({
                                         alignItems: "center",
                                         justifyContent: "center",
                                     }}
-                                />
-                                {" "}{zaps.amount}
+                                />{" "}
+                                {zaps.amount}
                             </Text>
                         </Pressable>
                     ) : (

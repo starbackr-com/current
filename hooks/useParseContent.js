@@ -20,7 +20,7 @@ export const useParseContent = (event) => {
                 }}
                 key={i}
             >
-                @{users[event.mentions[i - 1]?.mention].name || [event.mentions[i - 1]?.mention]}
+                @{users[event.mentions[i - 1]?.mention]?.name || [event.mentions[i - 1]?.mention]}
             </Text>
         );
     });

@@ -296,7 +296,7 @@ const ImagePost = ({
                 width: width - 32,
                 justifyContent: "space-between",
                 flexDirection: "row",
-                alignItems: "flex-start",
+                alignItems: "center",
             }}
         >
             <View
@@ -304,9 +304,10 @@ const ImagePost = ({
                     {
                         marginBottom: 16,
                         width: "85%",
-                        maxHeight: "90%",
+                        height: "90%",
                         borderRadius: 10,
                         backgroundColor: colors.backgroundSecondary,
+                        justifyContent: 'space-between'
                     },
                 ]}
             >
