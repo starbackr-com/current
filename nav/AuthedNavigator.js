@@ -20,6 +20,7 @@ import FullScreenImage from "../components/Images/FullScreenImage";
 import ReadMoreModal from "../features/homefeed/components/ReadMoreModal";
 import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
 import ProfileNavigator from "./ProfileNavigator";
+import ZapListModal from "../views/home/ZapListModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -194,6 +195,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="PostMenuModal"
                     component={PostMenuModal}
+                    options={{ presentation: "transparentModal" }}
+                />
+                <Stack.Screen
+                    name="ZapListModal"
+                    component={ZapListModal}
                     options={{ presentation: "transparentModal" }}
                 />
             </Stack.Navigator>

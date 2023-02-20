@@ -17,6 +17,7 @@ import { Image } from "expo-image";
 
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
+import { getAge } from "../../shared/utils/getAge";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
@@ -101,23 +102,6 @@ const ImagePost = ({
             );
         });
         return content;
-    }, []);
-
-    const getAge = useCallback((timestamp) => {
-        const now = new Date();
-        const timePassedInMins = Math.floor(
-            (now - new Date(timestamp * 1000)) / 1000 / 60
-        );
-
-        if (timePassedInMins < 60) {
-            return `${timePassedInMins}min ago`;
-        } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
-            return `${Math.floor(timePassedInMins / 60)}h ago`;
-        } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
-            return `${Math.floor(timePassedInMins / 1440)}d ago`;
-        } else {
-            return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
-        }
     }, []);
 
     const { created_at, pubkey } = item;
@@ -327,8 +311,8 @@ const ImagePost = ({
                         width: "85%",
                         height: "90%",
                         borderRadius: 10,
-                        justifyContent: "space-between",
                         backgroundColor: colors.backgroundSecondary,
+                        justifyContent: 'space-between'
                     },
                 ]}
             >
@@ -375,7 +359,7 @@ const ImagePost = ({
                         hasMore
                             ? () => {
                                   navigation.navigate("ReadMoreModal", {
-                                      content,
+                                      event: item,
                                       author: user?.name || pubkey,
                                   });
                               }
