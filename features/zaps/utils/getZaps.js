@@ -3,7 +3,6 @@ import { connectedRelays } from "../../../utils/nostrV2";
 import { Zap } from "../Zap";
 
 export const getZaps = async (eventIds) => {
-    console.log(eventIds)
     const allZaps = {};
     const zapsPerPost = {}
     await Promise.allSettled(
@@ -43,6 +42,5 @@ export const getZaps = async (eventIds) => {
             zapsPerPost[zap.toEvent] = {amount: zap.amount, zaps: [zap]}
         }
     })
-    console.log(zapsPerPost)
     return zapsPerPost
 };

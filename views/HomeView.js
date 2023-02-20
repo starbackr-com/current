@@ -8,8 +8,6 @@ import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
@@ -17,6 +15,7 @@ import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
 import { ActivityIndicator } from "react-native";
 import { getZaps } from "../features/zaps/utils/getZaps";
+import CustomButton from "../components/CustomButton";
 
 const HomeStack = createStackNavigator();
 
@@ -27,6 +26,7 @@ const HomeScreen = ({ navigation }) => {
     const [isFetching, setIsFetching] = useState(false);
     const [playAnimation, setPlayAnimation] = useState(false);
     const [zaps, setZaps] = useState();
+    const [page, setPage] = useState(1);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
@@ -51,18 +51,32 @@ const HomeScreen = ({ navigation }) => {
         setWidth(e.nativeEvent.layout.width);
     };
 
-    const loadZaps = async () => {
+    const loadZaps = async (postObj) => {
+        const postArray = Object.keys(postObj).map((key) => postObj[key])
+        const arrayOfIds = postArray.map((event) => event.id);
+        const allZaps = await getZaps(arrayOfIds);
+        setZaps(prev => Object.assign(prev ? prev : {}, allZaps));
+    };
+
+    const loadMoreItems = async () => {
+        if (isLoading) {
+            return;
+        }
+        console.log(`Getting page ${page}`);
+        setIsLoading(true);
+        const postObj = await getHomeFeed(followedPubkeys, page);
+        setIsLoading(false);
+        loadZaps(postObj)
+        setPage((prev) => prev + 1);
     };
 
     const loadHomefeed = async () => {
         setIsLoading(true);
-        const postObj = await getHomeFeed(followedPubkeys);
-        const postArray = Object.keys(postObj).map((key) => postObj[key]);
-        const arrayOfIds = postArray.map((event) => event.id);
-        const allZaps = await getZaps(arrayOfIds);
-        console.log(allZaps)
-        setZaps(allZaps);
+        const now = new Date() / 1000;
+        const postObj = await getHomeFeed(followedPubkeys, 0);
         setIsLoading(false);
+        loadZaps(postObj)
+
         updateFollowedUsers();
     };
 
@@ -102,13 +116,8 @@ const HomeScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            loadHomefeed();
-        }, 500);
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [followedPubkeys]);
+        loadHomefeed();
+    }, []);
 
     return (
         <View
@@ -120,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}
             >
-                {messages && height && !isLoading ? (
+                {messages && height ? (
                     <View style={{ flex: 1, width: "100%", height: "100%" }}>
                         <FlashList
                             data={rootNotes}
@@ -128,7 +137,7 @@ const HomeScreen = ({ navigation }) => {
                             snapToAlignment="start"
                             decelerationRate="fast"
                             snapToInterval={(height / 100) * 90}
-                            estimatedItemSize={height / 2}
+                            estimatedItemSize={(height / 100) * 90}
                             directionalLockEnabled
                             onRefresh={async () => {
                                 setIsFetching(true);
@@ -138,6 +147,15 @@ const HomeScreen = ({ navigation }) => {
                             refreshing={isFetching}
                             extraData={[users, zapAmount, zaps]}
                             getItemType={(item) => item.type}
+                            onEndReached={loadMoreItems}
+                            onEndReachedThreshold={2}
+                            ListFooterComponent={
+                                <CustomButton
+                                    text="Load More"
+                                    buttonConfig={{ onPress: loadMoreItems }}
+                                />
+                            }
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
                 ) : (

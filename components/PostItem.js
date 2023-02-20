@@ -167,7 +167,7 @@ const PostItem = ({
         const containerHeight = (((height / 100) * 90) / 100) * 90;
         const maxLines = containerHeight / lineHeight;
         const numOfLines = e.nativeEvent.lines.length;
-        console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`);
+        // console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`);
         if (numOfLines > maxLines - 5) {
             setHasMore(true);
         } else {

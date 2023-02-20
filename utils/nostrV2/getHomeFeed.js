@@ -1,7 +1,12 @@
 import { connectedRelays } from "./relay";
 import { Event } from "./Event";
 
-export const getHomeFeed = async (pubkeys) => {
+export const getHomeFeed = async (pubkeys, page) => {
+    let now = new Date() / 1000;
+    let hoursInSeconds = 4 * 60 * 60;
+    let until = Math.floor(now - page * hoursInSeconds);
+    let since = Math.floor(now - hoursInSeconds - (page * hoursInSeconds));
+    console.log(`Getting events from ${since} to ${until}`)
     const allPosts = {};
     await Promise.allSettled(
         connectedRelays.map(
@@ -12,20 +17,28 @@ export const getHomeFeed = async (pubkeys) => {
                         {
                             authors: pubkeys,
                             kinds: [1],
-                            limit: 50,
+                            until: until,
+                            since: since,
+                            limit: 20,
                         },
                     ]);
-                    const timer = setTimeout(() => {
+                    const fn = () => {
+                        sub.unsub();
+                        console.log(`${relay.url} Timeout!`);
                         resolve(posts);
                         return;
-                    }, 5000);
+                    };
+                    const timer = setTimeout(() => fn(), 5000);
                     sub.on("event", (event) => {
-                        const newEvent = new Event(event);
+                        const newEvent = new Event(event, relay.url);
                         newEvent.save();
                         posts.push(newEvent);
                     });
                     sub.on("eose", () => {
                         sub.unsub();
+                        console.log(
+                            `${relay.url} EOSE! Received: ${posts.length} posts`
+                        );
                         clearTimeout(timer);
                         resolve(posts);
                         return;
