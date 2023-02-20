@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import colors from "../styles/colors";
@@ -6,12 +6,15 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { getUserData, getUsersPosts } from "../utils/nostrV2";
+import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useParseContent } from "../hooks/useParseContent";
+import { getUsersPosts } from "../features/profile/utils/getUsersPosts";
+import ImagePost from "../components/Posts/ImagePost";
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -29,52 +32,12 @@ const getAge = (timestamp) => {
         return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
     }
 };
-
-const PostItem = ({ event, user }) => {
-    return (
-        <View
-            style={{
-                backgroundColor: colors.backgroundSecondary,
-                padding: 6,
-                borderRadius: 6,
-                marginBottom: 12,
-            }}
-        >
-            <Text
-                style={[
-                    globalStyles.textBodyBold,
-                    { textAlign: "left", width: "50%" },
-                ]}
-                numberOfLines={1}
-            >
-                {user?.name || event.pubkey}
-            </Text>
-            <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
-                {event.content}
-            </Text>
-            <Text
-                style={[
-                    globalStyles.textBodyS,
-                    { textAlign: "right", marginTop: 12 },
-                ]}
-            >
-                {getAge(event.created_at)}
-            </Text>
-        </View>
-    );
-};
-
-const ProfileScreen = ({ route, navigation }) => {
-    const { pubkey } = route.params;
-    const [feed, setFeed] = useState();
+const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
-
-    const loggedInPubkey = useSelector((state) => state.auth.pubKey);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-    const users = useSelector((state) => state.messages.users);
 
-    const user = users[pubkey];
+    const navigation = useNavigation();
 
     const verifyNip05 = async (pubkey, nip05) => {
         try {
@@ -98,20 +61,6 @@ const ProfileScreen = ({ route, navigation }) => {
         }
     }, []);
 
-    useFocusEffect(() => {
-        
-    });
-
-    const getFeed = async () => {
-        const response = await getUsersPosts(user.pubkey);
-        const array = Object.keys(response)
-            .map((key) => response[key])
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-        setFeed(array);
-    };
-
     const copyHandler = async () => {
         await Clipboard.setStringAsync(npub);
         setCopied(true);
@@ -121,84 +70,75 @@ const ProfileScreen = ({ route, navigation }) => {
     };
 
     const npub = encodePubkey(pubkey);
-
     return (
-        <View
-            style={[
-                globalStyles.screenContainer,
-                {
-                    paddingHorizontal: 0,
-                    paddingTop: 0,
-                    alignItems: "center",
-                },
-            ]}
-        >
-            <View style={{ width: "100%", height: "10%" }} />
-            <Pressable
-                style={{
-                    position: "absolute",
-                    top: 16,
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                }}
-                onPress={() => {
-                    navigation.goBack();
-                }}
-            >
-                <Ionicons
-                    name="chevron-down"
-                    size={32}
-                    color={colors.primary500}
-                />
-            </Pressable>
-            <View style={{ width: "100%", alignItems: "center" }}>
-                <Image
+        <View>
+            <View style={{ padding: 12 }}>
+                <View
                     style={{
-                        width: 74,
-                        height: 74,
-                        borderRadius: 37,
-                        borderColor: colors.primary500,
-                        borderWidth: 1,
+                        width: "100%",
+                        alignItems: "center",
+                        flexDirection: "row",
+                        marginBottom: 12,
                     }}
-                    source={
-                        user?.picture ||
-                        require("../assets/user_placeholder.jpg")
-                    }
-                />
-                <View style={{ padding: 12 }}>
-                    <Text style={[globalStyles.textBodyBold]}>
-                        {user?.name || pubkey}
-                    </Text>
-                    {pubkey === loggedInPubkey ? (
+                >
+                    <Image
+                        style={{
+                            width: 74,
+                            height: 74,
+                            borderRadius: 37,
+                            borderColor: colors.primary500,
+                            borderWidth: 1,
+                        }}
+                        source={
+                            user?.picture ||
+                            require("../assets/user_placeholder.jpg")
+                        }
+                    />
+                    <View style={{ padding: 12 }}>
                         <Text
                             style={[
-                                globalStyles.textBodyS,
-                                { color: colors.primary500 },
+                                globalStyles.textBodyBold,
+                                { textAlign: "left" },
                             ]}
-                            onPress={() => {}}
-                        >{`${followedPubkeys.length} following`}</Text>
-                    ) : undefined}
+                        >
+                            {user?.name || pubkey}
+                        </Text>
+                        {pubkey === loggedInPubkey ? (
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        color: colors.primary500,
+                                        textAlign: "left",
+                                    },
+                                ]}
+                                onPress={() => {}}
+                            >{`${followedPubkeys.length} following`}</Text>
+                        ) : undefined}
+                        <Text
+                            style={[
+                                globalStyles.textBody,
+                                { color: colors.primary500, textAlign: "left" },
+                            ]}
+                        >
+                            {user?.nip05}{" "}
+                            <Ionicons
+                                name={verified ? "checkbox" : "close-circle"}
+                            />{" "}
+                        </Text>
+                    </View>
+                </View>
+                <View>
                     <Text
-                        style={[
-                            globalStyles.textBody,
-                            { color: colors.primary500 },
-                        ]}
+                        style={[globalStyles.textBody, { textAlign: "left" }]}
                     >
-                        {user?.nip05}
-                        <Ionicons
-                            name={verified ? "checkbox" : "close-circle"}
-                        />{" "}
+                        {user?.about}
                     </Text>
-                    <Text style={[globalStyles.textBody]}>{user?.about}</Text>
                     <Text
                         style={[
                             globalStyles.textBodyS,
                             {
-                                textAlign: "center",
+                                textAlign: "left",
                                 color: "grey",
                                 marginBottom: 24,
                             },
@@ -225,6 +165,112 @@ const ProfileScreen = ({ route, navigation }) => {
                     ) : undefined}
                 </View>
             </View>
+        </View>
+    );
+};
+
+const PostItem = ({ event, user }) => {
+    const content = useParseContent(event);
+    return (
+        <View
+            style={{
+                backgroundColor: colors.backgroundSecondary,
+                padding: 6,
+                borderRadius: 6,
+                marginBottom: 12,
+            }}
+        >
+            <Text
+                style={[
+                    globalStyles.textBodyBold,
+                    { textAlign: "left", width: "50%" },
+                ]}
+                numberOfLines={1}
+            >
+                {user?.name || event.pubkey}
+            </Text>
+            <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
+                {content}
+            </Text>
+            <Text
+                style={[
+                    globalStyles.textBodyS,
+                    { textAlign: "right", marginTop: 12 },
+                ]}
+            >
+                {getAge(event.created_at)}
+            </Text>
+        </View>
+    );
+};
+
+const ProfileScreen = ({ route, navigation }) => {
+    const { pubkey } = route.params;
+    const [feed, setFeed] = useState();
+    const users = useSelector((state) => state.messages.users);
+    const [width, setWidth] = useState();
+
+    const loggedInPubkey = useSelector((state) => state.auth.pubKey);
+
+    const user = users[pubkey];
+
+    useFocusEffect(() => {});
+
+    const getFeed = async () => {
+        const response = await getUsersPosts(pubkey);
+        const array = Object.keys(response)
+            .map((key) => response[key])
+            .sort((a, b) => {
+                return a.created_at < b.created_at ? 1 : -1;
+            });
+        setFeed(array);
+    };
+
+    const onLayoutViewWidth = (e) => {
+        setWidth(e.nativeEvent.layout.width);
+    };
+
+    const renderItem = ({ item }) => {
+        if (item.type === "image") {
+            return <ImagePost event={item} user={user} width={width} />;
+        } else if (item.type === "text") {
+            return <PostItem event={item} user={user} width={width} />;
+        }
+    };
+
+    return (
+        <View
+            style={[
+                globalStyles.screenContainer,
+                {
+                    paddingHorizontal: 0,
+                    paddingTop: 0,
+                    alignItems: "center",
+                },
+            ]}
+        >
+            <Pressable
+                style={{
+                    flexDirection: "row",
+                    top: 16,
+                    width: "100%",
+                    height: 40,
+                    borderRadius: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    marginBottom: 24,
+                }}
+                onPress={() => {
+                    navigation.goBack();
+                }}
+            >
+                <Ionicons
+                    name="chevron-down"
+                    size={32}
+                    color={colors.primary500}
+                />
+            </Pressable>
             <View
                 style={{
                     flex: 1,
@@ -232,24 +278,25 @@ const ProfileScreen = ({ route, navigation }) => {
                     justifyContent: "center",
                     alignItems: "center",
                 }}
+                onLayout={onLayoutViewWidth}
             >
-                {feed ? (
-                    <View style={{ flex: 1, width: "94%" }}>
-                        <FlashList
-                            data={feed}
-                            renderItem={({ item }) => (
-                                <PostItem event={item} user={user} />
-                            )}
+                <FlashList
+                    data={feed}
+                    renderItem={renderItem}
+                    ListHeaderComponent={
+                        <ProfileHeader
+                            user={user}
+                            pubkey={pubkey}
+                            loggedInPubkey={loggedInPubkey}
                         />
-                    </View>
-                ) : (
-                    <View style={{ width: "50%" }}>
-                        <CustomButton
-                            text="Load Feed"
-                            buttonConfig={{ onPress: getFeed }}
-                        />
-                    </View>
-                )}
+                    }
+                />
+                {!feed ? (
+                    <CustomButton
+                        text="Get Feed"
+                        buttonConfig={{ onPress: getFeed }}
+                    />
+                ) : undefined}
             </View>
             {pubkey === loggedInPubkey ? (
                 <View style={{ position: "absolute", right: 32, top: 32 }}>
