@@ -110,7 +110,7 @@ const EULAScreen = ({navigation, route}) => {
             </Text>
             <View style={{ flexDirection: "column", width: '100%', justifyContent: 'space-evenly', marginVertical: 16 }}>
                 <CustomButton text='Accept' containerStyles={{marginBottom: 16}} buttonConfig={{onPress: acceptHandler}}/>
-                <CustomButton text='Decline'/>
+                <CustomButton text='Decline' buttonConfig={{onPress: () => {alert('If you do not accept the EULA you will not be able to use Current... Sorry!')}}}/>
             </View>
             <View style={{ height: headerHeight }}></View>
         </ScrollView>

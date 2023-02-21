@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { getValue } from "../../utils/secureStore";
-import colors from "../../styles/colors";
+import * as Clipboard from "expo-clipboard";
 import { encodeSeckey } from "../../utils/nostr/keys";
 import Input from "../../components/Input";
+import BackButton from "../../components/BackButton";
 
 const Word = ({ word, index }) => {
     return (
@@ -46,7 +47,8 @@ const DisplayKeysScreen = ({ navigation }) => {
         "****",
     ];
 
-    const keyPlaceholder = 'nsec1*************************************************'
+    const keyPlaceholder =
+        "nsec1*************************************************";
     const [mem, setMem] = useState();
     const [sk, setSk] = useState();
 
@@ -63,9 +65,9 @@ const DisplayKeysScreen = ({ navigation }) => {
         if (keys) {
             setMem(JSON.parse(keys));
         } else {
-            const sk = await getValue('privKey')
-            const nsec = encodeSeckey(sk)
-            setSk(nsec)
+            const sk = await getValue("privKey");
+            const nsec = encodeSeckey(sk);
+            setSk(nsec);
         }
     };
 
@@ -73,22 +75,43 @@ const DisplayKeysScreen = ({ navigation }) => {
         setShow((prev) => !prev);
     };
 
+    const copyHandler = async () => {
+        const sk = await getValue("privKey");
+        const nsec = encodeSeckey(sk);
+        await Clipboard.setStringAsync(nsec);
+        alert('Copied key to clipboard!')
+    };
+
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{ flex: 3, width: '100%', alignItems: 'center' }}>
+            <View style={{width: '100%'}}>
+                <BackButton onPress={() => {navigation.goBack()}}/>
+            </View>
+            <View style={{ flex: 3, width: "100%", alignItems: "center" }}>
                 <Text style={globalStyles.textBodyBold}>
                     This is your Backup... Write it down!
                 </Text>
-                {mem ? <FlatList
-                    data={show ? mem : placeholder}
-                    renderItem={({ item, index }) => (
-                        <Word word={item} index={index} />
-                    )}
-                    style={{ width: "100%", flexGrow: 0 }}
-                    columnWrapperStyle={{ justifyContent: "space-between" }}
-                    numColumns={2}
-                /> : undefined}
-                {sk ? <Input textInputConfig={{editable: false, value: show ? sk : keyPlaceholder, multiline: true}} inputStyle={{width: '90%'}}/> : undefined}
+                {mem ? (
+                    <FlatList
+                        data={show ? mem : placeholder}
+                        renderItem={({ item, index }) => (
+                            <Word word={item} index={index} />
+                        )}
+                        style={{ width: "100%", flexGrow: 0 }}
+                        columnWrapperStyle={{ justifyContent: "space-between" }}
+                        numColumns={2}
+                    />
+                ) : undefined}
+                {sk ? (
+                    <Input
+                        textInputConfig={{
+                            editable: false,
+                            value: show ? sk : keyPlaceholder,
+                            multiline: true,
+                        }}
+                        inputStyle={{ width: "90%" }}
+                    />
+                ) : undefined}
                 {show ? (
                     <Pressable>
                         <Text style={[globalStyles.textBodyS]}>Copy Keys</Text>
@@ -97,16 +120,14 @@ const DisplayKeysScreen = ({ navigation }) => {
             </View>
             <View style={{ flex: 1, justifyContent: "center" }}>
                 <CustomButton
-                    text={show ? "Hide Keys" : "Show Keys"}
-                    buttonConfig={{ onPress: showHandler }}
+                    text='Copy nSec'
+                    buttonConfig={{ onPress: copyHandler }}
+                    containerStyles={{ marginBottom: 16 }}
                 />
                 <CustomButton
-                    text="Back"
-                    buttonConfig={{
-                        onPress: () => {
-                            navigation.goBack();
-                        },
-                    }}
+                    text={show ? "Hide Keys" : "Show Keys"}
+                    buttonConfig={{ onPress: showHandler }}
+                    containerStyles={{ marginBottom: 16 }}
                 />
             </View>
         </View>
