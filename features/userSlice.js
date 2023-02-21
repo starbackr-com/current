@@ -43,6 +43,7 @@ export const userSlice = createSlice({
             const deduped = newFollows.filter(
                 (pubkey) => !state.followedPubkeys.includes(pubkey)
             );
+            console.log(deduped.length)
             state.followedPubkeys = [...state.followedPubkeys, ...deduped];
         },
         setZapAmount: (state, action) => {

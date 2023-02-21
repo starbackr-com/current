@@ -39,6 +39,10 @@ export const messageSlice = createSlice({
                         : state.users[newUser.pubkey];
             } else state.users[newUser.pubkey] = newUser;
         },
+        hydrate: (state, action) => {
+            const databaseUsers = action.payload
+            state.users = databaseUsers
+        },
         clearStore: (state) => {
             state.messages = [];
             state.users = {};
@@ -47,7 +51,7 @@ export const messageSlice = createSlice({
     },
 });
 
-export const { addMessage, addUser, removeAuthorsMessages, clearStore } =
+export const { addMessage, addUser, removeAuthorsMessages, clearStore, hydrate } =
     messageSlice.actions;
 
 export default messageSlice.reducer;

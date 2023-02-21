@@ -2,6 +2,7 @@ import { connectedRelays } from "./relay";
 import { Event } from "./Event";
 
 export const getHomeFeed = async (pubkeys, page) => {
+    console.log(`Getting Data for ${pubkeys.length} keys...`)
     let now = new Date() / 1000;
     let hoursInSeconds = 4 * 60 * 60;
     let until = Math.floor(now - page * hoursInSeconds);

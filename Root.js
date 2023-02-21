@@ -20,7 +20,7 @@ import { hydrateStore } from "./utils/cache/asyncStorage";
 SplashScreen.preventAutoHideAsync();
 
 const Root = () => {
-    const [appIsReady, setAppIsReady] = useState();
+    const [appIsReady, setAppIsReady] = useState(false);
     const dispatch = useDispatch();
     const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
 
@@ -28,6 +28,9 @@ const Root = () => {
         const prepare = async () => {
             try {
                 await initRelays();
+                await init();
+                await hydrateFromDatabase();
+                await hydrateStore();
                 const privKey = await getValue("privKey");
                 await loadAsync({
                     "Montserrat-Regular": require("./assets/Montserrat-Regular.ttf"),
@@ -36,22 +39,16 @@ const Root = () => {
                 });
                 if (privKey) {
                     console.log("Initialising from storage...");
-                    const {data: {access_token, username}} = await loginToWallet(
-                        privKey
-                    );
-                    const pubKey = await getPublicKey(privKey)
-                    console.log(username)
+                    const {
+                        data: { access_token, username },
+                    } = await loginToWallet(privKey);
+                    const pubKey = await getPublicKey(privKey);
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
                 }
-                const initFunctions = [init, hydrateFromDatabase, updateFollowedUsers, hydrateStore]
-                await Promise.allSettled(initFunctions.map(fn => fn()))
-                // await init();
-                // await hydrateFromDatabase();
-                // await updateFollowedUsers();
-                // await hydrateStore();
             } catch (e) {
                 console.warn(e);
             } finally {
+                console.log("Done!");
                 setAppIsReady(true);
             }
         };
