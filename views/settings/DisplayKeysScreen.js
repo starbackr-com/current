@@ -88,9 +88,6 @@ const DisplayKeysScreen = ({ navigation }) => {
                 <BackButton onPress={() => {navigation.goBack()}}/>
             </View>
             <View style={{ flex: 3, width: "100%", alignItems: "center" }}>
-                <Text style={globalStyles.textBodyBold}>
-                    This is your Backup... Write it down!
-                </Text>
                 {mem ? (
                     <FlatList
                         data={show ? mem : placeholder}

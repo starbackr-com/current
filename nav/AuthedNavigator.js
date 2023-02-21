@@ -84,7 +84,7 @@ const TabNavigator = ({ navigation }) => {
                         }}
                     >
                         <Text style={globalStyles.textBody}>
-                            {data ? `${data.balance}` : "----"} SATS
+                            {data ? `${data.balance}` : "----"} <Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>SATS</Text>
                         </Text>
                     </Pressable>
                 ),
