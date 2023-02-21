@@ -43,10 +43,12 @@ const Root = () => {
                     console.log(username)
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
                 }
-                await init();
-                await hydrateFromDatabase();
-                await updateFollowedUsers();
-                await hydrateStore();
+                const initFunctions = [init, hydrateFromDatabase, updateFollowedUsers, hydrateStore]
+                await Promise.allSettled(initFunctions.map(fn => fn()))
+                // await init();
+                // await hydrateFromDatabase();
+                // await updateFollowedUsers();
+                // await hydrateStore();
             } catch (e) {
                 console.warn(e);
             } finally {
