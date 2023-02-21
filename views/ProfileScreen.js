@@ -71,8 +71,9 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
 
     const npub = encodePubkey(pubkey);
     return (
-        <View>
-            <View style={{ padding: 12 }}>
+        <View style={{width: '100%'}}>
+            <View style={{width: '100%', height: 20}}></View>
+            <View style={{ padding: 12, width: '100%'}}>
                 <View
                     style={{
                         width: "100%",
@@ -246,6 +247,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     paddingHorizontal: 0,
                     paddingTop: 0,
                     alignItems: "center",
+                    width: '100%'
                 },
             ]}
         >
@@ -280,6 +282,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 }}
                 onLayout={onLayoutViewWidth}
             >
+                <View style={{width: '100%', height: 20}}></View>
                 <FlashList
                     data={feed}
                     renderItem={renderItem}
