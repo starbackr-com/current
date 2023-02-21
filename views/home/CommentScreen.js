@@ -65,6 +65,10 @@ const ReplyItem = ({ event, user, rootId, replies }) => {
                     nestedReplies: replies,
                 });
             }}
+            onLongPress={() => {
+                console.log('Pressed Long')
+                navigation.navigate('PostMenuModal', {event})
+            }}
         >
             <Text
                 style={[

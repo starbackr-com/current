@@ -33,7 +33,11 @@ export const userSlice = createSlice({
             state.mutedPubkeys.push(newMute);
             console.log(state.mutedPubkeys);
         },
-        unmutePubkey: () => {},
+        unmutePubkey: (state, action) => {
+            const newUnmute = action.payload;
+            const newState = state.mutedPubkeys.filter(pubkey => pubkey != newUnmute)
+            state.mutedPubkeys = newState
+        },
         followMultiplePubkeys: (state, action) => {
             const newFollows = action.payload;
             const deduped = newFollows.filter(

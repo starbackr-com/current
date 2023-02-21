@@ -47,7 +47,7 @@ export const getUserData = async (pubkeysInHex) => {
                         console.log(`${relay.url} timed out after 3 sec...`);
                         reject();
                         return;
-                    }, 3000);
+                    }, 2500);
                     sub.on("event", (event) => {
                         const newEvent = new Event(event);
                         newEvent.save();

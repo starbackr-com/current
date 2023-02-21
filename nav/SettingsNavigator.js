@@ -3,6 +3,7 @@ import DisplayKeysScreen from "../views/settings/DisplayKeysScreen";
 import SettingsHomeScreen from "../views/settings/SettingsHomeScreen";
 import SettingsNetworkScreen from "../views/settings/SettingsNetworkScreen";
 import SettingsPaymentsScreen from "../views/settings/SettingsPaymentsScreen";
+import SettingsUserScreen from "../views/settings/SettingsUserScreen";
 
 
 const Stack = createStackNavigator();
@@ -29,6 +30,10 @@ const SettingsNavigator = () => {
             <Stack.Screen
                 name="Payments"
                 component={SettingsPaymentsScreen}
+            />
+            <Stack.Screen
+                name="User"
+                component={SettingsUserScreen}
             />
         </Stack.Navigator>
     );

@@ -13,7 +13,7 @@ import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import {removeData} from '../../utils/cache/asyncStorage'
 
-const settings = ["Payments", "Backup", "Network"];
+const settings = ["Payments", "Backup", "Network", "User"];
 
 const SettingItem = ({ item, onNav }) => {
     return (

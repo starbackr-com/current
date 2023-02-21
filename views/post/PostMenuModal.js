@@ -1,11 +1,10 @@
 import { View, Text, Button, Pressable } from "react-native";
 import React from "react";
-import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import globalStyles from "../styles/globalStyles";
-import CustomButton from "../components/CustomButton";
 import { useDispatch } from "react-redux";
-import { mutePubkey } from "../features/userSlice";
+import globalStyles from "../../styles/globalStyles";
+import CustomButton from "../../components/CustomButton";
+import { muteUser } from "../../utils/users";
 
 const ActionButton = ({ onPress, icon, text }) => {
     return (
@@ -42,8 +41,13 @@ const PostMenuModal = ({ navigation, route }) => {
     const { id, pubkey } = route.params.event;
     const dispatch = useDispatch();
 
-    const muteHandler = () => {
-        dispatch(mutePubkey(pubkey))
+    const muteHandler = async () => {
+        try {
+            await muteUser(pubkey);
+            navigation.goBack();
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const upvoteHandler = () => {};
@@ -92,12 +96,20 @@ const PostMenuModal = ({ navigation, route }) => {
                     >
                         {/* <ActionButton text="Upvote" icon="arrow-up" onPress={upvoteHandler}/>
                         <ActionButton text="Downvote" icon="arrow-down" onPress={downvoteHandler}/> */}
-                        <ActionButton text="Report" icon="alert-circle" onPress={reportHandler}/>
-                        <ActionButton text="Mute User" icon="close" onPress={muteHandler}/>
+                        <ActionButton
+                            text="Report"
+                            icon="alert-circle"
+                            onPress={reportHandler}
+                        />
+                        <ActionButton
+                            text="Mute User"
+                            icon="volume-mute"
+                            onPress={muteHandler}
+                        />
                     </View>
                     <CustomButton
                         text="Close"
-                        containerStyles={{ width: "25%", alignItems: 'center'}}
+                        containerStyles={{ width: "25%", alignItems: "center" }}
                         buttonConfig={{
                             onPress: () => {
                                 navigation.goBack();
