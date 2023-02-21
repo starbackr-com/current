@@ -38,7 +38,8 @@ const ActionButton = ({ onPress, icon, text }) => {
 };
 
 const PostMenuModal = ({ navigation, route }) => {
-    const { id, pubkey } = route.params.event;
+    const { event } = route.params;
+    const { id, pubkey } = event;
     const dispatch = useDispatch();
 
     const muteHandler = async () => {
@@ -54,7 +55,10 @@ const PostMenuModal = ({ navigation, route }) => {
 
     const downvoteHandler = () => {};
 
-    const reportHandler = () => {};
+    const reportHandler = () => {
+        navigation.goBack();
+        navigation.navigate("ReportPostModal", { event });
+    };
     return (
         <>
             <View

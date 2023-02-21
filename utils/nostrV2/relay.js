@@ -13,7 +13,7 @@ export const initRelays = async () => {
         relays.map((relay) => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    await relay.connect();
+                    relay.connect();
                     const timer = setTimeout(() => {
                         console.log(`${relay.url} timed out after 5 sec...`);
                         return reject();

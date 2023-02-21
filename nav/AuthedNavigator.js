@@ -20,6 +20,7 @@ import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
 import ProfileNavigator from "./ProfileNavigator";
 import ZapListModal from "../views/home/ZapListModal";
 import PostMenuModal from "../views/post/PostMenuModal";
+import ReportPostModal from '../features/reports/views/ReportPostModal'
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -78,23 +79,12 @@ const TabNavigator = ({ navigation }) => {
                             alignItems: "center",
                             justifyContent: "center",
                         }}
-                        onPress={() => {navigation.navigate('Wallet');}}
+                        onPress={() => {
+                            navigation.navigate("Wallet");
+                        }}
                     >
                         <Text style={globalStyles.textBody}>
-                            {data ? `${data.balance}` : "----"}
-                        </Text>
-                        <Text
-                            style={[
-                                globalStyles.textBody,
-                                {
-                                    fontFamily: "Satoshi-Symbol",
-                                    marginLeft: 6,
-                                    fontSize: 20,
-                                    color: colors.primary500
-                                },
-                            ]}
-                        >
-                            S
+                            {data ? `${data.balance}` : "----"} SATS
                         </Text>
                     </Pressable>
                 ),
@@ -109,10 +99,10 @@ const TabNavigator = ({ navigation }) => {
                             marginLeft: 12,
                         }}
                         onPress={() => {
-                            navigation.navigate('Profile', {
-                                screen: 'ProfileScreen',
-                                params: {pubkey: pubKey},
-                              });
+                            navigation.navigate("Profile", {
+                                screen: "ProfileScreen",
+                                params: { pubkey: pubKey },
+                            });
                         }}
                     >
                         {user?.picture ? (
@@ -154,7 +144,6 @@ const TabNavigator = ({ navigation }) => {
         </Tab.Navigator>
     );
 };
-
 
 const AuthedNavigator = () => {
     return (
@@ -200,6 +189,11 @@ const AuthedNavigator = () => {
                     name="ZapListModal"
                     component={ZapListModal}
                     options={{ presentation: "transparentModal" }}
+                />
+                <Stack.Screen
+                    name="ReportPostModal"
+                    component={ReportPostModal}
+                    options={{ presentation: "modal" }}
                 />
             </Stack.Navigator>
         </>
