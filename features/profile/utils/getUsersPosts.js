@@ -1,5 +1,5 @@
-import { Event } from "./Event";
-import { connectedRelays } from "./relay";
+import { connectedRelays } from "../../../utils/nostrV2";
+import { ProfilePost } from "../ProfilePost";
 
 export const getUsersPosts = async (pubkeyInHex) => {
     const posts = {}
@@ -10,7 +10,7 @@ export const getUsersPosts = async (pubkeyInHex) => {
                 {
                     authors: [pubkeyInHex],
                     kinds: [1],
-                    limit: 50
+                    limit: 100
                 },
             ]);
             const timer = setTimeout(() => {
@@ -18,10 +18,9 @@ export const getUsersPosts = async (pubkeyInHex) => {
                 return;
             }, 3000)
             sub.on("event", (event) => {
-                const newEvent = new Event(event)
-                const formatted = newEvent.save('return')
+                const newEvent = new ProfilePost(event)
+                const formatted = newEvent.saveNote()
                 events.push(formatted)
-                console.log(formatted)
             });
             sub.on("eose", () => {
                 clearTimeout(timer);
@@ -31,6 +30,5 @@ export const getUsersPosts = async (pubkeyInHex) => {
             });
         }))
     ).then(result => result.map(result => result.value.map(post => {posts[post.id] = post})));
-    console.log(posts)
     return posts;
 };

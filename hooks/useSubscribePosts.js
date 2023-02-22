@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Zap } from "../features/zaps/Zap";
-import { connectedRelays, Event } from "../utils/nostrV2";
+import { connectedRelays, Note } from "../utils/nostrV2";
 
 export const useSubscribePosts = (pubkeysinHex, unixNow) => {
     const [page, setPage] = useState(0);
@@ -38,14 +38,15 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
                     return;
                 } else {
                     if (event.kind === 1) {
-                        const newEvent = new Event(event);
+                        const newEvent = new Note(event);
+                        const parsedEvent = newEvent.save()
                         console.log(`Data for page ${page}`);
                         if (data[newEvent.id]) {
                             console.log("Duplicate");
                             return;
                         } else {
                             setData((prev) =>
-                                ({...prev, [newEvent.id]: newEvent})
+                                ({...prev, [parsedEvent.id]: parsedEvent})
                             );
                         }
                     } else if (event.kind === 9735) {
