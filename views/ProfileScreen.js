@@ -12,6 +12,7 @@ import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useSubscribePosts } from "../hooks/useSubscribePosts";
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -75,6 +76,11 @@ const ProfileScreen = ({ route, navigation }) => {
     const users = useSelector((state) => state.messages.users);
 
     const user = users[pubkey];
+    const now = new Date() / 1000;
+
+    const [data, page, setPage] = useSubscribePosts([pubkey], now);
+
+    const array = Object.keys(data).map((key) => data[key]);
 
     const verifyNip05 = async (pubkey, nip05) => {
         try {
@@ -98,9 +104,7 @@ const ProfileScreen = ({ route, navigation }) => {
         }
     }, []);
 
-    useFocusEffect(() => {
-        
-    });
+    useFocusEffect(() => {});
 
     const getFeed = async () => {
         const response = await getUsersPosts(user.pubkey);
@@ -193,6 +197,14 @@ const ProfileScreen = ({ route, navigation }) => {
                             name={verified ? "checkbox" : "close-circle"}
                         />{" "}
                     </Text>
+                    <CustomButton
+                        text="Test +Page"
+                        buttonConfig={{
+                            onPress: () => {
+                                setPage(page + 1);
+                            },
+                        }}
+                    />
                     <Text style={[globalStyles.textBody]}>{user?.about}</Text>
                     <Text
                         style={[
@@ -233,10 +245,10 @@ const ProfileScreen = ({ route, navigation }) => {
                     alignItems: "center",
                 }}
             >
-                {feed ? (
+                {array ? (
                     <View style={{ flex: 1, width: "94%" }}>
                         <FlashList
-                            data={feed}
+                            data={array}
                             renderItem={({ item }) => (
                                 <PostItem event={item} user={user} />
                             )}

@@ -12,6 +12,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
 import ZapItem from "../../features/zaps/components/ZapItem";
+import { useSubscribeReplies } from "../../hooks/useSubscribeReplies";
 
 const createReplyTree = (dataset) => {
     try {
@@ -127,6 +128,9 @@ const CommentScreen = ({ route, navigation }) => {
 
     const users = useSelector((state) => state.messages.users);
 
+    const test = useSubscribeReplies([eventId]);
+    
+
     const renderItem = ({ item }) => {
         if (item.kind === 1) {
             return (
@@ -199,9 +203,9 @@ const CommentScreen = ({ route, navigation }) => {
         }
     };
 
-    useEffect(() => {
-        getAllReplies();
-    }, []);
+    // useEffect(() => {
+    //     getAllReplies();
+    // }, []);
 
     const headerHeight = useHeaderHeight();
     return (
