@@ -208,3 +208,40 @@ export const createZapEvent = async (content, tags) => {
 
 
 };
+
+export const publishDeleteAccount = async () => {
+    let privKey = await getValue("privKey");
+    if (!privKey) {
+        throw new Error("No privKey in secure storage found");
+    }
+    let pubKey = getPublicKey(privKey);
+    let event = {
+        kind: 0,
+        pubkey: pubKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: JSON.stringify({deleted:true,name:"nobody",about:"account deleted"}),
+    };
+    event.id = getEventHash(event);
+    event.sig = signEvent(event, privKey);
+    const successes = await Promise.allSettled(
+        connectedRelays.map((relay) => {
+            return new Promise((resolve, reject) => {
+                let pub = relay.publish(event);
+                pub.on("ok", () => {
+                    resolve(relay.url);
+                });
+                pub.on("failed", () => {
+                    reject();
+                });
+                setTimeout(() => {
+                    reject();
+                }, 10000);
+            });
+        })
+    );
+
+    return successes
+        .filter((promise) => promise.status === "fulfilled")
+        .map((promise) => promise.value);
+};

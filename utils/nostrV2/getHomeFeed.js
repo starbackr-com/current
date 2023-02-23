@@ -2,8 +2,9 @@ import { connectedRelays } from "./relay";
 import { Event } from "./Event";
 
 export const getHomeFeed = async (pubkeys, page) => {
+    console.log(`Getting Data for ${pubkeys.length} keys...`)
     let now = new Date() / 1000;
-    let hoursInSeconds = 4 * 60 * 60;
+    let hoursInSeconds = 2 * 60 * 60;
     let until = Math.floor(now - page * hoursInSeconds);
     let since = Math.floor(now - hoursInSeconds - (page * hoursInSeconds));
     console.log(`Getting events from ${since} to ${until}`)
@@ -19,7 +20,6 @@ export const getHomeFeed = async (pubkeys, page) => {
                             kinds: [1],
                             until: until,
                             since: since,
-                            limit: 20,
                         },
                     ]);
                     const fn = () => {
@@ -28,7 +28,7 @@ export const getHomeFeed = async (pubkeys, page) => {
                         resolve(posts);
                         return;
                     };
-                    const timer = setTimeout(() => fn(), 5000);
+                    const timer = setTimeout(() => fn(), 15000);
                     sub.on("event", (event) => {
                         const newEvent = new Event(event, relay.url);
                         newEvent.save();

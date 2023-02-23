@@ -188,7 +188,7 @@ const PostModal = ({ navigation, route }) => {
                             size={24}
                         />
                     </Pressable>
-                    <Pressable
+                    {/* <Pressable
                         onPress={() => {
                             navigation.navigate("PostExpiryModal");
                         }}
@@ -198,7 +198,7 @@ const PostModal = ({ navigation, route }) => {
                             color={colors.primary500}
                             size={24}
                         />
-                    </Pressable>
+                    </Pressable> */}
                 </View>
             </View>
         </KeyboardAvoidingView>

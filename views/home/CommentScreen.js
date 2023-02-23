@@ -12,6 +12,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
 import ZapItem from "../../features/zaps/components/ZapItem";
+import { useSubscribeReplies } from "../../hooks/useSubscribeReplies";
 
 const createReplyTree = (dataset) => {
     try {
@@ -64,6 +65,10 @@ const ReplyItem = ({ event, user, rootId, replies }) => {
                     type: "reply",
                     nestedReplies: replies,
                 });
+            }}
+            onLongPress={() => {
+                console.log('Pressed Long')
+                navigation.navigate('PostMenuModal', {event})
             }}
         >
             <Text
@@ -122,6 +127,9 @@ const CommentScreen = ({ route, navigation }) => {
     const [sending, setSending] = useState(false);
 
     const users = useSelector((state) => state.messages.users);
+
+    // const test = useSubscribeReplies([eventId]);
+    
 
     const renderItem = ({ item }) => {
         if (item.kind === 1) {
@@ -196,8 +204,9 @@ const CommentScreen = ({ route, navigation }) => {
     };
 
     useEffect(() => {
+        setReplies();
         getAllReplies();
-    }, []);
+    }, [eventId]);
 
     const headerHeight = useHeaderHeight();
     return (

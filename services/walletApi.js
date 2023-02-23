@@ -26,6 +26,17 @@ export const walletApi = createApi({
                 },
             }),
         }),
+        deleteWallet: builder.mutation({
+            query: ({ login, password, username }) => ({
+                url: `v2/deleteuser`,
+                method: "POST",
+                body: {
+                    login,
+                    password,
+                    username,
+                },
+            }),
+        }),
         postLogin: builder.mutation({
             query: ({ login, password }) => ({
                 url: `auth`,
@@ -79,6 +90,7 @@ export const walletApi = createApi({
 
 export const {
     usePostNewWalletMutation,
+    useDeleteWalletMutation,
     useGetWalletBalanceQuery,
     usePostLoginMutation,
     usePostInvoiceMutation,

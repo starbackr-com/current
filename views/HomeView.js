@@ -31,7 +31,8 @@ const HomeScreen = ({ navigation }) => {
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
-    const { followedPubkeys, zapAmount } = useSelector((state) => state.user);
+    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const zapAmount = useSelector(state => state.user.zapAmount)
     const messages = useSelector((state) => state.messages.messages);
     const rootNotes = messages.filter((message) => message.root === true);
 
@@ -129,7 +130,7 @@ const HomeScreen = ({ navigation }) => {
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}
             >
-                {messages && height ? (
+                {rootNotes.length > 2 && height ? (
                     <View style={{ flex: 1, width: "100%", height: "100%" }}>
                         <FlashList
                             data={rootNotes}
