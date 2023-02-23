@@ -14,7 +14,7 @@ import CustomButton from "../../components/CustomButton";
 import {removeData} from '../../utils/cache/asyncStorage';
 
 
-const settings = ["Payments", "Backup", "Network", "User", "Delete Account"];
+const settings = ["Payment Settings", "Backup Keys", "Relay Network", "Muted Users", "Delete Account"];
 
 const SettingItem = ({ item, onNav }) => {
     return (
@@ -79,13 +79,9 @@ const SettingsHomeScreen = ({ navigation }) => {
                         <SettingItem item={item} onNav={navigationHandler} />
                     )}
                 />
+
                 <CustomButton
-                    text="Reset Intro"
-                    buttonConfig={{ onPress: introHandler }}
-                    containerStyles={{marginBottom: 16}}
-                />
-                <CustomButton
-                    text="Log Out"
+                    text="Sign Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
 

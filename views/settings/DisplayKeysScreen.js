@@ -82,6 +82,13 @@ const DisplayKeysScreen = ({ navigation }) => {
         alert('Copied key to clipboard!')
     };
 
+    const copyKeysHandler = async () => {
+        const keys = await getValue("mem");
+        console.log(keys);
+        await Clipboard.setStringAsync(keys);
+        alert('Copied key to clipboard!')
+    };
+
     return (
         <View style={globalStyles.screenContainer}>
             <View style={{width: '100%'}}>
@@ -110,9 +117,11 @@ const DisplayKeysScreen = ({ navigation }) => {
                     />
                 ) : undefined}
                 {show ? (
-                    <Pressable>
-                        <Text style={[globalStyles.textBodyS]}>Copy Keys</Text>
-                    </Pressable>
+                  <CustomButton
+                      text='Copy Keys'
+                      buttonConfig={{ onPress: copyKeysHandler }}
+                      containerStyles={{ marginBottom: 16 }}
+                  />
                 ) : undefined}
             </View>
             <View style={{ flex: 1, justifyContent: "center" }}>

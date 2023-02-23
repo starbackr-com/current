@@ -101,7 +101,7 @@ const PostMenuModal = ({ navigation, route }) => {
                         {/* <ActionButton text="Upvote" icon="arrow-up" onPress={upvoteHandler}/>
                         <ActionButton text="Downvote" icon="arrow-down" onPress={downvoteHandler}/> */}
                         <ActionButton
-                            text="Report"
+                            text="Report Content"
                             icon="alert-circle"
                             onPress={reportHandler}
                         />

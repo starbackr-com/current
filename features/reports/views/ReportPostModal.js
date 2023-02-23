@@ -48,7 +48,7 @@ const ReportPostModal = ({ navigation, route }) => {
                     }}
                 />
             </View>
-            <Text style={globalStyles.textBodyBold}>Report a Note</Text>
+            <Text style={globalStyles.textBodyBold}>Report Content</Text>
             <Text style={globalStyles.textBodyS}>
                 Thank you for taking the time to report bad content. Please
                 choose the reason for your report below

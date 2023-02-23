@@ -21,19 +21,19 @@ const SettingsNavigator = () => {
                 component={SettingsHomeScreen}
             />
             <Stack.Screen
-                name="Backup"
+                name="Backup Keys"
                 component={DisplayKeysScreen}
             />
             <Stack.Screen
-                name="Network"
+                name="Relay Network"
                 component={SettingsNetworkScreen}
             />
             <Stack.Screen
-                name="Payments"
+                name="Payment Settings"
                 component={SettingsPaymentsScreen}
             />
             <Stack.Screen
-                name="User"
+                name="Muted Users"
                 component={SettingsUserScreen}
             />
             <Stack.Screen
