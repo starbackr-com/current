@@ -40,9 +40,7 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
                     if (event.kind === 1) {
                         const newEvent = new Note(event);
                         const parsedEvent = newEvent.save()
-                        console.log(`Data for page ${page}`);
                         if (data[newEvent.id]) {
-                            console.log("Duplicate");
                             return;
                         } else {
                             setData((prev) =>

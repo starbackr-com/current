@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Text, View } from "react-native";
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
@@ -7,6 +8,17 @@ import PostActionBar from "./PostActionBar";
 
 const ImagePost = ({ event, user, width }) => {
     const content = useParseContent(event);
+    const navigation = useNavigation();
+
+    const zapHandler = () => {};
+    const commentHandler = () => {
+        navigation.navigate("CommentScreen", {
+            eventId: event.id,
+            rootId: event.id,
+            type: "root",
+        });
+    };
+    const moreHandler = () => {};
     return (
         <View
             style={{
@@ -39,7 +51,7 @@ const ImagePost = ({ event, user, width }) => {
             <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                 {content}
             </Text>
-            <PostActionBar/>
+            <PostActionBar onPressComment={commentHandler} onPressZap={zapHandler} onPressMore={moreHandler}/>
         </View>
     );
 };

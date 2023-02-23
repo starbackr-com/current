@@ -128,7 +128,7 @@ const CommentScreen = ({ route, navigation }) => {
 
     const users = useSelector((state) => state.messages.users);
 
-    const test = useSubscribeReplies([eventId]);
+    // const test = useSubscribeReplies([eventId]);
     
 
     const renderItem = ({ item }) => {
@@ -203,9 +203,10 @@ const CommentScreen = ({ route, navigation }) => {
         }
     };
 
-    // useEffect(() => {
-    //     getAllReplies();
-    // }, []);
+    useEffect(() => {
+        setReplies();
+        getAllReplies();
+    }, [eventId]);
 
     const headerHeight = useHeaderHeight();
     return (

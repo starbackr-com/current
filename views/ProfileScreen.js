@@ -16,7 +16,8 @@ import { useParseContent } from "../hooks/useParseContent";
 import { getUsersPosts } from "../features/profile/utils/getUsersPosts";
 import ImagePost from "../components/Posts/ImagePost";
 import { useSubscribePosts } from "../hooks/useSubscribePosts";
-
+import PostActionBar from "../components/Posts/PostActionBar";
+import { useZapNote } from "../hooks/useZapNote";
 
 const getAge = (timestamp) => {
     const now = new Date();
@@ -63,7 +64,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
         }
     }, []);
 
-
     const getFeed = async () => {
         const response = await getUsersPosts(user.pubkey);
         const array = Object.keys(response)
@@ -84,9 +84,9 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
 
     const npub = encodePubkey(pubkey);
     return (
-        <View style={{width: '100%'}}>
-            <View style={{width: '100%', height: 20}}></View>
-            <View style={{ padding: 12, width: '100%'}}>
+        <View style={{ width: "100%" }}>
+            <View style={{ width: "100%", height: 20 }}></View>
+            <View style={{ padding: 12, width: "100%" }}>
                 <View
                     style={{
                         width: "100%",
@@ -183,8 +183,28 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     );
 };
 
-const PostItem = ({ event, user }) => {
+const PostItem = ({ event, user, width }) => {
     const content = useParseContent(event);
+    const navigation = useNavigation();
+    const zap = useZapNote(
+        event.id,
+        user?.lud06 || user?.lud16,
+        user?.name || event?.pubkey.slice(0, 16)
+    );
+
+    console.log(width);
+
+    const commentHandler = () => {
+        navigation.navigate("CommentScreen", {
+            eventId: event.id,
+            rootId: event.id,
+            type: "root",
+        });
+    };
+
+    const zapHandler = () => {
+        zap();
+    };
     return (
         <View
             style={{
@@ -194,26 +214,41 @@ const PostItem = ({ event, user }) => {
                 marginBottom: 12,
             }}
         >
+            <View
+                style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    borderBottomColor: colors.primary500,
+                    borderBottomWidth: 1,
+                }}
+            >
+                <Text
+                    style={[
+                        globalStyles.textBodyBold,
+                        { textAlign: "left", width: "50%" },
+                    ]}
+                    numberOfLines={1}
+                >
+                    {user?.name || event.pubkey}
+                </Text>
+                <Text style={[globalStyles.textBodyS]}>
+                    {getAge(event.created_at)}
+                </Text>
+            </View>
+
             <Text
                 style={[
-                    globalStyles.textBodyBold,
-                    { textAlign: "left", width: "50%" },
+                    globalStyles.textBody,
+                    { textAlign: "left", marginTop: 16 },
                 ]}
-                numberOfLines={1}
             >
-                {user?.name || event.pubkey}
-            </Text>
-            <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                 {content}
             </Text>
-            <Text
-                style={[
-                    globalStyles.textBodyS,
-                    { textAlign: "right", marginTop: 12 },
-                ]}
-            >
-                {getAge(event.created_at)}
-            </Text>
+            <PostActionBar
+                onPressComment={commentHandler}
+                onPressZap={zapHandler}
+            />
         </View>
     );
 };
@@ -230,8 +265,9 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const [data, page, setPage] = useSubscribePosts([pubkey], now);
 
-    const array = Object.keys(data).map((key) => data[key]);
-    console.log(array.length)
+    const array = Object.keys(data)
+        .map((key) => data[key])
+        .sort((a, b) => b.created_at - a.created_at);
 
     const user = users[pubkey];
 
@@ -249,30 +285,16 @@ const ProfileScreen = ({ route, navigation }) => {
         setWidth(e.nativeEvent.layout.width);
     };
 
-    const renderItem = ({ item }) => {console.log(item)
+    const renderItem = ({ item }) => {
         if (item.type === "image") {
-            console.log('Image!')
             return <ImagePost event={item} user={user} width={width} />;
         } else if (item.type === "text") {
-            console.log('Text!')
             return <PostItem event={item} user={user} width={width} />;
-        } else {
-            console.log('None!')
         }
     };
 
     return (
-        <View
-            style={[
-                globalStyles.screenContainer,
-                {
-                    paddingHorizontal: 0,
-                    paddingTop: 0,
-                    alignItems: "center",
-                    width: '100%'
-                },
-            ]}
-        >
+        <View style={[globalStyles.screenContainer, {paddingTop: 0}]}>
             <Pressable
                 style={{
                     flexDirection: "row",
@@ -283,7 +305,7 @@ const ProfileScreen = ({ route, navigation }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    marginBottom: 24,
+                    marginBottom: 12,
                 }}
                 onPress={() => {
                     navigation.goBack();
@@ -299,12 +321,9 @@ const ProfileScreen = ({ route, navigation }) => {
                 style={{
                     flex: 1,
                     width: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
                 }}
                 onLayout={onLayoutViewWidth}
             >
-                <View style={{width: '100%', height: 20}}></View>
                 <FlashList
                     data={array}
                     renderItem={renderItem}
@@ -315,9 +334,19 @@ const ProfileScreen = ({ route, navigation }) => {
                             loggedInPubkey={loggedInPubkey}
                         />
                     }
-                    ListFooterComponent={<CustomButton text='Load more' buttonConfig={{onPress: () => {setPage(page + 1)}}}/>}
+                    extraData={users}
+                    ListFooterComponent={
+                        <CustomButton
+                            text="Load more"
+                            buttonConfig={{
+                                onPress: () => {
+                                    setPage(page + 1);
+                                },
+                            }}
+                        />
+                    }
                 />
-                <View style={{height: 36}}></View>
+                <View style={{ height: 36 }}></View>
             </View>
             {pubkey === loggedInPubkey ? (
                 <View style={{ position: "absolute", right: 32, top: 32 }}>
