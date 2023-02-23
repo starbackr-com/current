@@ -11,9 +11,10 @@ import { dbLogout } from "../../utils/database";
 import colors from "../../styles/colors";
 import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
-import {removeData} from '../../utils/cache/asyncStorage'
+import {removeData} from '../../utils/cache/asyncStorage';
 
-const settings = ["Payments", "Backup", "Network", "User"];
+
+const settings = ["Payments", "Backup", "Network", "User", "Delete Account"];
 
 const SettingItem = ({ item, onNav }) => {
     return (
@@ -66,6 +67,8 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
 
+
+
     return (
         <View style={globalStyles.screenContainer}>
             <View style={{ width: "100%", flex: 1 }}>
@@ -85,7 +88,7 @@ const SettingsHomeScreen = ({ navigation }) => {
                     text="Log Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
-                
+
             </View>
             <Text
                 style={[

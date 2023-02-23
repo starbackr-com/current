@@ -4,6 +4,7 @@ import SettingsHomeScreen from "../views/settings/SettingsHomeScreen";
 import SettingsNetworkScreen from "../views/settings/SettingsNetworkScreen";
 import SettingsPaymentsScreen from "../views/settings/SettingsPaymentsScreen";
 import SettingsUserScreen from "../views/settings/SettingsUserScreen";
+import SettingsDeleteAccountScreen from "../views/settings/SettingsDeleteAccountScreen";
 
 
 const Stack = createStackNavigator();
@@ -34,6 +35,10 @@ const SettingsNavigator = () => {
             <Stack.Screen
                 name="User"
                 component={SettingsUserScreen}
+            />
+            <Stack.Screen
+                name="Delete Account"
+                component={SettingsDeleteAccountScreen}
             />
         </Stack.Navigator>
     );
