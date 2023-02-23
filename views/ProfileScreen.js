@@ -191,9 +191,6 @@ const PostItem = ({ event, user, width }) => {
         user?.lud06 || user?.lud16,
         user?.name || event?.pubkey.slice(0, 16)
     );
-
-    console.log(width);
-
     const commentHandler = () => {
         navigation.navigate("CommentScreen", {
             eventId: event.id,
@@ -204,6 +201,10 @@ const PostItem = ({ event, user, width }) => {
 
     const zapHandler = () => {
         zap();
+    };
+
+    const moreHandler = () => {
+        navigation.navigate("PostMenuModal", { event });
     };
     return (
         <View
@@ -221,6 +222,7 @@ const PostItem = ({ event, user, width }) => {
                     justifyContent: "space-between",
                     borderBottomColor: colors.primary500,
                     borderBottomWidth: 1,
+                    paddingBottom: 6
                 }}
             >
                 <Text
@@ -248,6 +250,8 @@ const PostItem = ({ event, user, width }) => {
             <PostActionBar
                 onPressComment={commentHandler}
                 onPressZap={zapHandler}
+                onPressMore={moreHandler}
+                zapDisabled={!user?.lud06 && !user?.lud16}
             />
         </View>
     );
@@ -294,7 +298,7 @@ const ProfileScreen = ({ route, navigation }) => {
     };
 
     return (
-        <View style={[globalStyles.screenContainer, {paddingTop: 0}]}>
+        <View style={[globalStyles.screenContainer, { paddingTop: 0 }]}>
             <Pressable
                 style={{
                     flexDirection: "row",

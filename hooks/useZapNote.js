@@ -82,7 +82,7 @@ export const useZapNote = (eventId, dest, name) => {
                             });
                             if (result.data && !result.data.error) {
                                 alert(
-                                    `🤑 🎉 Zap success: ${amount} SATS to ${
+                                    `⚡ 🎉 Zap success: ${amount} SATS to ${
                                         name
                                     } `
                                 );

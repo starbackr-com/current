@@ -17,8 +17,8 @@ const FeedImage = ({ size, images }) => {
         >
             <Image
                 source={images[0]}
-                style={{ height: size, width: size }}
-                contentFit='contain'
+                style={{ height: size, width: size, padding: 6 }}
+                contentFit='cover'
                 placeholder={blurhash}
             />
             {images.length > 1 ? (

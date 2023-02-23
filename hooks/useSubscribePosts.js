@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { Zap } from "../features/zaps/Zap";
 import { connectedRelays, Note } from "../utils/nostrV2";
 
 export const useSubscribePosts = (pubkeysinHex, unixNow) => {
@@ -18,6 +17,7 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
     };
 
     useEffect(() => {
+        // Subscribe to latest 6 posts on mount, get another 6-h window when 'page' changes
         let hoursInSeconds = 6 * 60 * 60;
         let until = Math.floor(unixNow - page * hoursInSeconds);
         let since = Math.floor(
@@ -33,6 +33,7 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
                     since: since,
                 },
             ]);
+            // Save events in data object if they don't exist already
             sub.on("event", (event) => {
                 if (mutedPubkeys.includes(event.pubkey)) {
                     return;
@@ -47,9 +48,6 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
                                 ({...prev, [parsedEvent.id]: parsedEvent})
                             );
                         }
-                    } else if (event.kind === 9735) {
-                        const zap = new Zap(event);
-                        events.push(zap);
                     }
                 }
             });
