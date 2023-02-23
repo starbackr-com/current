@@ -41,3 +41,21 @@ export const loginToWallet = async (privKey) => {
     }
 
 }
+
+export const deleteWallet = async (privKey, address) => {
+    try {
+        if (!privKey) {
+            throw new Error('Expected to get a valid private key')
+        }
+        const pubKey = await getPublicKey(privKey)
+        const password = secp256k1.utils.bytesToHex(sha256(utf8Encoder.encode(privKey)))
+        const result = await store.dispatch(walletApi.endpoints.deleteWallet.initiate({login: pubKey, password, username: address}))
+        // if (result?.error?.status === 400) {
+        //     throw new Error(`Invalid Credentials`)
+        // }
+        return result
+    } catch (err) {
+        console.log(err)
+    }
+
+}

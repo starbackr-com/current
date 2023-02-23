@@ -49,14 +49,38 @@ const ImportSingleKeyScreen = ({ navigation }) => {
                 const events = [];
                 let mostRecent;
                 data.map((item) => item.map((event) => events.push(event)));
-                if (events.length >= 1) {
-                    mostRecent = events.reduce(
-                        (p, c) => {
-                            let r = c.created_at > p.created_at ? c : p;
-                            return r;
-                        },
-                        { created_at: 0 }
-                    );
+
+                mostRecent = events.reduce(
+                    (p, c) => {
+                        let r = c.created_at > p.created_at ? c : p;
+                        return r;
+                    },
+                    { created_at: 0 }
+                );
+
+                let deletedAccount=false;
+
+                try {
+                  console.log('mostrecent', mostRecent.content);
+                  const mostrecentcontent = JSON.parse(mostRecent.content);
+                  deletedAccount = mostrecentcontent.deleted;
+                  console.log('deletedaccount', deletedAccount);
+
+                } catch (e) {
+                    //ignore
+                    console.log(e);
+                }
+
+
+                if (deletedAccount) {
+                  Alert.alert(
+                          "Deleted Account?",
+                           "You cannot use deleted account. Please use a different key.",
+                           [{text: 'OK', onPress: () => {return;}}]
+
+                  );
+                }
+                if (events.length >= 1 && !deletedAccount) {
                     Alert.alert(
                         "Update Profile?",
                         `A profile for this key already exists. Do you want to update it or keep the old one? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
@@ -97,7 +121,7 @@ const ImportSingleKeyScreen = ({ navigation }) => {
                             },
                         ]
                     );
-                } else {
+                } else if (!deletedAccount) {
                     Alert.alert(
                         "Create Profile?",
                         `We couldn't find a profile for this key on the connected relays... Do you want to create one? (If you don't, you will not be able to receive zaps on those relays.)`,
@@ -139,6 +163,7 @@ const ImportSingleKeyScreen = ({ navigation }) => {
                         ]
                     );
                 }
+
             }
         } catch (e) {
             console.log(e);
