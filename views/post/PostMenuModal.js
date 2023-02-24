@@ -1,10 +1,12 @@
-import { View, Text, Button, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { muteUser } from "../../utils/users";
+import * as Clipboard from 'expo-clipboard';
+import { encodeNoteID } from "../../utils/nostr/keys";
 
 const ActionButton = ({ onPress, icon, text }) => {
     return (
@@ -59,6 +61,13 @@ const PostMenuModal = ({ navigation, route }) => {
         navigation.goBack();
         navigation.navigate("ReportPostModal", { event });
     };
+
+    const copyEventHandler = async () => {
+        const bech32Note = encodeNoteID(id)
+        console.log(bech32Note)
+        await Clipboard.setStringAsync(bech32Note);
+    };
+
     return (
         <>
             <View
@@ -109,6 +118,11 @@ const PostMenuModal = ({ navigation, route }) => {
                             text="Mute User"
                             icon="volume-mute"
                             onPress={muteHandler}
+                        />
+                        <ActionButton
+                            text="Copy Event"
+                            icon="clipboard-outline"
+                            onPress={copyEventHandler}
                         />
                     </View>
                     <CustomButton
