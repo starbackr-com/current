@@ -20,6 +20,7 @@ const FeedImage = ({ size, images }) => {
                 style={{ height: size, width: size, padding: 6 }}
                 contentFit='cover'
                 placeholder={blurhash}
+                recyclingKey={images[0]}
             />
             {images.length > 1 ? (
                 <Text
