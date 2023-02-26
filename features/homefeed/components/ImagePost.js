@@ -542,7 +542,7 @@ const ImagePost = ({
                         alignItems: "center",
                         justifyContent: "center",
                     }}
-                    onPress={() => {
+                                        onPress={() => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
                             rootId: item.id,
