@@ -8,14 +8,14 @@ import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
 import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { useCallback } from "react";
 import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
-import {ActivityIndicator} from 'react-native';
+import { ActivityIndicator } from "react-native";
+import { getZaps } from "../features/zaps/utils/getZaps";
+import CustomButton from "../components/CustomButton";
 
 const HomeStack = createStackNavigator();
 
@@ -25,11 +25,14 @@ const HomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [playAnimation, setPlayAnimation] = useState(false);
+    const [zaps, setZaps] = useState();
+    const [page, setPage] = useState(1);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
-    const { followedPubkeys, zapAmount } = useSelector((state) => state.user);
+    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const zapAmount = useSelector(state => state.user.zapAmount)
     const messages = useSelector((state) => state.messages.messages);
     const rootNotes = messages.filter((message) => message.root === true);
 
@@ -49,41 +52,62 @@ const HomeScreen = ({ navigation }) => {
         setWidth(e.nativeEvent.layout.width);
     };
 
+    const loadZaps = async (postObj) => {
+        const postArray = Object.keys(postObj).map((key) => postObj[key])
+        const arrayOfIds = postArray.map((event) => event.id);
+        const allZaps = await getZaps(arrayOfIds);
+        setZaps(prev => Object.assign(prev ? prev : {}, allZaps));
+    };
+
+    const loadMoreItems = async () => {
+        if (isLoading) {
+            return;
+        }
+        console.log(`Getting page ${page}`);
+        setIsLoading(true);
+        const postObj = await getHomeFeed(followedPubkeys, page);
+        setIsLoading(false);
+        loadZaps(postObj)
+        setPage((prev) => prev + 1);
+    };
+
     const loadHomefeed = async () => {
         setIsLoading(true);
-        await getHomeFeed(followedPubkeys);
+        const now = new Date() / 1000;
+        const postObj = await getHomeFeed(followedPubkeys, 0);
         setIsLoading(false);
+        loadZaps(postObj)
+
         updateFollowedUsers();
     };
 
-    const renderPost = useCallback(
-        ({ item }) => {
-            if (item.type === "image") {
-                return (
-                    <ImagePost
-                        item={item}
-                        height={height}
-                        width={width}
-                        user={users[item.pubkey]}
-                        zapSuccess={playZapAnimation}
-                        zapAmount={zapAmount}
-                    />
-                );
-            } else {
-                return (
-                    <PostItem
-                        item={item}
-                        height={height}
-                        width={width}
-                        user={users[item.pubkey]}
-                        zapSuccess={playZapAnimation}
-                        zapAmount={zapAmount}
-                    />
-                );
-            }
-        },
-        [height, width, users, zapAmount]
-    );
+    const renderPost = ({ item }) => {
+        if (item.type === "image") {
+            return (
+                <ImagePost
+                    item={item}
+                    height={height}
+                    width={width}
+                    user={users[item.pubkey]}
+                    zapSuccess={playZapAnimation}
+                    zapAmount={zapAmount}
+                    zaps={zaps ? zaps[item.id] : null}
+                />
+            );
+        } else {
+            return (
+                <PostItem
+                    item={item}
+                    height={height}
+                    width={width}
+                    user={users[item.pubkey]}
+                    zapSuccess={playZapAnimation}
+                    zapAmount={zapAmount}
+                    zaps={zaps ? zaps[item.id] : null}
+                />
+            );
+        }
+    };
 
     const playZapAnimation = () => {
         setPlayAnimation(true);
@@ -93,22 +117,20 @@ const HomeScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            loadHomefeed();
-        }, 500);
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [followedPubkeys]);
+        loadHomefeed();
+    }, []);
 
     return (
-        <View style={[globalStyles.screenContainer, {paddingTop: 12}]} onLayout={onLayoutViewWidth}>
-            <GetStartedItems/>
+        <View
+            style={[globalStyles.screenContainer, { paddingTop: 12 }]}
+            onLayout={onLayoutViewWidth}
+        >
+            <GetStartedItems />
             <View
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}
             >
-                {messages && height && !isLoading ? (
+                {rootNotes.length > 2 && height ? (
                     <View style={{ flex: 1, width: "100%", height: "100%" }}>
                         <FlashList
                             data={rootNotes}
@@ -116,26 +138,37 @@ const HomeScreen = ({ navigation }) => {
                             snapToAlignment="start"
                             decelerationRate="fast"
                             snapToInterval={(height / 100) * 90}
-                            estimatedItemSize={height / 2}
+                            estimatedItemSize={(height / 100) * 90}
                             directionalLockEnabled
                             onRefresh={async () => {
                                 setIsFetching(true);
-                                await getHomeFeed(followedPubkeys);
+                                await loadHomefeed();
                                 setIsFetching(false);
                             }}
                             refreshing={isFetching}
-                            extraData={[users, zapAmount]}
+                            extraData={[users, zapAmount, zaps]}
                             getItemType={(item) => item.type}
+                            onEndReached={loadMoreItems}
+                            onEndReachedThreshold={2}
+                            ListFooterComponent={
+                                <CustomButton
+                                    text="Load More"
+                                    buttonConfig={{ onPress: loadMoreItems }}
+                                />
+                            }
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
                 ) : (
-                    <ActivityIndicator  style={{
-                        container: {
-                          flex: 1,
-                          justifyContent: 'center',
-                        },
-
-                    }} size={90}/>
+                    <ActivityIndicator
+                        style={{
+                            container: {
+                                flex: 1,
+                                justifyContent: "center",
+                            },
+                        }}
+                        size={90}
+                    />
                 )}
                 {playAnimation ? (
                     <View

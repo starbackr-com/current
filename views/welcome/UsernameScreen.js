@@ -84,7 +84,7 @@ const UsernameScreen = ({ navigation, route }) => {
             <View style={{ width: "100%", alignItems: "center" }}>
                 {available && available.length > 0 && !isFetching && !error ? (
                     <Text style={[globalStyles.textBody, { marginBottom: 32 }]}>
-                        Select your username
+                        Choose one from the list below
                     </Text>
                 ) : undefined}
                 {available && available.length > 0 && !isFetching && !error

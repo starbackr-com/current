@@ -3552,11 +3552,6 @@ expo-barcode-scanner@~12.3.1:
   dependencies:
     expo-image-loader "~4.1.0"
 
-expo-cached-image@^47.1.0:
-  version "47.1.0"
-  resolved "https://registry.yarnpkg.com/expo-cached-image/-/expo-cached-image-47.1.0.tgz#a196782c1015163d00c4233a3711229970223e4c"
-  integrity sha512-IJ4dEabRgrZOHq0SMKYB4lZRURZdxA7qXl3oOCU3d4DieAHIdYbRj2fz8RzJcsQkDBNM8VNTDjBYA8ITCTSblw==
-
 expo-clipboard@~4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-4.1.1.tgz#4d7d593f1612302fc2dd4f60ba3b430e62b838f0"
@@ -3577,23 +3572,23 @@ expo-crypto@~12.2.1:
   dependencies:
     base64-js "^1.3.0"
 
-expo-dev-client@~2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-2.1.1.tgz#d1214b7779bc1dde9a47df58d076e66ab19d5d6c"
-  integrity sha512-Up5x9rfpNOETeMObmQu+sNOnA17SAwgOy53+0bnY5T8/SDZ07qARwxgjaO3rqB+g4yN1isj2p92Bliin2T7ZdA==
+expo-dev-client@~2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-2.1.2.tgz#b5ccd2b58a837042c8bb278df53e0dc6722cd9ba"
+  integrity sha512-6vEzHJJjVo7WolPzjSaIvZtjcZnuO2abDKjNZlCC+I2pDKkzHMjAmUYr1MyVR5RM6jfTVO7jBfbHODwuZH12Hw==
   dependencies:
-    expo-dev-launcher "2.1.1"
-    expo-dev-menu "2.1.1"
+    expo-dev-launcher "2.1.2"
+    expo-dev-menu "2.1.2"
     expo-dev-menu-interface "1.1.1"
     expo-manifests "~0.5.0"
     expo-updates-interface "~0.9.0"
 
-expo-dev-launcher@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-2.1.1.tgz#61202c7e2ff487575888f74ac0594b013631a9ed"
-  integrity sha512-n/nTqB+dkeVKJ5anduE8iKc7r7dOAtVwP+cM9msYdan43e1H+WA0GQHxOK+cfOUqBvGggxUJm8QuT3oItN8aTA==
+expo-dev-launcher@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-2.1.2.tgz#bf46934af68af54e3780cd5292828df4a84e42de"
+  integrity sha512-1aH0rAoFnmsV2TcWV65xTRjVZk3noUfs/h4FeCxg54B3vd2Qz1d3ft6k8o1axU0lhC3edfRpZ44xJPW2Co2gGQ==
   dependencies:
-    expo-dev-menu "2.1.1"
+    expo-dev-menu "2.1.2"
     resolve-from "^5.0.0"
     semver "^7.3.5"
 
@@ -3602,10 +3597,10 @@ expo-dev-menu-interface@1.1.1:
   resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-1.1.1.tgz#8a0d979f62d9a192696f66a77f75d8fab79e604b"
   integrity sha512-doT+7WrSBnxCcTGZw9QIEZoL+43U4RywbG8XZwbhkcsFWGsh9scp0y/bv3ieFHxRtIdImxbxOoYh7fy1O6g28w==
 
-expo-dev-menu@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-2.1.1.tgz#2ac302d4aac3adc073591d2e6d938f936380047d"
-  integrity sha512-gBrpRVwUIKeMKCltHRuY7EAMP4ARQ/D8IM23+E+z1rnkQGubHQpEu2fvRIQOqOs7jNS7S/EscvqGFdwwVi8MgQ==
+expo-dev-menu@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-2.1.2.tgz#da7f854aa3b03d8adb798bccb7834fbbe2931356"
+  integrity sha512-FhRQg2b5J+yjpbx8rR7ol8MapAs6o/yMO8J+JnhJ5EgXlyWQQcyTzCIwtJ6Z5Z9YkN6aC3DmfETpogRQNKIEIw==
   dependencies:
     expo-dev-menu-interface "1.1.1"
     semver "^7.3.5"
@@ -3648,10 +3643,10 @@ expo-image-picker@~14.1.1:
   dependencies:
     expo-image-loader "~4.1.0"
 
-expo-image@1.0.0-rc.0:
-  version "1.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-1.0.0-rc.0.tgz#d01d52821d42d859a8d0b949324d3283033f032b"
-  integrity sha512-cWzJGLf+ulaYLf2Jr4f5z6R945ZDy5x+KxFr28q6CmbYDCk9zHCQWxVPQlnz1LtCRpHb5WAWTdhvJtWCRc+FpA==
+expo-image@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-1.0.0.tgz#a3670d20815d99e2527307a33761c9b0088823b1"
+  integrity sha512-A1amVExKhBa/eRXuceauYtPkf9izeje5AbxEWL09tgK91rf3GSIZXM5PSDGlIM0s7dpCV+Iet2jhwcFUfWaZrw==
 
 expo-json-utils@~0.5.0:
   version "0.5.1"
@@ -4798,10 +4793,10 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-jsc-android@^250230.2.1:
-  version "250230.2.1"
-  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-250230.2.1.tgz#3790313a970586a03ab0ad47defbc84df54f1b83"
-  integrity sha512-KmxeBlRjwoqCnBBKGsihFtvsBHyUFlBxJPK4FzeYcIuBfdjv6jFys44JITAgSTbQD+vIdwMEfyZklsuQX0yI1Q==
+jsc-android@^250231.0.0:
+  version "250231.0.0"
+  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-250231.0.0.tgz#91720f8df382a108872fa4b3f558f33ba5e95262"
+  integrity sha512-rS46PvsjYmdmuz1OAWXY/1kCYG7pnf1TBqeTiOJr1iDz7s5DLxxC9n/ZMknLDxzYzNVfI7R95MH10emSSG1Wuw==
 
 jscodeshift@^0.13.1:
   version "0.13.1"
@@ -6260,10 +6255,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-codegen@^0.71.3:
-  version "0.71.3"
-  resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.71.3.tgz#75fbc591819050791319ebdb9fe341ee4df5c288"
-  integrity sha512-5AvdHVU1sAaXg05i0dG664ZTaCaIFaY1znV5vNsj+wUu6MGxNEUNbDKk9dxKUkkxOyk2KZOK5uhzWL0p5H5yZQ==
+react-native-codegen@^0.71.5:
+  version "0.71.5"
+  resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.71.5.tgz#454a42a891cd4ca5fc436440d301044dc1349c14"
+  integrity sha512-rfsuc0zkuUuMjFnrT55I1mDZ+pBRp2zAiRwxck3m6qeGJBGK5OV5JH66eDQ4aa+3m0of316CqrJDRzVlYufzIg==
   dependencies:
     "@babel/parser" "^7.14.0"
     flow-parser "^0.185.0"
@@ -6288,10 +6283,10 @@ react-native-get-random-values@^1.8.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
-react-native-gradle-plugin@^0.71.14:
-  version "0.71.14"
-  resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.14.tgz#cc399662f04fbfcc0e352d03eae1d3efbd5f635a"
-  integrity sha512-nnLawTZEPPRAKq92UqDkzoGgCBl9aa9zAihFHMwmwzn4WRVdK4O6Cd4XYiyoNOiQzx3Hh9k5WOckHE80C92ivQ==
+react-native-gradle-plugin@^0.71.15:
+  version "0.71.15"
+  resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.15.tgz#9e6b506f30729fe8eb086981702f4e3c891d2b13"
+  integrity sha512-7S3pAuPaQJlhax6EZ4JMsDNpj05TfuzX9gPgWLrFfAIWIFLuJ6aDQYAZy2TEI9QJALPoWrj8LWaqP/DGYh14pw==
 
 react-native-randombytes@^3.6.1:
   version "3.6.1"
@@ -6326,10 +6321,10 @@ react-native-safe-modules@^1.0.3:
   dependencies:
     dedent "^0.6.0"
 
-react-native-screens@~3.19.0:
-  version "3.19.0"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.19.0.tgz#ec68685e04b074ebce4641b3a0ae7e2571629b75"
-  integrity sha512-Ehsmy7jr3H3j5pmN+/FqsAaIAD+k+xkcdePfLcg4rYRbN5X7fJPgaqhcmiCcZ0YxsU8ttsstP9IvRLNQuIkRRA==
+react-native-screens@~3.20.0:
+  version "3.20.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.20.0.tgz#4d154177395e5541387d9a05bc2e12e54d2fb5b1"
+  integrity sha512-joWUKWAVHxymP3mL9gYApFHAsbd9L6ZcmpoZa6Sl3W/82bvvNVMqcfP7MeNqVCg73qZ8yL4fW+J/syusHleUgg==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
@@ -6359,10 +6354,10 @@ react-native-webview@11.26.0:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native@0.71.2:
-  version "0.71.2"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.71.2.tgz#b6977eda2a6dc10baa006bf4ab1ee08318607ce9"
-  integrity sha512-ZSianM+j+09LoEdVIhrAP/uP8sQhT7dH6olCqM2xlpxmfCgA5NubsK6NABIuZiBlmmqjigyijm5Y/GhBIHDvEg==
+react-native@0.71.3:
+  version "0.71.3"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.71.3.tgz#0faab799c49e61ba12df9e6525c3ac7d595d673c"
+  integrity sha512-RYJXCcQGa4NTfKiPgl92eRDUuQ6JGDnHqFEzRwJSqEx9lWvlvRRIebstJfurzPDKLQWQrvITR7aI7e09E25mLw==
   dependencies:
     "@jest/create-cache-key-function" "^29.2.1"
     "@react-native-community/cli" "10.1.3"
@@ -6378,7 +6373,7 @@ react-native@0.71.2:
     event-target-shim "^5.0.1"
     invariant "^2.2.4"
     jest-environment-node "^29.2.1"
-    jsc-android "^250230.2.1"
+    jsc-android "^250231.0.0"
     memoize-one "^5.0.0"
     metro-react-native-babel-transformer "0.73.7"
     metro-runtime "0.73.7"
@@ -6388,8 +6383,8 @@ react-native@0.71.2:
     pretty-format "^26.5.2"
     promise "^8.3.0"
     react-devtools-core "^4.26.1"
-    react-native-codegen "^0.71.3"
-    react-native-gradle-plugin "^0.71.14"
+    react-native-codegen "^0.71.5"
+    react-native-gradle-plugin "^0.71.15"
     react-refresh "^0.4.0"
     react-shallow-renderer "^16.15.0"
     regenerator-runtime "^0.13.2"

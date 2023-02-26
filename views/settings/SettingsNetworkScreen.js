@@ -42,13 +42,17 @@ const SettingsNetworkScreen = ({navigation}) => {
     console.log(relays);
     return (
         <View style={globalStyles.screenContainer}>
-            <Text style={globalStyles.textBodyBold}>Relays</Text>
+            <Text style={globalStyles.textBodyBold}>Relay Network</Text>
             <View style={{width: '80%'}}>
                 {relays.map((relay) => (
                     <RelayItem relay={relay} key={relay.url} />
                 ))}
             </View>
             <CustomButton text='Back' buttonConfig={{onPress: () => {navigation.goBack();}}}/>
+
+            <Text style={globalStyles.textBody}>
+                NOTE: Relay management is automatic. We will enable custom relays in future release.
+            </Text>
         </View>
     );
 };

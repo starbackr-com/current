@@ -39,7 +39,7 @@ const parseMentions = (event) => {
 };
 
 export class Event {
-    constructor(eventData) {
+    constructor(eventData, relay) {
         this.eventData = eventData;
         this.id = eventData.id;
         this.content = eventData.content;
@@ -48,6 +48,7 @@ export class Event {
         this.pubkey = eventData.pubkey;
         this.sig = eventData.sig;
         this.tags = eventData.tags;
+        this.relay = relay
     }
 
     async save() {
@@ -117,7 +118,7 @@ export class Event {
     }
 
     saveNote() {
-        const { id, pubkey, created_at, kind, tags, content, sig } = this;
+        const { id, pubkey, created_at, kind, tags, content, sig, relay } = this;
         const { imageURL, newMessage, invoice } = parseContent(content);
         const { mentions } = parseMentions(this);
         let root = !tags.some((tag) => {
@@ -137,7 +138,8 @@ export class Event {
                 image: imageURL ? imageURL : undefined,
                 invoice,
                 mentions,
-                type: imageURL ? 'image' : 'text'
+                type: imageURL ? 'image' : 'text',
+                relay
             };
             store.dispatch(addMessage({ event: note }));
         } catch (err) {
