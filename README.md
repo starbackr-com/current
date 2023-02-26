@@ -4,7 +4,23 @@
 
 # Current | Nostr + Bitcoin
 
-The Current App for iOS and Android is an open source react-native client on top of the Nostr protocol. In order to give a consistent user experience across mobile devices, we built it on React Native. Current will work in two modes: base and expert. We built the app with base mode features, which offers numerous features for new users right out of the box.
+The Current App for iOS and Android is an open source react-native client on top of the Nostr protocol.
+
+[![Appstore](https://i.current.fyi/help/app-store-badge-blue.svg)](https://testflight.apple.com/join/mBNSgSCI)
+[![Playstore](https://i.current.fyi/help/play-store-badge-blue.svg)](https://play.google.com/apps/testing/io.getcurrent.current)
+
+[![android](https://i.current.fyi/help/android-apk.png)](https://i.current.fyi/help/current-0.0.3-v12.apk)
+
+
+
+
+
+Website: [getcurrent.io](https://getcurrent.io)
+
+Community: [telegram group](https://t.me/+1NhSTfdwv1M2MTky)
+
+
+In order to give a consistent user experience across mobile devices, we built it on React Native. Current will work in two modes: base and expert. We built the app with base mode features, which offers numerous features for new users right out of the box.
 
 #### Base mode:
 For normal users who are used to twitter/facebook like experience where the App manages their keys, lightning wallet, multimedia storage and automated relay management
@@ -66,7 +82,7 @@ Once base features are implemented we will start to open up the default features
 ## Screenshots
 
 
-![](https://i.current.fyi/current/app/appview.png)
+![](https://starbackr-images.s3.amazonaws.com/help/github-screenshot)
 
 
 
@@ -117,7 +133,12 @@ Start the server
 
 App successfully went through testflight review and was approved by Apple. We are putting some finishing touches and crushing some bugs.
 
-iOS App and android App links will be shared here on Feb 14th. You can also pre register on our website at https://app.getcurrent.io for priority access. You do not want to miss out as testflight seats are limited.
+iOS: https://testflight.apple.com/join/mB0EwMiV
+
+Google play: https://play.google.com/apps/testing/io.getcurrent.current
+
+Android APK: https://i.current.fyi/help/current-0.0.3-v12.apk
+
 ## Support
 
 For support, email hello@getcurrent.io.
