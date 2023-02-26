@@ -100,7 +100,23 @@ const ResultCard = ({ pk }) => {
                 alignItems: "center",
             }}
         >
-            <Pressable style={{borderWidth: 1, borderColor: colors.primary500, alignItems: 'center', borderRadius: 10, marginBottom: 12, padding: 6, backgroundColor: colors.backgroundPrimary}} onPress={() => {navigation.navigate('ProfileModal', {pubkey: pk})}}>
+            <Pressable
+                style={{
+                    borderWidth: 1,
+                    borderColor: colors.primary500,
+                    alignItems: "center",
+                    borderRadius: 10,
+                    marginBottom: 12,
+                    padding: 6,
+                    backgroundColor: colors.backgroundPrimary,
+                }}
+                onPress={() => {
+                    navigation.navigate("Profile", {
+                        screen: "ProfileScreen",
+                        params: { pubkey: pk },
+                    });
+                }}
+            >
                 <Image
                     source={
                         user?.picture ||
@@ -217,7 +233,7 @@ const SearchScreen = ({ navigation }) => {
                 <Input
                     textInputConfig={{
                         onChangeText: setInput,
-                        autoCapitalize: 'none',
+                        autoCapitalize: "none",
                         autocorrect: false,
                     }}
                 />

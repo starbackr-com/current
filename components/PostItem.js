@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../services/walletApi";
 import { useState } from "react";
+import { createZapEvent } from "../utils/nostrV2/publishEvents";
 import Animated, {
     withSequence,
     withTiming,
@@ -13,18 +14,26 @@ import Animated, {
 } from "react-native-reanimated";
 import globalStyles from "../styles/globalStyles";
 import { Image } from "expo-image";
-
-import reactStringReplace from "react-string-replace";
-import { useCallback } from "react";
 import FeedImage from "./Images/FeedImage";
-import { httpRegex } from "../constants";
-import * as Linking from "expo-linking";
+import { getAge } from "../features/shared/utils/getAge";
+import { useParseContent } from "../hooks/useParseContent";
 
-
-const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
+const PostItem = ({
+    item,
+    height,
+    width,
+    user,
+    zapSuccess,
+    zapAmount,
+    zaps,
+}) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
+    const [hasMore, setHasMore] = useState(false);
+    const [numOfLines, setNumOfLines] = useState();
+    const [textContainerHeight, setTextContaienrHeight] = useState();
+    const readMoreText = "Read More...";
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
             withSequence(
@@ -36,50 +45,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
         ),
     }));
 
-    const parseMentions = useCallback((event) => {
-        let content = event.content;
-        content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-            return (
-                <Text
-                    style={{ color: colors.primary500 }}
-                    onPress={() => {
-                        navigation.navigate("ProfileModal", {
-                            pubkey: event.tags[i - 1][1],
-                        });
-                    }}
-                    key={i}
-                >
-                    {event.mentions[i - 1]?.mention}
-                </Text>
-            );
-        });
-
-        content = reactStringReplace(content, /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/, (m, i) => {
-            return (
-                <Text style={{ color: colors.primary500 }} onPress={() => {Linking.openURL(m)}} key={i}>
-                    {m}
-                </Text>
-            );
-        });
-        return content;
-    }, []);
-
-    const getAge = useCallback((timestamp) => {
-        const now = new Date();
-        const timePassedInMins = Math.floor(
-            (now - new Date(timestamp * 1000)) / 1000 / 60
-        );
-
-        if (timePassedInMins < 60) {
-            return `${timePassedInMins}min ago`;
-        } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
-            return `${Math.floor(timePassedInMins / 60)}h ago`;
-        } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
-            return `${Math.floor(timePassedInMins / 1440)}d ago`;
-        } else {
-            return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
-        }
-    }, []);
+    const content = useParseContent(item);
 
     const { created_at, pubkey } = item;
     const blurhash = "LEHLh[WB2yk8pyoJadR*.7kCMdnj";
@@ -101,48 +67,84 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "Cancel",
                         style: "cancel",
-                        onPress: () => {
+                    },
+                ]
+            );
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const dest = user.lud06 || user.lud16;
+            const name = user.name || user.pubkey.slice(0, 12);
+            const url = dest.includes("@")
+                ? `https://${dest.split("@")[1]}/.well-known/lnurlp/${
+                      dest.split("@")[0]
+                  }`
+                : decodeLnurl(dest);
+            const response = await fetch(url);
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
+
+            const amount =
+                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+
+            Alert.alert(
+                "Zap",
+                `Do you want to send ${zapAmount} SATS to ${name}?`,
+                [
+                    {
+                        text: "Yes!",
+                        onPress: async () => {
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
+
+                                const zapevent = await createZapEvent("", tags);
+                                response = await fetch(
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
+                                );
+                            } else {
+                                console.log("inside not zap wallet");
+                                alert(
+                                    `Oops..! ${
+                                        user.name || user.pubkey
+                                    }'s wallet does not support Zaps!`
+                                );
+                                setIsLoading(false);
+                                return;
+                            }
+                            const data = await response.json();
+                            const invoice = data.pr;
+                            const result = await sendPayment({
+                                amount,
+                                invoice,
+                            });
+                            console.log(result);
+                            setIsLoading(false);
+                            if (result.data && !result.data.error) {
+                                //zapSuccess();
+                                alert(
+                                    `🤑 🎉 Zap success: ${amount} SATS to ${
+                                        user.name || user.pubkey
+                                    } `
+                                );
+                            } else {
+                                alert(
+                                    `Oops..! ${
+                                        user.name || user.pubkey
+                                    }'s wallet does not support Zaps!`
+                                );
+                                setIsLoading(false);
+                                return;
+                            }
                             return;
                         },
                     },
-                ]
-            );
-        }
-        setIsLoading(true);
-        if (user.lud06 && zapAmount) {
-            const dest = user.lud06.toLowerCase();
-            const url = decodeLnurl(dest);
-            const response = await fetch(url);
-            const { callback, minSendable } = await response.json();
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${amount} SATS to ${
-                    user.name || user.pubkey
-                }?`,
-                [
-                    {
-                        text: "OK",
-                        onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
-                            alert(result.data?.message);
-                            setIsLoading(false);
-                        },
-                    },
                     {
                         text: "Cancel",
                         style: "cancel",
@@ -152,56 +154,27 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     },
                 ]
             );
-        } else if (user.lud16 && zapAmount) {
-            const dest = user.lud16.toLowerCase();
-            const [username, domain] = dest.split("@");
-            const response = await fetch(
-                `https://${domain}/.well-known/lnurlp/${username}`
-            );
-            const { callback, minSendable } = await response.json();
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${amount} SATS to ${
-                    user.name || user.pubkey
-                }?`,
-                [
-                    {
-                        text: "OK",
-                        onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
-                            console.log(result);
-                            setIsLoading(false);
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            setIsLoading(false);
-                        },
-                    },
-                ]
-            );
+        } catch (e) {
+            console.log(e);
+            setIsLoading(false);
         }
-        return;
     };
 
     const age = getAge(created_at);
+
+    const textLayout = (e) => {
+        const lineHeight = e.nativeEvent.lines[0]?.height || 16;
+        const containerHeight = (((height / 100) * 90) / 100) * 90;
+        const maxLines = containerHeight / lineHeight;
+        const numOfLines = e.nativeEvent.lines.length;
+        // console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`);
+        if (numOfLines > maxLines - 5) {
+            setHasMore(true);
+        } else {
+            setHasMore(false);
+        }
+        setNumOfLines(maxLines - 5);
+    };
 
     return (
         <View
@@ -226,7 +199,7 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     },
                 ]}
             >
-                <View style={{ maxHeight: "60%" }}>
+                <View>
                     <Text
                         style={[
                             globalStyles.textBodyBold,
@@ -236,10 +209,50 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         {user?.name || pubkey}
                     </Text>
                     <Text
-                        style={[globalStyles.textBody, { textAlign: "left" }]}
+                        onTextLayout={textLayout}
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                opacity: 0,
+                                position: "absolute",
+                            },
+                        ]}
                     >
-                        {parseMentions(item)}
+                        {content}
                     </Text>
+                    <Text
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                textAlign: "left",
+                            },
+                        ]}
+                        numberOfLines={numOfLines}
+                    >
+                        {content}
+                    </Text>
+                    {hasMore && (
+                        <Pressable
+                            onPress={() => {
+                                navigation.navigate("ReadMoreModal", {
+                                    event: item,
+                                    author: user?.name || pubkey,
+                                });
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        color: colors.primary500,
+                                        textAlign: "left",
+                                    },
+                                ]}
+                            >
+                                {readMoreText}
+                            </Text>
+                        </Pressable>
+                    )}
                     {item.image ? (
                         <FeedImage
                             size={((width - 32) / 100) * 70}
@@ -247,14 +260,55 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         />
                     ) : undefined}
                 </View>
-                <Text
-                    style={[
-                        globalStyles.textBody,
-                        { textAlign: "right", padding: 4 },
-                    ]}
+                <View
+                    style={{
+                        width: "100%",
+                        alignItems: "center",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                    }}
                 >
-                    {age}
-                </Text>
+                    {zaps ? (
+                        // <Pressable onPress={() => {navigation.navigate('ZapListModal', {zaps})}}>
+                        <Pressable
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        textAlign: "left",
+                                        color: colors.primary500,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    },
+                                ]}
+                            >
+                                <Ionicons
+                                    name="flash-outline"
+                                    style={{
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                />{" "}
+                                {zaps.amount}
+                            </Text>
+                        </Pressable>
+                    ) : (
+                        <View></View>
+                    )}
+                    <Text
+                        style={[
+                            globalStyles.textBodyS,
+                            { textAlign: "right", padding: 4 },
+                        ]}
+                    >
+                        {age}
+                    </Text>
+                </View>
             </View>
             <View
                 style={{
@@ -274,8 +328,9 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate("ProfileModal", {
-                                    pubkey: user.pubkey,
+                                navigation.navigate("Profile", {
+                                    screen: "ProfileScreen",
+                                    params: { pubkey: user.pubkey },
                                 });
                             }}
                         >
@@ -340,6 +395,8 @@ const PostItem = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     onPress={() => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
+                            rootId: item.id,
+                            type: "root",
                         });
                     }}
                 >

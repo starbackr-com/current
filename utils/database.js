@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
-import { addUser } from "../features/messagesSlice";
-import { followPubkey } from "../features/userSlice";
+import { addUser, hydrate } from "../features/messagesSlice";
+import { followMultiplePubkeys, followPubkey, mutePubkey } from "../features/userSlice";
 import { store } from "../store/store";
 
 const openDatabase = () => SQLite.openDatabase("current.db");
@@ -45,6 +45,9 @@ const initArray = [
     CREATE TABLE IF NOT EXISTS followed_users (
     pubkey TEXT PRIMARY KEY NOT NULL,
     followed_at INT NOT NULL)`,
+    `
+    CREATE TABLE IF NOT EXISTS muted_users (
+    pubkey TEXT PRIMARY KEY NOT NULL)`,
 ];
 
 export const getUsersFromDb = () => {
@@ -72,9 +75,11 @@ export const hydrateFromDatabase = async () => {
             "SELECT * FROM users",
             [],
             (_, { rows: { _array } }) => {
-                const users = _array.map((user) => {
-                    store.dispatch(addUser({ user }));
+                const usersObj = {}
+                _array.forEach((user) => {
+                    usersObj[user.pubkey] = user
                 });
+                store.dispatch(hydrate(usersObj))
             },
             (_, error) => {
                 console.log("Error querying users", error);
@@ -85,8 +90,20 @@ export const hydrateFromDatabase = async () => {
             "SELECT pubkey FROM followed_users",
             [],
             (_, { rows: { _array } }) => {
+                const pubkeys = _array.map((row) => row.pubkey);
+                store.dispatch(followMultiplePubkeys(pubkeys))
+            },
+            (_, error) => {
+                console.log("Error querying users", error);
+                return false;
+            }
+        );
+        tx.executeSql(
+            "SELECT pubkey FROM muted_users",
+            [],
+            (_, { rows: { _array } }) => {
                 const pubkeys = _array.map((row) => {
-                    store.dispatch(followPubkey(row.pubkey));
+                    store.dispatch(mutePubkey(row.pubkey));
                 });
             },
             (_, error) => {

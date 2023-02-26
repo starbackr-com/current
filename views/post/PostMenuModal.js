@@ -1,11 +1,12 @@
-import { View, Text, Button, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
-import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import globalStyles from "../styles/globalStyles";
-import CustomButton from "../components/CustomButton";
 import { useDispatch } from "react-redux";
-import { mutePubkey } from "../features/userSlice";
+import globalStyles from "../../styles/globalStyles";
+import CustomButton from "../../components/CustomButton";
+import { muteUser } from "../../utils/users";
+import * as Clipboard from 'expo-clipboard';
+import { encodeNoteID } from "../../utils/nostr/keys";
 
 const ActionButton = ({ onPress, icon, text }) => {
     return (
@@ -39,18 +40,34 @@ const ActionButton = ({ onPress, icon, text }) => {
 };
 
 const PostMenuModal = ({ navigation, route }) => {
-    const { id, pubkey } = route.params.event;
+    const { event } = route.params;
+    const { id, pubkey } = event;
     const dispatch = useDispatch();
 
-    const muteHandler = () => {
-        dispatch(mutePubkey(pubkey))
+    const muteHandler = async () => {
+        try {
+            await muteUser(pubkey);
+            navigation.goBack();
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const upvoteHandler = () => {};
 
     const downvoteHandler = () => {};
 
-    const reportHandler = () => {};
+    const reportHandler = () => {
+        navigation.goBack();
+        navigation.navigate("ReportPostModal", { event });
+    };
+
+    const copyEventHandler = async () => {
+        const bech32Note = encodeNoteID(id)
+        console.log(bech32Note)
+        await Clipboard.setStringAsync(bech32Note);
+    };
+
     return (
         <>
             <View
@@ -92,12 +109,25 @@ const PostMenuModal = ({ navigation, route }) => {
                     >
                         {/* <ActionButton text="Upvote" icon="arrow-up" onPress={upvoteHandler}/>
                         <ActionButton text="Downvote" icon="arrow-down" onPress={downvoteHandler}/> */}
-                        <ActionButton text="Report" icon="alert-circle" onPress={reportHandler}/>
-                        <ActionButton text="Mute User" icon="close" onPress={muteHandler}/>
+                        <ActionButton
+                            text="Report Content"
+                            icon="alert-circle"
+                            onPress={reportHandler}
+                        />
+                        <ActionButton
+                            text="Mute User"
+                            icon="volume-mute"
+                            onPress={muteHandler}
+                        />
+                        <ActionButton
+                            text="Copy Event"
+                            icon="clipboard-outline"
+                            onPress={copyEventHandler}
+                        />
                     </View>
                     <CustomButton
                         text="Close"
-                        containerStyles={{ width: "25%", alignItems: 'center'}}
+                        containerStyles={{ width: "25%", alignItems: "center" }}
                         buttonConfig={{
                             onPress: () => {
                                 navigation.goBack();

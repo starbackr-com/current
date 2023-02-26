@@ -37,12 +37,22 @@ export const encodePubkey = (pubkeyInHex) => {
     }
 };
 
-export const encodeSeckey = (skInKey) => {
+export const encodeSeckey = (skInHex) => {
     try {
-        let words = bech32.toWords(toByteArray(skInKey))
+        let words = bech32.toWords(toByteArray(skInHex))
         const encoded = bech32.encode('nsec', words)
         return encoded;
     } catch (err) {
         console.log(err);
     }
 };
+
+export const encodeNoteID = (noteIdinHey) => {
+    try {
+        let words = bech32.toWords(toByteArray(noteIdinHey))
+        const encoded = bech32.encode('note', words)
+        return encoded;
+    } catch (err) {
+        console.log(err);
+    }
+}

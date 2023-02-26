@@ -2,8 +2,7 @@ import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
 import { connectedRelays } from "./relay";
 
-export const publishKind0 = async (address, bio, imageUrl) => {
-    const username = address.split("@")[0];
+export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
     let privKey = await getValue("privKey");
     if (!privKey) {
         throw new Error("No privKey in secure storage found");
@@ -15,11 +14,11 @@ export const publishKind0 = async (address, bio, imageUrl) => {
         created_at: Math.floor(Date.now() / 1000),
         tags: [],
         content: JSON.stringify({
-            name: username,
-            nip05: address,
+            name: name || nip05.split("@")[0],
+            nip05: nip05,
             about: bio,
             picture: imageUrl,
-            lud16: address,
+            lud16: lud16,
         }),
     };
     event.id = getEventHash(event);
@@ -138,4 +137,86 @@ export const publishReply = async (content, parentEvent) => {
     } catch (error) {
         console.log(error);
     }
+};
+
+export const createZapEvent = async (content, tags) => {
+
+        try {
+
+
+
+          const sk = await getValue("privKey");
+          let pk = getPublicKey(sk);
+
+          let addrelays = [];
+          connectedRelays.map((relay) => { addrelays.push(relay.url); console.log(relay.url); });
+
+          tags.push(['relays', addrelays[0], addrelays[1], addrelays[2], addrelays[3] ]);
+
+
+          let event = {
+              kind: 9734,
+              pubkey: pk,
+              created_at: Math.floor(Date.now() / 1000),
+              tags: tags,
+          };
+
+          if (content) {
+
+            event.content = content;
+          } else {
+            event.content = '';
+          }
+          event.id = getEventHash(event);
+          event.sig = signEvent(event, sk);
+
+          return event;
+
+
+        } catch (e) {
+
+          console.log('error: ', e);
+          return;
+
+        }
+
+
+
+};
+
+export const publishDeleteAccount = async () => {
+    let privKey = await getValue("privKey");
+    if (!privKey) {
+        throw new Error("No privKey in secure storage found");
+    }
+    let pubKey = getPublicKey(privKey);
+    let event = {
+        kind: 0,
+        pubkey: pubKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: JSON.stringify({deleted:true,name:"nobody",about:"account deleted"}),
+    };
+    event.id = getEventHash(event);
+    event.sig = signEvent(event, privKey);
+    const successes = await Promise.allSettled(
+        connectedRelays.map((relay) => {
+            return new Promise((resolve, reject) => {
+                let pub = relay.publish(event);
+                pub.on("ok", () => {
+                    resolve(relay.url);
+                });
+                pub.on("failed", () => {
+                    reject();
+                });
+                setTimeout(() => {
+                    reject();
+                }, 10000);
+            });
+        })
+    );
+
+    return successes
+        .filter((promise) => promise.status === "fulfilled")
+        .map((promise) => promise.value);
 };

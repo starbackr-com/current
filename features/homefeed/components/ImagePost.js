@@ -4,6 +4,7 @@ import colors from "../../../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { decodeLnurl } from "../../../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../../../services/walletApi";
+import { createZapEvent } from "../../../utils/nostrV2";
 import { useState } from "react";
 import Animated, {
     withSequence,
@@ -16,6 +17,7 @@ import { Image } from "expo-image";
 
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
+import { getAge } from "../../shared/utils/getAge";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
@@ -48,7 +50,15 @@ const FeedImage = ({ size, images }) => {
     );
 };
 
-const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
+const ImagePost = ({
+    item,
+    height,
+    width,
+    user,
+    zapSuccess,
+    zapAmount,
+    zaps,
+}) => {
     const [isLoading, setIsLoading] = useState();
     const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
@@ -80,8 +90,9 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                 <Text
                     style={{ color: colors.primary500 }}
                     onPress={() => {
-                        navigation.navigate("ProfileModal", {
-                            pubkey: event.tags[i - 1][1],
+                        navigation.navigate("Profile", {
+                            screen: "ProfileScreen",
+                            params: { pubkey: event.tags[i - 1][1] },
                         });
                     }}
                     key={i}
@@ -91,23 +102,6 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             );
         });
         return content;
-    }, []);
-
-    const getAge = useCallback((timestamp) => {
-        const now = new Date();
-        const timePassedInMins = Math.floor(
-            (now - new Date(timestamp * 1000)) / 1000 / 60
-        );
-
-        if (timePassedInMins < 60) {
-            return `${timePassedInMins}min ago`;
-        } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
-            return `${Math.floor(timePassedInMins / 60)}h ago`;
-        } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
-            return `${Math.floor(timePassedInMins / 1440)}d ago`;
-        } else {
-            return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
-        }
     }, []);
 
     const { created_at, pubkey } = item;
@@ -137,13 +131,20 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
             );
         }
         setIsLoading(true);
-        if (user.lud06 && zapAmount) {
-            const dest = user.lud06.toLowerCase();
-            const url = decodeLnurl(dest);
-            const response = await fetch(url);
-            const { callback, minSendable } = await response.json();
+        if (user.lud16 && zapAmount) {
+            const dest = user.lud16.toLowerCase();
+            const [username, domain] = dest.split("@");
+            const response = await fetch(
+                `https://${domain}/.well-known/lnurlp/${username}`
+            );
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
+
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+
+            console.log("checking else", amount);
+
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -153,22 +154,47 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "OK",
                         onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
+
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
+
+                                const zapevent = await createZapEvent("", tags);
+
+                                console.log(zapevent);
+
+                                response = await fetch(
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
+                                );
+                            } else {
+                                console.log('inside not zap wallet');
+                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
+                                setIsLoading(false);
+                                return;
+
+                            }
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
                                 amount,
                                 invoice,
                             });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
-                            alert(result.data?.message);
+                            console.log(result);
                             setIsLoading(false);
+                            if (result.data && !result.data.error) {
+                                //zapSuccess();
+                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
+                                    user.name || user.pubkey
+                                } `)
+                            } else {
+                              alert('Zap Failed');
+                            }
+                            return;
                         },
                     },
                     {
@@ -180,15 +206,16 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     },
                 ]
             );
-        } else if (user.lud16 && zapAmount) {
-            const dest = user.lud16.toLowerCase();
-            const [username, domain] = dest.split("@");
-            const response = await fetch(
-                `https://${domain}/.well-known/lnurlp/${username}`
-            );
-            const { callback, minSendable } = await response.json();
+        } else if (user.lud06 && zapAmount) {
+            console.log(user.lud06);
+            const dest = user.lud06.toLowerCase();
+            const url = decodeLnurl(dest);
+            const response = await fetch(url);
+            const { callback, minSendable, allowsNostr, nostrPubkey } =
+                await response.json();
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
+            console.log("checking", amount);
             Alert.alert(
                 "Zap",
                 `Do you want to send ${amount} SATS to ${
@@ -198,22 +225,46 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {
                         text: "OK",
                         onPress: async () => {
-                            const response = await fetch(
-                                `${callback}?amount=${amount * 1000}`
-                            );
+                            let response;
+                            if (allowsNostr && nostrPubkey) {
+                                let tags = [];
+                                tags.push(["p", nostrPubkey]);
+                                tags.push(["e", item.id]);
+                                // tags.push(["amount", amount * 1000]);
+
+                                const zapevent = await createZapEvent("", tags);
+
+                                console.log(zapevent);
+
+                                response = await fetch(
+                                    `${callback}?amount=${
+                                        amount * 1000
+                                    }&nostr=${JSON.stringify(zapevent)}`
+                                );
+                            } else {
+                                    console.log('inside not zap wallet');
+                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
+                                setIsLoading(false);
+                                return;
+
+                            }
                             const data = await response.json();
                             const invoice = data.pr;
                             const result = await sendPayment({
                                 amount,
                                 invoice,
                             });
-                            if (result.data?.message?.status === "SUCCEEDED") {
-                                setIsLoading(false);
-                                zapSuccess();
-                                return;
-                            }
                             console.log(result);
                             setIsLoading(false);
+                            if (result.data && !result.data.error) {
+                                //zapSuccess();
+                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
+                                    user.name || user.pubkey
+                                } `)
+                            } else {
+                              alert('Zap Failed');
+                            }
+                            return;
                         },
                     },
                     {
@@ -232,10 +283,10 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
     const age = getAge(created_at);
 
     const NUM_LINES = 2;
-    let content = item.content
+    let content = item.content;
 
     if (item.mentions) {
-        content = parseMentions(item)
+        content = parseMentions(item);
     }
 
     const textLayout = (e) => {
@@ -260,8 +311,8 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         width: "85%",
                         height: "90%",
                         borderRadius: 10,
-                        justifyContent: "space-between",
-                        backgroundColor: colors.backgroundSecondary
+                        backgroundColor: colors.backgroundSecondary,
+                        justifyContent: 'space-between'
                     },
                 ]}
             >
@@ -272,7 +323,7 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
                         borderBottomWidth: 1,
-                        borderColor: colors.primary500
+                        borderColor: colors.primary500,
                     }}
                 >
                     <Text
@@ -291,21 +342,39 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     images={[item.image]}
                 />
                 <Pressable
-                    style={({pressed}) => [{backgroundColor: colors.backgroundSecondary,
-                        padding: 12,
-                        borderBottomRightRadius: 10,
-                        borderBottomLeftRadius: 10,
-                        borderTopWidth: 1,
-                        borderColor: colors.primary500
-                    }, pressed && hasMore ? {backgroundColor: '#333333'} : undefined]}
-                    onPress={hasMore ? () => {navigation.navigate('ReadMoreModal', {content, author: user?.name || pubkey})} : undefined}
+                    style={({ pressed }) => [
+                        {
+                            backgroundColor: colors.backgroundSecondary,
+                            padding: 12,
+                            borderBottomRightRadius: 10,
+                            borderBottomLeftRadius: 10,
+                            borderTopWidth: 1,
+                            borderColor: colors.primary500,
+                        },
+                        pressed && hasMore
+                            ? { backgroundColor: "#333333" }
+                            : undefined,
+                    ]}
+                    onPress={
+                        hasMore
+                            ? () => {
+                                  navigation.navigate("ReadMoreModal", {
+                                      event: item,
+                                      author: user?.name || pubkey,
+                                  });
+                              }
+                            : undefined
+                    }
                 >
                     <Text
                         onTextLayout={textLayout}
-                        style={[globalStyles.textBody,{
-                            opacity: 0,
-                            position: "absolute",
-                        }]}
+                        style={[
+                            globalStyles.textBody,
+                            {
+                                opacity: 0,
+                                position: "absolute",
+                            },
+                        ]}
                     >
                         {content}
                     </Text>
@@ -328,17 +397,67 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     </Text>
                     {hasMore && (
                         <View>
-                            <Text style={[globalStyles.textBodyS, {color: colors.primary500, textAlign: 'left'}]}>{readMoreText}</Text>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyS,
+                                    {
+                                        color: colors.primary500,
+                                        textAlign: "left",
+                                    },
+                                ]}
+                            >
+                                {readMoreText}
+                            </Text>
                         </View>
                     )}
-                    <Text
-                        style={[
-                            globalStyles.textBodyS,
-                            { textAlign: "right", padding: 4 },
-                        ]}
+                    <View
+                        style={{
+                            width: "100%",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                        }}
                     >
-                        {age}
-                    </Text>
+                        {zaps ? (
+                            <Pressable
+                                style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Text
+                                    style={[
+                                        globalStyles.textBodS,
+                                        {
+                                            textAlign: "left",
+                                            color: colors.primary500,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        },
+                                    ]}
+                                >
+                                    <Ionicons
+                                        name="flash-outline"
+                                        style={{
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    />
+                                    {" "}{zaps.amount}
+                                </Text>
+                            </Pressable>
+                        ) : (
+                            <View></View>
+                        )}
+                        <Text
+                            style={[
+                                globalStyles.textBodyS,
+                                { textAlign: "right", padding: 4 },
+                            ]}
+                        >
+                            {age}
+                        </Text>
+                    </View>
                 </Pressable>
             </View>
             <View
@@ -359,8 +478,9 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                     {user ? (
                         <Pressable
                             onPress={() => {
-                                navigation.navigate("ProfileModal", {
-                                    pubkey: user.pubkey,
+                                navigation.navigate("Profile", {
+                                    screen: "ProfileScreen",
+                                    params: { pubkey: user.pubkey },
                                 });
                             }}
                         >
@@ -422,9 +542,11 @@ const ImagePost = ({ item, height, width, user, zapSuccess, zapAmount }) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}
-                    onPress={() => {
+                                        onPress={() => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
+                            rootId: item.id,
+                            type: "root",
                         });
                     }}
                 >

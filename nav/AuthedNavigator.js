@@ -8,17 +8,19 @@ import TwitterModal from "../views/welcome/TwitterModal";
 import colors from "../styles/colors";
 import WalletNavigator from "./WalletNavigator";
 import SettingsNavigator from "./SettingsNavigator";
-import ProfileScreen from "../views/ProfileScreen";
 import SearchScreen from "../views/SearchScreen";
 import globalStyles from "../styles/globalStyles";
 import { useGetWalletBalanceQuery } from "../services/walletApi";
 import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import PostMenuModal from "../views/PostMenuModal";
 import PostView from "../views/post/PostView";
 import FullScreenImage from "../components/Images/FullScreenImage";
 import ReadMoreModal from "../features/homefeed/components/ReadMoreModal";
 import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
+import ProfileNavigator from "./ProfileNavigator";
+import ZapListModal from "../views/home/ZapListModal";
+import PostMenuModal from "../views/post/PostMenuModal";
+import ReportPostModal from '../features/reports/views/ReportPostModal'
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -77,23 +79,12 @@ const TabNavigator = ({ navigation }) => {
                             alignItems: "center",
                             justifyContent: "center",
                         }}
-                        onPress={() => {navigation.navigate('Wallet');}}
+                        onPress={() => {
+                            navigation.navigate("Wallet");
+                        }}
                     >
                         <Text style={globalStyles.textBody}>
-                            {data ? `${data.balance}` : "----"}
-                        </Text>
-                        <Text
-                            style={[
-                                globalStyles.textBody,
-                                {
-                                    fontFamily: "Satoshi-Symbol",
-                                    marginLeft: 6,
-                                    fontSize: 20,
-                                    color: colors.primary500
-                                },
-                            ]}
-                        >
-                            S
+                            {data ? `${data.balance}` : "----"} <Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>SATS</Text>
                         </Text>
                     </Pressable>
                 ),
@@ -108,8 +99,9 @@ const TabNavigator = ({ navigation }) => {
                             marginLeft: 12,
                         }}
                         onPress={() => {
-                            navigation.navigate("ProfileModal", {
-                                pubkey: pubKey,
+                            navigation.navigate("Profile", {
+                                screen: "ProfileScreen",
+                                params: { pubkey: pubKey },
                             });
                         }}
                     >
@@ -153,7 +145,6 @@ const TabNavigator = ({ navigation }) => {
     );
 };
 
-
 const AuthedNavigator = () => {
     return (
         <>
@@ -175,8 +166,8 @@ const AuthedNavigator = () => {
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen
-                    name="ProfileModal"
-                    component={ProfileScreen}
+                    name="Profile"
+                    component={ProfileNavigator}
                     options={{ presentation: "modal" }}
                 />
                 <Stack.Screen
@@ -193,6 +184,16 @@ const AuthedNavigator = () => {
                     name="PostMenuModal"
                     component={PostMenuModal}
                     options={{ presentation: "transparentModal" }}
+                />
+                <Stack.Screen
+                    name="ZapListModal"
+                    component={ZapListModal}
+                    options={{ presentation: "transparentModal" }}
+                />
+                <Stack.Screen
+                    name="ReportPostModal"
+                    component={ReportPostModal}
+                    options={{ presentation: "modal" }}
                 />
             </Stack.Navigator>
         </>
