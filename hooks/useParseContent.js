@@ -8,7 +8,10 @@ export const useParseContent = (event) => {
     const navigation = useNavigation();
     const users = useSelector(state => state.messages.users)
     let content = event.content
+    console.log(event.mentions)
     content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
+        console.log(event.mentions[i - 1]?.mention)
+        console.log(users[event.mentions[i - 1]?.mention]?.name)
         return (
             <Text
                 style={{ color: colors.primary500 }}
@@ -20,7 +23,7 @@ export const useParseContent = (event) => {
                 }}
                 key={i}
             >
-                @{users[event.mentions[i - 1]?.mention]?.name || [event.mentions[i - 1]?.mention]}
+                @{users[event.mentions[i - 1]?.mention]?.name || event.mentions[i - 1]?.mention}
             </Text>
         );
     });

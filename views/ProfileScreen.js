@@ -196,6 +196,7 @@ const PostItem = ({ event, user, width }) => {
             eventId: event.id,
             rootId: event.id,
             type: "root",
+            event
         });
     };
 

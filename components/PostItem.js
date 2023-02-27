@@ -397,6 +397,7 @@ const PostItem = ({
                             eventId: item.id,
                             rootId: item.id,
                             type: "root",
+                            event: item
                         });
                     }}
                 >

@@ -1,28 +1,26 @@
 import { useNavigation } from "@react-navigation/native";
-import { Text, View } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
+import colors from "../../styles/colors";
 import globalStyles from "../../styles/globalStyles";
-import FeedImage from "../Images/FeedImage";
 import PostActionBar from "./PostActionBar";
 
-const ImagePost = ({ event, user, width }) => {
+const TextPost = ({ event, user }) => {
     const content = useParseContent(event);
     const navigation = useNavigation();
-
     const zap = useZapNote(
         event.id,
         user?.lud06 || user?.lud16,
         user?.name || event?.pubkey.slice(0, 16)
     );
-
     const commentHandler = () => {
         navigation.push("CommentScreen", {
             eventId: event.id,
             rootId: event.id,
             type: "root",
-            event: event
+            event: event,
         });
     };
 
@@ -42,16 +40,20 @@ const ImagePost = ({ event, user, width }) => {
                 marginBottom: 12,
             }}
         >
-            <View
+            <Pressable
                 style={{
+                    width: "100%",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    width: "100%",
-                    alignItems: "center",
                     borderBottomColor: colors.primary500,
                     borderBottomWidth: 1,
                     paddingBottom: 6,
-                    marginBottom: 6
+                }}
+                onPress={() => {
+                    navigation.navigate("Profile", {
+                        screen: "ProfileScreen",
+                        params: { pubkey: event.pubkey },
+                    });
                 }}
             >
                 <Text
@@ -63,26 +65,27 @@ const ImagePost = ({ event, user, width }) => {
                 >
                     {user?.name || event.pubkey}
                 </Text>
-                <Text
-                    style={[
-                        globalStyles.textBodyS,
-                        { textAlign: "right", marginTop: 12 },
-                    ]}
-                >
+                <Text style={[globalStyles.textBodyS]}>
                     {getAge(event.created_at)}
                 </Text>
-            </View>
-            <FeedImage size={width - 12} images={event.images} />
-            <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
+            </Pressable>
+
+            <Text
+                style={[
+                    globalStyles.textBody,
+                    { textAlign: "left", marginTop: 16 },
+                ]}
+            >
                 {content}
             </Text>
             <PostActionBar
                 onPressComment={commentHandler}
                 onPressZap={zapHandler}
                 onPressMore={moreHandler}
+                zapDisabled={!user?.lud06 && !user?.lud16}
             />
         </View>
     );
 };
 
-export default ImagePost;
+export default TextPost;

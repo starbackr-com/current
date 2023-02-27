@@ -6,14 +6,13 @@ import { Reply } from "../utils/nostrV2/Reply";
 import { connectedRelays } from "../utils/nostrV2";
 
 export const useSubscribeReplies = (parentIds) => {
-    const [data, setData] = useState(0);
+    const [replies, setReplies] = useState({});
     const mutedPubkeys = useSelector((state) => state.user.mutedPubkeys);
-    console.log(data);
     useEffect(() => {
         let subs = connectedRelays.map((relay) => {
             let sub = relay.sub([
                 {
-                    kinds: [1],
+                    kinds: [1, 9735],
                     "#e": parentIds,
                 },
             ]);
@@ -23,19 +22,40 @@ export const useSubscribeReplies = (parentIds) => {
                 } else {
                     if (event.kind === 1) {
                         const reply = new Reply(event);
-                        console.log('EVENT!');
+                        if (replies[reply.id]) {
+                            return;
+                        } else {
+                            setReplies((prev) => ({
+                                ...prev,
+                                [reply.id]: reply,
+                            }));
+                        }
                     } else if (event.kind === 9735) {
                         const zap = new Zap(event);
-                        events.push(zap);
+                        if (replies[zap.id]) {
+                            return;
+                        } else {
+                            setReplies((prev) => ({
+                                ...prev,
+                                [zap.id]: zap,
+                            }));
+                        }
                     }
                 }
             });
             return sub;
         });
 
+        setTimeout(() => {
+            console.log('Unsubbing from Timeout')
+            subs.forEach((sub) => sub.unsub());
+        }, 15000);
+
         // Unsub on Dismount
         return () => {
+            console.log('Unsubbing from Dismount')
             subs.forEach((sub) => sub.unsub());
         };
     }, []);
+    return replies;
 };
