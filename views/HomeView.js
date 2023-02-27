@@ -1,21 +1,17 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
 import PostItem from "../components/PostItem";
 import CommentScreen from "./home/CommentScreen";
-import { getHomeFeed } from "../utils/nostrV2/getHomeFeed";
-import { updateFollowedUsers } from "../utils/nostrV2/getUserData";
-import Lottie from "lottie-react-native";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import ImagePost from "../features/homefeed/components/ImagePost";
 import { ActivityIndicator } from "react-native";
 import { getZaps } from "../features/zaps/utils/getZaps";
-import CustomButton from "../components/CustomButton";
 import { useHomefeed } from "../features/homefeed/hooks/useHomefeed";
 
 const HomeStack = createStackNavigator();
@@ -23,23 +19,16 @@ const HomeStack = createStackNavigator();
 const HomeScreen = ({ navigation }) => {
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetching, setIsFetching] = useState(false);
-    const [playAnimation, setPlayAnimation] = useState(false);
     const [zaps, setZaps] = useState();
+    const [checkedZaps, setCheckedZaps] = useState([]);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
-    const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const zapAmount = useSelector((state) => state.user.zapAmount);
-    // const messages = useSelector((state) => state.messages.messages);
     const now = new Date() / 1000;
     const [data, page, setNewPage] = useHomefeed(now);
-    const sorted = data.sort((a,b) => b.created_at - a.created_at);
-    console.log(data.length)
-
-    const animation = useRef();
+    const sorted = data.sort((a, b) => b.created_at - a.created_at);
     const dispatch = useDispatch();
 
     const onLayoutViewHeight = (e) => {
@@ -57,20 +46,8 @@ const HomeScreen = ({ navigation }) => {
 
     const loadZaps = async (arrayOfIds) => {
         const allZaps = await getZaps(arrayOfIds);
-        console.log(allZaps)
+        console.log(allZaps);
         setZaps((prev) => Object.assign(prev ? prev : {}, allZaps));
-    };
-
-    const loadMoreItems = async () => {
-        if (isLoading) {
-            return;
-        }
-        console.log(`Getting page ${page}`);
-        setIsLoading(true);
-        const postObj = await getHomeFeed(followedPubkeys, page);
-        setIsLoading(false);
-        loadZaps(postObj);
-        setPage((prev) => prev + 1);
     };
 
     const renderPost = ({ item }) => {
@@ -81,7 +58,6 @@ const HomeScreen = ({ navigation }) => {
                     height={height}
                     width={width}
                     user={users[item.pubkey]}
-                    zapSuccess={playZapAnimation}
                     zapAmount={zapAmount}
                     zaps={zaps ? zaps[item.id] : null}
                 />
@@ -93,7 +69,6 @@ const HomeScreen = ({ navigation }) => {
                     height={height}
                     width={width}
                     user={users[item.pubkey]}
-                    zapSuccess={playZapAnimation}
                     zapAmount={zapAmount}
                     zaps={zaps ? zaps[item.id] : null}
                 />
@@ -101,18 +76,12 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
-    const playZapAnimation = () => {
-        setPlayAnimation(true);
-        setTimeout(() => {
-            setPlayAnimation(false);
-        }, 1000);
-    };
-
     useEffect(() => {
         const timeout = setTimeout(() => {
             const eventIds = data.map((event) => event.id);
-            console.log(eventIds.length)
-            loadZaps(eventIds);
+            const toCheck = eventIds.filter(id => !checkedZaps.includes(id))
+            loadZaps(toCheck);
+            setCheckedZaps((prev) => [...prev, toCheck]);
         }, 1500);
         return () => {
             clearTimeout(timeout);
@@ -139,22 +108,12 @@ const HomeScreen = ({ navigation }) => {
                             snapToInterval={(height / 100) * 90}
                             estimatedItemSize={(height / 100) * 90}
                             directionalLockEnabled
-                            onRefresh={async () => {
-                                setIsFetching(true);
-                                await loadHomefeed();
-                                setIsFetching(false);
-                            }}
-                            refreshing={isFetching}
                             extraData={[users, zapAmount, zaps]}
                             getItemType={(item) => item.type}
-                            // onEndReached={loadMoreItems}
-                            // onEndReachedThreshold={2}
-                            ListFooterComponent={
-                                <CustomButton
-                                    text="Load More"
-                                    buttonConfig={{ onPress: loadMoreItems }}
-                                />
-                            }
+                            onEndReached={() => {
+                                setNewPage(page + 1);
+                            }}
+                            onEndReachedThreshold={2}
                             showsVerticalScrollIndicator={false}
                         />
                     </View>
@@ -169,31 +128,6 @@ const HomeScreen = ({ navigation }) => {
                         size={90}
                     />
                 )}
-                {playAnimation ? (
-                    <View
-                        style={{
-                            position: "absolute",
-                            right: 0,
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Lottie
-                            autoPlay
-                            loop={false}
-                            ref={animation}
-                            style={{
-                                position: "absolute",
-                                width: (width / 100) * 80,
-                                height: (width / 100) * 80,
-                            }}
-                            source={require("../assets/zap-success.json")}
-                        />
-                    </View>
-                ) : undefined}
             </View>
         </View>
     );

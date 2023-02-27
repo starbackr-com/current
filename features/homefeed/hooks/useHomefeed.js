@@ -24,14 +24,6 @@ export const useHomefeed = (unixNow) => {
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
 
-        // Update State every 250ms seconds
-        const interval = setInterval(() => {
-            if (data.length !== receivedEvents.length) {
-                console.log(`Fetched data: ${data.length}`);
-                setData(receivedEvents);
-            }
-        }, 1000);
-
         const subs = connectedRelays.map((relay) => {
             const sub = relay.sub([
                 {
@@ -61,7 +53,6 @@ export const useHomefeed = (unixNow) => {
         // Unsub and clear interval on dismount
         return () => {
             subs.forEach((sub) => sub.unsub());
-            clearImmediate(interval);
         };
     }, [page]);
 
