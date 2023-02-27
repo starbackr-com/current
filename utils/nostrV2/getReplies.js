@@ -1,13 +1,14 @@
 import { Zap } from "../../features/zaps/Zap";
 import { store } from "../../store/store";
 import { connectedRelays } from "./relay";
+import { connectedRelayPool } from "./relayPool";
 import { Reply } from "./Reply";
 
 export const getReplies = async (parentIds) => {
     const mutedPubkeys = store.getState().user.mutedPubkeys;
     const replies = {};
     await Promise.allSettled(
-        connectedRelays.map(
+        connectedRelayPool.map(
             (relay) =>
                 new Promise((resolve, reject) => {
                     let events = [];

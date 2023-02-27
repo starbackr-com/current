@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { connectedRelays, Note } from "../../../utils/nostrV2";
+import { connectedRelayPool, pool } from "../../../utils/nostrV2/relayPool";
 
 export const useHomefeed = (unixNow) => {
     const [page, setPage] = useState(0);
@@ -23,36 +24,54 @@ export const useHomefeed = (unixNow) => {
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
-
-        const subs = connectedRelays.map((relay) => {
-            const sub = relay.sub([
-                {
-                    kinds: [1],
-                    authors: followedPubkeys,
-                    until: until,
-                    since: since,
-                },
-            ]);
-            // Save events in data object if they don't exist already
-            sub.on("event", (event) => {
-                if (!receivedIds.includes(event.id)) {
-                    receivedIds.push(event.id);
-                    const newEvent = new Note(event);
-                    const parsedEvent = newEvent.save();
-                    if (parsedEvent.root) {
-                        setData((prev) => [...prev, parsedEvent]);
-                    }
+        console.log(connectedRelayPool)
+        let sub = pool.sub(['wss://relay.current.fyi', 'wss://relay.nostrati.com', 'wss://nostr.mom', 'wss://nostr-pub.wellorder.net', 'wss://nos.lol', 'wss://nostr-verified.wellorder.net', 'wss://nostr.cro.social'], [
+            {
+                kinds: [1],
+                authors: followedPubkeys,
+                until: until,
+                since: since,
+            },
+        ]);
+        sub.on("event", (event) => {
+            if (!receivedIds.includes(event.id)) {
+                receivedIds.push(event.id);
+                const newEvent = new Note(event);
+                const parsedEvent = newEvent.save();
+                if (parsedEvent.root) {
+                    setData((prev) => [...prev, parsedEvent]);
                 }
-            });
-            sub.on("eose", () => {
-                sub.unsub();
-            });
-            return sub;
+            }
         });
+        // const subs = connectedRelays.map((relay) => {
+        //     const sub = relay.sub([
+        //         {
+        //             kinds: [1],
+        //             authors: followedPubkeys,
+        //             until: until,
+        //             since: since,
+        //         },
+        //     ]);
+        //     // Save events in data object if they don't exist already
+        //     sub.on("event", (event) => {
+        //         if (!receivedIds.includes(event.id)) {
+        //             receivedIds.push(event.id);
+        //             const newEvent = new Note(event);
+        //             const parsedEvent = newEvent.save();
+        //             if (parsedEvent.root) {
+        //                 setData((prev) => [...prev, parsedEvent]);
+        //             }
+        //         }
+        //     });
+        //     sub.on("eose", () => {
+        //         sub.unsub();
+        //     });
+        //     return sub;
+        // });
 
         // Unsub and clear interval on dismount
         return () => {
-            subs.forEach((sub) => sub.unsub());
+            // subs.forEach((sub) => sub.unsub());
         };
     }, [page]);
 
