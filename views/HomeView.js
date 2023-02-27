@@ -16,6 +16,7 @@ import ImagePost from "../features/homefeed/components/ImagePost";
 import { ActivityIndicator } from "react-native";
 import { getZaps } from "../features/zaps/utils/getZaps";
 import CustomButton from "../components/CustomButton";
+import { useHomefeed } from "../features/homefeed/hooks/useHomefeed";
 
 const HomeStack = createStackNavigator();
 
@@ -26,15 +27,17 @@ const HomeScreen = ({ navigation }) => {
     const [isFetching, setIsFetching] = useState(false);
     const [playAnimation, setPlayAnimation] = useState(false);
     const [zaps, setZaps] = useState();
-    const [page, setPage] = useState(1);
     const twitterModalShown = useSelector(
         (state) => state.intro.twitterModalShown
     );
     const users = useSelector((state) => state.messages.users);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-    const zapAmount = useSelector(state => state.user.zapAmount)
-    const messages = useSelector((state) => state.messages.messages);
-    const rootNotes = messages.filter((message) => message.root === true);
+    const zapAmount = useSelector((state) => state.user.zapAmount);
+    // const messages = useSelector((state) => state.messages.messages);
+    const now = new Date() / 1000;
+    const [data, page, setNewPage] = useHomefeed(now);
+    const sorted = data.sort((a,b) => b.created_at - a.created_at);
+    console.log(data.length)
 
     const animation = useRef();
     const dispatch = useDispatch();
@@ -52,11 +55,10 @@ const HomeScreen = ({ navigation }) => {
         setWidth(e.nativeEvent.layout.width);
     };
 
-    const loadZaps = async (postObj) => {
-        const postArray = Object.keys(postObj).map((key) => postObj[key])
-        const arrayOfIds = postArray.map((event) => event.id);
+    const loadZaps = async (arrayOfIds) => {
         const allZaps = await getZaps(arrayOfIds);
-        setZaps(prev => Object.assign(prev ? prev : {}, allZaps));
+        console.log(allZaps)
+        setZaps((prev) => Object.assign(prev ? prev : {}, allZaps));
     };
 
     const loadMoreItems = async () => {
@@ -67,18 +69,8 @@ const HomeScreen = ({ navigation }) => {
         setIsLoading(true);
         const postObj = await getHomeFeed(followedPubkeys, page);
         setIsLoading(false);
-        loadZaps(postObj)
+        loadZaps(postObj);
         setPage((prev) => prev + 1);
-    };
-
-    const loadHomefeed = async () => {
-        setIsLoading(true);
-        const now = new Date() / 1000;
-        const postObj = await getHomeFeed(followedPubkeys, 0);
-        setIsLoading(false);
-        loadZaps(postObj)
-
-        updateFollowedUsers();
     };
 
     const renderPost = ({ item }) => {
@@ -117,8 +109,15 @@ const HomeScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        loadHomefeed();
-    }, []);
+        const timeout = setTimeout(() => {
+            const eventIds = data.map((event) => event.id);
+            console.log(eventIds.length)
+            loadZaps(eventIds);
+        }, 1500);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [data]);
 
     return (
         <View
@@ -130,10 +129,10 @@ const HomeScreen = ({ navigation }) => {
                 onLayout={onLayoutViewHeight}
                 style={{ flex: 1, width: "100%" }}
             >
-                {rootNotes.length > 2 && height ? (
+                {data.length > 2 && height ? (
                     <View style={{ flex: 1, width: "100%", height: "100%" }}>
                         <FlashList
-                            data={rootNotes}
+                            data={sorted}
                             renderItem={renderPost}
                             snapToAlignment="start"
                             decelerationRate="fast"
@@ -148,8 +147,8 @@ const HomeScreen = ({ navigation }) => {
                             refreshing={isFetching}
                             extraData={[users, zapAmount, zaps]}
                             getItemType={(item) => item.type}
-                            onEndReached={loadMoreItems}
-                            onEndReachedThreshold={2}
+                            // onEndReached={loadMoreItems}
+                            // onEndReachedThreshold={2}
                             ListFooterComponent={
                                 <CustomButton
                                     text="Load More"
