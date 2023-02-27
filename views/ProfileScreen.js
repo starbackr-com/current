@@ -11,30 +11,12 @@ import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useParseContent } from "../hooks/useParseContent";
+import { useNavigation } from "@react-navigation/native";
 import { getUsersPosts } from "../features/profile/utils/getUsersPosts";
 import ImagePost from "../components/Posts/ImagePost";
 import { useSubscribePosts } from "../hooks/useSubscribePosts";
-import PostActionBar from "../components/Posts/PostActionBar";
-import { useZapNote } from "../hooks/useZapNote";
+import TextPost from "../components/Posts/TextPost";
 
-const getAge = (timestamp) => {
-    const now = new Date();
-    const timePassedInMins = Math.floor(
-        (now - new Date(timestamp * 1000)) / 1000 / 60
-    );
-
-    if (timePassedInMins < 60) {
-        return `${timePassedInMins}min ago`;
-    } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
-        return `${Math.floor(timePassedInMins / 60)}h ago`;
-    } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
-        return `${Math.floor(timePassedInMins / 1440)}d ago`;
-    } else {
-        return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
-    }
-};
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
@@ -183,80 +165,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     );
 };
 
-const PostItem = ({ event, user, width }) => {
-    const content = useParseContent(event);
-    const navigation = useNavigation();
-    const zap = useZapNote(
-        event.id,
-        user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16)
-    );
-    const commentHandler = () => {
-        navigation.navigate("CommentScreen", {
-            eventId: event.id,
-            rootId: event.id,
-            type: "root",
-        });
-    };
-
-    const zapHandler = () => {
-        zap();
-    };
-
-    const moreHandler = () => {
-        navigation.navigate("PostMenuModal", { event });
-    };
-    return (
-        <View
-            style={{
-                backgroundColor: colors.backgroundSecondary,
-                padding: 6,
-                borderRadius: 6,
-                marginBottom: 12,
-            }}
-        >
-            <View
-                style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    borderBottomColor: colors.primary500,
-                    borderBottomWidth: 1,
-                    paddingBottom: 6
-                }}
-            >
-                <Text
-                    style={[
-                        globalStyles.textBodyBold,
-                        { textAlign: "left", width: "50%" },
-                    ]}
-                    numberOfLines={1}
-                >
-                    {user?.name || event.pubkey}
-                </Text>
-                <Text style={[globalStyles.textBodyS]}>
-                    {getAge(event.created_at)}
-                </Text>
-            </View>
-
-            <Text
-                style={[
-                    globalStyles.textBody,
-                    { textAlign: "left", marginTop: 16 },
-                ]}
-            >
-                {content}
-            </Text>
-            <PostActionBar
-                onPressComment={commentHandler}
-                onPressZap={zapHandler}
-                onPressMore={moreHandler}
-                zapDisabled={!user?.lud06 && !user?.lud16}
-            />
-        </View>
-    );
-};
-
 const ProfileScreen = ({ route, navigation }) => {
     const { pubkey } = route.params;
     const [feed, setFeed] = useState();
@@ -275,16 +183,6 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const user = users[pubkey];
 
-    const getFeed = async () => {
-        const response = await getUsersPosts(pubkey);
-        const array = Object.keys(response)
-            .map((key) => response[key])
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-        setFeed(array);
-    };
-
     const onLayoutViewWidth = (e) => {
         setWidth(e.nativeEvent.layout.width);
     };
@@ -293,12 +191,12 @@ const ProfileScreen = ({ route, navigation }) => {
         if (item.type === "image") {
             return <ImagePost event={item} user={user} width={width} />;
         } else if (item.type === "text") {
-            return <PostItem event={item} user={user} width={width} />;
+            return <TextPost event={item} user={user} width={width} />;
         }
     };
 
     return (
-        <View style={[globalStyles.screenContainer, { paddingTop: 0 }]}>
+        <View style={[globalStyles.screenContainer, { paddingTop: 0, paddingHorizontal: 0 }]}>
             <Pressable
                 style={{
                     flexDirection: "row",

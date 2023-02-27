@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
 import { FlashList } from "@shopify/flash-list";
-import PostItem from "../components/PostItem";
+import PostItem from "../features/homefeed/components/PostItem";
 import CommentScreen from "./home/CommentScreen";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";

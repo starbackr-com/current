@@ -5,14 +5,14 @@ export default globalStyles = StyleSheet.create({
     screenContainer: {
         flex: 1,
         paddingTop: 32,
-        paddingHorizontal: 16,
+        paddingHorizontal: 8,
         backgroundColor: colors.backgroundPrimary,
         alignItems: 'center',
     },
     screenContainerScroll: {
         flex: 1,
         paddingTop: 32,
-        paddingHorizontal: 16,
+        paddingHorizontal: 8,
         backgroundColor: colors.backgroundPrimary,
     },
     textBody: {
