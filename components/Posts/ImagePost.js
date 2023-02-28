@@ -69,7 +69,7 @@ const ImagePost = ({ event, user, width }) => {
                     {getAge(event.created_at)}
                 </Text>
             </View>
-            <FeedImage size={width - 12} images={event.image} />
+            <FeedImage size={width} images={event.image} />
             <View style={{paddingHorizontal: 6}}>
                 <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                     {content}

@@ -247,6 +247,7 @@ const ProfileScreen = ({ route, navigation }) => {
                             }}
                         />
                     }
+                    estimatedItemSize={250}
                 />
                 <View style={{ height: 36 }}></View>
             </View>
