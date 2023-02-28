@@ -20,7 +20,8 @@ import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
 import ProfileNavigator from "./ProfileNavigator";
 import ZapListModal from "../views/home/ZapListModal";
 import PostMenuModal from "../views/post/PostMenuModal";
-import ReportPostModal from '../features/reports/views/ReportPostModal'
+import ReportPostModal from "../features/reports/views/ReportPostModal";
+import MentionsModal from "../features/mentions/views/MentionsModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,21 +73,37 @@ const TabNavigator = ({ navigation }) => {
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
                 headerRight: () => (
-                    <Pressable
-                        style={{
-                            flexDirection: "row",
-                            marginRight: 12,
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                        onPress={() => {
-                            navigation.navigate("Wallet");
-                        }}
-                    >
-                        <Text style={globalStyles.textBody}>
-                            {data ? `${data.balance}` : "----"} <Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>SATS</Text>
-                        </Text>
-                    </Pressable>
+                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                        <Pressable
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                            onPress={() => {
+                                navigation.navigate("Wallet");
+                            }}
+                        >
+                            <Text style={globalStyles.textBody}>
+                                {data ? `${data.balance}` : "----"}{" "}
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyS,
+                                        { color: colors.primary500 },
+                                    ]}
+                                >
+                                    SATS
+                                </Text>
+                            </Text>
+                        </Pressable>
+                        <Ionicons
+                            name="notifications-outline"
+                            size={20}
+                            color={colors.primary500}
+                            style={{marginHorizontal: 12}}
+                            onPress={() => {navigation.navigate('MentionsModal')}}
+                        />
+                    </View>
                 ),
                 headerLeft: () => (
                     <Pressable
@@ -193,6 +210,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="ReportPostModal"
                     component={ReportPostModal}
+                    options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="MentionsModal"
+                    component={MentionsModal}
                     options={{ presentation: "modal" }}
                 />
             </Stack.Navigator>

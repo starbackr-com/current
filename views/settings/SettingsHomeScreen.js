@@ -12,6 +12,7 @@ import colors from "../../styles/colors";
 import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import {removeData} from '../../utils/cache/asyncStorage';
+import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
 
 
 const settings = ["Payment Settings", "Backup Keys", "Relay Network", "Muted Users", "Delete Account"];
@@ -48,7 +49,8 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
     const loggedIn = useSelector((state) => state.auth.loggedIn);
-    console.log(loggedIn);
+    const data = useNoteMentions();
+    console.log(data)
     const logoutHandler = async () => {
         await deleteValue("privKey");
         await deleteValue("username");
