@@ -41,9 +41,6 @@ const TextPost = ({ event, user, width }) => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    borderBottomColor: colors.primary500,
-                    borderBottomWidth: 1,
-                    paddingBottom: 6,
                 }}
             >
                 <Text

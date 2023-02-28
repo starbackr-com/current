@@ -22,8 +22,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [verified, setVerified] = useState(false);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
 
-    const navigation = useNavigation();
-
     const verifyNip05 = async (pubkey, nip05) => {
         try {
             const [name, domain] = nip05.split("@");
@@ -45,16 +43,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
             verifyNip05(user.pubkey, user.nip05);
         }
     }, []);
-
-    const getFeed = async () => {
-        const response = await getUsersPosts(user.pubkey);
-        const array = Object.keys(response)
-            .map((key) => response[key])
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-        setFeed(array);
-    };
 
     const copyHandler = async () => {
         await Clipboard.setStringAsync(npub);
@@ -248,6 +236,7 @@ const ProfileScreen = ({ route, navigation }) => {
                         />
                     }
                     estimatedItemSize={250}
+                    ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: colors.backgroundSecondary, width: '100%', marginVertical: 5}}/>}
                 />
                 <View style={{ height: 36 }}></View>
             </View>

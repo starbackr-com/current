@@ -22,6 +22,7 @@ import ZapListModal from "../views/home/ZapListModal";
 import PostMenuModal from "../views/post/PostMenuModal";
 import ReportPostModal from "../features/reports/views/ReportPostModal";
 import MentionsModal from "../features/mentions/views/MentionsModal";
+import CustomTabBar from "../components/CustomTabBar";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -141,6 +142,7 @@ const TabNavigator = ({ navigation }) => {
                     </Pressable>
                 ),
             })}
+            // tabBar={props => <CustomTabBar {...props}/>}
         >
             <Tab.Screen name="Home" component={HomeView} />
             <Tab.Screen name="Wallet" component={WalletNavigator} />
