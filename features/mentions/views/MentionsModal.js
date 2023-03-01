@@ -22,8 +22,9 @@ const Mention = ({ item }) => {
             onPress={() => {
                 navigation.navigate("CommentScreen", {
                     eventId: item.id,
-                    rootId: item.id,
+                    rootId: item.root,
                     type: "root",
+                    event: item
                 });
             }}
         >

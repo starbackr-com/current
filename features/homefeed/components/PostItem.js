@@ -271,6 +271,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                             eventId: item.id,
                             rootId: item.id,
                             type: "root",
+                            event: item
                         });
                     }}
                 >

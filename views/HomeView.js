@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
-import CommentScreen from "./home/CommentScreen";
+import CommentScreen from "../features/comments/views/CommentScreen";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";

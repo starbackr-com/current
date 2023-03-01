@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
+import Animated, { FadeIn, LightSpeedInLeft } from "react-native-reanimated";
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
 import PostActionBar from "./PostActionBar";
 
-const TextPost = ({ event, user, width }) => {
+const TextPost = ({ event, user }) => {
     const content = useParseContent(event);
     const navigation = useNavigation();
     const zap = useZapNote(
@@ -14,10 +15,11 @@ const TextPost = ({ event, user, width }) => {
         user?.name || event?.pubkey.slice(0, 16)
     );
     const commentHandler = () => {
-        navigation.navigate("CommentScreen", {
+        navigation.push("CommentScreen", {
             eventId: event.id,
             rootId: event.id,
             type: "root",
+            event: event,
         });
     };
 
@@ -29,10 +31,10 @@ const TextPost = ({ event, user, width }) => {
         navigation.navigate("PostMenuModal", { event });
     };
     return (
-        <View
+        <Animated.View
+            entering={FadeIn}
             style={{
                 padding: 6,
-                borderRadius: 6,
                 marginBottom: 12,
             }}
         >
@@ -49,6 +51,12 @@ const TextPost = ({ event, user, width }) => {
                         { textAlign: "left", width: "50%" },
                     ]}
                     numberOfLines={1}
+                    onPress={() => {
+                        navigation.navigate("Profile", {
+                            screen: "ProfileScreen",
+                            params: { pubkey: event.pubkey },
+                        });
+                    }}
                 >
                     {user?.name || event.pubkey}
                 </Text>
@@ -71,7 +79,7 @@ const TextPost = ({ event, user, width }) => {
                 onPressMore={moreHandler}
                 zapDisabled={!user?.lud06 && !user?.lud16}
             />
-        </View>
+        </Animated.View>
     );
 };
 

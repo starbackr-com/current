@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -159,6 +159,8 @@ const ProfileScreen = ({ route, navigation }) => {
     const users = useSelector((state) => state.messages.users);
     const [width, setWidth] = useState();
 
+    const listRef = useRef();
+
     const loggedInPubkey = useSelector((state) => state.auth.pubKey);
 
     const now = new Date() / 1000;
@@ -230,6 +232,7 @@ const ProfileScreen = ({ route, navigation }) => {
                             text="Load more"
                             buttonConfig={{
                                 onPress: () => {
+                                    listRef.current.prepareForLayoutAnimationRender()
                                     setPage(page + 1);
                                 },
                             }}
@@ -237,6 +240,8 @@ const ProfileScreen = ({ route, navigation }) => {
                     }
                     estimatedItemSize={250}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: colors.backgroundSecondary, width: '100%', marginVertical: 5}}/>}
+                    ref={listRef}
+                    keyExtractor={(item) => item.id}
                 />
                 <View style={{ height: 36 }}></View>
             </View>

@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { Text, View } from "react-native";
+import Animated, { FadeIn, LightSpeedInLeft } from "react-native-reanimated";
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
@@ -22,6 +23,7 @@ const ImagePost = ({ event, user, width }) => {
             eventId: event.id,
             rootId: event.id,
             type: "root",
+            event: event,
         });
     };
 
@@ -33,19 +35,45 @@ const ImagePost = ({ event, user, width }) => {
         navigation.navigate("PostMenuModal", { event });
     };
     return (
-        <View
+        <Animated.View
+            entering={FadeIn}
             style={{
                 marginBottom: 12,
             }}
         >
             <View
                 style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 16
+                }}
+            >
+                <Text
+                    style={[
+                        globalStyles.textBodyBold,
+                        { textAlign: "left", width: "50%" },
+                    ]}
+                    numberOfLines={1}
+                    onPress={() => {
+                        navigation.navigate("Profile", {
+                            screen: "ProfileScreen",
+                            params: { pubkey: event.pubkey },
+                        });
+                    }}
+                >
+                    {user?.name || event.pubkey}
+                </Text>
+                <Text style={[globalStyles.textBodyS]}>
+                    {getAge(event.created_at)}
+                </Text>
+            </View>
+            {/* <View
+                style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
                     width: "100%",
                     alignItems: "center",
-                    borderBottomColor: colors.primary500,
-                    borderBottomWidth: 1,
                     paddingBottom: 6,
                     marginBottom: 6,
                     paddingHorizontal: 6,
@@ -68,9 +96,9 @@ const ImagePost = ({ event, user, width }) => {
                 >
                     {getAge(event.created_at)}
                 </Text>
-            </View>
+            </View> */}
             <FeedImage size={width} images={event.image} />
-            <View style={{paddingHorizontal: 6}}>
+            <View style={{ padding: 6 }}>
                 <Text style={[globalStyles.textBody, { textAlign: "left" }]}>
                     {content}
                 </Text>
@@ -78,9 +106,10 @@ const ImagePost = ({ event, user, width }) => {
                     onPressComment={commentHandler}
                     onPressZap={zapHandler}
                     onPressMore={moreHandler}
+                    zapDisabled={!user?.lud06 && !user?.lud16}
                 />
             </View>
-        </View>
+        </Animated.View>
     );
 };
 
