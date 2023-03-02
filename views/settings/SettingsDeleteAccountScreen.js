@@ -47,7 +47,7 @@ const SettingsDeleteAccountScreen = ({ navigation }) => {
                     await deleteValue("username");
                     await deleteValue("mem");
                     await dbLogout();
-                    await removeData(["twitterModalShown", "zapAmount"]);
+                    await removeData(["twitterModalShown", "zapAmount", "zapComment"]);
                     dispatch(clearStore());
                     dispatch(clearUserStore());
                     dispatch(logOut());

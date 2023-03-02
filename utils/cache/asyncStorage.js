@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
 import { setZapAmount } from '../../features/userSlice';
+import { setZapComment } from '../../features/userSlice';
+import { setZapNoconf } from '../../features/userSlice';
 import { store } from '../../store/store';
 
 export const storeData = async (key, value) => {
@@ -25,10 +27,18 @@ export const getData = async (key) => {
 
 export const hydrateStore = async () => {
     const zapAmount = await getData('zapAmount')
+    const zapComment = await getData('zapComment')
+    const zapNoconf = await getData('zapNoconf')
     const twitterModalShown = await getData('twitterModalShown')
     const getStartedItemsShown = await getData('getStartedItemsShown')
     if (zapAmount) {
         store.dispatch(setZapAmount(zapAmount))
+    }
+    if (zapComment) {
+        store.dispatch(setZapComment(zapComment))
+    }
+    if (zapNoconf) {
+        store.dispatch(setZapNoconf(zapNoconf))
     }
     if (twitterModalShown) {
         store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)))
@@ -46,7 +56,7 @@ export const getAllKeys = async () => {
       keys = await AsyncStorage.getAllKeys()
     } catch(e) {
     }
-  
+
     console.log(keys)
   }
 
@@ -56,6 +66,6 @@ export const getAllKeys = async () => {
     } catch(e) {
       // remove error
     }
-  
+
     console.log(`Removed ${keys} from AsyncStorage`)
   }
