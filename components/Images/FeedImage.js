@@ -20,18 +20,8 @@ const FeedImage = ({ size, images }) => {
                 style={{ height: size, width: size, padding: 6 }}
                 contentFit='cover'
                 placeholder={blurhash}
-                recyclingKey={images[0]}
+                recyclingkey={images[0]}
             />
-            {images.length > 1 ? (
-                <Text
-                    style={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        backgroundColor: colors.primary500,
-                    }}
-                >{`+${images.length - 1}`}</Text>
-            ) : undefined}
         </Pressable>
     );
 };

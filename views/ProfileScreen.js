@@ -16,11 +16,15 @@ import { useSubscribePosts } from "../hooks/useSubscribePosts";
 import TextPost from "../components/Posts/TextPost";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
+import { useUnfollowUser } from "../hooks/useUnfollowUser";
+import { useFollowUser } from "../hooks/useFollowUser";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const { unfollow } = useUnfollowUser();
+    const { follow } = useFollowUser();
 
     const verifyNip05 = async (pubkey, nip05) => {
         try {
@@ -139,12 +143,19 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                                 text="Follow"
                                 buttonConfig={{
                                     onPress: () => {
-                                        followUser(pubkey);
+                                        follow([pubkey]);
                                     },
                                 }}
                             />
                         ) : (
-                            <CustomButton text="Unfollow" />
+                            <CustomButton
+                                text="Unfollow"
+                                buttonConfig={{
+                                    onPress: () => {
+                                        unfollow(pubkey);
+                                    },
+                                }}
+                            />
                         )
                     ) : undefined}
                 </View>
@@ -219,7 +230,9 @@ const ProfileScreen = ({ route, navigation }) => {
                             },
                         }}
                     />
-            ) : <View/>}
+                ) : (
+                    <View />
+                )}
             </View>
             <View
                 style={{

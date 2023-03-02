@@ -1,26 +1,18 @@
+import { imageRegex } from "../../constants/regex";
+
 const parseContent = (message) => {
-    let imageRegex = /(http(s?):)([\/|.|\w|\s|\-|_])*\.(?:jpg|gif|png|jpeg)/g;
     let imageURL = message.match(imageRegex);
-    let newMessage = message
-        .replace(imageRegex, function (url) {
-            return "";
-        })
-        .trim();
+    let newMessage = message.replace(imageRegex, "").trim();
     return { imageURL, newMessage };
 };
 
-const parseMentions = (event) => {
-    if (event.tags.length < 1) {
+const parseMentions = ({ content, tags }) => {
+    if (tags.length < 1) {
         return {};
     }
-    let content = event.content;
-    let matches = content.match(/#\[([0-9]+)]/g);
-    if (!matches) {
-        return {};
-    }
-    let mentions = matches.map((match, i) => {
-        return { index: i, type: event.tags[i][0], mention: event.tags[i][1] };
-    });
+    const matches = content.match(/#\[([0-9]+)]/g) || [];
+    const mentions = matches
+        .map((match, i) => ({ index: i, type: tags[i][0], mention: tags[i][1] }));
     return { mentions };
 };
 
@@ -35,8 +27,8 @@ export class Note {
         this.sig = eventData.sig;
         this.tags = eventData.tags;
     }
-    checkRoot () {
-        return !this.tags.some(tag => tag.includes('e'))
+    checkRoot() {
+        return !this.tags.some((tag) => tag.includes("e"));
     }
     save() {
         const { id, pubkey, created_at, kind, tags, content, sig, relay } =

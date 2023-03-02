@@ -10,11 +10,23 @@ import { saveValue } from "../../utils/secureStore";
 import { logIn } from "../../features/authSlice";
 import { useDispatch } from "react-redux";
 import { followMultipleUsers, followUser } from "../../utils/users";
-import { getKind3Followers, updateFollowedUsers } from "../../utils/nostrV2/getUserData";
+import {
+    getKind3Followers,
+    updateFollowedUsers,
+} from "../../utils/nostrV2/getUserData";
 
 const LoadingProfileScreen = ({ route }) => {
-    const { image, svg, svgId, privKey, address, bio, publishProfile, mem } =
-        route.params;
+    const {
+        image,
+        svg,
+        svgId,
+        privKey,
+        address,
+        bio,
+        publishProfile,
+        mem,
+        isImport,
+    } = route.params;
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -90,9 +102,11 @@ const LoadingProfileScreen = ({ route }) => {
                     await publishKind0(address, bio, imageUrl, address);
                 }
                 try {
-                    const oldFollowers = await getKind3Followers(pubKey)
-                    await followMultipleUsers(oldFollowers)
-                } catch(e) {console.log(e)}
+                    const oldFollowers = await getKind3Followers(pubKey);
+                    await followMultipleUsers(oldFollowers);
+                } catch (e) {
+                    console.log(e);
+                }
                 await updateFollowedUsers();
             } catch (error) {
             } finally {
@@ -109,9 +123,15 @@ const LoadingProfileScreen = ({ route }) => {
                 { justifyContent: "space-around" },
             ]}
         >
-            <Text style={globalStyles.textBody}>
-                Deriving your nostr-keys...
-            </Text>
+            {isImport ? (
+                <Text style={globalStyles.textBody}>
+                    Setting up your profile...
+                </Text>
+            ) : (
+                <Text style={globalStyles.textBody}>
+                    Deriving your nostr-keys...
+                </Text>
+            )}
             <LoadingSpinner size={100} />
         </View>
     );

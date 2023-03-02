@@ -6,6 +6,9 @@ import ImagePost from "./ImagePost";
 import PostItem from "./PostItem";
 import { useSelector } from "react-redux";
 import { getZaps } from "../../zaps/utils/getZaps";
+import globalStyles from "../../../styles/globalStyles";
+import colors from "../../../styles/colors";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeFeed = ({ width, height }) => {
     const [checkedZaps, setCheckedZaps] = useState([]);
@@ -18,6 +21,8 @@ const HomeFeed = ({ width, height }) => {
     const now = new Date() / 1000;
     const [data, page, setNewPage, triggerRefresh] = useHomefeed(now);
     const sorted = data.sort((a, b) => b.created_at - a.created_at);
+
+    const navigation = useNavigation();
 
     const loadZaps = async (arrayOfIds) => {
         const allZaps = await getZaps(arrayOfIds);
@@ -94,15 +99,23 @@ const HomeFeed = ({ width, height }) => {
                     />
                 </View>
             ) : (
-                <ActivityIndicator
+                <View
                     style={{
-                        container: {
-                            flex: 1,
-                            justifyContent: "center",
-                        },
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
                     }}
-                    size={90}
-                />
+                >
+                    <View style={{width: '100%'}}>
+                        <Text style={globalStyles.textBody}>
+                            {'No messages to display...\n'}
+                            <Text style={{ color: colors.primary500 }} onPress={() => {navigation.navigate('TwitterModal')}}>
+                                Find people to follow
+                            </Text>
+                        </Text>
+                    </View>
+                </View>
             )}
         </>
     );

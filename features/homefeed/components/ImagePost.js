@@ -298,7 +298,7 @@ const ImagePost = ({
         <View
             style={{
                 height: (height / 100) * 90,
-                width: width - 32,
+                width: width - 16,
                 justifyContent: "space-between",
                 flexDirection: "row",
                 alignItems: "center",
