@@ -38,7 +38,7 @@ const SettingsPaymentsScreen = ({ navigation }) => {
         try {
             await storeData("zapAmount", zapValueInput);
             let zapComment = zapValueComment;
-            if (zapValueComment === '') zapComment = '⚡️ by ' + username;
+            if (zapValueComment === null || zapValueComment === '') zapComment = '⚡️ by ' + username;
             await storeData("zapComment", zapComment );
             await storeData("zapNoconf", iszapNoconfChecked.toString() );
             dispatch(setZapAmount(zapValueInput));
@@ -68,8 +68,10 @@ const SettingsPaymentsScreen = ({ navigation }) => {
                 <Input
                     style={{marginTop: 32}}
                     textInputConfig={{
+                        placeholderTextColor: colors.primary500,
                         placeholder: '⚡️ by ' + username,
                         value: zapValueComment,
+                        multiline: true,
                         onChangeText: setZapValueComment,
                         ref: zapCommentInput,
                         marginTop: 20
