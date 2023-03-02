@@ -1,17 +1,12 @@
 const parseContent = (message) => {
     let imageRegex = /(http(s?):)([\/|.|\w|\s|\-|_])*\.(?:jpg|gif|png|jpeg)/g;
     let imageURL = message.match(imageRegex);
-    let invoiceRegex = /(lnbc\d+[munp][A-Za-z0-9]+)/g;
-    let invoice = message.match(invoiceRegex);
     let newMessage = message
         .replace(imageRegex, function (url) {
             return "";
         })
-        .replace(invoiceRegex, function (url) {
-            return "";
-        })
         .trim();
-    return { imageURL, newMessage, invoice };
+    return { imageURL, newMessage };
 };
 
 const parseMentions = (event) => {
@@ -40,11 +35,13 @@ export class Note {
         this.sig = eventData.sig;
         this.tags = eventData.tags;
     }
-
+    checkRoot () {
+        return !this.tags.some(tag => tag.includes('e'))
+    }
     save() {
         const { id, pubkey, created_at, kind, tags, content, sig, relay } =
             this;
-        const { imageURL, newMessage, invoice } = parseContent(content);
+        const { imageURL, newMessage } = parseContent(content);
         const { mentions } = parseMentions(this);
         let root = !tags.some((tag) => {
             let response = tag.includes("e");
@@ -61,7 +58,6 @@ export class Note {
                 sig,
                 root,
                 image: imageURL ? imageURL : undefined,
-                invoice,
                 mentions,
                 type: imageURL ? "image" : "text",
             };

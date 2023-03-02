@@ -5,7 +5,7 @@ import {
     Platform,
     useWindowDimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import globalStyles from "../../../styles/globalStyles";
 import Input from "../../../components/Input";
 import { FlashList } from "@shopify/flash-list";
@@ -25,6 +25,7 @@ const CommentScreen = ({ route, navigation }) => {
 
     const [width, setWidth] = useState();
     const [input, setInput] = useState('');
+    const listRef = useRef();
     const headerHeight = useHeaderHeight();
     const height = useWindowDimensions().height;
     const replies = useReplies(event.id);
@@ -44,9 +45,15 @@ const CommentScreen = ({ route, navigation }) => {
         }
     };
 
-    const submitHandler = () => {
-        // console.log(input)
-        publishReply(input, event)
+    const submitHandler = async () => {
+        listRef.current.prepareForLayoutAnimationRender();
+        const success = await publishReply(input, event)
+        console.log(success)
+        if (!success) {
+            alert('Something went wrong publishing your note...')
+        } else {
+            setInput('')
+        }
     };
 
     return (
@@ -65,12 +72,15 @@ const CommentScreen = ({ route, navigation }) => {
                     renderItem={renderItem}
                     extraData={users}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: colors.backgroundSecondary, width: '100%', marginVertical: 5}}/>}
+                    estimatedItemSize={100}
+                    ref={listRef}
+                    keyExtractor={(item) => item.id}
                 />
             </View>
             <View style={{ width: "100%", flexDirection: "row", alignItems: 'center', backgroundColor: colors.backgroundPrimary, paddingVertical: 12}}>
                 <View style={{ flex: 1}}>
                     <Input
-                        textInputConfig={{ multiline: true, onChangeText: setInput }}
+                        textInputConfig={{ multiline: true, onChangeText: setInput, value: input }}
                         inputStyle={{ maxHeight: height / 5 }}
                     />
                 </View>

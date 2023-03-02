@@ -17,7 +17,9 @@ export const useReplies = (eventId, now) => {
         sub.on("event", (event) => {
             const note = new Note(event);
             const parsedEvent = note.save();
-            setReplies((prev) => [...prev, parsedEvent]);
+            setReplies((prev) => [...prev, parsedEvent].sort(
+                (a, b) => b.created_at - a.created_at
+            ));
         });
     }, []);
     return replies;

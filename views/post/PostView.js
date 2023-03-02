@@ -338,7 +338,7 @@ const PostGifModal = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flex: 1, marginRight: 12 }}>
-                        <Input textInputConfig={{ onChangeText: setInput }} />
+                        <Input textInputConfig={{ onChangeText: setInput, onSubmitEditing: getTrendingGifs}} />
                     </View>
                     <Ionicons
                         name="search"

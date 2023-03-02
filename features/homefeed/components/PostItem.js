@@ -37,7 +37,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
     const zap = useZapNote(
         item.id,
         user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16)
+        user?.name || item?.pubkey.slice(0, 16)
     );
 
     const { created_at, pubkey } = item;

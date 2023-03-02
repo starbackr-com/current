@@ -20,13 +20,21 @@ try {
         tags: [...replyETags, ...replyPTags],
         content
       }
-      console.log(reply)
       reply.id = getEventHash(reply)
       reply.sig = signEvent(reply, sk)
     const urls = relays.map(relay => relay.url)
-
-    let pubs = pool.publish(urls, reply)
-    console.log(pubs)
+    const success = await new Promise((resolve, reject) => {
+        let pubs = pool.publish(urls, reply)
+        let timer = setTimeout(() => {
+            reject();
+            return;
+        }, 5000)
+        pubs.on('ok', () => {
+            clearTimeout(timer)
+            resolve(true)
+    })
+    })
+    return success
 } catch(e) {
     console.log(e)
 }

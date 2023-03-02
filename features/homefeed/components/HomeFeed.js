@@ -1,27 +1,34 @@
 import { View, Text, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useHomefeed } from "../hooks/useHomefeed";
 import ImagePost from "./ImagePost";
 import PostItem from "./PostItem";
 import { useSelector } from "react-redux";
-import {getZaps} from '../../zaps/utils/getZaps'
+import { getZaps } from "../../zaps/utils/getZaps";
 
 const HomeFeed = ({ width, height }) => {
     const [checkedZaps, setCheckedZaps] = useState([]);
     const [zaps, setZaps] = useState();
+    const [refreshing, setRefreshing] = useState(false);
 
     const zapAmount = useSelector((state) => state.user.zapAmount);
     const users = useSelector((state) => state.messages.users);
 
     const now = new Date() / 1000;
-    const [data, page, setNewPage] = useHomefeed(now);
+    const [data, page, setNewPage, triggerRefresh] = useHomefeed(now);
     const sorted = data.sort((a, b) => b.created_at - a.created_at);
 
     const loadZaps = async (arrayOfIds) => {
         const allZaps = await getZaps(arrayOfIds);
         setZaps((prev) => Object.assign(prev ? prev : {}, allZaps));
     };
+
+    const refreshHandler = useCallback(() => {
+        setRefreshing(true);
+        triggerRefresh();
+        setRefreshing(false);
+    }, []);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -35,32 +42,34 @@ const HomeFeed = ({ width, height }) => {
         };
     }, [data]);
 
-    const renderPost = ({ item }) => {
-        if (item.type === "image") {
-            return (
-                <ImagePost
-                    item={item}
-                    height={height}
-                    width={width}
-                    user={users[item.pubkey]}
-                    zapAmount={zapAmount}
-                    zaps={zaps ? zaps[item.id] : null}
-                />
-            );
-        } else {
-            return (
-                <PostItem
-                    item={item}
-                    height={height}
-                    width={width}
-                    user={users[item.pubkey]}
-                    zapAmount={zapAmount}
-                    zaps={zaps ? zaps[item.id] : null}
-                />
-            );
-        }
-    };
-
+    const renderPost = useCallback(
+        ({ item }) => {
+            if (item.type === "image") {
+                return (
+                    <ImagePost
+                        item={item}
+                        height={height}
+                        width={width}
+                        user={users[item.pubkey]}
+                        zapAmount={zapAmount}
+                        zaps={zaps ? zaps[item.id] : null}
+                    />
+                );
+            } else {
+                return (
+                    <PostItem
+                        item={item}
+                        height={height}
+                        width={width}
+                        user={users[item.pubkey]}
+                        zapAmount={zapAmount}
+                        zaps={zaps ? zaps[item.id] : null}
+                    />
+                );
+            }
+        },
+        [users, zapAmount, zaps, height, width]
+    );
     return (
         <>
             {sorted.length > 3 && height ? (
@@ -80,6 +89,8 @@ const HomeFeed = ({ width, height }) => {
                         }}
                         onEndReachedThreshold={2}
                         showsVerticalScrollIndicator={false}
+                        refreshing={refreshing}
+                        onRefresh={refreshHandler}
                     />
                 </View>
             ) : (

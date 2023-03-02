@@ -11,11 +11,11 @@ import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
-import { useNavigation } from "@react-navigation/native";
-import { getUsersPosts } from "../features/profile/utils/getUsersPosts";
 import ImagePost from "../components/Posts/ImagePost";
 import { useSubscribePosts } from "../hooks/useSubscribePosts";
 import TextPost from "../components/Posts/TextPost";
+import { SafeAreaView } from "react-native-safe-area-context";
+import BackButton from "../components/BackButton";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
@@ -186,8 +186,13 @@ const ProfileScreen = ({ route, navigation }) => {
     };
 
     return (
-        <View style={[globalStyles.screenContainer, { paddingTop: 0, paddingHorizontal: 0 }]}>
-            <Pressable
+        <SafeAreaView
+            style={[
+                globalStyles.screenContainer,
+                { paddingTop: 0, paddingHorizontal: 0 },
+            ]}
+        >
+            <View
                 style={{
                     flexDirection: "row",
                     top: 16,
@@ -195,20 +200,27 @@ const ProfileScreen = ({ route, navigation }) => {
                     height: 40,
                     borderRadius: 20,
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                     alignSelf: "center",
                     marginBottom: 12,
                 }}
-                onPress={() => {
-                    navigation.goBack();
-                }}
             >
-                <Ionicons
-                    name="chevron-down"
-                    size={32}
-                    color={colors.primary500}
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
                 />
-            </Pressable>
+                {pubkey === loggedInPubkey ? (
+                    <CustomButton
+                        text="Edit"
+                        buttonConfig={{
+                            onPress: () => {
+                                navigation.navigate("EditProfileScreen");
+                            },
+                        }}
+                    />
+            ) : <View/>}
+            </View>
             <View
                 style={{
                     flex: 1,
@@ -232,32 +244,29 @@ const ProfileScreen = ({ route, navigation }) => {
                             text="Load more"
                             buttonConfig={{
                                 onPress: () => {
-                                    listRef.current.prepareForLayoutAnimationRender()
+                                    listRef.current.prepareForLayoutAnimationRender();
                                     setPage(page + 1);
                                 },
                             }}
                         />
                     }
                     estimatedItemSize={250}
-                    ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: colors.backgroundSecondary, width: '100%', marginVertical: 5}}/>}
+                    ItemSeparatorComponent={() => (
+                        <View
+                            style={{
+                                height: 1,
+                                backgroundColor: colors.backgroundSecondary,
+                                width: "100%",
+                                marginVertical: 5,
+                            }}
+                        />
+                    )}
                     ref={listRef}
                     keyExtractor={(item) => item.id}
                 />
                 <View style={{ height: 36 }}></View>
             </View>
-            {pubkey === loggedInPubkey ? (
-                <View style={{ position: "absolute", right: 32, top: 32 }}>
-                    <CustomButton
-                        text="Edit"
-                        buttonConfig={{
-                            onPress: () => {
-                                navigation.navigate("EditProfileScreen");
-                            },
-                        }}
-                    />
-                </View>
-            ) : undefined}
-        </View>
+        </SafeAreaView>
     );
 };
 

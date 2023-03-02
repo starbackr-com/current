@@ -18,7 +18,6 @@ const HomeScreen = ({ navigation }) => {
         (state) => state.intro.twitterModalShown
     );
     const dispatch = useDispatch();
-
     const onLayoutViewHeight = (e) => {
         setHeight(e.nativeEvent.layout.height);
         if (!twitterModalShown) {
