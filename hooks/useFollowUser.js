@@ -46,7 +46,7 @@ export const useFollowUser = () => {
     const dispatch = useDispatch();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
 
-    const follow = (pubkeysInHex) => {
+    const follow = async (pubkeysInHex) => {
         try {
             dispatch(followMultiplePubkeys(pubkeysInHex));
             const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
