@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable, Button } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -14,6 +15,7 @@ import CustomButton from "../../components/CustomButton";
 import { removeData } from "../../utils/cache/asyncStorage";
 import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
 import appJson from '../../app.json';
+import { generateRandomString } from "../../utils/cache/asyncStorage";
 
 const settings = [
     "Payment Settings",
@@ -70,6 +72,8 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
     const introHandler = async () => {
+        await AsyncStorage.removeItem('appId');
+        generateRandomString(12);
         await removeData(["twitterModalShown", "getStartedItemsShown"]);
         dispatch(resetAll());
     };

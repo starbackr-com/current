@@ -3,7 +3,29 @@ import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
 import { setZapAmount } from '../../features/userSlice';
 import { setZapComment } from '../../features/userSlice';
 import { setZapNoconf } from '../../features/userSlice';
+import { setAppId } from '../../features/userSlice';
 import { store } from '../../store/store';
+
+export const generateRandomString = async (length) => {
+        const value = await AsyncStorage.getItem('appId');
+
+        if (!value) {
+          const char = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+          const random = Array.from(
+              {length: length},
+              () => char[Math.floor(Math.random() * char.length)]
+          );
+          const randomString = random.join("");
+          await AsyncStorage.setItem('appId', randomString);
+          console.log('appId created: ', randomString);
+
+        }
+        else {
+          console.log('appId exists', value);
+        }
+
+}
+
 
 export const storeData = async (key, value) => {
     try {

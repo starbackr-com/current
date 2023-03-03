@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
 import { connectedRelays } from "./relay";
@@ -59,6 +60,36 @@ export const publishEvent = async (content, tags) => {
             tags: tags || [],
             content,
         };
+
+        try {
+            let tags = (event.tags? event.tags: []);
+            const hashtags = event.content.split(' ').filter(v=> v.startsWith('#'));
+            console.log(hashtags);
+            hashtags.forEach(tag => {tags.push(["t", tag.replace(/^#/, '')]);});
+            event.tags = tags;
+
+        } catch (e) {
+              console.log('error in setting up hashtags', e);
+        }
+
+        try {
+
+            if (event.content.includes("Current")) {
+
+                const value = await AsyncStorage.getItem('appId');
+                  console.log(value);
+                event.tags.push(["id", value]);
+            } else {
+              console.log('no current');
+            }
+
+
+
+        } catch (e) {
+          console.log('error in setting up appId', e);
+        }
+
+
         event.id = getEventHash(event);
         event.sig = signEvent(event, privKey);
         const successes = await Promise.allSettled(

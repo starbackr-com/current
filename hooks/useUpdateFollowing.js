@@ -9,8 +9,11 @@ export const useUpdateFollowing = () => {
 
     const getFollowingList = async () => {
         const replies = {};
+        const response = await fetch("https://getcurrent.io/relays");
+        const data = await response.json();
+
         const currentRelay = connectedRelays.filter(
-            (relay) => relay.url === "wss://nostr1.current.fyi"
+            (relay) => relay.url === data.result[0].relay
         );
         let sub = currentRelay[0].sub([
             {

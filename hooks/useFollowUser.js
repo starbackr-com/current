@@ -18,7 +18,7 @@ const publishKind3 = async (oldKeys, newKeys) => {
             kind: 3,
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
-            tags: [dedupedKeysTags],
+            tags: [...dedupedKeysTags],
             content: "",
         };
         event.id = getEventHash(event);
