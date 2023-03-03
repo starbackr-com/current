@@ -1,6 +1,6 @@
 {
   "name": "current",
-  "version": "1.0.0",
+  "version": "0.0.4",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
@@ -25,6 +25,7 @@
     "expo": "^48.0.4",
     "expo-av": "~13.2.1",
     "expo-barcode-scanner": "~12.3.1",
+    "expo-checkbox": "~2.3.1",
     "expo-clipboard": "~4.1.1",
     "expo-crypto": "~12.2.1",
     "expo-dev-client": "~2.1.4",

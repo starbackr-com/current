@@ -13,6 +13,7 @@ import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import { removeData } from "../../utils/cache/asyncStorage";
 import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
+import appJson from '../../app.json';
 
 const settings = [
     "Payment Settings",
@@ -61,7 +62,7 @@ const SettingsHomeScreen = ({ navigation }) => {
         await deleteValue("username");
         await deleteValue("mem");
         await dbLogout();
-        await removeData(["twitterModalShown", "zapAmount"]);
+        await removeData(["twitterModalShown", "zapAmount", "zapComment"]);
         dispatch(clearStore());
         dispatch(clearUserStore());
         dispatch(logOut());
@@ -102,7 +103,7 @@ const SettingsHomeScreen = ({ navigation }) => {
                 >
                     Terms and Privacy
                 </Text>
-                <Text style={globalStyles.textBodyS}>v0.0.4</Text>
+                <Text onPress= {introHandler} style={globalStyles.textBodyS}>v{appJson.expo.version} ({appJson.expo.ios.buildNumber})</Text>
         </View>
     );
 };

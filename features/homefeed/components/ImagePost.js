@@ -18,6 +18,7 @@ import { Image } from "expo-image";
 import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
 import { getAge } from "../../shared/utils/getAge";
+import { useZapNote } from "../../../hooks/useZapNote";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
@@ -106,179 +107,11 @@ const ImagePost = ({
 
     const { created_at, pubkey } = item;
 
-    const zapHandler = async () => {
-        if (!zapAmount) {
-            Alert.alert(
-                "No Zap-Amount set!",
-                `In order to Zap a post you will need to set a default Zap-Amount first`,
-                [
-                    {
-                        text: "Settings",
-                        onPress: () => {
-                            navigation.navigate("Settings", {
-                                screen: "Payments",
-                            });
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            return;
-                        },
-                    },
-                ]
-            );
-        }
-        setIsLoading(true);
-        if (user.lud16 && zapAmount) {
-            const dest = user.lud16.toLowerCase();
-            const [username, domain] = dest.split("@");
-            const response = await fetch(
-                `https://${domain}/.well-known/lnurlp/${username}`
-            );
-            const { callback, minSendable, allowsNostr, nostrPubkey } =
-                await response.json();
-
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-
-            console.log("checking else", amount);
-
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${amount} SATS to ${
-                    user.name || user.pubkey
-                }?`,
-                [
-                    {
-                        text: "OK",
-                        onPress: async () => {
-
-                            let response;
-                            if (allowsNostr && nostrPubkey) {
-                                let tags = [];
-                                tags.push(["p", nostrPubkey]);
-                                tags.push(["e", item.id]);
-                                // tags.push(["amount", amount * 1000]);
-
-                                const zapevent = await createZapEvent("", tags);
-
-                                console.log(zapevent);
-
-                                response = await fetch(
-                                    `${callback}?amount=${
-                                        amount * 1000
-                                    }&nostr=${JSON.stringify(zapevent)}`
-                                );
-                            } else {
-                                console.log('inside not zap wallet');
-                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
-                                setIsLoading(false);
-                                return;
-
-                            }
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            console.log(result);
-                            setIsLoading(false);
-                            if (result.data && !result.data.error) {
-                                //zapSuccess();
-                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
-                                    user.name || user.pubkey
-                                } `)
-                            } else {
-                              alert('Zap Failed');
-                            }
-                            return;
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            setIsLoading(false);
-                        },
-                    },
-                ]
-            );
-        } else if (user.lud06 && zapAmount) {
-            console.log(user.lud06);
-            const dest = user.lud06.toLowerCase();
-            const url = decodeLnurl(dest);
-            const response = await fetch(url);
-            const { callback, minSendable, allowsNostr, nostrPubkey } =
-                await response.json();
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-            console.log("checking", amount);
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${amount} SATS to ${
-                    user.name || user.pubkey
-                }?`,
-                [
-                    {
-                        text: "OK",
-                        onPress: async () => {
-                            let response;
-                            if (allowsNostr && nostrPubkey) {
-                                let tags = [];
-                                tags.push(["p", nostrPubkey]);
-                                tags.push(["e", item.id]);
-                                // tags.push(["amount", amount * 1000]);
-
-                                const zapevent = await createZapEvent("", tags);
-
-                                console.log(zapevent);
-
-                                response = await fetch(
-                                    `${callback}?amount=${
-                                        amount * 1000
-                                    }&nostr=${JSON.stringify(zapevent)}`
-                                );
-                            } else {
-                                    console.log('inside not zap wallet');
-                                alert(`Oops..! ${user.name || user.pubkey}'s wallet does not support Zaps!`);
-                                setIsLoading(false);
-                                return;
-
-                            }
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            console.log(result);
-                            setIsLoading(false);
-                            if (result.data && !result.data.error) {
-                                //zapSuccess();
-                                alert(`🤑 🎉 Zap success: ${amount} SATS to ${
-                                    user.name || user.pubkey
-                                } `)
-                            } else {
-                              alert('Zap Failed');
-                            }
-                            return;
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            setIsLoading(false);
-                        },
-                    },
-                ]
-            );
-        }
-        return;
-    };
+    const zap = useZapNote(
+        item.id,
+        user?.lud06 || user?.lud16,
+        user?.name || item?.pubkey.slice(0, 16)
+    );
 
     const age = getAge(created_at);
 
@@ -519,7 +352,7 @@ const ImagePost = ({
                                 ? { backgroundColor: "#777777" }
                                 : undefined,
                         ]}
-                        onPress={zapHandler}
+                        onPress={zap}
                     >
                         <Animated.View
                             style={isLoading ? animatedStyle : { opacity: 1 }}

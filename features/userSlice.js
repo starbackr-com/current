@@ -4,6 +4,8 @@ const initialState = {
     followedPubkeys: [],
     mutedPubkeys: [],
     zapAmount: null,
+    zapComment: null,
+    zapNoconf: false,
 };
 
 export const userSlice = createSlice({
@@ -50,10 +52,20 @@ export const userSlice = createSlice({
             console.log(action.payload);
             state.zapAmount = action.payload;
         },
+        setZapComment: (state, action) => {
+            console.log(action.payload);
+            state.zapComment = action.payload;
+        },
+        setZapNoconf: (state, action) => {
+            console.log(action.payload);
+            state.zapNoconf = action.payload;
+        },
         clearUserStore: (state) => {
             state.followedPubkeys = [];
             mutedPubkeys = [];
             zapAmount = null;
+            zapComment = null;
+            zapNoconf = false;
         },
     },
 });
@@ -65,6 +77,8 @@ export const {
     unmutePubkey,
     followMultiplePubkeys,
     setZapAmount,
+    setZapComment,
+    setZapNoconf,
     clearUserStore
 } = userSlice.actions;
 

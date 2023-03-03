@@ -124,6 +124,7 @@ ${gif}`
                     onChangeText: setContent,
                     value: content,
                     multiline: true,
+                    placeholderTextColor: colors.primary500,
                     placeholder: "What's on your mind?",
                     autoFocus: true,
                 }}
