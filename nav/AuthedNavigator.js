@@ -23,6 +23,7 @@ import PostMenuModal from "../views/post/PostMenuModal";
 import ReportPostModal from "../features/reports/views/ReportPostModal";
 import MentionsModal from "../features/mentions/views/MentionsModal";
 import CustomTabBar from "../components/CustomTabBar";
+import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -34,6 +35,7 @@ const TabNavigator = ({ navigation }) => {
 
     const pubKey = useSelector((state) => state.auth.pubKey);
     const user = useSelector((state) => state.messages.users[pubKey]);
+    useUpdateFollowing(); 
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({

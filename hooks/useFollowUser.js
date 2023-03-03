@@ -7,10 +7,9 @@ import { pool } from "../utils/nostrV2/relayPool";
 import { getValue } from "../utils/secureStore";
 
 const publishKind3 = async (oldKeys, newKeys) => {
-    oldKeysTags = oldKeys.map((key) => ["p", key, ""]);
-    newKeysTags = newKeys.map((key) => ["p", key, ""]);
-    console.log(oldKeysTags.length);
-    console.log(newKeysTags.length);
+    const dedupedKeys = new Set([...oldKeys, ...newKeys]);
+    console.log(`deduped length: ${[...dedupedKeys].length}`)
+    const dedupedKeysTags = [...dedupedKeys].map((key) => ["p", key, ""]);
     try {
         const sk = await getValue("privKey");
         const pk = getPublicKey(sk);
@@ -19,7 +18,7 @@ const publishKind3 = async (oldKeys, newKeys) => {
             kind: 3,
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
-            tags: [...oldKeysTags, ...newKeysTags],
+            tags: [dedupedKeysTags],
             content: "",
         };
         event.id = getEventHash(event);
