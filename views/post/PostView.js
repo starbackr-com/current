@@ -26,7 +26,7 @@ import { useNavigation } from "@react-navigation/native";
 const Stack = createStackNavigator();
 
 const PostModal = ({ navigation, route }) => {
-    const [content, setContent] = useState();
+    const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
     const [sending, setSending] = useState(false);
     const headerHeight = useHeaderHeight();
@@ -43,7 +43,7 @@ const PostModal = ({ navigation, route }) => {
         if (gif) {
             setContent(
                 (prev) => `${prev}
-            
+
 ${gif}`
             );
         }
