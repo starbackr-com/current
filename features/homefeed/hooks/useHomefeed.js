@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Note, relays } from "../../../utils/nostrV2";
-import { pool } from "../../../utils/nostrV2/relayPool";
+import { Note, connectedRelays } from "../../../utils/nostrV2";
 
 export const useHomefeed = (unixNow) => {
     const [page, setPage] = useState(0);
@@ -9,7 +8,7 @@ export const useHomefeed = (unixNow) => {
     const [refresh, setRefresh] = useState();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
 
-    const urls = relays.map((relay) => relay.url);
+    const receivedEventIds = [];
 
     // Setup pagination Function
     const setNewPage = (pageValue) => {
@@ -21,10 +20,11 @@ export const useHomefeed = (unixNow) => {
     };
 
     const eventCallback = useCallback((event) => {
-        const newEvent = new Note(event);
-        if (newEvent.checkRoot()) {
-            const parsedEvent = newEvent.save();
-            if (parsedEvent.root) {
+        if (!receivedEventIds.includes(event.id)) {
+            receivedEventIds.push(event.id);
+            const newEvent = new Note(event);
+            if (newEvent.checkRoot()) {
+                const parsedEvent = newEvent.save();
                 setData((prev) =>
                     [...prev, parsedEvent].sort(
                         (a, b) => b.created_at - a.created_at
@@ -40,18 +40,20 @@ export const useHomefeed = (unixNow) => {
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
-        let sub = pool.sub(urls, [
-            {
-                kinds: [1],
-                authors: followedPubkeys,
-                until: until,
-                since: since,
-            },
-        ]);
-        sub.on("event", eventCallback);
-        // Unsub and clear interval on dismount
+        let subs = connectedRelays.map((relay) => {
+            let sub = relay.sub([
+                {
+                    kinds: [1],
+                    authors: followedPubkeys,
+                    until: until,
+                    since: since,
+                },
+            ]);
+            sub.on("event", eventCallback);
+            return sub;
+        });
         return () => {
-            // subs.forEach((sub) => sub.unsub());
+            subs.forEach((sub) => sub.unsub());
         };
     }, [page, refresh]);
 

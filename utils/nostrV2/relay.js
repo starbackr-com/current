@@ -2,11 +2,12 @@ import { relayInit } from "nostr-tools";
 
 export let relays;
 export let connectedRelays;
+export let urls
 
 export const initRelays = async () => {
     const response = await fetch("https://getcurrent.io/relays");
     const data = await response.json();
-    const urls = data.result;
+    urls = data.result;
 
     relays = urls.map((url) => relayInit(url.relay));
     connectedRelays = await Promise.allSettled(
