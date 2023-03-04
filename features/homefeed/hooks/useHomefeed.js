@@ -7,6 +7,7 @@ export const useHomefeed = (unixNow) => {
     const [data, setData] = useState([]);
     const [refresh, setRefresh] = useState();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const ownPK = useSelector(state => state.auth.pubKey)
 
     const receivedEventIds = [];
 
@@ -16,6 +17,7 @@ export const useHomefeed = (unixNow) => {
     };
 
     const triggerRefresh = () => {
+        setPage(0)
         setRefresh((prev) => !prev);
     };
 
@@ -55,7 +57,7 @@ export const useHomefeed = (unixNow) => {
         return () => {
             subs.forEach((sub) => sub.unsub());
         };
-    }, [page, refresh]);
+    }, [page, refresh, followedPubkeys]);
 
     return [data, page, setNewPage, triggerRefresh];
 };
