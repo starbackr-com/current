@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text, View, Pressable, Image } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
@@ -24,6 +24,7 @@ import ReportPostModal from "../features/reports/views/ReportPostModal";
 import MentionsModal from "../features/mentions/views/MentionsModal";
 import CustomTabBar from "../components/CustomTabBar";
 import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
+import { Image } from "expo-image";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -35,7 +36,7 @@ const TabNavigator = ({ navigation }) => {
 
     const pubKey = useSelector((state) => state.auth.pubKey);
     const user = useSelector((state) => state.messages.users[pubKey]);
-    useUpdateFollowing(); 
+    useUpdateFollowing();
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -76,7 +77,9 @@ const TabNavigator = ({ navigation }) => {
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
                 headerRight: () => (
-                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                    <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                    >
                         <Pressable
                             style={{
                                 flexDirection: "row",
@@ -103,8 +106,10 @@ const TabNavigator = ({ navigation }) => {
                             name="notifications-outline"
                             size={20}
                             color={colors.primary500}
-                            style={{marginHorizontal: 12}}
-                            onPress={() => {navigation.navigate('MentionsModal')}}
+                            style={{ marginHorizontal: 12 }}
+                            onPress={() => {
+                                navigation.navigate("MentionsModal");
+                            }}
                         />
                     </View>
                 ),
@@ -127,7 +132,10 @@ const TabNavigator = ({ navigation }) => {
                     >
                         {user?.picture ? (
                             <Image
-                                source={{ uri: user?.picture }}
+                                source={
+                                    user?.picture ||
+                                    require("../assets/user_placeholder.jpg")
+                                }
                                 style={{
                                     width: 26,
                                     height: 26,
