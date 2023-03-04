@@ -36,7 +36,6 @@ const TabNavigator = ({ navigation }) => {
 
     const pubKey = useSelector((state) => state.auth.pubKey);
     const user = useSelector((state) => state.messages.users[pubKey]);
-    useUpdateFollowing();
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -175,6 +174,7 @@ const TabNavigator = ({ navigation }) => {
 };
 
 const AuthedNavigator = () => {
+    useUpdateFollowing();
     return (
         <>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
