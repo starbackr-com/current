@@ -46,6 +46,7 @@ const Root = () => {
                     } = await loginToWallet(privKey);
                     const pubKey = await getPublicKey(privKey);
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
+                    updateFollowedUsers();
                 }
             } catch (e) {
                 console.warn(e);
