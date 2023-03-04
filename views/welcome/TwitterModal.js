@@ -149,7 +149,7 @@ const ChooseUserScreen = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
-    const {follow} = useFollowUser(); 
+    const { follow } = useFollowUser();
 
     const { handle } = route.params;
     console.log(handle);
@@ -188,8 +188,11 @@ const ChooseUserScreen = ({ route, navigation }) => {
     };
 
     const submitHandler = async () => {
-        const pubkeys = list.map((item) => decodePubkey(item.pubkey));
-        await follow(pubkeys)
+        const selectedItems = list.filter((item) =>
+            selected.includes(item.twitter_handle)
+        );
+        const pubkeys = selectedItems.map((item) => decodePubkey(item.pubkey));
+        await follow(pubkeys);
         dispatch(setTwitterModal(true));
         navigation.reset({ index: 0, routes: [{ name: "MainTabNav" }] });
     };
