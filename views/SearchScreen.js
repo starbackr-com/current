@@ -118,7 +118,7 @@ const SearchScreen = ({ navigation }) => {
             try {
                 let handle = input[0] === "@" ? input : `@${input}`;
                 const response = await fetch(
-                    `https://getcurrent.io/pubkey/${handle}`
+                    `${process.env.BASEURL}/pubkey/${handle}`
                 );
                 const data = await response.json();
                 const npub = data.result.filter(

@@ -5,7 +5,7 @@ export let connectedRelayPool;
 export const pool = new SimplePool()
 
 export const initRelayPool = async () => {
-    const response = await fetch("https://getcurrent.io/relays");
+    const response = await fetch(process.env.BASEURL + "/relays");
     const data = await response.json();
     const urls = data.result;
     connectedRelayPool = await Promise.allSettled(

@@ -158,7 +158,7 @@ const ChooseUserScreen = ({ route, navigation }) => {
     const getFollowee = async (handle) => {
         try {
             const response = await fetch(
-                `https://getcurrent.io/followuser?twitterhandle=${handle}`
+                `${process.env.BASEURL}/followuser?twitterhandle=${handle}`
             );
             const data = await response.json();
             setList(data.result);

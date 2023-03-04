@@ -31,7 +31,7 @@ const uploadImage = async (localUri, pubKey, bearer) => {
         `${id}/profile/avatar_${Math.floor(Math.random() * 100000)}.${match[1]}`
     );
     formData.append("type", "image");
-    const response = await fetch(`https://getcurrent.io/upload`, {
+    const response = await fetch(`${process.env.BASEURL}/upload`, {
         method: "POST",
         body: formData,
         headers: {

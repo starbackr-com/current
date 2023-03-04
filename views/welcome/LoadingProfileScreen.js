@@ -43,7 +43,7 @@ const LoadingProfileScreen = ({ route }) => {
         formData.append("asset", { uri: localUri, name: filename, type });
         formData.append("name", `${id}/profile/avatar.${match[1]}`);
         formData.append("type", "image");
-        const response = await fetch(`https://getcurrent.io/upload`, {
+        const response = await fetch(`${process.env.BASEURL}/upload`, {
             method: "POST",
             body: formData,
             headers: {
@@ -59,7 +59,7 @@ const LoadingProfileScreen = ({ route }) => {
     const uploadSvg = async (id, bearer) => {
         try {
             const response = await fetch(
-                `https://getcurrent.io/avatar?name=${id}`,
+                `${process.env.BASEURL}/avatar?name=${id}`,
                 {
                     method: "GET",
                     headers: {

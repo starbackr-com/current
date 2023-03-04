@@ -5,7 +5,7 @@ export let connectedRelays;
 export let urls
 
 export const initRelays = async () => {
-    const response = await fetch("https://getcurrent.io/relays");
+    const response = await fetch(process.env.BASEURL + "/relays");
     const data = await response.json();
     urls = data.result;
 

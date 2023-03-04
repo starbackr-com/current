@@ -9,7 +9,7 @@ export const useUpdateFollowing = () => {
 
     const getFollowingList = async () => {
         const replies = {};
-        const response = await fetch("https://getcurrent.io/relays");
+        const response = await fetch(process.env.BASEURL + "/relays");
         const data = await response.json();
 
         const currentRelay = connectedRelays.filter(

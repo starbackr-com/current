@@ -24,7 +24,7 @@ const UsernameScreen = ({ navigation, route }) => {
         Keyboard.dismiss();
         setIsFetching(true);
         const response = await fetch(
-            `https://getcurrent.io/checkuser?name=${username}`
+            `${process.env.BASEURL}/checkuser?name=${username}`
         );
         const data = await response.json();
         setAvailable(data.available);

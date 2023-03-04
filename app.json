@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +31,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 15
+      "versionCode": 16
     },
     "web": {
       "favicon": "./assets/favicon.png"
