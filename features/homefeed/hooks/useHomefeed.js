@@ -37,6 +37,7 @@ export const useHomefeed = (unixNow) => {
     }, []);
 
     useEffect(() => {
+        const authorArray = new Set([...followedPubkeys, ownPK])
         const hoursInSeconds = 6 * 60 * 60;
         const until = Math.floor(unixNow - page * hoursInSeconds);
         const since = Math.floor(
@@ -46,7 +47,7 @@ export const useHomefeed = (unixNow) => {
             let sub = relay.sub([
                 {
                     kinds: [1],
-                    authors: followedPubkeys,
+                    authors: [...authorArray],
                     until: until,
                     since: since,
                 },
