@@ -13,18 +13,17 @@ const PostActionBar = ({
         <View
             style={{
                 flexDirection: "row",
-                justifyContent: "space-between",
                 marginTop: 32,
+                width: '50%'
             }}
         >
             <Pressable
                 style={({ pressed }) => [
                     {
                         justifyContent: "center",
-                        alignItems: "center",
                         paddingVertical: 6,
                         borderRadius: 5,
-                        width: "30%",
+                        flex: 1
                     },
                     pressed && !zapDisabled
                         ? { backgroundColor: "#333333" }
@@ -42,10 +41,9 @@ const PostActionBar = ({
                 style={({ pressed }) => [
                     {
                         justifyContent: "center",
-                        alignItems: "center",
                         paddingVertical: 6,
                         borderRadius: 5,
-                        width: "30%",
+                        flex: 1
                     },
                     pressed ? { backgroundColor: "#333333" } : undefined,
                 ]}
@@ -61,10 +59,9 @@ const PostActionBar = ({
                 style={({ pressed }) => [
                     {
                         justifyContent: "center",
-                        alignItems: "center",
                         paddingVertical: 6,
                         borderRadius: 5,
-                        width: "30%",
+                        flex: 1
                     },
                     pressed ? { backgroundColor: "#333333" } : undefined,
                 ]}

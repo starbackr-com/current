@@ -39,7 +39,7 @@ const SelectImage = ({ navigation, route }) => {
         const id = pubKey.slice(0, 10);
         console.log(id);
         const response = await fetch(
-            `https://key.getcurrent.io/multiavatar?name=${id}`
+            `${process.env.BASEURL}/multiavatar?name=${id}`
         );
         const data = await response.json();
         setSvgs(data);

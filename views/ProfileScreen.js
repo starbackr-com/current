@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -11,36 +11,20 @@ import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { followUser } from "../utils/users";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useParseContent } from "../hooks/useParseContent";
-import { getUsersPosts } from "../features/profile/utils/getUsersPosts";
 import ImagePost from "../components/Posts/ImagePost";
 import { useSubscribePosts } from "../hooks/useSubscribePosts";
-import PostActionBar from "../components/Posts/PostActionBar";
-import { useZapNote } from "../hooks/useZapNote";
+import TextPost from "../components/Posts/TextPost";
+import { SafeAreaView } from "react-native-safe-area-context";
+import BackButton from "../components/BackButton";
+import { useUnfollowUser } from "../hooks/useUnfollowUser";
+import { useFollowUser } from "../hooks/useFollowUser";
 
-const getAge = (timestamp) => {
-    const now = new Date();
-    const timePassedInMins = Math.floor(
-        (now - new Date(timestamp * 1000)) / 1000 / 60
-    );
-
-    if (timePassedInMins < 60) {
-        return `${timePassedInMins}min ago`;
-    } else if (timePassedInMins >= 60 && timePassedInMins < 1440) {
-        return `${Math.floor(timePassedInMins / 60)}h ago`;
-    } else if (timePassedInMins >= 1440 && timePassedInMins < 10080) {
-        return `${Math.floor(timePassedInMins / 1440)}d ago`;
-    } else {
-        return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
-    }
-};
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
     const [verified, setVerified] = useState(false);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-
-    const navigation = useNavigation();
+    const { unfollow } = useUnfollowUser();
+    const { follow } = useFollowUser();
 
     const verifyNip05 = async (pubkey, nip05) => {
         try {
@@ -63,16 +47,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
             verifyNip05(user.pubkey, user.nip05);
         }
     }, []);
-
-    const getFeed = async () => {
-        const response = await getUsersPosts(user.pubkey);
-        const array = Object.keys(response)
-            .map((key) => response[key])
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-        setFeed(array);
-    };
 
     const copyHandler = async () => {
         await Clipboard.setStringAsync(npub);
@@ -169,90 +143,23 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                                 text="Follow"
                                 buttonConfig={{
                                     onPress: () => {
-                                        followUser(pubkey);
+                                        follow([pubkey]);
                                     },
                                 }}
                             />
                         ) : (
-                            <CustomButton text="Unfollow" />
+                            <CustomButton
+                                text="Unfollow"
+                                buttonConfig={{
+                                    onPress: () => {
+                                        unfollow(pubkey);
+                                    },
+                                }}
+                            />
                         )
                     ) : undefined}
                 </View>
             </View>
-        </View>
-    );
-};
-
-const PostItem = ({ event, user, width }) => {
-    const content = useParseContent(event);
-    const navigation = useNavigation();
-    const zap = useZapNote(
-        event.id,
-        user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16)
-    );
-    const commentHandler = () => {
-        navigation.navigate("CommentScreen", {
-            eventId: event.id,
-            rootId: event.id,
-            type: "root",
-        });
-    };
-
-    const zapHandler = () => {
-        zap();
-    };
-
-    const moreHandler = () => {
-        navigation.navigate("PostMenuModal", { event });
-    };
-    return (
-        <View
-            style={{
-                backgroundColor: colors.backgroundSecondary,
-                padding: 6,
-                borderRadius: 6,
-                marginBottom: 12,
-            }}
-        >
-            <View
-                style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    borderBottomColor: colors.primary500,
-                    borderBottomWidth: 1,
-                    paddingBottom: 6
-                }}
-            >
-                <Text
-                    style={[
-                        globalStyles.textBodyBold,
-                        { textAlign: "left", width: "50%" },
-                    ]}
-                    numberOfLines={1}
-                >
-                    {user?.name || event.pubkey}
-                </Text>
-                <Text style={[globalStyles.textBodyS]}>
-                    {getAge(event.created_at)}
-                </Text>
-            </View>
-
-            <Text
-                style={[
-                    globalStyles.textBody,
-                    { textAlign: "left", marginTop: 16 },
-                ]}
-            >
-                {content}
-            </Text>
-            <PostActionBar
-                onPressComment={commentHandler}
-                onPressZap={zapHandler}
-                onPressMore={moreHandler}
-                zapDisabled={!user?.lud06 && !user?.lud16}
-            />
         </View>
     );
 };
@@ -262,6 +169,8 @@ const ProfileScreen = ({ route, navigation }) => {
     const [feed, setFeed] = useState();
     const users = useSelector((state) => state.messages.users);
     const [width, setWidth] = useState();
+
+    const listRef = useRef();
 
     const loggedInPubkey = useSelector((state) => state.auth.pubKey);
 
@@ -275,16 +184,6 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const user = users[pubkey];
 
-    const getFeed = async () => {
-        const response = await getUsersPosts(pubkey);
-        const array = Object.keys(response)
-            .map((key) => response[key])
-            .sort((a, b) => {
-                return a.created_at < b.created_at ? 1 : -1;
-            });
-        setFeed(array);
-    };
-
     const onLayoutViewWidth = (e) => {
         setWidth(e.nativeEvent.layout.width);
     };
@@ -293,13 +192,18 @@ const ProfileScreen = ({ route, navigation }) => {
         if (item.type === "image") {
             return <ImagePost event={item} user={user} width={width} />;
         } else if (item.type === "text") {
-            return <PostItem event={item} user={user} width={width} />;
+            return <TextPost event={item} user={user} width={width} />;
         }
     };
 
     return (
-        <View style={[globalStyles.screenContainer, { paddingTop: 0 }]}>
-            <Pressable
+        <SafeAreaView
+            style={[
+                globalStyles.screenContainer,
+                { paddingTop: 0, paddingHorizontal: 0 },
+            ]}
+        >
+            <View
                 style={{
                     flexDirection: "row",
                     top: 16,
@@ -307,20 +211,29 @@ const ProfileScreen = ({ route, navigation }) => {
                     height: 40,
                     borderRadius: 20,
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                     alignSelf: "center",
                     marginBottom: 12,
                 }}
-                onPress={() => {
-                    navigation.goBack();
-                }}
             >
-                <Ionicons
-                    name="chevron-down"
-                    size={32}
-                    color={colors.primary500}
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
                 />
-            </Pressable>
+                {pubkey === loggedInPubkey ? (
+                    <CustomButton
+                        text="Edit"
+                        buttonConfig={{
+                            onPress: () => {
+                                navigation.navigate("EditProfileScreen");
+                            },
+                        }}
+                    />
+                ) : (
+                    <View />
+                )}
+            </View>
             <View
                 style={{
                     flex: 1,
@@ -344,27 +257,29 @@ const ProfileScreen = ({ route, navigation }) => {
                             text="Load more"
                             buttonConfig={{
                                 onPress: () => {
+                                    listRef.current.prepareForLayoutAnimationRender();
                                     setPage(page + 1);
                                 },
                             }}
                         />
                     }
+                    estimatedItemSize={250}
+                    ItemSeparatorComponent={() => (
+                        <View
+                            style={{
+                                height: 1,
+                                backgroundColor: colors.backgroundSecondary,
+                                width: "100%",
+                                marginVertical: 5,
+                            }}
+                        />
+                    )}
+                    ref={listRef}
+                    keyExtractor={(item) => item.id}
                 />
                 <View style={{ height: 36 }}></View>
             </View>
-            {pubkey === loggedInPubkey ? (
-                <View style={{ position: "absolute", right: 32, top: 32 }}>
-                    <CustomButton
-                        text="Edit"
-                        buttonConfig={{
-                            onPress: () => {
-                                navigation.navigate("EditProfileScreen");
-                            },
-                        }}
-                    />
-                </View>
-            ) : undefined}
-        </View>
+        </SafeAreaView>
     );
 };
 

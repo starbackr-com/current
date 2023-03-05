@@ -13,6 +13,8 @@ import { getUserData, updateFollowedUsers } from "../utils/nostrV2/getUserData";
 import { Image } from "expo-image";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useNavigation } from "@react-navigation/native";
+import { useFollowUser } from "../hooks/useFollowUser";
+import { useUnfollowUser } from "../hooks/useUnfollowUser";
 
 const hexRegex = /^[0-9a-f]{64}$/i;
 
@@ -23,73 +25,12 @@ const twitterRegex = /^@?(\w){1,15}$/;
 const emailRegex =
     /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/i;
 
-const UserItem = ({ item, user }) => {
-    const deleteHandler = () => {
-        unfollowUser(item);
-    };
-    return (
-        <View
-            style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-                backgroundColor: "#222222",
-                padding: 6,
-                borderRadius: 10,
-                alignItems: "center",
-                marginBottom: 6,
-            }}
-        >
-            <Text style={[globalStyles.textBody, { overflow: "hidden" }]}>
-                {user?.name || item}
-            </Text>
-            <CustomButton
-                text="Unfollow"
-                buttonConfig={{ onPress: deleteHandler }}
-            />
-        </View>
-    );
-};
-
-const FollowerScreen = () => {
-    const [input, setInput] = useState("");
-    const following = useSelector((state) => state.user.followedPubkeys);
-    const users = useSelector((state) => state.messages.users);
-    const searchHandler = async () => {
-        if (input.includes("npub")) {
-            const decoded = await decodePubkey(input);
-            await followUser(decoded);
-            await updateFollowedUsers();
-            return;
-        }
-    };
-    return (
-        <View
-            style={[
-                globalStyles.screenContainer,
-                { justifyContent: "space-between" },
-            ]}
-        >
-            <View style={{ flex: 6, width: "100%" }}>
-                <View style={{ flex: 1, width: "100%", height: "100%" }}>
-                    <FlashList
-                        data={following}
-                        renderItem={({ item }) => (
-                            <UserItem item={item} user={users[item]} />
-                        )}
-                        estimatedItemSize={50}
-                        extraData={users}
-                    />
-                </View>
-            </View>
-        </View>
-    );
-};
-
 const ResultCard = ({ pk }) => {
     const user = useSelector((state) => state.messages.users[pk]);
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const navigation = useNavigation();
+    const { follow } = useFollowUser();
+    const { unfollow } = useUnfollowUser();
     return (
         <View
             style={{
@@ -135,7 +76,7 @@ const ResultCard = ({ pk }) => {
                     text="Unfollow"
                     buttonConfig={{
                         onPress: () => {
-                            unfollowUser(pk);
+                            unfollow(pk);
                         },
                     }}
                 />
@@ -144,7 +85,7 @@ const ResultCard = ({ pk }) => {
                     text="Follow"
                     buttonConfig={{
                         onPress: () => {
-                            followUser(pk);
+                            follow([pk]);
                         },
                     }}
                 />
@@ -177,7 +118,7 @@ const SearchScreen = ({ navigation }) => {
             try {
                 let handle = input[0] === "@" ? input : `@${input}`;
                 const response = await fetch(
-                    `https://getcurrent.io/pubkey/${handle}`
+                    `${process.env.BASEURL}/pubkey/${handle}`
                 );
                 const data = await response.json();
                 const npub = data.result.filter(

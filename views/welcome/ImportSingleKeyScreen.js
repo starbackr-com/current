@@ -58,112 +58,39 @@ const ImportSingleKeyScreen = ({ navigation }) => {
                     { created_at: 0 }
                 );
 
-                let deletedAccount=false;
+                let deletedAccount = false;
 
                 try {
-                  console.log('mostrecent', mostRecent.content);
-                  const mostrecentcontent = JSON.parse(mostRecent.content);
-                  deletedAccount = mostrecentcontent.deleted;
-                  console.log('deletedaccount', deletedAccount);
-
+                    console.log("mostrecent", mostRecent.content);
+                    const mostrecentcontent = JSON.parse(mostRecent.content);
+                    deletedAccount = mostrecentcontent.deleted;
+                    console.log("deletedaccount", deletedAccount);
                 } catch (e) {
                     //ignore
                     console.log(e);
                 }
 
-
                 if (deletedAccount) {
-                  Alert.alert(
-                          "Deleted Account?",
-                           "You cannot use deleted account. Please use a different key.",
-                           [{text: 'OK', onPress: () => {return;}}]
-
-                  );
-                }
-                if (events.length >= 1 && !deletedAccount) {
                     Alert.alert(
-                        "Update Profile?",
-                        `A profile for this key already exists. Do you want to update it or keep the old one? (If you do not update the Lightning Address, Tips you receive will not show up in your current wallet!)`,
+                        "Deleted Account?",
+                        "You cannot use deleted account. Please use a different key.",
                         [
                             {
-                                text: "Keep old data",
+                                text: "OK",
                                 onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: false,
-                                        isImport: true,
-                                        updateData: 'none',
-                                    });
-                                },
-                            },
-                            {
-                                text: "Update Lightning Address",
-                                onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: true,
-                                        isImport: true,
-                                        updateData: 'ln',
-                                        oldData: mostRecent
-                                    });
-                                },
-                            },
-                            {
-                                text: "Update everything",
-                                onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: true,
-                                        isImport: true,
-                                        updateData: 'all',
-                                    });
+                                    return;
                                 },
                             },
                         ]
                     );
-                } else if (!deletedAccount) {
-                    Alert.alert(
-                        "Create Profile?",
-                        `We couldn't find a profile for this key on the connected relays... Do you want to create one? (If you don't, you will not be able to receive zaps on those relays.)`,
-                        [
-                            {
-                                text: "Create Profile",
-                                onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: true,
-                                        isImport: true,
-                                        updateData: "all",
-                                    });
-                                },
-                            },
-                            {
-                                text: "Update Tip Address only",
-                                onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: true,
-                                        isImport: true,
-                                        updateData: "ln",
-                                        oldData: mostRecent,
-                                    });
-                                },
-                            },
-                            {
-                                text: "Continue without",
-                                onPress: () => {
-                                    navigation.navigate("UsernameScreen", {
-                                        privKey,
-                                        publishProfile: false,
-                                        isImport: true,
-                                        updateData: "none",
-                                    });
-                                },
-                            },
-                        ]
-                    );
+                } else {
+                    navigation.navigate("UsernameScreen", {
+                        privKey,
+                        publishProfile: false,
+                        isImport: true,
+                        updateData: "none",
+                    });
                 }
-
             }
         } catch (e) {
             console.log(e);

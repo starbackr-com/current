@@ -16,6 +16,7 @@ import { getPublicKey } from "nostr-tools";
 import { initRelays } from "./utils/nostrV2";
 import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
 import { hydrateStore } from "./utils/cache/asyncStorage";
+import { initRelayPool } from "./utils/nostrV2/relayPool";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,6 +29,7 @@ const Root = () => {
         const prepare = async () => {
             try {
                 await initRelays();
+                await initRelayPool();
                 await init();
                 await hydrateFromDatabase();
                 await hydrateStore();
@@ -44,6 +46,7 @@ const Root = () => {
                     } = await loginToWallet(privKey);
                     const pubKey = await getPublicKey(privKey);
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
+                    updateFollowedUsers();
                 }
             } catch (e) {
                 console.warn(e);

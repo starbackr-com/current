@@ -4,6 +4,7 @@ import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { ScrollView } from "react-native-gesture-handler";
 
 const UsernameScreen = ({ navigation, route }) => {
     const [error, setError] = useState(false);
@@ -11,19 +12,19 @@ const UsernameScreen = ({ navigation, route }) => {
     const [available, setAvailable] = useState();
     const [isFetching, setIsFetching] = useState();
 
-    const { privKey, isImport, publishProfile, updateData, oldData } = route.params;
-    console.log(oldData)
+    const { privKey, isImport, publishProfile, updateData, oldData } =
+        route.params;
 
     const fetchAvailableUsernames = async () => {
-        setError(false)
+        setError(false);
         if (!username.match(/^[a-z0-9]{4,32}$/i)) {
-            setError(true)
+            setError(true);
             return;
         }
         Keyboard.dismiss();
         setIsFetching(true);
         const response = await fetch(
-            `https://getcurrent.io/checkuser?name=${username}`
+            `${process.env.BASEURL}/checkuser?name=${username}`
         );
         const data = await response.json();
         setAvailable(data.available);
@@ -31,20 +32,21 @@ const UsernameScreen = ({ navigation, route }) => {
     };
 
     const nextHandler = (address) => {
-        if (isImport && updateData === 'none') {
+        if (isImport && updateData === "none") {
             navigation.navigate("LoadingProfileScreen", {
                 privKey,
                 address,
                 publishProfile: false,
+                isImport
             });
             return;
-        } else if (isImport && updateData === 'ln') {
+        } else if (isImport && updateData === "ln") {
             navigation.navigate("CreateProfileScreen", {
                 privKey,
                 address,
                 publishProfile: true,
                 oldData,
-                updateData
+                updateData,
             });
             return;
         }
@@ -56,13 +58,28 @@ const UsernameScreen = ({ navigation, route }) => {
             <Text style={[globalStyles.textBodyBold, { textAlign: "center" }]}>
                 Choose your username
             </Text>
-            <Text style={globalStyles.textBody}>
-                Your username can be used to find you on nostr, but also to
-                receive payments on the Lightning Network.
-            </Text>
+            {isImport ? (
+                <Text style={globalStyles.textBody}>
+                    Although you imported an existing key, you still need to
+                    choose a username for your Current wallet. Your nostr
+                    profile will not be affected.
+                </Text>
+            ) : (
+                <Text style={globalStyles.textBody}>
+                    Your username can be used to find you on nostr, but also to
+                    receive payments on the Lightning Network.
+                </Text>
+            )}
             <View></View>
             <View style={{ width: "100%", alignItems: "center", margin: 32 }}>
-                <View style={{ width: "60%", flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
+                <View
+                    style={{
+                        width: "60%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
                     <Input
                         textInputConfig={{
                             value: username,
@@ -81,7 +98,7 @@ const UsernameScreen = ({ navigation, route }) => {
                 </View>
             </View>
             {isFetching ? <LoadingSpinner size={50} /> : undefined}
-            <View style={{ width: "100%", alignItems: "center" }}>
+            <ScrollView style={{ width: "100%"}} contentContainerStyle={{alignItems: 'center'}}>
                 {available && available.length > 0 && !isFetching && !error ? (
                     <Text style={[globalStyles.textBody, { marginBottom: 32 }]}>
                         Choose one from the list below
@@ -102,9 +119,21 @@ const UsernameScreen = ({ navigation, route }) => {
                           />
                       ))
                     : undefined}
-                    {available && available.length === 0 && !isFetching && !error ? <Text style={globalStyles.textBody}>That username is taken...</Text> : undefined}
-                    {error ? <Text style={globalStyles.textBodyError}>Usernames must be between 4 and 32 chars and can only contain a-z, 0-9</Text> : undefined}
-            </View>
+                {available &&
+                available.length === 0 &&
+                !isFetching &&
+                !error ? (
+                    <Text style={globalStyles.textBody}>
+                        That username is taken...
+                    </Text>
+                ) : undefined}
+                {error ? (
+                    <Text style={globalStyles.textBodyError}>
+                        Usernames must be between 4 and 32 chars and can only
+                        contain a-z, 0-9
+                    </Text>
+                ) : undefined}
+            </ScrollView>
         </View>
     );
 };

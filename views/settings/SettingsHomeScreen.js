@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable, Button } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -11,10 +12,18 @@ import { dbLogout } from "../../utils/database";
 import colors from "../../styles/colors";
 import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
-import {removeData} from '../../utils/cache/asyncStorage';
+import { removeData } from "../../utils/cache/asyncStorage";
+import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
+import appJson from '../../app.json';
+import { generateRandomString } from "../../utils/cache/asyncStorage";
 
-
-const settings = ["Payment Settings", "Backup Keys", "Relay Network", "Muted Users", "Delete Account"];
+const settings = [
+    "Payment Settings",
+    "Backup Keys",
+    "Relay Network",
+    "Muted Users",
+    "Delete Account",
+];
 
 const SettingItem = ({ item, onNav }) => {
     return (
@@ -48,13 +57,14 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
     const loggedIn = useSelector((state) => state.auth.loggedIn);
-    console.log(loggedIn);
+    const data = useNoteMentions();
+    console.log(data);
     const logoutHandler = async () => {
         await deleteValue("privKey");
         await deleteValue("username");
         await deleteValue("mem");
         await dbLogout();
-        await removeData(['twitterModalShown', 'zapAmount']);
+        await removeData(["twitterModalShown", "zapAmount", "zapComment"]);
         dispatch(clearStore());
         dispatch(clearUserStore());
         dispatch(logOut());
@@ -62,12 +72,11 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
     const introHandler = async () => {
-        await removeData(['twitterModalShown', 'getStartedItemsShown']);
+        await AsyncStorage.removeItem('appId');
+        generateRandomString(12);
+        await removeData(["twitterModalShown", "getStartedItemsShown"]);
         dispatch(resetAll());
     };
-
-
-
 
     return (
         <View style={globalStyles.screenContainer}>
@@ -84,21 +93,21 @@ const SettingsHomeScreen = ({ navigation }) => {
                     text="Sign Out"
                     buttonConfig={{ onPress: logoutHandler }}
                 />
-
             </View>
-            <Text
-                style={[
-                    globalStyles.textBody,
-                    { color: colors.primary500, marginBottom: 16 },
-                ]}
-                onPress={() => {
-                    Linking.openURL(
-                        "https://app.getcurrent.io/terms-and-privacy"
-                    );
-                }}
-            >
-                Terms and Privacy
-            </Text>
+                <Text
+                    style={[
+                        globalStyles.textBody,
+                        { color: colors.primary500, marginBottom: 16 },
+                    ]}
+                    onPress={() => {
+                        Linking.openURL(
+                            "https://app.getcurrent.io/terms-and-privacy"
+                        );
+                    }}
+                >
+                    Terms and Privacy
+                </Text>
+                <Text onPress= {introHandler} style={globalStyles.textBodyS}>v{appJson.expo.version} ({appJson.expo.ios.buildNumber})</Text>
         </View>
     );
 };

@@ -1,9 +1,15 @@
-import { View, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import {
+    View,
+    Pressable,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import colors from "../../styles/colors";
 import globalStyles from "../../styles/globalStyles";
@@ -14,11 +20,13 @@ import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
 import { Event } from "../../utils/nostrV2/Event";
 import BackButton from "../../components/BackButton";
+import { MasonryFlashList } from "@shopify/flash-list";
+import { useNavigation } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
 const PostModal = ({ navigation, route }) => {
-    const [content, setContent] = useState();
+    const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
     const [sending, setSending] = useState(false);
     const headerHeight = useHeaderHeight();
@@ -26,13 +34,20 @@ const PostModal = ({ navigation, route }) => {
     const { pubKey, walletBearer } = useSelector((state) => state.auth);
 
     const expiresAt = route?.params?.expiresAt;
+    const gif = route?.params?.gif;
     const prefilledContent = route?.params?.prefilledContent;
-    
     useEffect(() => {
         if (prefilledContent) {
-            setContent(prefilledContent)
+            setContent(prefilledContent);
         }
-    },[])
+        if (gif) {
+            setContent(
+                (prev) => `${prev}
+
+${gif}`
+            );
+        }
+    }, [gif]);
 
     const resizeImage = async (image) => {
         const manipResult = await manipulateAsync(
@@ -58,7 +73,7 @@ const PostModal = ({ navigation, route }) => {
             }`
         );
         formData.append("type", "image");
-        const response = await fetch(`https://getcurrent.io/upload`, {
+        const response = await fetch(`${process.env.BASEURL}/upload`, {
             method: "POST",
             body: formData,
             headers: {
@@ -87,11 +102,21 @@ const PostModal = ({ navigation, route }) => {
     return (
         <KeyboardAvoidingView
             style={[globalStyles.screenContainer]}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={headerHeight}
         >
-            <View style={{width: '100%', flexDirection: 'row', marginBottom: 12}}>
-            <BackButton onPress={() => {navigation.goBack()}}/>
+            <View
+                style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    marginBottom: 12,
+                }}
+            >
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                />
             </View>
             <Input
                 inputStyle={{ flex: 3, maxHeight: "30%" }}
@@ -99,6 +124,7 @@ const PostModal = ({ navigation, route }) => {
                     onChangeText: setContent,
                     value: content,
                     multiline: true,
+                    placeholderTextColor: colors.primary500,
                     placeholder: "What's on your mind?",
                     autoFocus: true,
                 }}
@@ -132,11 +158,11 @@ const PostModal = ({ navigation, route }) => {
             ) : undefined}
             <View
                 style={{
-                    flex: 1,
                     width: "100%",
                     justifyContent: "space-between",
                     flexDirection: "row-reverse",
                     marginVertical: 12,
+                    alignItems: "center",
                 }}
             >
                 <View>
@@ -157,14 +183,16 @@ const PostModal = ({ navigation, route }) => {
                                             imageURL
                                         );
                                     }
-                                    const result = await publishEvent(postContent);
+                                    const result = await publishEvent(
+                                        postContent
+                                    );
                                     if (result.successes.length > 0) {
-                                        let newEvent = new Event(result.event)
-                                        newEvent.save()
-                                        navigation.navigate('MainTabNav')
+                                        let newEvent = new Event(result.event);
+                                        newEvent.save();
+                                        navigation.navigate("MainTabNav");
                                         return;
                                     }
-                                    alert('Something went wrong...')
+                                    alert("Something went wrong...");
                                     setSending(false);
                                 } catch (e) {
                                     console.log(e);
@@ -179,6 +207,7 @@ const PostModal = ({ navigation, route }) => {
                     style={{
                         flexDirection: "row",
                         width: "50%",
+                        marginLeft: 12,
                     }}
                 >
                     <Pressable style={{ marginRight: 24 }} onPress={pickImage}>
@@ -199,6 +228,17 @@ const PostModal = ({ navigation, route }) => {
                             size={24}
                         />
                     </Pressable> */}
+                    <Pressable
+                        onPress={() => {
+                            navigation.navigate("PostGifModal");
+                        }}
+                    >
+                        <MaterialCommunityIcons
+                            name="file-gif-box"
+                            color={colors.primary500}
+                            size={24}
+                        />
+                    </Pressable>
                 </View>
             </View>
         </KeyboardAvoidingView>
@@ -221,8 +261,147 @@ const PostExpiryModal = ({ navigation }) => {
         </View>
     );
 };
+const PostGifModal = ({ navigation }) => {
+    const [gifs, setGifs] = useState();
+    const [containerWidth, setContainerWidth] = useState();
+    const [input, setInput] = useState();
+    const [searchTerm, setSearchTerm] = useState('');
 
-const PostView = ({route}) => {
+
+    const getTrendingGifs = async () => {
+        setSearchTerm(input)
+        try {
+            if (input?.length > 0) {
+                const response = await fetch(
+                    encodeURI(
+                        `https:/api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&limit=25&q=${input}`
+                    )
+                );
+                const data = await response.json();
+                const giphyData = data.data.map((gif) => ({
+                    id: gif.id,
+                    thumbnail: gif.images.fixed_width_downsampled.url,
+                    result: gif.images.downsized_medium.url?.split("?")[0],
+                    height: Number(gif.images.fixed_width_downsampled.height),
+                    width: Number(gif.images.fixed_width_downsampled.width),
+                }));
+                setGifs(giphyData);
+            } else {
+                console.log(input);
+                const response = await fetch(
+                    `https://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=25`
+                );
+                const data = await response.json();
+                const giphyData = data.data.map((gif) => ({
+                    id: gif.id,
+                    thumbnail: gif.images.fixed_width_downsampled.url,
+                    result: gif.images.downsized_medium.url?.split("?")[0],
+                    height: Number(gif.images.fixed_width_downsampled.height),
+                    width: Number(gif.images.fixed_width_downsampled.width),
+                }));
+                setGifs(giphyData);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    useEffect(() => {
+        getTrendingGifs();
+    }, []);
+
+    const onLayoutView = (e) => {
+        setContainerWidth(e.nativeEvent.layout.width);
+    };
+
+    return (
+        <View style={[globalStyles.screenContainer]}>
+            <View
+                style={{
+                    width: "100%",
+                    flex: 1,
+                    alignItems: "center",
+                }}
+            >
+                <View style={{ width: "100%" }}>
+                    <BackButton
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    />
+                </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        width: "95%",
+                        alignItems: "center",
+                        paddingVertical: 12,
+                    }}
+                >
+                    <View style={{ flex: 1, marginRight: 12 }}>
+                        <Input textInputConfig={{ onChangeText: setInput, onSubmitEditing: getTrendingGifs}} />
+                    </View>
+                    <Ionicons
+                        name="search"
+                        size={24}
+                        color={colors.primary500}
+                        onPress={getTrendingGifs}
+                    />
+                </View>
+                <View
+                    style={{ width: "100%", flex: 1 }}
+                    onLayout={onLayoutView}
+                >
+                    {gifs ? (
+                        <MasonryFlashList
+                            numColumns={2}
+                            data={gifs}
+                            renderItem={({ item }) => (
+                                <GifContainer
+                                    item={item}
+                                    width={containerWidth}
+                                />
+                            )}
+                            ListHeaderComponent={() => (
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyBold,
+                                        { textAlign: "left" },
+                                    ]}
+                                >
+                                    {searchTerm?.length > 0 ? searchTerm : 'Trending'}
+                                </Text>
+                            )}
+                            estimatedItemSize={180}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    ) : undefined}
+                </View>
+            </View>
+        </View>
+    );
+};
+
+const GifContainer = ({ item, width }) => {
+    const navigation = useNavigation();
+    return (
+        <Pressable
+            onPress={() => {
+                navigation.navigate("PostModal", { gif: item.result });
+            }}
+        >
+            <Image
+                style={{
+                    width: width / 2,
+                    height: item.height,
+                }}
+                source={item.thumbnail}
+            />
+        </Pressable>
+    );
+};
+
+const PostView = ({ route }) => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="PostModal" component={PostModal} />
@@ -231,6 +410,7 @@ const PostView = ({route}) => {
                 component={PostExpiryModal}
                 options={{ presentation: "transparentModal" }}
             />
+            <Stack.Screen name="PostGifModal" component={PostGifModal} />
         </Stack.Navigator>
     );
 };

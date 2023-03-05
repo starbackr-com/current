@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text, View, Pressable, Image } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import HomeView from "../views/HomeView";
 import { createStackNavigator } from "@react-navigation/stack";
 import TwitterModal from "../views/welcome/TwitterModal";
@@ -20,7 +20,11 @@ import VerifyTwitterModal from "../views/welcome/VerifyTwitterModal";
 import ProfileNavigator from "./ProfileNavigator";
 import ZapListModal from "../views/home/ZapListModal";
 import PostMenuModal from "../views/post/PostMenuModal";
-import ReportPostModal from '../features/reports/views/ReportPostModal'
+import ReportPostModal from "../features/reports/views/ReportPostModal";
+import MentionsModal from "../features/mentions/views/MentionsModal";
+import CustomTabBar from "../components/CustomTabBar";
+import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
+import { Image } from "expo-image";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,21 +76,41 @@ const TabNavigator = ({ navigation }) => {
                 tabBarShowLabel: false,
                 headerShadowVisible: false,
                 headerRight: () => (
-                    <Pressable
-                        style={{
-                            flexDirection: "row",
-                            marginRight: 12,
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                        onPress={() => {
-                            navigation.navigate("Wallet");
-                        }}
+                    <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                        <Text style={globalStyles.textBody}>
-                            {data ? `${data.balance}` : "----"} <Text style={[globalStyles.textBodyS, {color: colors.primary500}]}>SATS</Text>
-                        </Text>
-                    </Pressable>
+                        <Pressable
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                            onPress={() => {
+                                navigation.navigate("Wallet");
+                            }}
+                        >
+                            <Text style={globalStyles.textBody}>
+                                {data ? `${data.balance}` : "----"}{" "}
+                                <Text
+                                    style={[
+                                        globalStyles.textBodyS,
+                                        { color: colors.primary500 },
+                                    ]}
+                                >
+                                    SATS
+                                </Text>
+                            </Text>
+                        </Pressable>
+                        <Ionicons
+                            name="notifications-outline"
+                            size={20}
+                            color={colors.primary500}
+                            style={{ marginHorizontal: 12 }}
+                            onPress={() => {
+                                navigation.navigate("MentionsModal");
+                            }}
+                        />
+                    </View>
                 ),
                 headerLeft: () => (
                     <Pressable
@@ -107,7 +131,10 @@ const TabNavigator = ({ navigation }) => {
                     >
                         {user?.picture ? (
                             <Image
-                                source={{ uri: user?.picture }}
+                                source={
+                                    user?.picture ||
+                                    require("../assets/user_placeholder.jpg")
+                                }
                                 style={{
                                     width: 26,
                                     height: 26,
@@ -124,6 +151,7 @@ const TabNavigator = ({ navigation }) => {
                     </Pressable>
                 ),
             })}
+            // tabBar={props => <CustomTabBar {...props}/>}
         >
             <Tab.Screen name="Home" component={HomeView} />
             <Tab.Screen name="Wallet" component={WalletNavigator} />
@@ -146,6 +174,7 @@ const TabNavigator = ({ navigation }) => {
 };
 
 const AuthedNavigator = () => {
+    useUpdateFollowing();
     return (
         <>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -193,6 +222,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="ReportPostModal"
                     component={ReportPostModal}
+                    options={{ presentation: "modal" }}
+                />
+                <Stack.Screen
+                    name="MentionsModal"
+                    component={MentionsModal}
                     options={{ presentation: "modal" }}
                 />
             </Stack.Navigator>

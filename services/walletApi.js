@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const walletApi = createApi({
     reducerPath: "walletApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https:/getcurrent.io/",
+        baseUrl: process.env.BASEURL,
         prepareHeaders: (headers, { getState }) => {
             const token = getState().auth.walletBearer;
             if (token) {

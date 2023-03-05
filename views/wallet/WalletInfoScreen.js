@@ -12,7 +12,6 @@ import * as Clipboard from "expo-clipboard";
 
 const WalletInfoScreen = ({ navigation }) => {
     const username = useSelector((state) => state.auth.username);
-    console.log(username)
     let lnurl;
 
     let copyAddress;

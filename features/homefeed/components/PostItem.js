@@ -1,38 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, Pressable, Alert } from "react-native";
-import colors from "../styles/colors";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { decodeLnurl } from "../utils/bitcoin/lnurl";
-import { usePostPaymentMutation } from "../services/walletApi";
 import { useState } from "react";
-import { createZapEvent } from "../utils/nostrV2/publishEvents";
+import { Image } from "expo-image";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, {
     withSequence,
     withTiming,
     withRepeat,
     useAnimatedStyle,
 } from "react-native-reanimated";
-import globalStyles from "../styles/globalStyles";
-import { Image } from "expo-image";
-import FeedImage from "./Images/FeedImage";
-import { getAge } from "../features/shared/utils/getAge";
-import { useParseContent } from "../hooks/useParseContent";
+import { useParseContent } from "../../../hooks/useParseContent";
+import colors from "../../../styles/colors";
+import globalStyles from "../../../styles/globalStyles";
+import { getAge } from "../../shared/utils/getAge";
+import { useZapNote } from "../../../hooks/useZapNote";
 
-const PostItem = ({
-    item,
-    height,
-    width,
-    user,
-    zapSuccess,
-    zapAmount,
-    zaps,
-}) => {
+const PostItem = ({ item, height, width, user, zaps }) => {
     const [isLoading, setIsLoading] = useState();
-    const [sendPayment] = usePostPaymentMutation();
     const navigation = useNavigation();
     const [hasMore, setHasMore] = useState(false);
     const [numOfLines, setNumOfLines] = useState();
-    const [textContainerHeight, setTextContaienrHeight] = useState();
     const readMoreText = "Read More...";
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: withRepeat(
@@ -47,127 +34,21 @@ const PostItem = ({
 
     const content = useParseContent(item);
 
+    const zap = useZapNote(
+        item.id,
+        user?.lud06 || user?.lud16,
+        user?.name || item?.pubkey.slice(0, 16)
+    );
+
     const { created_at, pubkey } = item;
-    const blurhash = "LEHLh[WB2yk8pyoJadR*.7kCMdnj";
-
-    const zapHandler = async () => {
-        if (!zapAmount) {
-            Alert.alert(
-                "No Zap-Amount set!",
-                `In order to Zap a post you will need to set a default Zap-Amount first`,
-                [
-                    {
-                        text: "Settings",
-                        onPress: () => {
-                            navigation.navigate("Settings", {
-                                screen: "Payments",
-                            });
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                    },
-                ]
-            );
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const dest = user.lud06 || user.lud16;
-            const name = user.name || user.pubkey.slice(0, 12);
-            const url = dest.includes("@")
-                ? `https://${dest.split("@")[1]}/.well-known/lnurlp/${
-                      dest.split("@")[0]
-                  }`
-                : decodeLnurl(dest);
-            const response = await fetch(url);
-            const { callback, minSendable, allowsNostr, nostrPubkey } =
-                await response.json();
-
-            const amount =
-                minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
-
-            Alert.alert(
-                "Zap",
-                `Do you want to send ${zapAmount} SATS to ${name}?`,
-                [
-                    {
-                        text: "Yes!",
-                        onPress: async () => {
-                            let response;
-                            if (allowsNostr && nostrPubkey) {
-                                let tags = [];
-                                tags.push(["p", nostrPubkey]);
-                                tags.push(["e", item.id]);
-                                // tags.push(["amount", amount * 1000]);
-
-                                const zapevent = await createZapEvent("", tags);
-                                response = await fetch(
-                                    `${callback}?amount=${
-                                        amount * 1000
-                                    }&nostr=${JSON.stringify(zapevent)}`
-                                );
-                            } else {
-                                console.log("inside not zap wallet");
-                                alert(
-                                    `Oops..! ${
-                                        user.name || user.pubkey
-                                    }'s wallet does not support Zaps!`
-                                );
-                                setIsLoading(false);
-                                return;
-                            }
-                            const data = await response.json();
-                            const invoice = data.pr;
-                            const result = await sendPayment({
-                                amount,
-                                invoice,
-                            });
-                            console.log(result);
-                            setIsLoading(false);
-                            if (result.data && !result.data.error) {
-                                //zapSuccess();
-                                alert(
-                                    `🤑 🎉 Zap success: ${amount} SATS to ${
-                                        user.name || user.pubkey
-                                    } `
-                                );
-                            } else {
-                                alert(
-                                    `Oops..! ${
-                                        user.name || user.pubkey
-                                    }'s wallet does not support Zaps!`
-                                );
-                                setIsLoading(false);
-                                return;
-                            }
-                            return;
-                        },
-                    },
-                    {
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            setIsLoading(false);
-                        },
-                    },
-                ]
-            );
-        } catch (e) {
-            console.log(e);
-            setIsLoading(false);
-        }
-    };
 
     const age = getAge(created_at);
 
     const textLayout = (e) => {
-        const lineHeight = e.nativeEvent.lines[0]?.height || 16;
+        const lineHeight = e.nativeEvent.lines[0]?.height || 16;
         const containerHeight = (((height / 100) * 90) / 100) * 90;
         const maxLines = containerHeight / lineHeight;
         const numOfLines = e.nativeEvent.lines.length;
-        // console.log(`numOfLines: ${numOfLines}, maxLines: ${maxLines}`);
         if (numOfLines > maxLines - 5) {
             setHasMore(true);
         } else {
@@ -180,7 +61,7 @@ const PostItem = ({
         <View
             style={{
                 height: (height / 100) * 90,
-                width: width - 32,
+                width: width - 16,
                 justifyContent: "space-between",
                 flexDirection: "row",
                 alignItems: "center",
@@ -253,12 +134,6 @@ const PostItem = ({
                             </Text>
                         </Pressable>
                     )}
-                    {item.image ? (
-                        <FeedImage
-                            size={((width - 32) / 100) * 70}
-                            images={[item.image]}
-                        />
-                    ) : undefined}
                 </View>
                 <View
                     style={{
@@ -269,7 +144,6 @@ const PostItem = ({
                     }}
                 >
                     {zaps ? (
-                        // <Pressable onPress={() => {navigation.navigate('ZapListModal', {zaps})}}>
                         <Pressable
                             style={{
                                 alignItems: "center",
@@ -346,7 +220,7 @@ const PostItem = ({
                                 cachePolicy="memory-disk"
                                 source={
                                     user.picture ||
-                                    require("../assets//user_placeholder.jpg")
+                                    require("../../../assets/user_placeholder.jpg")
                                 }
                                 contentFit="contain"
                             />
@@ -369,7 +243,7 @@ const PostItem = ({
                                 ? { backgroundColor: "#777777" }
                                 : undefined,
                         ]}
-                        onPress={zapHandler}
+                        onPress={zap}
                     >
                         <Animated.View
                             style={isLoading ? animatedStyle : { opacity: 1 }}
@@ -397,6 +271,7 @@ const PostItem = ({
                             eventId: item.id,
                             rootId: item.id,
                             type: "root",
+                            event: item
                         });
                     }}
                 >

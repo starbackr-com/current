@@ -5,15 +5,18 @@ import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import { generateMnemonic } from "../../utils/keys";
 import colors from "../../styles/colors";
+import { generateRandomString } from "../../utils/cache/asyncStorage";
 
 const WelcomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();
 
     const importHandler = async () => {
+        generateRandomString(12);
         navigation.navigate("EULA");
     };
 
     const createHandler = async () => {
+        generateRandomString(12);
         setIsLoading(true);
         const mem = await generateMnemonic();
         navigation.navigate("EULA", { mem });
