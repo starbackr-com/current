@@ -131,19 +131,19 @@ Start the server
 
 ## App Store Links
 
-App successfully went through testflight review and was approved by Apple. We are putting some finishing touches and crushing some bugs.
+App successfully went through appstore review and was approved by Apple.
 
-iOS: https://testflight.apple.com/join/mB0EwMiV
+iOS: https://apps.apple.com/us/app/current-nostr-bitcoin/id1668517032
 
-Google play: https://play.google.com/apps/testing/io.getcurrent.current
+Google play: https://play.google.com/store/apps/details?id=io.getcurrent.current
 
-Android APK: https://i.current.fyi/help/current-0.0.3-v12.apk
+Android APK: https://i.current.fyi/help/current-004.apk
 
 ## Support
 
 For support, email hello@getcurrent.io.
 
-contact us at Nostr https://nostr.band/npub1current7ntwqmh2twlrtl2llequeks0zfh36v69x4d3wmckg427safsh3w
+contact us on Nostr https://nostr.band/npub1current7ntwqmh2twlrtl2llequeks0zfh36v69x4d3wmckg427safsh3w
 
 
 ## Contributing
