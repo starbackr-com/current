@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Note, connectedRelays } from "../../../utils/nostrV2";
+import { Note, connectedRelays, urls, relays } from "../../../utils/nostrV2";
+import { pool } from "../../../utils/nostrV2/relayPool";
 
 export const useHomefeed = (unixNow) => {
     const [page, setPage] = useState(0);
@@ -43,20 +44,29 @@ export const useHomefeed = (unixNow) => {
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
-        let subs = connectedRelays.map((relay) => {
-            let sub = relay.sub([
-                {
-                    kinds: [1],
-                    authors: [...authorArray],
-                    until: until,
-                    since: since,
-                },
-            ]);
-            sub.on("event", eventCallback);
-            return sub;
-        });
+        const urls = relays.map(relay => relay.url)
+        const sub = pool.sub(urls, [{
+            kinds: [1],
+            authors: [...authorArray],
+            until: until,
+            since: since,
+        }])
+
+        sub.on('event', eventCallback)
+        // let subs = connectedRelays.map((relay) => {
+        //     let sub = relay.sub([
+        //         {
+        //             kinds: [1],
+        //             authors: [...authorArray],
+        //             until: until,
+        //             since: since,
+        //         },
+        //     ]);
+        //     sub.on("event", eventCallback);
+        //     return sub;
+        // });
         return () => {
-            subs.forEach((sub) => sub.unsub());
+            sub.unsub();
         };
     }, [page, refresh, followedPubkeys]);
 

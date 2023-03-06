@@ -8,7 +8,7 @@ import { getValue } from "../utils/secureStore";
 
 const publishKind3 = async (oldKeys, newKeys) => {
     const dedupedKeys = new Set([...oldKeys, ...newKeys]);
-    console.log(`deduped length: ${[...dedupedKeys].length}`)
+    console.log(`deduped length: ${[...dedupedKeys].length}`);
     const dedupedKeysTags = [...dedupedKeys].map((key) => ["p", key, ""]);
     try {
         const sk = await getValue("privKey");
@@ -47,10 +47,13 @@ export const useFollowUser = () => {
 
     const follow = async (pubkeysInHex) => {
         try {
-            dispatch(followMultiplePubkeys(pubkeysInHex));
+            const deduped = pubkeysInHex.filter(
+                (pubkey) => !followedPubkeys.includes(pubkey)
+            );
+            dispatch(followMultiplePubkeys(deduped));
             const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
             const timeNow = new Date().getTime() / 1000;
-            pubkeysInHex.forEach((pubkey) => {
+            deduped.forEach((pubkey) => {
                 try {
                     const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
                     const params = [pubkey, timeNow];

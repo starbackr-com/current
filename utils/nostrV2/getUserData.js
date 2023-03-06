@@ -1,35 +1,51 @@
 import { store } from "../../store/store";
 import { Event } from "./Event";
 import { connectedRelays } from "./relay";
+import { connectedRelayPool, pool } from "./relayPool";
 
 export const updateFollowedUsers = async () => {
     const pubkeys = store.getState().user.followedPubkeys;
-    return Promise.allSettled(
-        connectedRelays.map(
-            (relay) =>
-                new Promise((resolve, reject) => {
-                    let sub = relay.sub([
-                        {
-                            authors: pubkeys,
-                            kinds: [0],
-                        },
-                    ]);
-                    sub.on("event", (event) => {
-                        const newEvent = new Event(event);
-                        newEvent.save();
-                    });
-                    sub.on("eose", () => {
-                        sub.unsub();
-                        clearTimeout(timer);
-                        return resolve();
-                    });
-                    let timer = setTimeout(() => {
-                        console.log(`${relay.url} timed out after 5 sec...`);
-                        return reject();
-                    }, 5000);
-                })
-        )
-    );
+    const urls = connectedRelayPool.map(relay => relay.url)
+    await new Promise((resolve) => {
+        const sub = pool.sub(urls, [{
+            authors: pubkeys,
+            kinds: [0],
+        }])
+        sub.on('event', (event) => {
+            const newEvent = new Event(event)
+            newEvent.save();
+        })
+        setTimeout(() => {
+            resolve();
+        }, 5000)
+    })
+    // return Promise.allSettled(
+    //     connectedRelays.map(
+    //         (relay) =>
+    //             new Promise((resolve, reject) => {
+    //                 let sub = relay.sub([
+    //                     {
+    //                         authors: pubkeys,
+    //                         kinds: [0],
+    //                     },
+    //                 ]);
+    //                 sub.on("event", (event) => {
+    //                     const newEvent = new Event(event);
+    //                     newEvent.save();
+    //                 });
+    //                 sub.on("eose", () => {
+    //                     sub.unsub();
+    //                     clearTimeout(timer);
+    //                     return resolve();
+    //                 });
+    //                 let timer = setTimeout(() => {
+    //                     console.log(`${relay.url} timed out after 5 sec...`);
+    //                     reject();
+    //                     return
+    //                 }, 10000);
+    //             })
+    //     )
+    // );
 };
 
 export const getUserData = async (pubkeysInHex) => {

@@ -7,12 +7,13 @@ export const pool = new SimplePool()
 export const initRelayPool = async () => {
     const response = await fetch(process.env.BASEURL + "/relays");
     const data = await response.json();
-    const urls = data.result;
+    const urlObj = data.result;
+    const urls = urlObj.map(obj => obj.relay)
     connectedRelayPool = await Promise.allSettled(
         urls.map((url) => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    const relay = await pool.ensureRelay(url.relay)
+                    const relay = await pool.ensureRelay(url)
                     resolve(relay)
                 } catch (e) {
                     console.log(e);

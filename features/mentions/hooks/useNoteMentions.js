@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { connectedRelays, Note, urls } from "../../../utils/nostrV2";
+import { connectedRelays, Note, relays, urls } from "../../../utils/nostrV2";
 import { connectedRelayPool, pool } from "../../../utils/nostrV2/relayPool";
 
 export const useNoteMentions = () => {
@@ -10,29 +10,35 @@ export const useNoteMentions = () => {
 
     const receivedEventIds = [];
 
-    useEffect(() => {
-        let subs = connectedRelays.map((relay) => {
-            let sub = relay.sub([
-                {
-                    kinds: [1],
-                    "#p": [pk],
-                },
-            ]);
-            sub.on("event", (event) => {
-                if (mutedPubkeys.includes(event.pubkey)) {
-                    return;
-                } else {
-                    if (!receivedEventIds.includes(event.id)) {
-                        receivedEventIds.push(event.id)
-                        const newEvent = new Note(event).save();
-                        setData((prev) => [...prev, newEvent]);
-                    }
+    const eventCallback = useCallback(
+        (event) => {
+            if (mutedPubkeys.includes(event.pubkey)) {
+                return;
+            } else {
+                if (!receivedEventIds.includes(event.id)) {
+                    receivedEventIds.push(event.id);
+                    const newEvent = new Note(event).save();
+                    setData((prev) => [...prev, newEvent]);
                 }
-            });
-            return sub;
+            }
+        },
+        [mutedPubkeys]
+    );
+
+    useEffect(() => {
+        const urls = relays.map((relay) => relay.url);
+        const sub = pool.sub(urls, [
+            {
+                kinds: [1],
+                "#p": [pk],
+            },
+        ]);
+        sub.on("event", eventCallback);
+        sub.on("eose", () => {
+            console.log("eose!");
         });
         return () => {
-            subs.forEach((sub) => sub.unsub());
+            sub.unsub();
         };
     }, []);
 
