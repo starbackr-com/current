@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import colors from "../styles/colors";
@@ -10,14 +10,11 @@ import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
-import { followUser } from "../utils/users";
 import ImagePost from "../components/Posts/ImagePost";
-import { useSubscribePosts } from "../hooks/useSubscribePosts";
 import TextPost from "../components/Posts/TextPost";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
-import { useUnfollowUser } from "../hooks/useUnfollowUser";
-import { useFollowUser } from "../hooks/useFollowUser";
+import { useFollowUser, useSubscribePosts, useUnfollowUser } from "../hooks";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
@@ -178,10 +175,6 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const [data, page, setPage] = useSubscribePosts([pubkey], now);
 
-    const array = Object.keys(data)
-        .map((key) => data[key])
-        .sort((a, b) => b.created_at - a.created_at);
-
     const user = users[pubkey];
 
     const onLayoutViewWidth = (e) => {
@@ -242,7 +235,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 onLayout={onLayoutViewWidth}
             >
                 <FlashList
-                    data={array}
+                    data={data}
                     renderItem={renderItem}
                     ListHeaderComponent={
                         <ProfileHeader

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Note, relays, pool } from "../../../utils/nostrV2";
+import { Note, pool, connectedRelayPool } from "../../../utils/nostrV2";
 
 export const useHomefeed = (unixNow) => {
     const [page, setPage] = useState(0);
@@ -42,7 +42,7 @@ export const useHomefeed = (unixNow) => {
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
-        const urls = relays.map((relay) => relay.url);
+        const urls = connectedRelayPool.map((relay) => relay.url);
         const sub = pool.sub(urls, [
             {
                 kinds: [1],
