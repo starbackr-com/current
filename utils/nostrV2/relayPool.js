@@ -1,23 +1,25 @@
-import {SimplePool} from 'nostr-tools'
+import { SimplePool } from "nostr-tools";
 
 export let connectedRelayPool;
 
-export const pool = new SimplePool()
+export let urls;
+
+export const pool = new SimplePool();
 
 export const initRelayPool = async () => {
     const response = await fetch(process.env.BASEURL + "/relays");
     const data = await response.json();
     const urlObj = data.result;
-    const urls = urlObj.map(obj => obj.relay)
+    urls = urlObj.map((obj) => obj.relay);
     connectedRelayPool = await Promise.allSettled(
         urls.map((url) => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    const relay = await pool.ensureRelay(url)
-                    resolve(relay)
+                    const relay = await pool.ensureRelay(url);
+                    resolve(relay);
                 } catch (e) {
                     console.log(e);
-                    reject()
+                    reject();
                 }
             });
         })

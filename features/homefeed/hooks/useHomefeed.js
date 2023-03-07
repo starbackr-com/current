@@ -1,30 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Note, connectedRelays, urls, relays } from "../../../utils/nostrV2";
-import { pool } from "../../../utils/nostrV2/relayPool";
+import { Note, relays, pool } from "../../../utils/nostrV2";
 
 export const useHomefeed = (unixNow) => {
     const [page, setPage] = useState(0);
     const [data, setData] = useState([]);
     const [refresh, setRefresh] = useState();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-    const ownPK = useSelector(state => state.auth.pubKey)
+    const ownPK = useSelector((state) => state.auth.pubKey);
 
-    const receivedEventIds = [];
+    const receivedEventIds = new Set();
 
-    // Setup pagination Function
     const setNewPage = (pageValue) => {
         setPage(pageValue);
     };
 
     const triggerRefresh = () => {
-        setPage(0)
+        setPage(0);
         setRefresh((prev) => !prev);
     };
 
     const eventCallback = useCallback((event) => {
-        if (!receivedEventIds.includes(event.id)) {
-            receivedEventIds.push(event.id);
+        if (!receivedEventIds.has(event.id)) {
+            receivedEventIds.add(event.id);
             const newEvent = new Note(event);
             if (newEvent.checkRoot()) {
                 const parsedEvent = newEvent.save();
@@ -38,33 +36,23 @@ export const useHomefeed = (unixNow) => {
     }, []);
 
     useEffect(() => {
-        const authorArray = new Set([...followedPubkeys, ownPK])
+        const authorArray = new Set([...followedPubkeys, ownPK]);
         const hoursInSeconds = 6 * 60 * 60;
         const until = Math.floor(unixNow - page * hoursInSeconds);
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds
         );
-        const urls = relays.map(relay => relay.url)
-        const sub = pool.sub(urls, [{
-            kinds: [1],
-            authors: [...authorArray],
-            until: until,
-            since: since,
-        }])
+        const urls = relays.map((relay) => relay.url);
+        const sub = pool.sub(urls, [
+            {
+                kinds: [1],
+                authors: [...authorArray],
+                until: until,
+                since: since,
+            },
+        ]);
 
-        sub.on('event', eventCallback)
-        // let subs = connectedRelays.map((relay) => {
-        //     let sub = relay.sub([
-        //         {
-        //             kinds: [1],
-        //             authors: [...authorArray],
-        //             until: until,
-        //             since: since,
-        //         },
-        //     ]);
-        //     sub.on("event", eventCallback);
-        //     return sub;
-        // });
+        sub.on("event", eventCallback);
         return () => {
             sub.unsub();
         };

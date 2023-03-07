@@ -13,7 +13,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { hydrateFromDatabase, init } from "./utils/database";
 import { getPublicKey } from "nostr-tools";
-import { initRelays } from "./utils/nostrV2";
 import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
 import { hydrateStore } from "./utils/cache/asyncStorage";
 import { initRelayPool } from "./utils/nostrV2/relayPool";
@@ -28,7 +27,6 @@ const Root = () => {
     useEffect(() => {
         const prepare = async () => {
             try {
-                await initRelays();
                 await initRelayPool();
                 await init();
                 await hydrateFromDatabase();

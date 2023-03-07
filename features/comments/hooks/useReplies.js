@@ -1,11 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Note, relays } from "../../../utils/nostrV2";
-import { pool } from "../../../utils/nostrV2/relayPool";
+import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
 
 export const useReplies = (eventId, now) => {
     const [replies, setReplies] = useState([]);
-    const urls = relays.map((relay) => relay.url);
+    const urls = connectedRelayPool.map((relay) => relay.url);
+    const mutedPubkeys = useSelector((state) => state.user.mutedPubkeys);
+
+    const eventCallback = useCallback(
+        (event) => {
+            if (mutedPubkeys.includes(event.pubkey)) {
+                return;
+            } else {
+                const newEvent = new Note(event).save();
+                setReplies((prev) => [...prev, newEvent]);
+            }
+        },
+        [mutedPubkeys]
+    );
+
     useEffect(() => {
         const sub = pool.sub(urls, [
             {
@@ -14,13 +27,7 @@ export const useReplies = (eventId, now) => {
             },
         ]);
 
-        sub.on("event", (event) => {
-            const note = new Note(event);
-            const parsedEvent = note.save();
-            setReplies((prev) => [...prev, parsedEvent].sort(
-                (a, b) => b.created_at - a.created_at
-            ));
-        });
+        sub.on("event", eventCallback);
     }, []);
     return replies;
 };

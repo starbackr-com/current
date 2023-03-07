@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { connectedRelays, Note, relays, urls } from "../../../utils/nostrV2";
-import { connectedRelayPool, pool } from "../../../utils/nostrV2/relayPool";
+import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
 
 export const useNoteMentions = () => {
     const [data, setData] = useState([]);
@@ -26,7 +25,7 @@ export const useNoteMentions = () => {
     );
 
     useEffect(() => {
-        const urls = relays.map((relay) => relay.url);
+        const urls = connectedRelayPool.map((relay) => relay.url);
         const sub = pool.sub(urls, [
             {
                 kinds: [1],
@@ -34,9 +33,6 @@ export const useNoteMentions = () => {
             },
         ]);
         sub.on("event", eventCallback);
-        sub.on("eose", () => {
-            console.log("eose!");
-        });
         return () => {
             sub.unsub();
         };
