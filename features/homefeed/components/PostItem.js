@@ -14,6 +14,7 @@ import colors from "../../../styles/colors";
 import globalStyles from "../../../styles/globalStyles";
 import { getAge } from "../../shared/utils/getAge";
 import { useZapNote } from "../../../hooks/useZapNote";
+import UserBanner from "./UserBanner";
 
 const PostItem = ({ item, height, width, user, zaps }) => {
     const [isLoading, setIsLoading] = useState();
@@ -81,14 +82,11 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                 ]}
             >
                 <View>
-                    <Text
-                        style={[
-                            globalStyles.textBodyBold,
-                            { textAlign: "left" },
-                        ]}
-                    >
-                        {user?.name || pubkey}
-                    </Text>
+                    <UserBanner
+                        event={item}
+                        user={user}
+                        width={((width - 16) / 100) * 85}
+                    />
                     <Text
                         onTextLayout={textLayout}
                         style={[
@@ -190,43 +188,6 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     width: "10%",
                 }}
             >
-                <View
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        marginBottom: 16,
-                    }}
-                >
-                    {user ? (
-                        <Pressable
-                            onPress={() => {
-                                navigation.navigate("Profile", {
-                                    screen: "ProfileScreen",
-                                    params: { pubkey: user.pubkey },
-                                });
-                            }}
-                        >
-                            <Image
-                                style={{
-                                    width: (width / 100) * 8,
-                                    height: (width / 100) * 8,
-                                    borderRadius: (width / 100) * 4,
-                                    backgroundColor: colors.primary500,
-                                    borderColor: colors.primary500,
-                                    borderWidth: 2,
-                                }}
-                                cachePolicy="memory-disk"
-                                source={
-                                    user.picture ||
-                                    require("../../../assets/user_placeholder.jpg")
-                                }
-                                contentFit="contain"
-                            />
-                        </Pressable>
-                    ) : undefined}
-                </View>
                 {user?.lud06 || user?.lud16 ? (
                     <Pressable
                         style={({ pressed }) => [
@@ -271,7 +232,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                             eventId: item.id,
                             rootId: item.id,
                             type: "root",
-                            event: item
+                            event: item,
                         });
                     }}
                 >

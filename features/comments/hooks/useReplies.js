@@ -12,7 +12,7 @@ export const useReplies = (eventId, now) => {
             if (mutedPubkeys.includes(event.pubkey)) {
                 return;
             } else {
-                const newEvent = new Note(event).save();
+                const newEvent = new Note(event).saveReply();
                 setReplies((prev) => [...prev, newEvent]);
             }
         },

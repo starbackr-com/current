@@ -1,9 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
-import { connectedRelays } from "./relay";
 
-import { connectedRelayPool, pool } from "./";
+import { connectedRelayPool, pool } from "./relayPool";
 
 export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
     let privKey = await getValue("privKey");
@@ -74,12 +73,9 @@ export const publishEvent = async (content, tags) => {
             console.log("error in setting up hashtags", e);
         }
 
-        // Privacy Implications!!
-
         try {
             if (event.content.includes("Current")) {
                 const value = await AsyncStorage.getItem("appId");
-                console.log(value);
                 event.tags.push(["id", value]);
             } else {
                 console.log("no current");
@@ -94,7 +90,8 @@ export const publishEvent = async (content, tags) => {
         const pub = pool.publish(urls, event);
         await new Promise((resolve) => {
             let successes = 0;
-            const timer = setTimeout(resolve, 3400);
+            const timer = setTimeout(resolve, 2500);
+            pub.on('')
             pub.on("ok", () => {
                 successes++;
                 if (successes === connectedRelayPool.length) {
@@ -109,60 +106,13 @@ export const publishEvent = async (content, tags) => {
     }
 };
 
-export const publishReply = async (content, parentEvent) => {
-    try {
-        const sk = await getValue("privKey");
-        if (!sk) {
-            throw new Error("No privKey in secure storage found");
-        }
-        let pk = getPublicKey(sk);
-        let event = {
-            kind: 1,
-            pubkey: pk,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [["e", parentEvent]],
-            content,
-        };
-        event.id = getEventHash(event);
-        event.sig = signEvent(event, sk);
-        const successes = await Promise.allSettled(
-            connectedRelays.map((relay) => {
-                return new Promise((resolve, reject) => {
-                    let pub = relay.publish(event);
-                    const timer = setTimeout(() => {
-                        reject();
-                    }, 10000);
-                    pub.on("ok", () => {
-                        clearTimeout(timer);
-                        resolve(relay.url);
-                        return;
-                    });
-                    pub.on("failed", (error) => {
-                        console.log(error);
-                        clearTimeout(timer);
-                        reject();
-                        return;
-                    });
-                });
-            })
-        ).then((result) =>
-            result
-                .filter((promise) => promise.status === "fulfilled")
-                .map((promise) => promise.value)
-        );
-        return { successes, event };
-    } catch (error) {
-        console.log(error);
-    }
-};
-
 export const createZapEvent = async (content, tags) => {
     try {
         const sk = await getValue("privKey");
         let pk = getPublicKey(sk);
 
         let addrelays = [];
-        connectedRelays.map((relay) => {
+        connectedRelayPool.map((relay) => {
             addrelays.push(relay.url);
             console.log(relay.url);
         });
@@ -217,7 +167,7 @@ export const publishDeleteAccount = async () => {
     event.id = getEventHash(event);
     event.sig = signEvent(event, privKey);
     const successes = await Promise.allSettled(
-        connectedRelays.map((relay) => {
+        connectedRelayPool.map((relay) => {
             return new Promise((resolve, reject) => {
                 let pub = relay.publish(event);
                 pub.on("ok", () => {
