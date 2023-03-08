@@ -110,6 +110,17 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                                 name={verified ? "checkbox" : "close-circle"}
                             />{" "}
                         </Text>
+                        <Text
+                            style={[
+                                globalStyles.textBody,
+                                { color: colors.primary500, textAlign: "left" },
+                            ]}
+                        >
+                            {user?.lud16}{" "}
+                            <Ionicons
+                                name={user?.lud16 ? "flash" : ""}
+                            />{" "}
+                        </Text>
                     </View>
                 </View>
                 <View>

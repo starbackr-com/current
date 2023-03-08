@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import globalStyles from "../../../styles/globalStyles";
 import colors from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const UserBanner = ({ user, event, width }) => {
     const imageDimensions = (width / 100) * 12;
@@ -42,8 +43,11 @@ const UserBanner = ({ user, event, width }) => {
                 >
                     {user?.name || event.pubkey.slice(0, 16)}
                 </Text>
-                <Text style={[globalStyles.textBodyS, { textAlign: "left" }]}>
-                    Badges will go here
+                <Text style={[globalStyles.textBodyS, { textAlign: "left", color: colors.primary500 }]}>
+                {user?.nip05}{" "}
+                <Ionicons
+                    name={user?.nip05 ? "checkbox" : "close-circle"}
+                />{" "}
                 </Text>
             </View>
         </Pressable>
