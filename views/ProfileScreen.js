@@ -12,7 +12,6 @@ import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import ImagePost from "../components/Posts/ImagePost";
 import TextPost from "../components/Posts/TextPost";
-import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { useFollowUser, useSubscribePosts, useUnfollowUser } from "../hooks";
 
@@ -190,7 +189,7 @@ const ProfileScreen = ({ route, navigation }) => {
     };
 
     return (
-        <SafeAreaView
+        <View
             style={[
                 globalStyles.screenContainer,
                 { paddingTop: 0, paddingHorizontal: 0 },
@@ -272,7 +271,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 />
                 <View style={{ height: 36 }}></View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

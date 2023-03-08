@@ -20,7 +20,6 @@ const HomeFeed = ({ width, height }) => {
 
     const now = new Date() / 1000;
     const [data, page, setNewPage, triggerRefresh] = useHomefeed(now);
-    const sorted = data.sort((a, b) => b.created_at - a.created_at);
 
     const navigation = useNavigation();
 
@@ -77,10 +76,10 @@ const HomeFeed = ({ width, height }) => {
     );
     return (
         <>
-            {sorted.length > 3 && height ? (
+            {data.length > 3 && height ? (
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
-                        data={sorted}
+                        data={data}
                         renderItem={renderPost}
                         snapToAlignment="start"
                         decelerationRate="fast"

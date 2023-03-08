@@ -33,7 +33,7 @@ export const useSubscribePosts = (pubkeysinHex, unixNow) => {
 
     useEffect(() => {
         // Subscribe to latest 6 posts on mount, get another 6-h window when 'page' changes
-        let hoursInSeconds = 6 * 60 * 60;
+        let hoursInSeconds = 24 * 60 * 60;
         let until = Math.floor(unixNow - page * hoursInSeconds);
         let since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds

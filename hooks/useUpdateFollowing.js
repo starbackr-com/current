@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { connectedRelays } from "../utils/nostrV2";
+import { pool } from "../utils/nostrV2";
 import { useFollowUser } from "./useFollowUser";
 
 export const useUpdateFollowing = () => {
@@ -8,19 +8,18 @@ export const useUpdateFollowing = () => {
     const { follow } = useFollowUser();
 
     const getFollowingList = async () => {
-        const replies = {};
         const response = await fetch(process.env.BASEURL + "/relays");
         const data = await response.json();
 
-        const currentRelay = connectedRelays.filter(
-            (relay) => relay.url === data.result[0].relay
+        const sub = pool.sub(
+            [data.result[0].relay],
+            [
+                {
+                    kinds: [3],
+                    authors: [pk],
+                },
+            ]
         );
-        let sub = currentRelay[0].sub([
-            {
-                kinds: [3],
-                authors: [pk],
-            },
-        ]);
         const tags = await new Promise((resolve) => {
             sub.on("event", (event) => {
                 resolve(event.tags);

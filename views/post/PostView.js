@@ -18,7 +18,6 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
-import { Event } from "../../utils/nostrV2/Event";
 import BackButton from "../../components/BackButton";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
@@ -26,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 const Stack = createStackNavigator();
 
 const PostModal = ({ navigation, route }) => {
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState("");
     const [image, setImage] = useState(null);
     const [sending, setSending] = useState(false);
     const headerHeight = useHeaderHeight();
@@ -96,6 +95,22 @@ ${gif}`
 
         if (!result.canceled) {
             resizeImage(result.assets[0]);
+        }
+    };
+
+    const submitHandler = async () => {
+        setSending(true);
+        let postContent = content;
+        try {
+            if (image) {
+                let imageURL = await uploadImage(pubKey, walletBearer);
+                postContent = content.concat("\n", imageURL);
+            }
+            await publishEvent(postContent);
+            navigation.navigate("MainTabNav");
+            return;
+        } catch (e) {
+            console.log(e);
         }
     };
 
@@ -169,35 +184,7 @@ ${gif}`
                     <CustomButton
                         text="Send"
                         buttonConfig={{
-                            onPress: async () => {
-                                setSending(true);
-                                let postContent = content;
-                                try {
-                                    if (image) {
-                                        let imageURL = await uploadImage(
-                                            pubKey,
-                                            walletBearer
-                                        );
-                                        postContent = content.concat(
-                                            "\n",
-                                            imageURL
-                                        );
-                                    }
-                                    const result = await publishEvent(
-                                        postContent
-                                    );
-                                    if (result.successes.length > 0) {
-                                        let newEvent = new Event(result.event);
-                                        newEvent.save();
-                                        navigation.navigate("MainTabNav");
-                                        return;
-                                    }
-                                    alert("Something went wrong...");
-                                    setSending(false);
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                            },
+                            onPress: submitHandler,
                         }}
                         disabled={!content || content?.length < 1}
                         loading={sending}
@@ -265,11 +252,10 @@ const PostGifModal = ({ navigation }) => {
     const [gifs, setGifs] = useState();
     const [containerWidth, setContainerWidth] = useState();
     const [input, setInput] = useState();
-    const [searchTerm, setSearchTerm] = useState('');
-
+    const [searchTerm, setSearchTerm] = useState("");
 
     const getTrendingGifs = async () => {
-        setSearchTerm(input)
+        setSearchTerm(input);
         try {
             if (input?.length > 0) {
                 const response = await fetch(
@@ -339,7 +325,12 @@ const PostGifModal = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flex: 1, marginRight: 12 }}>
-                        <Input textInputConfig={{ onChangeText: setInput, onSubmitEditing: getTrendingGifs}} />
+                        <Input
+                            textInputConfig={{
+                                onChangeText: setInput,
+                                onSubmitEditing: getTrendingGifs,
+                            }}
+                        />
                     </View>
                     <Ionicons
                         name="search"
@@ -369,7 +360,9 @@ const PostGifModal = ({ navigation }) => {
                                         { textAlign: "left" },
                                     ]}
                                 >
-                                    {searchTerm?.length > 0 ? searchTerm : 'Trending'}
+                                    {searchTerm?.length > 0
+                                        ? searchTerm
+                                        : "Trending"}
                                 </Text>
                             )}
                             estimatedItemSize={180}
