@@ -20,7 +20,8 @@ const UserBanner = ({ user, event, width }) => {
             onPress={() => {
                 navigation.navigate("Profile", {
                     screen: "ProfileScreen",
-                    params: { pubkey: user.pubkey },
+                    params: { pubkey: event.pubkey, name: user?.name || event.pubkey.slice(0,16) },
+
                 });
             }}
         >
@@ -43,11 +44,16 @@ const UserBanner = ({ user, event, width }) => {
                 >
                     {user?.name || event.pubkey.slice(0, 16)}
                 </Text>
-                <Text style={[globalStyles.textBodyS, { textAlign: "left", color: colors.primary500 }]}>
-                {user?.nip05}{" "}
-                <Ionicons
-                    name={user?.nip05 ? "checkbox" : "close-circle"}
-                />{" "}
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { textAlign: "left", color: colors.primary500 },
+                    ]}
+                >
+                    {user?.nip05}
+                    <Ionicons
+                        name={user?.nip05 ? "checkbox" : "close-circle"}
+                    />
                 </Text>
             </View>
         </Pressable>

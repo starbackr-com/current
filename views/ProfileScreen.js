@@ -52,7 +52,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
         }, 1000);
     };
 
-    const npub = encodePubkey(pubkey);
+    const npub = encodePubkey(pubkey) || 'npub100000000000000000';
     return (
         <View style={{ width: "100%" }}>
             <View style={{ width: "100%", height: 20 }}></View>
@@ -79,14 +79,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                         }
                     />
                     <View style={{ padding: 12 }}>
-                        <Text
-                            style={[
-                                globalStyles.textBodyBold,
-                                { textAlign: "left" },
-                            ]}
-                        >
-                            {user?.name || pubkey}
-                        </Text>
                         {pubkey === loggedInPubkey ? (
                             <Text
                                 style={[
@@ -206,37 +198,6 @@ const ProfileScreen = ({ route, navigation }) => {
                 { paddingTop: 0, paddingHorizontal: 0 },
             ]}
         >
-            <View
-                style={{
-                    flexDirection: "row",
-                    top: 16,
-                    width: "100%",
-                    height: 40,
-                    borderRadius: 20,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    alignSelf: "center",
-                    marginBottom: 12,
-                }}
-            >
-                <BackButton
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                />
-                {pubkey === loggedInPubkey ? (
-                    <CustomButton
-                        text="Edit"
-                        buttonConfig={{
-                            onPress: () => {
-                                navigation.navigate("EditProfileScreen");
-                            },
-                        }}
-                    />
-                ) : (
-                    <View />
-                )}
-            </View>
             <View
                 style={{
                     flex: 1,
