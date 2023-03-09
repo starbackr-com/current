@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
-import { relays } from "../../utils/nostrV2";
+import { connectedRelayPool, relays } from "../../utils/nostrV2";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomButton from "../../components/CustomButton";
 
@@ -39,12 +39,11 @@ const RelayItem = ({ relay }) => {
 };
 
 const SettingsNetworkScreen = ({navigation}) => {
-    console.log(relays);
     return (
         <View style={globalStyles.screenContainer}>
             <Text style={globalStyles.textBodyBold}>Relay Network</Text>
             <View style={{width: '80%'}}>
-                {relays.map((relay) => (
+                {connectedRelayPool.map((relay) => (
                     <RelayItem relay={relay} key={relay.url} />
                 ))}
             </View>

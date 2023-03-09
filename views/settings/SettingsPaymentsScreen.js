@@ -11,11 +11,12 @@ import { setZapComment } from "../../features/userSlice";
 import { setZapNoconf } from "../../features/userSlice";
 import { storeData } from "../../utils/cache/asyncStorage";
 import { useHeaderHeight } from "@react-navigation/elements";
-import Checkbox from 'expo-checkbox';
-
+import Checkbox from "expo-checkbox";
 
 const SettingsPaymentsScreen = ({ navigation }) => {
-    const { zapAmount, zapComment, zapNoconf } = useSelector((state) => state.user);
+    const { zapAmount, zapComment, zapNoconf } = useSelector(
+        (state) => state.user
+    );
     const [zapValueInput, setZapValueInput] = useState();
     const [zapValueComment, setZapValueComment] = useState();
     const [iszapNoconfChecked, setzapNoconfChecked] = useState(false);
@@ -28,19 +29,25 @@ const SettingsPaymentsScreen = ({ navigation }) => {
     const zapCommentInput = useRef();
     const zapNoconfInput = useRef();
 
-    useEffect(() => {
-        setZapValueInput(zapAmount);
-        setZapValueComment(zapComment);
-        setzapNoconfChecked(zapNoconf)
-    }, [zapAmount],[zapComment], [zapNoconf]);
+    useEffect(
+        () => {
+            setZapValueInput(zapAmount);
+            setZapValueComment(zapComment);
+            setzapNoconfChecked(zapNoconf);
+        },
+        [zapAmount],
+        [zapComment],
+        [zapNoconf]
+    );
 
     const submitHandler = async () => {
         try {
             await storeData("zapAmount", zapValueInput);
             let zapComment = zapValueComment;
-            if (zapValueComment === null || zapValueComment === '') zapComment = '⚡️ by ' + username;
-            await storeData("zapComment", zapComment );
-            await storeData("zapNoconf", iszapNoconfChecked.toString() );
+            if (zapValueComment === null || zapValueComment === "")
+                zapComment = "⚡️ by " + username;
+            await storeData("zapComment", zapComment);
+            await storeData("zapNoconf", iszapNoconfChecked.toString());
             dispatch(setZapAmount(zapValueInput));
             dispatch(setZapComment(zapComment));
             dispatch(setZapNoconf(iszapNoconfChecked));
@@ -51,41 +58,71 @@ const SettingsPaymentsScreen = ({ navigation }) => {
         }
     };
     return (
-        <KeyboardAvoidingView style={[globalStyles.screenContainer]} keyboardVerticalOffset={headerHeight} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <KeyboardAvoidingView
+            style={[globalStyles.screenContainer]}
+            keyboardVerticalOffset={headerHeight}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
             <Text style={globalStyles.textH2}>Payment Settings</Text>
-            <View style={{ flex: 2, width: '80%'}}>
+            <View style={{ flex: 2, width: "80%" }}>
                 <Input
                     textInputConfig={{
                         value: zapValueInput,
                         onChangeText: setZapValueInput,
-                        inputMode: 'numeric',
+                        inputMode: "numeric",
                         ref: zapAmountInput,
                         marginTop: 20,
-                        marginBottom: 20
+                        marginBottom: 20,
                     }}
                     label="Default Zap Value"
                 />
                 <Input
-                    style={{marginTop: 32}}
+                    style={{ marginTop: 32 }}
                     textInputConfig={{
                         placeholderTextColor: colors.primary500,
-                        placeholder: '⚡️ by ' + username,
+                        placeholder: "⚡️ by " + username,
                         value: zapValueComment,
                         multiline: true,
                         onChangeText: setZapValueComment,
                         ref: zapCommentInput,
-                        marginTop: 20
+                        marginTop: 20,
                     }}
                     label="Zap Comment"
                 />
-                <View style={globalStyles.screenContainer, { width: '100%', justifyContent: "space-evenly", flexDirection: 'row', marginBottom: 32}}>
-                        <Checkbox style={globalStyles.checkbox, {marginTop: 32}} value={iszapNoconfChecked} onValueChange={setzapNoconfChecked} />
-                        <Text style={globalStyles.textH2, {color: colors.primary500, marginTop: 32}}>No Zap Confirmation?</Text>
+                <View
+                    style={
+                        (globalStyles.screenContainer,
+                        {
+                            width: "100%",
+                            justifyContent: "space-evenly",
+                            flexDirection: "row",
+                            marginBottom: 32,
+                        })
+                    }
+                >
+                    <Checkbox
+                        style={(globalStyles.checkbox, { marginTop: 32 })}
+                        value={iszapNoconfChecked}
+                        onValueChange={setzapNoconfChecked}
+                    />
+                    <Text
+                        style={
+                            (globalStyles.textH2,
+                            { color: colors.primary500, marginTop: 32 })
+                        }
+                    >
+                        No Zap Confirmation?
+                    </Text>
                 </View>
-
-
             </View>
-            <View style={{ width: '100%', justifyContent: "space-evenly", flexDirection: 'row', marginBottom: 32}}>
+            <View
+                style={{
+                    width: "100%",
+                    justifyContent: "space-evenly",
+                    flexDirection: "row",
+                    marginBottom: 32,
+                }}
+            >
                 <CustomButton
                     text="Save"
                     buttonConfig={{ onPress: submitHandler }}
@@ -95,7 +132,7 @@ const SettingsPaymentsScreen = ({ navigation }) => {
                     secondary
                     buttonConfig={{
                         onPress: () => {
-                            navigation.navigate('SettingsHomeScreen');
+                            navigation.navigate("SettingsHomeScreen");
                         },
                     }}
                 />
