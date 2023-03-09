@@ -4,7 +4,7 @@ export let connectedRelayPool;
 
 export let urls;
 
-export const pool = new SimplePool();
+export const pool = new SimplePool({eoseSubTimeout: 5000});
 
 export const initRelayPool = async () => {
     const response = await fetch(process.env.BASEURL + "/relays");

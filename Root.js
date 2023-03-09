@@ -24,6 +24,17 @@ const Root = () => {
     const dispatch = useDispatch();
     const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
 
+    const refreshToken = async () => {
+        if (isLoggedIn && Date.now() > walletExpires) {
+            const sk = await getValue("privKey");
+            const pk = getPublicKey(sk);
+            const {
+                data: { access_token, username },
+            } = await loginToWallet(sk);
+            dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
+        }
+    };
+
     useEffect(() => {
         const prepare = async () => {
             try {
@@ -38,7 +49,6 @@ const Root = () => {
                     "Satoshi-Symbol": require("./assets/Satoshi-Symbol.ttf"),
                 });
                 if (privKey) {
-                    console.log("Initialising from storage...");
                     const {
                         data: { access_token, username },
                     } = await loginToWallet(privKey);
@@ -49,7 +59,6 @@ const Root = () => {
             } catch (e) {
                 console.warn(e);
             } finally {
-                console.log("Done!");
                 setAppIsReady(true);
             }
         };
@@ -66,18 +75,7 @@ const Root = () => {
         return null;
     }
     return (
-        <NavigationContainer
-            onStateChange={async () => {
-                if (isLoggedIn && new Date() > walletExpires) {
-                    const privKey = await getValue("privKey");
-                    const username = await getValue("username");
-                    const { access_token } = loginToWallet(privKey, username);
-                    dispatch(
-                        logIn({ bearer: access_token, username: username })
-                    );
-                }
-            }}
-        >
+        <NavigationContainer onStateChange={refreshToken}>
             <StatusBar style="light" />
             <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
                 {isLoggedIn == false ? (
