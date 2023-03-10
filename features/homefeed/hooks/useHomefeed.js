@@ -9,6 +9,16 @@ export const useHomefeed = (unixNow) => {
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const ownPK = useSelector((state) => state.auth.pubKey);
 
+    let hours;
+
+    if (followedPubkeys < 100) {
+        hours = 6;
+    } else if (followedPubkeys >= 100 && followedPubkeys < 300) {
+        hours = 3;
+    } else {
+        hours = 1;
+    }
+
     const receivedEventIds = new Set();
 
     const setNewPage = (pageValue) => {
@@ -37,7 +47,8 @@ export const useHomefeed = (unixNow) => {
 
     useEffect(() => {
         const authorArray = new Set([...followedPubkeys, ownPK]);
-        const hoursInSeconds = 6 * 60 * 60;
+
+        const hoursInSeconds = hours * 60 * 60;
         const until = Math.floor(unixNow - page * hoursInSeconds);
         const since = Math.floor(
             unixNow - hoursInSeconds - page * hoursInSeconds

@@ -85,9 +85,6 @@ const ImagePost = ({
         }
         let content = event.content;
         content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-            console.log(i);
-            console.log(event.mentions[i - 1]);
-            console.log(event);
             return (
                 <Text
                     style={{ color: colors.primary500 }}

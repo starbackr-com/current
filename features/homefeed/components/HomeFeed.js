@@ -40,7 +40,7 @@ const HomeFeed = ({ width, height }) => {
             const toCheck = eventIds.filter((id) => !checkedZaps.includes(id));
             loadZaps(toCheck);
             setCheckedZaps((prev) => [...prev, toCheck]);
-        }, 1500);
+        }, 5000);
         return () => {
             clearTimeout(timeout);
         };
