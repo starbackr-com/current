@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
+import { Zap } from "../../zaps/Zap";
 
 export const useReplies = (eventId, now) => {
     const [replies, setReplies] = useState([]);
@@ -12,8 +13,13 @@ export const useReplies = (eventId, now) => {
             if (mutedPubkeys.includes(event.pubkey)) {
                 return;
             } else {
-                const newEvent = new Note(event).saveReply();
-                setReplies((prev) => [...prev, newEvent]);
+                if (event.kind === 1) {
+                    const newEvent = new Note(event).saveReply();
+                    setReplies((prev) => [...prev, newEvent]);
+                } else if (event.kind === 9735) {
+                    const newZap = new Zap(event);
+                    setReplies((prev) => [...prev, newZap]);
+                }
             }
         },
         [mutedPubkeys]
@@ -22,7 +28,7 @@ export const useReplies = (eventId, now) => {
     useEffect(() => {
         const sub = pool.sub(urls, [
             {
-                kinds: [1],
+                kinds: [1, 9735],
                 "#e": [eventId],
             },
         ]);
