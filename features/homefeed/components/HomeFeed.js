@@ -79,7 +79,7 @@ const HomeFeed = ({ width, height }) => {
     );
     return (
         <>
-            {events.length >= 1 && height ? (
+            {events.length >= 3 && height ? (
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
                         data={events}
@@ -91,10 +91,10 @@ const HomeFeed = ({ width, height }) => {
                         directionalLockEnabled
                         extraData={[users, zapAmount, zaps]}
                         getItemType={(item) => item.type}
-                        // onEndReached={() => {
-                        //     get25RootPosts();
-                        // }}
-                        // onEndReachedThreshold={2}
+                        onEndReached={() => {
+                            get25RootPosts();
+                        }}
+                        onEndReachedThreshold={2}
                         showsVerticalScrollIndicator={false}
                         // refreshing={refreshing}
                         // onRefresh={refreshHandler}
