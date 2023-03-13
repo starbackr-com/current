@@ -82,7 +82,7 @@ Once base features are implemented we will start to open up the default features
 ## Screenshots
 
 
-![](https://starbackr-images.s3.amazonaws.com/help/github-screenshot)
+![](https://starbackr-images.s3.amazonaws.com/help/github-screenshot.png)
 
 
 
