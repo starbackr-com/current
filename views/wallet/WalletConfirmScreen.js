@@ -48,7 +48,10 @@ const WalletConfirmScreen = ({ route, navigation }) => {
                                   });
                                   return
                             }
-                            console.log(result);
+                            if (result?.error) {
+                                console.log(result.error)
+                                alert(result?.error?.data.message.failure_reason)
+                            }
                             setIsLoading(false)
                         },
                     }}
