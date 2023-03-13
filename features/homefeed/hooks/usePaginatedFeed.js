@@ -8,6 +8,14 @@ export const usePaginatedFeed = (unixNow) => {
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     let timer;
 
+    let windowHours = 1;
+
+    if (followedPubkeys < 100) {
+        windowHours = 12
+    } else if (followedPubkeys < 250) {
+        windowHours = 3
+    }
+
     const get25RootPosts = async () => {
         let until = globalUntil
         let since = until - 3600;
@@ -39,7 +47,7 @@ export const usePaginatedFeed = (unixNow) => {
                         const newEvent = new Note(event).save();
                         results.push(newEvent);
                     }
-                    timer = setTimeout(next, 3200);
+                    timer = setTimeout(next, 3000);
                 });
             });
             until = until - 3600
