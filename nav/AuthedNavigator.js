@@ -126,7 +126,7 @@ const TabNavigator = ({ navigation }) => {
                         onPress={() => {
                             navigation.navigate("Profile", {
                                 screen: "ProfileScreen",
-                                params: { pubkey: pubKey },
+                                params: { pubkey: pubKey, name: user?.name || undefined },
                             });
                         }}
                     >
@@ -175,7 +175,7 @@ const TabNavigator = ({ navigation }) => {
 };
 
 const AuthedNavigator = () => {
-    useUpdateFollowing();
+    // useUpdateFollowing();
     return (
         <>
             <Stack.Navigator>
@@ -205,13 +205,14 @@ const AuthedNavigator = () => {
                     options={({ route, navigation }) => {
                         return {
                             presentation: "modal",
-                            headerStyle: {
-                                backgroundColor: "#18181b",
-                            },
-                            headerShadowVisible: false,
-                            headerTitle: route.params.params.name,
-                            headerTitleStyle: {color: 'white'},
-                            header: ({route}) => <ProfileHeader route={route}/>
+                            // headerStyle: {
+                            //     backgroundColor: "#18181b",
+                            // },
+                            // headerShadowVisible: false,
+                            // headerTitle: route.params.params.name,
+                            // headerTitleStyle: {color: 'white'},
+                            // header: ({route}) => <ProfileHeader route={route}/>
+                            headerShown: false
                         };
                     }}
                 />

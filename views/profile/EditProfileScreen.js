@@ -135,9 +135,6 @@ const EditProfileScreen = ({ navigation }) => {
             style={globalStyles.screenContainerScroll}
             contentContainerStyle={{ alignItems: "center" }}
         >
-            <View style={{width: '100%', alignItems: 'flex-start'}}>
-                <BackButton onPress={() => {navigation.goBack()}} text='Cancel'/>
-            </View>
             <Pressable
                 style={({ pressed }) => [
                     {

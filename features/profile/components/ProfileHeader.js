@@ -1,15 +1,13 @@
 import { View, Text } from "react-native";
 import React from "react";
 import BackButton from "../../../components/BackButton";
-import CustomButton from "../../../components/CustomButton";
 import globalStyles from "../../../styles/globalStyles";
 import colors from "../../../styles/colors";
 import { useIsAuthed } from "../hooks/useIsAuthed";
-import { useNavigation } from "@react-navigation/native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-const ProfileHeader = ({ route }) => {
-    const check = useIsAuthed(route.params.params.pubkey);
-    const navigation = useNavigation();
+const ProfileHeader = ({ route, navigation }) => {
+    const check = useIsAuthed(route?.params?.pubkey);
     return (
         <View
             style={{
@@ -21,16 +19,47 @@ const ProfileHeader = ({ route }) => {
             }}
         >
             <View style={{ width: "25%" }}>
-                <BackButton onPress={() => {navigation.goBack()}}/>
+                <BackButton
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                />
             </View>
             <View style={{ width: "50%" }}>
                 <Text style={globalStyles.textBodyBold}>
-                    {route?.params?.params?.name || "Profile"}
+                    {route?.params?.name || "Profile"}
                 </Text>
             </View>
-            <View style={{ width: "25%" }}>
-                {check ? <CustomButton text="Edit" /> : <View/>}
-            </View>
+            {route.name === 'ProfileScreen' ?
+                <View
+                    style={{
+                        width: "25%",
+                        flexDirection: "row",
+                        justifyContent: "space-evenly",
+                    }}
+                >
+                    {check ? (
+                        <Ionicons
+                            name="pencil-sharp"
+                            size={24}
+                            color={colors.primary500}
+                            onPress={() => {
+                                navigation.navigate("EditProfileScreen");
+                            }}
+                        />
+                    ) : (
+                        <View />
+                    )}
+                    <Ionicons
+                        name="qr-code"
+                        size={24}
+                        color={colors.primary500}
+                        onPress={() => {
+                            navigation.navigate("ProfileQRScreen", {pk: route?.params?.pubkey});
+                        }}
+                    />
+                </View> : <View style={{width: '25%'}}/>
+            }
         </View>
     );
 };
