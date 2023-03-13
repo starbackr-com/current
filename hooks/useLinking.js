@@ -17,5 +17,17 @@ export const useLinking = () => {
                 },
             });
         }
+        
+        // In order for this to work we need a decodeNote function and refactor CommentScreen to fetch the event data itself
+
+        // else if (scheme === "nostr" && path.startsWith("note")) {
+        //     const eventId = decodeNote()
+        //     navigation.push("CommentScreen", {
+        //         eventId: event.id,
+        //         rootId: event.id,
+        //         type: "root",
+        //         event: event,
+        //     });
+        // }
     }
 };
