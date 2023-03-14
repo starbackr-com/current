@@ -20,9 +20,8 @@ const HomeFeed = ({ width, height }) => {
     const users = useSelector((state) => state.messages.users);
 
     const now = new Date() / 1000;
-    // const [data, page, setNewPage, triggerRefresh] = useHomefeed(now);
 
-    const [get25RootPosts, events] = usePaginatedFeed(now);
+    const [get25RootPosts, events, refresh] = usePaginatedFeed(now);
 
     const navigation = useNavigation();
 
@@ -33,7 +32,7 @@ const HomeFeed = ({ width, height }) => {
 
     const refreshHandler = useCallback(() => {
         setRefreshing(true);
-        triggerRefresh();
+        refresh();
         setRefreshing(false);
     }, []);
 
@@ -96,8 +95,8 @@ const HomeFeed = ({ width, height }) => {
                         }}
                         onEndReachedThreshold={2}
                         showsVerticalScrollIndicator={false}
-                        // refreshing={refreshing}
-                        // onRefresh={refreshHandler}
+                        refreshing={refreshing}
+                        onRefresh={refreshHandler}
                     />
                 </View>
             ) : (
