@@ -12,7 +12,7 @@ export const updateFollowedUsers = async () => {
                 authors: pubkeys,
                 kinds: [0],
             },
-        ]);
+        ], {skipVerification: true});
         sub.on("event", (event) => {
             const newEvent = new Event(event);
             newEvent.save();

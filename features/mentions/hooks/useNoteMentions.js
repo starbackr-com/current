@@ -17,7 +17,7 @@ export const useNoteMentions = () => {
                 if (!receivedEventIds.includes(event.id)) {
                     receivedEventIds.push(event.id);
                     const newEvent = new Note(event).save();
-                    setData((prev) => [...prev, newEvent]);
+                    setData((prev) => [...prev, newEvent].sort((a, b) => b.created_at - a.created_at));
                 }
             }
         },
@@ -31,7 +31,7 @@ export const useNoteMentions = () => {
                 kinds: [1],
                 "#p": [pk],
             },
-        ]);
+        ], {skipVerification: true});
         sub.on("event", eventCallback);
         return () => {
             sub.unsub();
