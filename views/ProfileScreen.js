@@ -13,7 +13,13 @@ import { useSelector } from "react-redux";
 import ImagePost from "../components/Posts/ImagePost";
 import TextPost from "../components/Posts/TextPost";
 import BackButton from "../components/BackButton";
-import { useFollowUser, useSubscribePosts, useUnfollowUser } from "../hooks";
+import {
+    useFollowUser,
+    useGetBadges,
+    useSubscribePosts,
+    useUnfollowUser,
+    usePaginatedPosts
+} from "../hooks";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
@@ -52,7 +58,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
         }, 1000);
     };
 
-    const npub = encodePubkey(pubkey) || 'npub100000000000000000';
+    const npub = encodePubkey(pubkey) || "npub100000000000000000";
     return (
         <View style={{ width: "100%" }}>
             <View style={{ width: "100%", height: 20 }}></View>
@@ -109,9 +115,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                             ]}
                         >
                             {user?.lud16}{" "}
-                            <Ionicons
-                                name={user?.lud16 ? "flash" : ""}
-                            />{" "}
+                            <Ionicons name={user?.lud16 ? "flash" : ""} />{" "}
                         </Text>
                     </View>
                 </View>
@@ -175,7 +179,9 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const now = new Date() / 1000;
 
-    const [data, page, setPage] = useSubscribePosts([pubkey], now);
+    // const [data, page, setPage] = useSubscribePosts([pubkey], now);
+
+    const [get25Posts, events, isLoading] = usePaginatedPosts([pubkey])
 
     const user = users[pubkey];
 
@@ -206,7 +212,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 onLayout={onLayoutViewWidth}
             >
                 <FlashList
-                    data={data}
+                    data={events}
                     renderItem={renderItem}
                     ListHeaderComponent={
                         <ProfileHeader
@@ -220,11 +226,10 @@ const ProfileScreen = ({ route, navigation }) => {
                         <CustomButton
                             text="Load more"
                             buttonConfig={{
-                                onPress: () => {
-                                    listRef.current.prepareForLayoutAnimationRender();
-                                    setPage(page + 1);
-                                },
+                                onPress: get25Posts,
                             }}
+                            disabled={isLoading}
+                            loading={isLoading}
                         />
                     }
                     estimatedItemSize={250}
