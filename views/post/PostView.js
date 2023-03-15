@@ -270,6 +270,7 @@ const PostGifModal = ({ navigation }) => {
                     result: gif.images.downsized_medium.url?.split("?")[0],
                     height: Number(gif.images.fixed_width_downsampled.height),
                     width: Number(gif.images.fixed_width_downsampled.width),
+                    source: "GIPHY",
                 }));
                 setGifs(giphyData);
             } else {
@@ -284,6 +285,7 @@ const PostGifModal = ({ navigation }) => {
                     result: gif.images.downsized_medium.url?.split("?")[0],
                     height: Number(gif.images.fixed_width_downsampled.height),
                     width: Number(gif.images.fixed_width_downsampled.width),
+                    source: "GIPHY",
                 }));
                 setGifs(giphyData);
             }
@@ -344,30 +346,30 @@ const PostGifModal = ({ navigation }) => {
                     onLayout={onLayoutView}
                 >
                     {gifs ? (
-                        <MasonryFlashList
-                            numColumns={2}
-                            data={gifs}
-                            renderItem={({ item }) => (
-                                <GifContainer
-                                    item={item}
-                                    width={containerWidth}
-                                />
-                            )}
-                            ListHeaderComponent={() => (
-                                <Text
-                                    style={[
-                                        globalStyles.textBodyBold,
-                                        { textAlign: "left" },
-                                    ]}
-                                >
-                                    {searchTerm?.length > 0
-                                        ? searchTerm
-                                        : "Trending"}
-                                </Text>
-                            )}
-                            estimatedItemSize={180}
-                            showsVerticalScrollIndicator={false}
-                        />
+                        <View style={{ flex: 1 }}>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyBold,
+                                    { textAlign: "left" },
+                                ]}
+                            >
+                                {searchTerm?.length > 0
+                                    ? searchTerm
+                                    : "Trending"}
+                            </Text>
+                            <MasonryFlashList
+                                numColumns={2}
+                                data={gifs}
+                                renderItem={({ item }) => (
+                                    <GifContainer
+                                        item={item}
+                                        width={containerWidth}
+                                    />
+                                )}
+                                estimatedItemSize={180}
+                                showsVerticalScrollIndicator={false}
+                            />
+                        </View>
                     ) : undefined}
                 </View>
             </View>
@@ -390,6 +392,19 @@ const GifContainer = ({ item, width }) => {
                 }}
                 source={item.thumbnail}
             />
+            <View
+                style={{
+                    position: "absolute",
+                    backgroundColor: "white",
+                    padding: 3,
+                    opacity: 0.8,
+                    right: 5,
+                    bottom: 5,
+                    borderRadius: 2
+                }}
+            >
+                <Text style={[globalStyles.textBodyS, {color: 'black'}]}>{item.source}</Text>
+            </View>
         </Pressable>
     );
 };

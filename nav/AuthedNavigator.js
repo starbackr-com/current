@@ -175,7 +175,7 @@ const TabNavigator = ({ navigation }) => {
 };
 
 const AuthedNavigator = () => {
-    // useUpdateFollowing();
+    useUpdateFollowing();
     return (
         <>
             <Stack.Navigator>

@@ -18,7 +18,7 @@ export const useUpdateFollowing = () => {
                     kinds: [3],
                     authors: [pk],
                 },
-            ]
+            ], {skipVerification: true}
         );
         const tags = await new Promise((resolve) => {
             sub.on("event", (event) => {
