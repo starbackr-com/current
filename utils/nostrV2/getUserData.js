@@ -42,7 +42,7 @@ export const getUserData = async (pubkeysInHex) => {
 
 export const getOldKind0 = async (pubkeyInHex) => {
     return Promise.allSettled(
-        connectedRelays.map(
+        connectedRelayPool.map(
             (relay) =>
                 new Promise((resolve, reject) => {
                     const allEvents = [];
