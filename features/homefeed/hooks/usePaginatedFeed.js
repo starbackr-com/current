@@ -10,20 +10,19 @@ export const usePaginatedFeed = (unixNow) => {
 
     const untilRef = useRef(Math.floor(Date.now() / 1000));
 
-    let windowHours = 1;
-
-    if (followedPubkeys < 100) {
-        windowHours = 12;
-    } else if (followedPubkeys < 250) {
-        windowHours = 3;
-    }
-
     const refresh = () => {
         untilRef.current = Math.floor(Date.now() / 1000);
         get25RootPosts();
     };
 
     const get25RootPosts = async () => {
+        let windowHours = 1;
+
+        if (followedPubkeys < 100) {
+            windowHours = 12;
+        } else if (followedPubkeys < 250) {
+            windowHours = 3;
+        }
         if (followedPubkeys.length < 1) {
             return;
         }
@@ -66,7 +65,7 @@ export const usePaginatedFeed = (unixNow) => {
             until = until - 3600;
             since = since - 3600;
         }
-        untilRef.current = until
+        untilRef.current = until;
     };
 
     useEffect(() => {
