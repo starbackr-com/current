@@ -4,6 +4,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     Text,
+    Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -21,6 +22,8 @@ import { publishEvent } from "../../utils/nostrV2/publishEvents";
 import BackButton from "../../components/BackButton";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
+import { getUserData } from "../../utils/nostrV2";
+import { useZapPlebhy } from "../../features/plebhy/hooks/useZapPlebhy";
 
 const Stack = createStackNavigator();
 
@@ -255,6 +258,7 @@ const PostGifModal = ({ navigation }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const getTrendingGifs = async () => {
+        let plebhyGifs = [];
         setSearchTerm(input);
         try {
             if (input?.length > 0) {
@@ -274,7 +278,6 @@ const PostGifModal = ({ navigation }) => {
                 }));
                 setGifs(giphyData);
             } else {
-                console.log(input);
                 const response = await fetch(
                     `https://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=25`
                 );
@@ -287,7 +290,27 @@ const PostGifModal = ({ navigation }) => {
                     width: Number(gif.images.fixed_width_downsampled.width),
                     source: "GIPHY",
                 }));
-                setGifs(giphyData);
+                try {
+                    const plebhyResponse = await fetch(
+                        "https://current.fyi/plebhy?limit=10&search=trending"
+                    );
+                    const plebhyData = await plebhyResponse.json();
+                    plebhyGifs = plebhyData.data.map((gif) => ({
+                        id: gif.sid,
+                        pTag: gif.ptag,
+                        eTag: gif.etag,
+                        thumbnail: decodeURIComponent(gif.images.downsized.url),
+                        result: decodeURIComponent(gif.images.original.url),
+                        height: Number(gif.images.downsized.height),
+                        width: Number(gif.images.downsized.width),
+                        source: "PLEBHY",
+                    }));
+                    const plebhyPubkeys = plebhyData.data.map(gif => gif.ptag)
+                    getUserData(plebhyPubkeys)
+                } catch (e) {
+                    console.log("There was an issue getting PLEBHY gifs...", e);
+                }
+                setGifs([...plebhyGifs, ...giphyData]);
             }
         } catch (e) {
             console.log(e);
@@ -379,10 +402,25 @@ const PostGifModal = ({ navigation }) => {
 
 const GifContainer = ({ item, width }) => {
     const navigation = useNavigation();
+    const user = useSelector(state => state.messages.users[item.pTag])
+    const zapPlebhy = useZapPlebhy()
+
+    const yesHandler = () => {
+        zapPlebhy(item.eTag, user)
+        navigation.navigate("PostModal", { gif: item.result });
+    };
+
+    const noHandler = () => {
+        navigation.navigate("PostModal", { gif: item.result });
+    };
     return (
         <Pressable
             onPress={() => {
-                navigation.navigate("PostModal", { gif: item.result });
+                if (item.source === 'GIPHY') {
+                    navigation.navigate("PostModal", { gif: item.result });
+                } else if (item.source === 'PLEBHY' && user) {
+                    Alert.alert('Support the creator?', `This GIF was created by ${user.name || item.pTag.slice(0,8)}. Do you want to send them a Zap?`, [{text: 'Yes!', onPress: yesHandler}, {text: 'No!', style:'destructive'}])
+                }
             }}
         >
             <Image
@@ -395,15 +433,18 @@ const GifContainer = ({ item, width }) => {
             <View
                 style={{
                     position: "absolute",
-                    backgroundColor: "white",
+                    backgroundColor:
+                        item.source === "PLEBHY" ? colors.primary500 : "white",
                     padding: 3,
                     opacity: 0.8,
                     right: 5,
                     bottom: 5,
-                    borderRadius: 2
+                    borderRadius: 2,
                 }}
             >
-                <Text style={[globalStyles.textBodyS, {color: 'black'}]}>{item.source}</Text>
+                <Text style={[globalStyles.textBodyS, { color: "black" }]}>
+                    {item.source}
+                </Text>
             </View>
         </Pressable>
     );
