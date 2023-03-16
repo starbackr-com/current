@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
 
 export const usePaginatedFeed = (unixNow) => {
     const [events, setEvents] = useState([]);
-    const [globalUntil, setGlobalUntil] = useState(
-        Math.floor(Date.now() / 1000)
-    );
+
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     let timer;
+
+    const untilRef = useRef(Math.floor(Date.now() / 1000));
 
     let windowHours = 1;
 
@@ -19,7 +19,7 @@ export const usePaginatedFeed = (unixNow) => {
     }
 
     const refresh = () => {
-        setGlobalUntil(Math.floor(Date.now() / 1000));
+        untilRef.current = Math.floor(Date.now() / 1000);
         get25RootPosts();
     };
 
@@ -27,7 +27,7 @@ export const usePaginatedFeed = (unixNow) => {
         if (followedPubkeys.length < 1) {
             return;
         }
-        let until = globalUntil;
+        let until = untilRef.current;
         let since = until - 3600;
         const urls = connectedRelayPool.map((relay) => relay.url);
         const results = [];
@@ -66,7 +66,7 @@ export const usePaginatedFeed = (unixNow) => {
             until = until - 3600;
             since = since - 3600;
         }
-        setGlobalUntil(until);
+        untilRef.current = until
     };
 
     useEffect(() => {
