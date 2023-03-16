@@ -7,7 +7,7 @@ import CustomButton from "../../components/CustomButton";
 import { muteUser } from "../../utils/users";
 import * as Clipboard from 'expo-clipboard';
 import { encodeNoteID } from "../../utils/nostr/keys";
-import { publishRepost } from "../../utils/nostrV2";
+import { publishReaction, publishRepost } from "../../utils/nostrV2";
 import { useState } from "react";
 
 const ActionButton = ({ onPress, icon, text }) => {
@@ -20,7 +20,8 @@ const ActionButton = ({ onPress, icon, text }) => {
                 paddingHorizontal: 5,
                 borderRadius: 10,
                 backgroundColor: "#333333",
-                width: "20%",
+                flex: 1,
+                margin: 2
             }}
             onPress={onPress}
         >
@@ -63,7 +64,11 @@ const PostMenuModal = ({ navigation, route }) => {
         navigation.goBack();
     };
 
-    const downvoteHandler = () => {};
+    const upvoteHandler = async () => {
+        await publishReaction('+', id, pubkey);
+        navigation.goBack();
+    };
+
 
     const reportHandler = () => {
         navigation.goBack();
@@ -110,7 +115,7 @@ const PostMenuModal = ({ navigation, route }) => {
                         style={{
                             flexDirection: "row",
                             justifyContent: "space-around",
-                            alignItems: "center",
+                            alignItems: 'stretch',
                             paddingVertical: 16,
                             width: "100%",
                         }}
@@ -121,6 +126,11 @@ const PostMenuModal = ({ navigation, route }) => {
                             text="Repost Event"
                             icon="repeat"
                             onPress={repostHandler}
+                        />
+                        <ActionButton
+                            text="Like Event"
+                            icon="heart-circle"
+                            onPress={upvoteHandler}
                         />
                         <ActionButton
                             text="Report Content"

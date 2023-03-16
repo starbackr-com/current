@@ -218,4 +218,42 @@ export const publishRepost = async (eTag, pTag) => {
             }
         });
     });
+    alert("Success!");
+};
+
+export const publishReaction = async (sign, eTag, pTag) => {
+    if (sign != "+" && sign != "-") {
+        throw new Error("Invalid sign for reaction! Must be + or -");
+    }
+    const sk = await getValue("privKey");
+    if (!sk) {
+        throw new Error("No private key in secure storage found!");
+    }
+    const pk = getPublicKey(sk);
+    const event = {
+        kind: 7,
+        pubkey: pk,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ["e", eTag],
+            ["p", pTag],
+        ],
+        content: sign,
+    };
+    event.id = getEventHash(event);
+    event.sig = signEvent(event, sk);
+    const urls = connectedRelayPool.map((relay) => relay.url);
+    const pub = pool.publish(urls, event);
+    await new Promise((resolve) => {
+        let successes = 0;
+        const timer = setTimeout(resolve, 2500);
+        pub.on("ok", () => {
+            successes++;
+            if (successes === connectedRelayPool.length) {
+                clearTimeout(timer);
+                resolve();
+            }
+        });
+    });
+    alert("Success!");
 };
