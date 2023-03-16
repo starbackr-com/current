@@ -50,7 +50,7 @@ const CommentScreen = ({ route, navigation }) => {
                 );
             }
         } else if (item.kind === 9735) {
-            return <ZapPost event={item} user={users[item.pubkey]} />;
+            return <ZapPost event={item} user={users[item.payer]} />;
         }
     };
 

@@ -34,7 +34,7 @@ const ZapPost = ({ event, user }) => {
                     onPress={() => {
                         navigation.navigate("Profile", {
                             screen: "ProfileScreen",
-                            params: { pubkey: event.pubkey },
+                            params: { pubkey: event.payer, name: user.name || event.payer },
                         });
                     }}
                 >
