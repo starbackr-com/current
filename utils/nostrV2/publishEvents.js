@@ -91,7 +91,6 @@ export const publishEvent = async (content, tags) => {
         await new Promise((resolve) => {
             let successes = 0;
             const timer = setTimeout(resolve, 2500);
-            pub.on('')
             pub.on("ok", () => {
                 successes++;
                 if (successes === connectedRelayPool.length) {
@@ -186,4 +185,37 @@ export const publishDeleteAccount = async () => {
     return successes
         .filter((promise) => promise.status === "fulfilled")
         .map((promise) => promise.value);
+};
+
+export const publishRepost = async (eTag, pTag) => {
+    const sk = await getValue("privKey");
+    if (!sk) {
+        throw new Error("No private key in secure storage found!");
+    }
+    const pk = getPublicKey(sk);
+    const event = {
+        kind: 6,
+        pubkey: pk,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ["e", eTag, "", "root"],
+            ["p", pTag],
+        ],
+        content: "",
+    };
+    event.id = getEventHash(event);
+    event.sig = signEvent(event, sk);
+    const urls = connectedRelayPool.map((relay) => relay.url);
+    const pub = pool.publish(urls, event);
+    await new Promise((resolve) => {
+        let successes = 0;
+        const timer = setTimeout(resolve, 2500);
+        pub.on("ok", () => {
+            successes++;
+            if (successes === connectedRelayPool.length) {
+                clearTimeout(timer);
+                resolve();
+            }
+        });
+    });
 };
