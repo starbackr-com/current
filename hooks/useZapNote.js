@@ -47,9 +47,9 @@ export const useZapNote = (eventId, dest, name) => {
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
 
-            console.log(zapNoconf);    
+            console.log(zapNoconf);
 
-            if (zapNoconf) {
+            if (zapNoconf && (minSendable / 1000 < zapAmount)) {
 
               let response;
               if (allowsNostr && nostrPubkey) {
