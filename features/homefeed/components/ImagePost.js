@@ -107,7 +107,8 @@ const ImagePost = ({
     const zap = useZapNote(
         item.id,
         user?.lud06 || user?.lud16,
-        user?.name || item?.pubkey.slice(0, 16)
+        user?.name || item?.pubkey.slice(0, 16),
+        item.pubkey
     );
 
     const age = getAge(created_at);

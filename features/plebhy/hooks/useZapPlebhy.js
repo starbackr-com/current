@@ -6,7 +6,7 @@ export const useZapPlebhy = () => {
     const zapAmount = useSelector((state) => state.user.zapAmount);
     const [sendPayment] = usePostPaymentMutation();
 
-    const zapPlebhy = async (eventId, user) => {
+    const zapPlebhy = async (eventId, user, pubkey) => {
         try {
             const dest = user.lud16 ? user.lud16 : user.lud06
             if (!dest) {
@@ -31,7 +31,7 @@ export const useZapPlebhy = () => {
             }
             if (allowsNostr && nostrPubkey) {
                 let tags = [];
-                tags.push(["p", nostrPubkey]);
+                tags.push(["p", pubkey]);
                 tags.push(["e", eventId]);
                 // tags.push(["amount", amount * 1000]);
 

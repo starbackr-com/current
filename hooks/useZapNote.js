@@ -5,7 +5,7 @@ import { usePostPaymentMutation } from "../services/walletApi";
 import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { createZapEvent } from "../utils/nostrV2";
 
-export const useZapNote = (eventId, dest, name) => {
+export const useZapNote = (eventId, dest, name, pubkey) => {
     const zapAmount = useSelector((state) => state.user.zapAmount);
     const zapComment = useSelector((state) => state.user.zapComment);
     const zapNoconf = useSelector((state) => state.user.zapNoconf);
@@ -47,33 +47,29 @@ export const useZapNote = (eventId, dest, name) => {
             const amount =
                 minSendable / 1000 > zapAmount ? minSendable / 1000 : zapAmount;
 
-            console.log(zapNoconf);
-
             if (zapNoconf && (minSendable / 1000 < zapAmount)) {
 
               let response;
               if (allowsNostr && nostrPubkey) {
                   let tags = [];
-                  tags.push(["p", nostrPubkey]);
+                  tags.push(["p", pubkey]);
                   tags.push(["e", eventId]);
                   // tags.push(["amount", amount * 1000]);
 
                   const zapevent = await createZapEvent(zapComment?zapComment:'', tags);
-                  const stringifiedEvent = JSON.stringify(zapevent)
-                  console.log(stringifiedEvent)
                   response = await fetch(
                       `${callback}?amount=${
                           amount * 1000
                       }&nostr=${JSON.stringify(zapevent)}`
                   );
               } else {
+                console.log('No nostr on lnurl')
                   alert(
                       `Oops..! ${name}'s wallet does not support Zaps!`
                   );
                   return;
               }
               const data = await response.json();
-              console.log(data)
               const invoice = data.pr;
               const result = await sendPayment({
                   amount,
@@ -86,8 +82,9 @@ export const useZapNote = (eventId, dest, name) => {
                       } `
                   );
               } else {
+                console.log(result.error)
                   alert(
-                      `Oops..! ${name}'s wallet does not support Zaps!`
+                      `Oops..! Something went wrong...`
                   );
                   return;
               }
@@ -105,13 +102,11 @@ export const useZapNote = (eventId, dest, name) => {
                               let response;
                               if (allowsNostr && nostrPubkey) {
                                   let tags = [];
-                                  tags.push(["p", nostrPubkey]);
+                                  tags.push(["p", pubkey]);
                                   tags.push(["e", eventId]);
                                   // tags.push(["amount", amount * 1000]);
 
                                   const zapevent = await createZapEvent(zapComment?zapComment:'', tags);
-                                  const stringifiedEvent = JSON.stringify(zapevent)
-                                  console.log(stringifiedEvent)
                                   response = await fetch(
                                       `${callback}?amount=${
                                           amount * 1000
@@ -124,7 +119,6 @@ export const useZapNote = (eventId, dest, name) => {
                                   return;
                               }
                               const data = await response.json();
-                              console.log(data)
                               const invoice = data.pr;
                               const result = await sendPayment({
                                   amount,

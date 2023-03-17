@@ -12,7 +12,8 @@ const TextPost = ({ event, user }) => {
     const zap = useZapNote(
         event.id,
         user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16)
+        user?.name || event?.pubkey.slice(0, 16),
+        event.pubkey
     );
     const commentHandler = () => {
         navigation.push("CommentScreen", {

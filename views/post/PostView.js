@@ -406,7 +406,7 @@ const GifContainer = ({ item, width }) => {
     const zapPlebhy = useZapPlebhy()
 
     const yesHandler = () => {
-        zapPlebhy(item.eTag, user)
+        zapPlebhy(item.eTag, user, item.pTag)
         navigation.navigate("PostModal", { gif: item.result });
     };
 

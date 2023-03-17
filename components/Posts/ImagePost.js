@@ -15,7 +15,8 @@ const ImagePost = ({ event, user, width }) => {
     const zap = useZapNote(
         event.id,
         user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16)
+        user?.name || event?.pubkey.slice(0, 16),
+        event.pubkey
     );
 
     const commentHandler = () => {
@@ -46,7 +47,7 @@ const ImagePost = ({ event, user, width }) => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    marginBottom: 16
+                    marginBottom: 16,
                 }}
             >
                 <Text
