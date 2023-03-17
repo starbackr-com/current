@@ -52,7 +52,7 @@ const Root = () => {
                     const {
                         data: { access_token, username },
                     } = await loginToWallet(privKey);
-                    const pubKey = await getPublicKey(privKey);
+                    const pubKey = getPublicKey(privKey);
                     dispatch(logIn({ bearer: access_token, username, pubKey }));
                     await updateFollowedUsers();
                 }

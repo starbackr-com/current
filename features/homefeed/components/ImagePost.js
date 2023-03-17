@@ -1,10 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Pressable, Alert } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import colors from "../../../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { decodeLnurl } from "../../../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../../../services/walletApi";
-import { createZapEvent } from "../../../utils/nostrV2";
 import { useState } from "react";
 import Animated, {
     withSequence,
@@ -37,6 +35,7 @@ const FeedImage = ({ size, images }) => {
                 style={{ height: size, width: size }}
                 contentFit="cover"
                 placeholder={blurhash}
+                recyclingKey={images[0]}
             />
             {images.length > 1 ? (
                 <Text
