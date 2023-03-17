@@ -18,25 +18,23 @@ export const usePaginatedFeed = (unixNow) => {
     const get25RootPosts = async () => {
         let windowHours = 1;
 
-        if (followedPubkeys < 100) {
+        if (followedPubkeys.length < 100) {
             windowHours = 12;
-        } else if (followedPubkeys < 250) {
+        } else if (followedPubkeys.length >= 100 && followedPubkeys.length < 250) {
             windowHours = 3;
         }
         if (followedPubkeys.length < 1) {
             return;
         }
         let until = untilRef.current;
-        let since = until - 3600;
+        let since = until - (windowHours * 3600);
+        console.log(windowHours)
         const urls = connectedRelayPool.map((relay) => relay.url);
         const results = [];
         while (results.length < 25) {
             await new Promise((resolve) => {
                 const next = () => {
                     const set = new Set([...events, ...results]);
-                    setEvents(
-                        [...set].sort((a, b) => b.created_at - a.created_at)
-                    );
                     resolve();
                     sub.unsub();
                 };
@@ -56,14 +54,14 @@ export const usePaginatedFeed = (unixNow) => {
                 sub.on("event", (event) => {
                     clearTimeout(timer);
                     if (!event.tags.some((tag) => tag.includes("e"))) {
-                        const newEvent = new Note(event).save();
+                        const newEvent = new Note(event).saveToStore();
                         results.push(newEvent);
                     }
                     timer = setTimeout(next, 3000);
                 });
             });
-            until = until - 3600;
-            since = since - 3600;
+            until = until - (windowHours * 3600);
+            since = since - (windowHours * 3600);
         }
         untilRef.current = until;
     };
@@ -72,5 +70,5 @@ export const usePaginatedFeed = (unixNow) => {
         get25RootPosts();
     }, []);
 
-    return [get25RootPosts, events, refresh];
+    return [get25RootPosts, refresh];
 };

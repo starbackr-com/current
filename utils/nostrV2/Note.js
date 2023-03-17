@@ -1,4 +1,6 @@
 import { imageRegex } from "../../constants/regex";
+import { addMessage } from "../../features/messagesSlice";
+import { store } from "../../store/store";
 
 const parseContent = (message) => {
     let imageURL = message.match(imageRegex);
@@ -69,6 +71,34 @@ export class Note {
                 type: imageURL ? "image" : "text",
             };
             return note;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    saveToStore() {
+        const { id, pubkey, created_at, kind, tags, content, sig, relay } =
+            this;
+        const { imageURL, newMessage } = parseContent(content);
+        const { mentions } = parseMentions(this);
+        let root = !tags.some((tag) => {
+            let response = tag.includes("e");
+            return response;
+        });
+        try {
+            const note = {
+                id,
+                pubkey,
+                created_at,
+                kind,
+                tags,
+                content: newMessage,
+                sig,
+                root,
+                image: imageURL ? imageURL : undefined,
+                mentions,
+                type: imageURL ? "image" : "text",
+            };
+            store.dispatch(addMessage(note))
         } catch (err) {
             console.log(err);
         }

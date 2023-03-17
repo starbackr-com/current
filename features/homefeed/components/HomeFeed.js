@@ -21,7 +21,9 @@ const HomeFeed = ({ width, height }) => {
 
     const now = new Date() / 1000;
 
-    const [get25RootPosts, events, refresh] = usePaginatedFeed(now);
+    const [get25RootPosts, refresh] = usePaginatedFeed(now);
+
+    const events = useSelector(state => state.messages.messages)
 
     const navigation = useNavigation();
 
