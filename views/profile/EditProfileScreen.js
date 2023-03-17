@@ -85,7 +85,7 @@ const EditProfileScreen = ({ navigation }) => {
     const submitHandler = async () => {
         setIsLoading(true);
         try {
-            let imageUri = profiledata.picture;
+            let imageUri = profiledata?.picture;
             if (newImage) {
                 imageUri = await uploadImage(image.uri, pk, bearer);
             }
@@ -123,11 +123,11 @@ const EditProfileScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        setBio(profiledata.about);
-        setName(profiledata.name);
-        setLud16(profiledata.lud16 || profiledata.lud06);
-        setImage(profiledata.picture);
-        setNip05(profiledata.nip05);
+        setBio(profiledata?.about);
+        setName(profiledata?.name);
+        setLud16(profiledata?.lud16 || profiledata?.lud06);
+        setImage(profiledata?.picture);
+        setNip05(profiledata?.nip05);
     }, []);
 
     return (

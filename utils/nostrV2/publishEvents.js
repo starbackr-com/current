@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { getValue } from "../secureStore";
+import { Event } from "./Event";
 
 import { connectedRelayPool, pool } from "./relayPool";
 
@@ -25,8 +26,10 @@ export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
     };
     event.id = getEventHash(event);
     event.sig = signEvent(event, privKey);
+    // const newEvent = new Event(event);
+    // newEvent.save();
     const successes = await Promise.allSettled(
-        connectedRelays.map((relay) => {
+        connectedRelayPool.map((relay) => {
             return new Promise((resolve, reject) => {
                 let pub = relay.publish(event);
                 pub.on("ok", () => {
