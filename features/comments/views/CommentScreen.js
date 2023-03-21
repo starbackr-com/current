@@ -1,11 +1,11 @@
 import {
     View,
-    Text,
     KeyboardAvoidingView,
     Platform,
     useWindowDimensions,
+    ActivityIndicator,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import globalStyles from "../../../styles/globalStyles";
 import Input from "../../../components/Input";
 import { FlashList } from "@shopify/flash-list";
@@ -14,27 +14,35 @@ import colors from "../../../styles/colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import CommentHeader from "../components/CommentHeader";
 import { useReplies } from "../hooks/useReplies";
-import TextPost from "../../../components/Posts/TextPost";
 import { useSelector } from "react-redux";
 import BackButton from "../../../components/BackButton";
-import ImagePost from "../../../components/Posts/ImagePost";
 import { publishReply } from "../utils/publishReply";
-import ZapPost from "../../../components/Posts/ZapPost";
+import { getEventById } from "../../../utils/nostrV2/getEvents";
+import { ImagePost, TextPost, ZapPost } from "../../../components/Posts";
 
 const CommentScreen = ({ route, navigation }) => {
-    const { eventId, type, rootId, nestedReplies, event } = route?.params;
+    const { eventId } = route?.params;
 
+    const [event, setEvent] = useState();
     const [width, setWidth] = useState();
     const [input, setInput] = useState("");
-    const listRef = useRef();
     const headerHeight = useHeaderHeight();
     const height = useWindowDimensions().height;
-    const replies = useReplies(event.id);
+    const replies = useReplies(eventId);
     const users = useSelector((state) => state.messages.users);
 
     const onLayoutViewWidth = (e) => {
         setWidth(e.nativeEvent.layout.width);
     };
+
+    const getEvent = async () => {
+        const parentEvent = await getEventById(eventId);
+        setEvent(parentEvent);
+    };
+
+    useEffect(() => {
+        getEvent();
+    }, []);
 
     const renderItem = ({ item }) => {
         if (item.kind === 1) {
@@ -55,9 +63,7 @@ const CommentScreen = ({ route, navigation }) => {
     };
 
     const submitHandler = async () => {
-        listRef.current.prepareForLayoutAnimationRender();
         const success = await publishReply(input, event);
-        console.log(success);
         if (!success) {
             alert("Something went wrong publishing your note...");
         } else {
@@ -78,7 +84,7 @@ const CommentScreen = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            <View
+            {event ? <View
                 style={{ flex: 1, width: "100%" }}
                 onLayout={onLayoutViewWidth}
             >
@@ -98,10 +104,9 @@ const CommentScreen = ({ route, navigation }) => {
                         />
                     )}
                     estimatedItemSize={100}
-                    ref={listRef}
                     keyExtractor={(item) => item.id}
                 />
-            </View>
+            </View> : <ActivityIndicator style={{flex: 1}}/>}
             <View
                 style={{
                     width: "100%",
