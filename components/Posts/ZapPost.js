@@ -37,7 +37,7 @@ export const ZapPost = ({ event, user }) => {
                             screen: "ProfileScreen",
                             params: {
                                 pubkey: event.payer,
-                                name: user.name || event.payer,
+                                name: user?.name || event.payer,
                             },
                         });
                     }}
