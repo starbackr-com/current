@@ -10,8 +10,6 @@ import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
-import ImagePost from "../components/Posts/ImagePost";
-import TextPost from "../components/Posts/TextPost";
 import BackButton from "../components/BackButton";
 import {
     useFollowUser,
@@ -20,6 +18,7 @@ import {
     useUnfollowUser,
     usePaginatedPosts
 } from "../hooks";
+import { ImagePost, TextPost } from "../components/Posts";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
