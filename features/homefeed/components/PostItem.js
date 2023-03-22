@@ -1,13 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Pressable, Alert } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useState } from "react";
-import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, {
     withSequence,
     withTiming,
     withRepeat,
     useAnimatedStyle,
+    interpolateColor,
+    useDerivedValue,
 } from "react-native-reanimated";
 import { useParseContent } from "../../../hooks/useParseContent";
 import colors from "../../../styles/colors";
@@ -15,6 +16,7 @@ import globalStyles from "../../../styles/globalStyles";
 import { getAge } from "../../shared/utils/getAge";
 import { useZapNote } from "../../../hooks/useZapNote";
 import UserBanner from "./UserBanner";
+import { useIsZapped } from "../../zaps/hooks/useIsZapped";
 
 const PostItem = ({ item, height, width, user, zaps }) => {
     const [isLoading, setIsLoading] = useState();
@@ -32,6 +34,31 @@ const PostItem = ({ item, height, width, user, zaps }) => {
             true
         ),
     }));
+
+    const isZapped = useIsZapped(item.id);
+
+    const bgProgress = useDerivedValue(() => {
+        return withTiming(isZapped ? 1 : 0);
+    });
+
+    const backgroundStyle = useAnimatedStyle(() => {
+        const backgroundColor = interpolateColor(
+            bgProgress.value,
+            [0, 1],
+            ["#222222", colors.primary500]
+        );
+        return { backgroundColor };
+    });
+
+    const textStyle = useAnimatedStyle(() => {
+        const color = interpolateColor(
+            bgProgress.value,
+            [0, 1],
+            ["#ffffff", colors.backgroundPrimary]
+        );
+
+        return { color };
+    });
 
     const content = useParseContent(item);
 
@@ -69,7 +96,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                 alignItems: "center",
             }}
         >
-            <View
+            <Animated.View
                 style={[
                     {
                         backgroundColor: "#222222",
@@ -80,6 +107,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                         borderRadius: 10,
                         justifyContent: "space-between",
                     },
+                    backgroundStyle,
                 ]}
             >
                 <View>
@@ -87,6 +115,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                         event={item}
                         user={user}
                         width={((width - 16) / 100) * 85}
+                        isZapped={isZapped}
                     />
                     <Text
                         onTextLayout={textLayout}
@@ -100,17 +129,18 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     >
                         {content}
                     </Text>
-                    <Text
+                    <Animated.Text
                         style={[
                             globalStyles.textBody,
                             {
                                 textAlign: "left",
                             },
+                            textStyle,
                         ]}
                         numberOfLines={numOfLines}
                     >
                         {content}
-                    </Text>
+                    </Animated.Text>
                     {hasMore && (
                         <Pressable
                             onPress={() => {
@@ -173,16 +203,17 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     ) : (
                         <View></View>
                     )}
-                    <Text
+                    <Animated.Text
                         style={[
                             globalStyles.textBodyS,
                             { textAlign: "right", padding: 4 },
+                            textStyle
                         ]}
                     >
                         {age}
-                    </Text>
+                    </Animated.Text>
                 </View>
-            </View>
+            </Animated.View>
             <View
                 style={{
                     flexDirection: "column",
