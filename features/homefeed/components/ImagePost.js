@@ -143,7 +143,7 @@ const ImagePost = ({
                         height: "90%",
                         borderRadius: 10,
                         backgroundColor: colors.backgroundSecondary,
-                        justifyContent: 'space-between'
+                        justifyContent: "space-between",
                     },
                 ]}
             >
@@ -157,7 +157,7 @@ const ImagePost = ({
                         borderColor: colors.primary500,
                     }}
                 >
-                    <UserBanner event={item} user={user} width={width}/>
+                    <UserBanner event={item} user={user} width={width} />
                 </View>
                 <FeedImage
                     size={((width - 16) / 100) * 85}
@@ -264,8 +264,8 @@ const ImagePost = ({
                                             alignItems: "center",
                                             justifyContent: "center",
                                         }}
-                                    />
-                                    {" "}{zaps.amount}
+                                    />{" "}
+                                    {zaps.amount}
                                 </Text>
                             </Pressable>
                         ) : (
@@ -327,12 +327,12 @@ const ImagePost = ({
                         alignItems: "center",
                         justifyContent: "center",
                     }}
-                                        onPress={() => {
+                    onPress={() => {
                         navigation.navigate("CommentScreen", {
                             eventId: item.id,
                             rootId: item.id,
                             type: "root",
-                            event: item
+                            event: item,
                         });
                     }}
                 >
