@@ -1,26 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Note, relays } from "../../../utils/nostrV2";
-import { pool } from "../../../utils/nostrV2/relayPool";
+import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
+import { Zap } from "../../zaps/Zap";
 
 export const useReplies = (eventId, now) => {
     const [replies, setReplies] = useState([]);
-    const urls = relays.map((relay) => relay.url);
+    const urls = connectedRelayPool.map((relay) => relay.url);
+    const mutedPubkeys = useSelector((state) => state.user.mutedPubkeys);
+
+    const eventCallback = useCallback(
+        (event) => {
+            if (mutedPubkeys.includes(event.pubkey)) {
+                return;
+            } else {
+                if (event.kind === 1) {
+                    const newEvent = new Note(event).saveReply();
+                    setReplies((prev) => [...prev, newEvent]);
+                } else if (event.kind === 9735) {
+                    const newZap = new Zap(event);
+                    setReplies((prev) => [...prev, newZap]);
+                }
+            }
+        },
+        [mutedPubkeys]
+    );
+
     useEffect(() => {
         const sub = pool.sub(urls, [
             {
-                kinds: [1],
+                kinds: [1, 9735],
                 "#e": [eventId],
             },
         ]);
 
-        sub.on("event", (event) => {
-            const note = new Note(event);
-            const parsedEvent = note.save();
-            setReplies((prev) => [...prev, parsedEvent].sort(
-                (a, b) => b.created_at - a.created_at
-            ));
-        });
+        sub.on("event", eventCallback);
     }, []);
     return replies;
 };

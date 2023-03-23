@@ -1,10 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Pressable, Alert } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import colors from "../../../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { decodeLnurl } from "../../../utils/bitcoin/lnurl";
 import { usePostPaymentMutation } from "../../../services/walletApi";
-import { createZapEvent } from "../../../utils/nostrV2";
 import { useState } from "react";
 import Animated, {
     withSequence,
@@ -19,6 +17,7 @@ import reactStringReplace from "react-string-replace";
 import { useCallback } from "react";
 import { getAge } from "../../shared/utils/getAge";
 import { useZapNote } from "../../../hooks/useZapNote";
+import UserBanner from "./UserBanner";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
@@ -36,6 +35,7 @@ const FeedImage = ({ size, images }) => {
                 style={{ height: size, width: size }}
                 contentFit="cover"
                 placeholder={blurhash}
+                recyclingKey={images[0]}
             />
             {images.length > 1 ? (
                 <Text
@@ -84,9 +84,6 @@ const ImagePost = ({
         }
         let content = event.content;
         content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-            console.log(i);
-            console.log(event.mentions[i - 1]);
-            console.log(event);
             return (
                 <Text
                     style={{ color: colors.primary500 }}
@@ -110,7 +107,8 @@ const ImagePost = ({
     const zap = useZapNote(
         item.id,
         user?.lud06 || user?.lud16,
-        user?.name || item?.pubkey.slice(0, 16)
+        user?.name || item?.pubkey.slice(0, 16),
+        item.pubkey
     );
 
     const age = getAge(created_at);
@@ -159,19 +157,10 @@ const ImagePost = ({
                         borderColor: colors.primary500,
                     }}
                 >
-                    <Text
-                        style={[
-                            globalStyles.textBodyBold,
-                            {
-                                textAlign: "left",
-                            },
-                        ]}
-                    >
-                        {user?.name || pubkey}
-                    </Text>
+                    <UserBanner event={item} user={user} width={width}/>
                 </View>
                 <FeedImage
-                    size={((width - 32) / 100) * 85}
+                    size={((width - 16) / 100) * 85}
                     images={[item.image]}
                 />
                 <Pressable
@@ -299,43 +288,6 @@ const ImagePost = ({
                     width: "10%",
                 }}
             >
-                <View
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        marginBottom: 16,
-                    }}
-                >
-                    {user ? (
-                        <Pressable
-                            onPress={() => {
-                                navigation.navigate("Profile", {
-                                    screen: "ProfileScreen",
-                                    params: { pubkey: user.pubkey },
-                                });
-                            }}
-                        >
-                            <Image
-                                style={{
-                                    width: (width / 100) * 8,
-                                    height: (width / 100) * 8,
-                                    borderRadius: (width / 100) * 4,
-                                    backgroundColor: colors.primary500,
-                                    borderColor: colors.primary500,
-                                    borderWidth: 2,
-                                }}
-                                cachePolicy="memory-disk"
-                                source={
-                                    user.picture ||
-                                    require("../../../assets//user_placeholder.jpg")
-                                }
-                                contentFit="contain"
-                            />
-                        </Pressable>
-                    ) : undefined}
-                </View>
                 {user?.lud06 || user?.lud16 ? (
                     <Pressable
                         style={({ pressed }) => [

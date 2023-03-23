@@ -4,6 +4,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     Text,
+    Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -18,15 +19,16 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
-import { Event } from "../../utils/nostrV2/Event";
 import BackButton from "../../components/BackButton";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
+import { getUserData } from "../../utils/nostrV2";
+import { useZapPlebhy } from "../../features/plebhy/hooks/useZapPlebhy";
 
 const Stack = createStackNavigator();
 
 const PostModal = ({ navigation, route }) => {
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState("");
     const [image, setImage] = useState(null);
     const [sending, setSending] = useState(false);
     const headerHeight = useHeaderHeight();
@@ -96,6 +98,22 @@ ${gif}`
 
         if (!result.canceled) {
             resizeImage(result.assets[0]);
+        }
+    };
+
+    const submitHandler = async () => {
+        setSending(true);
+        let postContent = content;
+        try {
+            if (image) {
+                let imageURL = await uploadImage(pubKey, walletBearer);
+                postContent = content.concat("\n", imageURL);
+            }
+            await publishEvent(postContent);
+            navigation.navigate("MainTabNav");
+            return;
+        } catch (e) {
+            console.log(e);
         }
     };
 
@@ -169,35 +187,7 @@ ${gif}`
                     <CustomButton
                         text="Send"
                         buttonConfig={{
-                            onPress: async () => {
-                                setSending(true);
-                                let postContent = content;
-                                try {
-                                    if (image) {
-                                        let imageURL = await uploadImage(
-                                            pubKey,
-                                            walletBearer
-                                        );
-                                        postContent = content.concat(
-                                            "\n",
-                                            imageURL
-                                        );
-                                    }
-                                    const result = await publishEvent(
-                                        postContent
-                                    );
-                                    if (result.successes.length > 0) {
-                                        let newEvent = new Event(result.event);
-                                        newEvent.save();
-                                        navigation.navigate("MainTabNav");
-                                        return;
-                                    }
-                                    alert("Something went wrong...");
-                                    setSending(false);
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                            },
+                            onPress: submitHandler,
                         }}
                         disabled={!content || content?.length < 1}
                         loading={sending}
@@ -265,11 +255,11 @@ const PostGifModal = ({ navigation }) => {
     const [gifs, setGifs] = useState();
     const [containerWidth, setContainerWidth] = useState();
     const [input, setInput] = useState();
-    const [searchTerm, setSearchTerm] = useState('');
-
+    const [searchTerm, setSearchTerm] = useState("");
 
     const getTrendingGifs = async () => {
-        setSearchTerm(input)
+        let plebhyGifs = [];
+        setSearchTerm(input);
         try {
             if (input?.length > 0) {
                 const response = await fetch(
@@ -284,10 +274,10 @@ const PostGifModal = ({ navigation }) => {
                     result: gif.images.downsized_medium.url?.split("?")[0],
                     height: Number(gif.images.fixed_width_downsampled.height),
                     width: Number(gif.images.fixed_width_downsampled.width),
+                    source: "GIPHY",
                 }));
                 setGifs(giphyData);
             } else {
-                console.log(input);
                 const response = await fetch(
                     `https://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=25`
                 );
@@ -298,8 +288,29 @@ const PostGifModal = ({ navigation }) => {
                     result: gif.images.downsized_medium.url?.split("?")[0],
                     height: Number(gif.images.fixed_width_downsampled.height),
                     width: Number(gif.images.fixed_width_downsampled.width),
+                    source: "GIPHY",
                 }));
-                setGifs(giphyData);
+                try {
+                    const plebhyResponse = await fetch(
+                        "https://current.fyi/plebhy?limit=10&search=trending"
+                    );
+                    const plebhyData = await plebhyResponse.json();
+                    plebhyGifs = plebhyData.data.map((gif) => ({
+                        id: gif.sid,
+                        pTag: gif.ptag,
+                        eTag: gif.etag,
+                        thumbnail: decodeURIComponent(gif.images.downsized.url),
+                        result: decodeURIComponent(gif.images.original.url),
+                        height: Number(gif.images.downsized.height),
+                        width: Number(gif.images.downsized.width),
+                        source: "PLEBHY",
+                    }));
+                    const plebhyPubkeys = plebhyData.data.map(gif => gif.ptag)
+                    getUserData(plebhyPubkeys)
+                } catch (e) {
+                    console.log("There was an issue getting PLEBHY gifs...", e);
+                }
+                setGifs([...plebhyGifs, ...giphyData]);
             }
         } catch (e) {
             console.log(e);
@@ -339,7 +350,12 @@ const PostGifModal = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flex: 1, marginRight: 12 }}>
-                        <Input textInputConfig={{ onChangeText: setInput, onSubmitEditing: getTrendingGifs}} />
+                        <Input
+                            textInputConfig={{
+                                onChangeText: setInput,
+                                onSubmitEditing: getTrendingGifs,
+                            }}
+                        />
                     </View>
                     <Ionicons
                         name="search"
@@ -353,28 +369,30 @@ const PostGifModal = ({ navigation }) => {
                     onLayout={onLayoutView}
                 >
                     {gifs ? (
-                        <MasonryFlashList
-                            numColumns={2}
-                            data={gifs}
-                            renderItem={({ item }) => (
-                                <GifContainer
-                                    item={item}
-                                    width={containerWidth}
-                                />
-                            )}
-                            ListHeaderComponent={() => (
-                                <Text
-                                    style={[
-                                        globalStyles.textBodyBold,
-                                        { textAlign: "left" },
-                                    ]}
-                                >
-                                    {searchTerm?.length > 0 ? searchTerm : 'Trending'}
-                                </Text>
-                            )}
-                            estimatedItemSize={180}
-                            showsVerticalScrollIndicator={false}
-                        />
+                        <View style={{ flex: 1 }}>
+                            <Text
+                                style={[
+                                    globalStyles.textBodyBold,
+                                    { textAlign: "left" },
+                                ]}
+                            >
+                                {searchTerm?.length > 0
+                                    ? searchTerm
+                                    : "Trending"}
+                            </Text>
+                            <MasonryFlashList
+                                numColumns={2}
+                                data={gifs}
+                                renderItem={({ item }) => (
+                                    <GifContainer
+                                        item={item}
+                                        width={containerWidth}
+                                    />
+                                )}
+                                estimatedItemSize={180}
+                                showsVerticalScrollIndicator={false}
+                            />
+                        </View>
                     ) : undefined}
                 </View>
             </View>
@@ -384,10 +402,25 @@ const PostGifModal = ({ navigation }) => {
 
 const GifContainer = ({ item, width }) => {
     const navigation = useNavigation();
+    const user = useSelector(state => state.messages.users[item.pTag])
+    const zapPlebhy = useZapPlebhy()
+
+    const yesHandler = () => {
+        zapPlebhy(item.eTag, user, item.pTag)
+        navigation.navigate("PostModal", { gif: item.result });
+    };
+
+    const noHandler = () => {
+        navigation.navigate("PostModal", { gif: item.result });
+    };
     return (
         <Pressable
             onPress={() => {
-                navigation.navigate("PostModal", { gif: item.result });
+                if (item.source === 'GIPHY') {
+                    navigation.navigate("PostModal", { gif: item.result });
+                } else if (item.source === 'PLEBHY' && user) {
+                    Alert.alert('Support the creator?', `This GIF was created by ${user.name || item.pTag.slice(0,8)}. Do you want to send them a Zap?`, [{text: 'Yes!', onPress: yesHandler}, {text: 'No!', style:'destructive'}])
+                }
             }}
         >
             <Image
@@ -397,6 +430,22 @@ const GifContainer = ({ item, width }) => {
                 }}
                 source={item.thumbnail}
             />
+            <View
+                style={{
+                    position: "absolute",
+                    backgroundColor:
+                        item.source === "PLEBHY" ? colors.primary500 : "white",
+                    padding: 3,
+                    opacity: 0.8,
+                    right: 5,
+                    bottom: 5,
+                    borderRadius: 2,
+                }}
+            >
+                <Text style={[globalStyles.textBodyS, { color: "black" }]}>
+                    {item.source}
+                </Text>
+            </View>
         </Pressable>
     );
 };

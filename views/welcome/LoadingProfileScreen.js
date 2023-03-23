@@ -92,7 +92,6 @@ const LoadingProfileScreen = ({ route }) => {
             await followUser(pubKey);
             try {
                 if (publishProfile) {
-                    console.log("Publishing...");
                     if (image) {
                         imageUrl = await uploadImage(pubKey, access_token);
                     }
@@ -101,14 +100,9 @@ const LoadingProfileScreen = ({ route }) => {
                     }
                     await publishKind0(address, bio, imageUrl, address);
                 }
-                try {
-                    const oldFollowers = await getKind3Followers(pubKey);
-                    await followMultipleUsers(oldFollowers);
-                } catch (e) {
-                    console.log(e);
-                }
                 await updateFollowedUsers();
             } catch (error) {
+                console.log(error);
             } finally {
                 dispatch(logIn({ bearer: access_token, username, pubKey }));
             }

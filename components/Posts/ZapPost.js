@@ -1,42 +1,21 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
-import Animated, { FadeIn, LightSpeedInLeft } from "react-native-reanimated";
+import Animated, { color, FadeIn, LightSpeedInLeft } from "react-native-reanimated";
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
+import colors from "../../styles/colors";
 import PostActionBar from "./PostActionBar";
 
-const TextPost = ({ event, user }) => {
-    const content = useParseContent(event);
+const ZapPost = ({ event, user }) => {
     const navigation = useNavigation();
-    const zap = useZapNote(
-        event.id,
-        user?.lud06 || user?.lud16,
-        user?.name || event?.pubkey.slice(0, 16),
-        event.pubkey
-    );
-    const commentHandler = () => {
-        navigation.push("CommentScreen", {
-            eventId: event.id,
-            rootId: event.id,
-            type: "root",
-            event: event,
-        });
-    };
-
-    const zapHandler = () => {
-        zap();
-    };
-
-    const moreHandler = () => {
-        navigation.navigate("PostMenuModal", { event });
-    };
     return (
         <Animated.View
             entering={FadeIn}
             style={{
                 padding: 6,
                 marginBottom: 12,
+                backgroundColor: colors.primary500,
             }}
         >
             <View
@@ -49,19 +28,19 @@ const TextPost = ({ event, user }) => {
                 <Text
                     style={[
                         globalStyles.textBodyBold,
-                        { textAlign: "left", width: "50%" },
+                        { textAlign: "left", width: "50%", color: colors.backgroundPrimary },
                     ]}
                     numberOfLines={1}
                     onPress={() => {
                         navigation.navigate("Profile", {
                             screen: "ProfileScreen",
-                            params: { pubkey: event.pubkey },
+                            params: { pubkey: event.payer, name: user.name || event.payer },
                         });
                     }}
                 >
                     {user?.name || event.pubkey}
                 </Text>
-                <Text style={[globalStyles.textBodyS]}>
+                <Text style={[globalStyles.textBodyS, {color: colors.backgroundPrimary}]}>
                     {getAge(event.created_at)}
                 </Text>
             </View>
@@ -69,19 +48,13 @@ const TextPost = ({ event, user }) => {
             <Text
                 style={[
                     globalStyles.textBody,
-                    { textAlign: "left", marginTop: 16 },
+                    { textAlign: "left", marginTop: 16, color: colors.backgroundPrimary },
                 ]}
             >
-                {content}
+                Zapped {event.amount} SATS
             </Text>
-            <PostActionBar
-                onPressComment={commentHandler}
-                onPressZap={zapHandler}
-                onPressMore={moreHandler}
-                zapDisabled={!user?.lud06 && !user?.lud16}
-            />
         </Animated.View>
     );
 };
 
-export default TextPost;
+export default ZapPost;

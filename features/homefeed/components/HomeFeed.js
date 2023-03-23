@@ -9,6 +9,7 @@ import { getZaps } from "../../zaps/utils/getZaps";
 import globalStyles from "../../../styles/globalStyles";
 import colors from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
+import { usePaginatedFeed } from "../hooks/usePaginatedFeed";
 
 const HomeFeed = ({ width, height }) => {
     const [checkedZaps, setCheckedZaps] = useState([]);
@@ -19,8 +20,10 @@ const HomeFeed = ({ width, height }) => {
     const users = useSelector((state) => state.messages.users);
 
     const now = new Date() / 1000;
-    const [data, page, setNewPage, triggerRefresh] = useHomefeed(now);
-    const sorted = data.sort((a, b) => b.created_at - a.created_at);
+
+    const [get25RootPosts, refresh] = usePaginatedFeed(now);
+
+    const events = useSelector(state => state.messages.messages)
 
     const navigation = useNavigation();
 
@@ -31,21 +34,21 @@ const HomeFeed = ({ width, height }) => {
 
     const refreshHandler = useCallback(() => {
         setRefreshing(true);
-        triggerRefresh();
+        refresh();
         setRefreshing(false);
     }, []);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            const eventIds = data.map((event) => event.id);
+            const eventIds = events.map((event) => event.id);
             const toCheck = eventIds.filter((id) => !checkedZaps.includes(id));
             loadZaps(toCheck);
             setCheckedZaps((prev) => [...prev, toCheck]);
-        }, 1500);
+        }, 5000);
         return () => {
             clearTimeout(timeout);
         };
-    }, [data]);
+    }, [events]);
 
     const renderPost = useCallback(
         ({ item }) => {
@@ -77,10 +80,10 @@ const HomeFeed = ({ width, height }) => {
     );
     return (
         <>
-            {sorted.length > 3 && height ? (
+            {events.length >= 3 && height ? (
                 <View style={{ flex: 1, width: "100%", height: "100%" }}>
                     <FlashList
-                        data={sorted}
+                        data={events}
                         renderItem={renderPost}
                         snapToAlignment="start"
                         decelerationRate="fast"
@@ -90,7 +93,7 @@ const HomeFeed = ({ width, height }) => {
                         extraData={[users, zapAmount, zaps]}
                         getItemType={(item) => item.type}
                         onEndReached={() => {
-                            setNewPage(page + 1);
+                            get25RootPosts();
                         }}
                         onEndReachedThreshold={2}
                         showsVerticalScrollIndicator={false}
@@ -107,10 +110,15 @@ const HomeFeed = ({ width, height }) => {
                         width: "100%",
                     }}
                 >
-                    <View style={{width: '100%'}}>
+                    <View style={{ width: "100%" }}>
                         <Text style={globalStyles.textBody}>
-                            {'No messages to display...\n'}
-                            <Text style={{ color: colors.primary500 }} onPress={() => {navigation.navigate('TwitterModal')}}>
+                            {"No messages to display...\n"}
+                            <Text
+                                style={{ color: colors.primary500 }}
+                                onPress={() => {
+                                    navigation.navigate("TwitterModal");
+                                }}
+                            >
                                 Find people to follow
                             </Text>
                         </Text>

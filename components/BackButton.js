@@ -5,9 +5,9 @@ import colors from '../styles/colors'
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 
-const BackButton = ({onPress}) => {
+const BackButton = ({onPress, text}) => {
   return (
-      <Text onPress={onPress} style={[globalStyles.textBody, {color: colors.primary500, textAlign: 'left'}]}><Ionicons name='arrow-back'/> Back</Text>
+      <Text onPress={onPress} style={[globalStyles.textBody, {color: colors.primary500, textAlign: 'left'}]}><Ionicons name='arrow-back'/> {text || 'Back'}</Text>
   )
 }
 

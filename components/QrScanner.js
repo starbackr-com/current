@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import globalStyles from "../styles/globalStyles";
 import CustomButton from "./CustomButton";
-
-const lnRegex = ''
-const bcRegex = ''
-const lnAddressRegex = ''
-const lnurlRegex = ''
+import { bolt11Regex } from "../constants/regex";
 
 const QrScanner = ({ navigation }) => {
     const [hasPermission, setHasPermission] = useState(null);
@@ -24,34 +20,61 @@ const QrScanner = ({ navigation }) => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        if (data.includes('lnbc1')) {
-            navigation.navigate("WalletSendScreen", {data: data});
+        if (data.match(bolt11Regex)) {
+            navigation.navigate("WalletSendScreen", { data: data });
+        } else {
+            Alert.alert(
+                "Not a valid invoice",
+                `This is not a valid Lightning Invoice!
+
+(Only bolt11 invoices are supported right now)`,
+                [
+                    {
+                        text: "Okay!",
+                        onPress: () => {
+                            setScanned(false);
+                        },
+                    },
+                ]
+            );
         }
     };
 
     if (hasPermission === null) {
-        return <View style={globalStyles.screenContainer}><Text>Requesting for camera permission...</Text></View>;
+        return (
+            <View style={globalStyles.screenContainer}>
+                <Text>Requesting for camera permission...</Text>
+            </View>
+        );
     }
     if (hasPermission === false) {
-        return <View style={globalStyles.screenContainer}><Text>No permission to access camera...</Text></View>;
+        return (
+            <View style={globalStyles.screenContainer}>
+                <Text>No permission to access camera...</Text>
+            </View>
+        );
     }
 
     return (
-        <View style={[globalStyles.screenContainer, {flexDirection: 'column-reverse'}]}>
+        <View
+            style={[
+                globalStyles.screenContainer,
+                { flexDirection: "column-reverse" },
+            ]}
+        >
             <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />
-            {scanned && (
-                
-                <Button
-                    title={"Tap to Scan Again"}
-                    onPress={() => setScanned(false)}
-                />
-            )}
-            <CustomButton text='Back' containerStyles={{margin: 32}} buttonConfig={{onPress: () => {
-                navigation.goBack();
-            }}}/>
+            <CustomButton
+                text="Back"
+                containerStyles={{ margin: 32 }}
+                buttonConfig={{
+                    onPress: () => {
+                        navigation.goBack();
+                    },
+                }}
+            />
         </View>
     );
 };
