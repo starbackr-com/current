@@ -419,7 +419,7 @@ const GifContainer = ({ item, width }) => {
                 if (item.source === 'GIPHY') {
                     navigation.navigate("PostModal", { gif: item.result });
                 } else if (item.source === 'PLEBHY' && user) {
-                    Alert.alert('Support the creator?', `This GIF was created by ${user.name || item.pTag.slice(0,8)}. Do you want to send them a Zap?`, [{text: 'Yes!', onPress: yesHandler}, {text: 'No!', style:'destructive'}])
+                    Alert.alert('Support the creator?', `This GIF was created by ${user.name || item.pTag.slice(0,8)}. Do you want to send them a Zap?`, [{text: 'Yes!', onPress: yesHandler}, {text: 'No!', style:'destructive', onPress: noHandler}])
                 }
             }}
         >
