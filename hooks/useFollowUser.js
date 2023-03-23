@@ -2,13 +2,12 @@ import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
 import { useDispatch, useSelector } from "react-redux";
 import { followMultiplePubkeys } from "../features/userSlice";
 import { db } from "../utils/database";
-import { relays } from "../utils/nostrV2";
-import { pool } from "../utils/nostrV2/relayPool";
+import { connectedRelayPool, pool } from "../utils/nostrV2/relayPool";
 import { getValue } from "../utils/secureStore";
 
 const publishKind3 = async (oldKeys, newKeys) => {
     const dedupedKeys = new Set([...oldKeys, ...newKeys]);
-    console.log(`deduped length: ${[...dedupedKeys].length}`)
+    console.log(`deduped length: ${[...dedupedKeys].length}`);
     const dedupedKeysTags = [...dedupedKeys].map((key) => ["p", key, ""]);
     try {
         const sk = await getValue("privKey");
@@ -23,7 +22,7 @@ const publishKind3 = async (oldKeys, newKeys) => {
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, sk);
-        const urls = relays.map((relay) => relay.url);
+        const urls = connectedRelayPool.map((relay) => relay.url);
         let pubs = pool.publish(urls, event);
         const success = await new Promise((resolve, reject) => {
             let timer = setTimeout(() => {
@@ -47,10 +46,13 @@ export const useFollowUser = () => {
 
     const follow = async (pubkeysInHex) => {
         try {
-            dispatch(followMultiplePubkeys(pubkeysInHex));
+            const deduped = pubkeysInHex.filter(
+                (pubkey) => !followedPubkeys.includes(pubkey)
+            );
+            dispatch(followMultiplePubkeys(deduped));
             const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
             const timeNow = new Date().getTime() / 1000;
-            pubkeysInHex.forEach((pubkey) => {
+            deduped.forEach((pubkey) => {
                 try {
                     const sql = `INSERT OR REPLACE INTO followed_users (pubkey, followed_at) VALUES (?,?)`;
                     const params = [pubkey, timeNow];

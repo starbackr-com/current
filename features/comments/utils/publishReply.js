@@ -1,6 +1,5 @@
 import { getEventHash, getPublicKey, signEvent } from "nostr-tools";
-import { relays } from "../../../utils/nostrV2";
-import { pool } from "../../../utils/nostrV2/relayPool";
+import { connectedRelayPool, pool } from "../../../utils/nostrV2/relayPool";
 import { getValue } from "../../../utils/secureStore";
 
 export const publishReply = async (content, event) => {
@@ -22,7 +21,7 @@ try {
       }
       reply.id = getEventHash(reply)
       reply.sig = signEvent(reply, sk)
-    const urls = relays.map(relay => relay.url)
+    const urls = connectedRelayPool.map(relay => relay.url)
     const success = await new Promise((resolve, reject) => {
         let pubs = pool.publish(urls, reply)
         let timer = setTimeout(() => {

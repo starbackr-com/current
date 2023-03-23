@@ -8,10 +8,12 @@ import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import HomeFeed from "../features/homefeed/components/HomeFeed";
+import { useLinking } from "../hooks";
 
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
+    useLinking();
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
     const twitterModalShown = useSelector(

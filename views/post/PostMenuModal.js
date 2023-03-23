@@ -7,6 +7,8 @@ import CustomButton from "../../components/CustomButton";
 import { muteUser } from "../../utils/users";
 import * as Clipboard from 'expo-clipboard';
 import { encodeNoteID } from "../../utils/nostr/keys";
+import { publishReaction, publishRepost } from "../../utils/nostrV2";
+import { useState } from "react";
 
 const ActionButton = ({ onPress, icon, text }) => {
     return (
@@ -18,7 +20,8 @@ const ActionButton = ({ onPress, icon, text }) => {
                 paddingHorizontal: 5,
                 borderRadius: 10,
                 backgroundColor: "#333333",
-                width: "20%",
+                flex: 1,
+                margin: 2
             }}
             onPress={onPress}
         >
@@ -42,6 +45,7 @@ const ActionButton = ({ onPress, icon, text }) => {
 const PostMenuModal = ({ navigation, route }) => {
     const { event } = route.params;
     const { id, pubkey } = event;
+    const [repostLoading, setRepostLoading] = useState(false)
     const dispatch = useDispatch();
 
     const muteHandler = async () => {
@@ -53,9 +57,18 @@ const PostMenuModal = ({ navigation, route }) => {
         }
     };
 
-    const upvoteHandler = () => {};
+    const repostHandler = async () => {
+        setRepostLoading(true);
+        await publishRepost(id, pubkey);
+        setRepostLoading(false);
+        navigation.goBack();
+    };
 
-    const downvoteHandler = () => {};
+    const upvoteHandler = async () => {
+        await publishReaction('+', id, pubkey);
+        navigation.goBack();
+    };
+
 
     const reportHandler = () => {
         navigation.goBack();
@@ -102,13 +115,23 @@ const PostMenuModal = ({ navigation, route }) => {
                         style={{
                             flexDirection: "row",
                             justifyContent: "space-around",
-                            alignItems: "center",
+                            alignItems: 'stretch',
                             paddingVertical: 16,
                             width: "100%",
                         }}
                     >
                         {/* <ActionButton text="Upvote" icon="arrow-up" onPress={upvoteHandler}/>
                         <ActionButton text="Downvote" icon="arrow-down" onPress={downvoteHandler}/> */}
+                        <ActionButton
+                            text="Repost Event"
+                            icon="repeat"
+                            onPress={repostHandler}
+                        />
+                        <ActionButton
+                            text="Like Event"
+                            icon="heart-circle"
+                            onPress={upvoteHandler}
+                        />
                         <ActionButton
                             text="Report Content"
                             icon="alert-circle"

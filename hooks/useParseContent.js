@@ -3,6 +3,7 @@ import { Text } from "react-native";
 import { useSelector } from "react-redux";
 import reactStringReplace from "react-string-replace";
 import * as Linking from "expo-linking";
+import { httpRegex } from "../constants/regex";
 
 export const useParseContent = (event) => {
     const navigation = useNavigation();
@@ -27,7 +28,7 @@ export const useParseContent = (event) => {
 
     content = reactStringReplace(
         content,
-        /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/,
+        httpRegex,
         (m, i) => {
             return (
                 <Text

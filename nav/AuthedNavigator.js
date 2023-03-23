@@ -25,6 +25,7 @@ import MentionsModal from "../features/mentions/views/MentionsModal";
 import CustomTabBar from "../components/CustomTabBar";
 import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
 import { Image } from "expo-image";
+import ProfileHeader from "../features/profile/components/ProfileHeader";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -125,7 +126,7 @@ const TabNavigator = ({ navigation }) => {
                         onPress={() => {
                             navigation.navigate("Profile", {
                                 screen: "ProfileScreen",
-                                params: { pubkey: pubKey },
+                                params: { pubkey: pubKey, name: user?.name || undefined },
                             });
                         }}
                     >
@@ -177,57 +178,85 @@ const AuthedNavigator = () => {
     useUpdateFollowing();
     return (
         <>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="MainTabNav" component={TabNavigator} />
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="MainTabNav"
+                    component={TabNavigator}
+                    options={{ headerShown: false }}
+                />
                 <Stack.Screen
                     name="TwitterModal"
                     component={TwitterModal}
-                    options={{ presentation: "modal" }}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
                 <Stack.Screen
                     name="VerifyTwitterModal"
                     component={VerifyTwitterModal}
-                    options={{ presentation: "modal" }}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
                 <Stack.Screen
                     name="PostView"
                     component={PostView}
-                    options={{ presentation: "modal" }}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
                 <Stack.Screen
                     name="Profile"
                     component={ProfileNavigator}
-                    options={{ presentation: "modal" }}
+                    options={({ route, navigation }) => {
+                        return {
+                            presentation: "modal",
+                            // headerStyle: {
+                            //     backgroundColor: "#18181b",
+                            // },
+                            // headerShadowVisible: false,
+                            // headerTitle: route.params.params.name,
+                            // headerTitleStyle: {color: 'white'},
+                            // header: ({route}) => <ProfileHeader route={route}/>
+                            headerShown: false
+                        };
+                    }}
                 />
                 <Stack.Screen
                     name="ImageModal"
                     component={FullScreenImage}
-                    options={{ presentation: "transparentModal" }}
+                    options={{
+                        presentation: "transparentModal",
+                        headerShown: false,
+                    }}
                 />
                 <Stack.Screen
                     name="ReadMoreModal"
                     component={ReadMoreModal}
-                    options={{ presentation: "transparentModal" }}
+                    options={{
+                        presentation: "transparentModal",
+                        headerShown: false,
+                    }}
                 />
                 <Stack.Screen
                     name="PostMenuModal"
                     component={PostMenuModal}
-                    options={{ presentation: "transparentModal" }}
+                    options={{
+                        presentation: "transparentModal",
+                        headerShown: false,
+                    }}
                 />
                 <Stack.Screen
                     name="ZapListModal"
                     component={ZapListModal}
-                    options={{ presentation: "transparentModal" }}
+                    options={{
+                        presentation: "transparentModal",
+                        headerShown: false,
+                    }}
                 />
                 <Stack.Screen
                     name="ReportPostModal"
                     component={ReportPostModal}
-                    options={{ presentation: "modal" }}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
                 <Stack.Screen
                     name="MentionsModal"
                     component={MentionsModal}
-                    options={{ presentation: "modal" }}
+                    options={{ presentation: "modal", headerShown: false }}
                 />
             </Stack.Navigator>
         </>

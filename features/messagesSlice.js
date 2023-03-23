@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     messages: [],
+    noteIds: [],
     users: {},
     relayReady: false,
 };
@@ -11,16 +12,14 @@ export const messageSlice = createSlice({
     initialState,
     reducers: {
         addMessage: (state, action) => {
-            const newMessage = action.payload.event;
+            const newMessage = action.payload;
             const exists = state.messages.find(
                 (message) => message.id === newMessage.id
             );
             if (exists) {
                 return;
             }
-
-            let updatedArray = [...state.messages, action.payload.event];
-            updatedArray.sort((a, b) => b.created_at - a.created_at);
+            const updatedArray = [...state.messages, action.payload].sort((a, b) => b.created_at - a.created_at);
             state.messages = updatedArray;
         },
         removeAuthorsMessages: (state, action) => {

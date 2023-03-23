@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import globalStyles from "../styles/globalStyles";
 import colors from "../styles/colors";
@@ -10,14 +10,16 @@ import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
-import { followUser } from "../utils/users";
 import ImagePost from "../components/Posts/ImagePost";
-import { useSubscribePosts } from "../hooks/useSubscribePosts";
 import TextPost from "../components/Posts/TextPost";
-import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
-import { useUnfollowUser } from "../hooks/useUnfollowUser";
-import { useFollowUser } from "../hooks/useFollowUser";
+import {
+    useFollowUser,
+    useGetBadges,
+    useSubscribePosts,
+    useUnfollowUser,
+    usePaginatedPosts
+} from "../hooks";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
@@ -56,7 +58,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
         }, 1000);
     };
 
-    const npub = encodePubkey(pubkey);
+    const npub = encodePubkey(pubkey) || "npub100000000000000000";
     return (
         <View style={{ width: "100%" }}>
             <View style={{ width: "100%", height: 20 }}></View>
@@ -83,14 +85,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                         }
                     />
                     <View style={{ padding: 12 }}>
-                        <Text
-                            style={[
-                                globalStyles.textBodyBold,
-                                { textAlign: "left" },
-                            ]}
-                        >
-                            {user?.name || pubkey}
-                        </Text>
                         {pubkey === loggedInPubkey ? (
                             <Text
                                 style={[
@@ -113,6 +107,15 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                             <Ionicons
                                 name={verified ? "checkbox" : "close-circle"}
                             />{" "}
+                        </Text>
+                        <Text
+                            style={[
+                                globalStyles.textBody,
+                                { color: colors.primary500, textAlign: "left" },
+                            ]}
+                        >
+                            {user?.lud16}{" "}
+                            <Ionicons name={user?.lud16 ? "flash" : ""} />{" "}
                         </Text>
                     </View>
                 </View>
@@ -176,11 +179,9 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const now = new Date() / 1000;
 
-    const [data, page, setPage] = useSubscribePosts([pubkey], now);
+    // const [data, page, setPage] = useSubscribePosts([pubkey], now);
 
-    const array = Object.keys(data)
-        .map((key) => data[key])
-        .sort((a, b) => b.created_at - a.created_at);
+    const [get25Posts, events, isLoading] = usePaginatedPosts([pubkey])
 
     const user = users[pubkey];
 
@@ -197,43 +198,12 @@ const ProfileScreen = ({ route, navigation }) => {
     };
 
     return (
-        <SafeAreaView
+        <View
             style={[
                 globalStyles.screenContainer,
                 { paddingTop: 0, paddingHorizontal: 0 },
             ]}
         >
-            <View
-                style={{
-                    flexDirection: "row",
-                    top: 16,
-                    width: "100%",
-                    height: 40,
-                    borderRadius: 20,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    alignSelf: "center",
-                    marginBottom: 12,
-                }}
-            >
-                <BackButton
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                />
-                {pubkey === loggedInPubkey ? (
-                    <CustomButton
-                        text="Edit"
-                        buttonConfig={{
-                            onPress: () => {
-                                navigation.navigate("EditProfileScreen");
-                            },
-                        }}
-                    />
-                ) : (
-                    <View />
-                )}
-            </View>
             <View
                 style={{
                     flex: 1,
@@ -242,7 +212,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 onLayout={onLayoutViewWidth}
             >
                 <FlashList
-                    data={array}
+                    data={events}
                     renderItem={renderItem}
                     ListHeaderComponent={
                         <ProfileHeader
@@ -256,11 +226,10 @@ const ProfileScreen = ({ route, navigation }) => {
                         <CustomButton
                             text="Load more"
                             buttonConfig={{
-                                onPress: () => {
-                                    listRef.current.prepareForLayoutAnimationRender();
-                                    setPage(page + 1);
-                                },
+                                onPress: get25Posts,
                             }}
+                            disabled={isLoading}
+                            loading={isLoading}
                         />
                     }
                     estimatedItemSize={250}
@@ -279,7 +248,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 />
                 <View style={{ height: 36 }}></View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

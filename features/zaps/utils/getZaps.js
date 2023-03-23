@@ -1,12 +1,12 @@
 import { event } from "react-native-reanimated";
-import { connectedRelays } from "../../../utils/nostrV2";
+import { connectedRelayPool, connectedRelays } from "../../../utils/nostrV2";
 import { Zap } from "../Zap";
 
 export const getZaps = async (eventIds) => {
     const allZaps = {};
     const zapsPerPost = {}
     await Promise.allSettled(
-        connectedRelays.map(
+        connectedRelayPool.map(
             (relay) =>
                 new Promise((resolve, reject) => {
                     let zaps = [];

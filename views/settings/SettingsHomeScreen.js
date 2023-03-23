@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, FlatList, Pressable, Button } from "react-native";
 import React from "react";
 import globalStyles from "../../styles/globalStyles";
@@ -14,7 +14,7 @@ import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import { removeData } from "../../utils/cache/asyncStorage";
 import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
-import appJson from '../../app.json';
+import appJson from "../../app.json";
 import { generateRandomString } from "../../utils/cache/asyncStorage";
 
 const settings = [
@@ -55,10 +55,6 @@ const SettingsHomeScreen = ({ navigation }) => {
     const navigationHandler = (route) => {
         navigation.navigate(route);
     };
-
-    const loggedIn = useSelector((state) => state.auth.loggedIn);
-    const data = useNoteMentions();
-    console.log(data);
     const logoutHandler = async () => {
         await deleteValue("privKey");
         await deleteValue("username");
@@ -72,7 +68,7 @@ const SettingsHomeScreen = ({ navigation }) => {
     };
 
     const introHandler = async () => {
-        await AsyncStorage.removeItem('appId');
+        await AsyncStorage.removeItem("appId");
         generateRandomString(12);
         await removeData(["twitterModalShown", "getStartedItemsShown"]);
         dispatch(resetAll());
@@ -94,20 +90,22 @@ const SettingsHomeScreen = ({ navigation }) => {
                     buttonConfig={{ onPress: logoutHandler }}
                 />
             </View>
-                <Text
-                    style={[
-                        globalStyles.textBody,
-                        { color: colors.primary500, marginBottom: 16 },
-                    ]}
-                    onPress={() => {
-                        Linking.openURL(
-                            "https://app.getcurrent.io/terms-and-privacy"
-                        );
-                    }}
-                >
-                    Terms and Privacy
-                </Text>
-                <Text onPress= {introHandler} style={globalStyles.textBodyS}>v{appJson.expo.version} ({appJson.expo.ios.buildNumber})</Text>
+            <Text
+                style={[
+                    globalStyles.textBody,
+                    { color: colors.primary500, marginBottom: 16 },
+                ]}
+                onPress={() => {
+                    Linking.openURL(
+                        "https://app.getcurrent.io/terms-and-privacy"
+                    );
+                }}
+            >
+                Terms and Privacy
+            </Text>
+            <Text onPress={introHandler} style={globalStyles.textBodyS}>
+                v{appJson.expo.version} ({appJson.expo.ios.buildNumber})
+            </Text>
         </View>
     );
 };
