@@ -31,7 +31,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 16
+      "versionCode": 22
     },
     "web": {
       "favicon": "./assets/favicon.png"
