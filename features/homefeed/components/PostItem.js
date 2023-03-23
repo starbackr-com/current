@@ -30,36 +30,18 @@ const PostItem = ({ item, height, width, user, zaps }) => {
     });
 
     const backgroundStyle = useAnimatedStyle(() => {
-        const backgroundColor = interpolateColor(
+        const borderColor = interpolateColor(
             bgProgress.value,
             [0, 1],
             ["#222222", colors.primary500]
         );
         
-        return { backgroundColor };
-    });
-
-    const textStyle = useAnimatedStyle(() => {
-        const color = interpolateColor(
-            bgProgress.value,
-            [0, 1],
-            ["#ffffff", colors.backgroundPrimary]
-        );
-
-        return { color };
+        return { borderColor };
     });
 
     const content = useParseContent(item);
 
-    const zap = useZapNote(
-        item.id,
-        user?.lud06 || user?.lud16,
-        user?.name || item?.pubkey.slice(0, 16),
-        item.pubkey
-    );
-
     const { created_at, pubkey } = item;
-
     const age = getAge(created_at);
 
     const textLayout = (e) => {
@@ -95,6 +77,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                         padding: 12,
                         borderRadius: 10,
                         justifyContent: "space-between",
+                        borderWidth: 1,
                     },
                     backgroundStyle,
                 ]}
@@ -118,18 +101,17 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     >
                         {content}
                     </Text>
-                    <Animated.Text
+                    <Text
                         style={[
                             globalStyles.textBody,
                             {
                                 textAlign: "left",
                             },
-                            textStyle,
                         ]}
                         numberOfLines={numOfLines}
                     >
                         {content}
-                    </Animated.Text>
+                    </Text>
                     {hasMore && (
                         <Pressable
                             onPress={() => {
@@ -192,15 +174,14 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     ) : (
                         <View></View>
                     )}
-                    <Animated.Text
+                    <Text
                         style={[
                             globalStyles.textBodyS,
-                            { textAlign: "right", padding: 4 },
-                            textStyle,
+                            { textAlign: "right", padding: 4, color: 'white'}
                         ]}
                     >
                         {age}
-                    </Animated.Text>
+                    </Text>
                 </View>
             </Animated.View>
             <ActionBar user={user} event={item} width={width}/>

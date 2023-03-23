@@ -32,7 +32,13 @@ const ActionBar = ({ user, event, width }) => {
     };
 
     const zapStyle = useAnimatedStyle(() => ({
-        opacity: withRepeat(withSequence(withTiming(0.1, {duration: 500}), withTiming(1, {duration: 500})), -1)
+        opacity: withRepeat(
+            withSequence(
+                withTiming(0.1, { duration: 500 }),
+                withTiming(1, { duration: 500 })
+            ),
+            -1
+        ),
     }));
     return (
         <View
@@ -48,7 +54,7 @@ const ActionBar = ({ user, event, width }) => {
                             width: (width / 100) * 8,
                             height: (width / 100) * 8,
                             borderRadius: (width / 100) * 4,
-                            backgroundColor: colors.primary500,
+                            backgroundColor: colors.backgroundSecondary,
                             marginBottom: 16,
                             alignItems: "center",
                             justifyContent: "center",
@@ -57,10 +63,12 @@ const ActionBar = ({ user, event, width }) => {
                     ]}
                     onPress={zapHandler}
                 >
-                    <Animated.View style={[zapPending ? zapStyle : {opacity: 1}]}>
+                    <Animated.View
+                        style={[zapPending ? zapStyle : { opacity: 1 }]}
+                    >
                         <Ionicons
                             name="flash"
-                            color='white'
+                            color={colors.primary500}
                             size={(width / 100) * 5}
                         />
                     </Animated.View>
@@ -71,7 +79,7 @@ const ActionBar = ({ user, event, width }) => {
                     width: (width / 100) * 8,
                     height: (width / 100) * 8,
                     borderRadius: (width / 100) * 4,
-                    backgroundColor: colors.primary500,
+                    backgroundColor: colors.backgroundSecondary,
                     marginBottom: 16,
                     alignItems: "center",
                     justifyContent: "center",
@@ -87,7 +95,7 @@ const ActionBar = ({ user, event, width }) => {
             >
                 <Ionicons
                     name="chatbubble-ellipses"
-                    color="white"
+                    color={colors.primary500}
                     size={(width / 100) * 5}
                 />
             </Pressable>
@@ -96,7 +104,7 @@ const ActionBar = ({ user, event, width }) => {
                     width: (width / 100) * 8,
                     height: (width / 100) * 8,
                     borderRadius: (width / 100) * 4,
-                    backgroundColor: colors.primary500,
+                    backgroundColor: colors.backgroundSecondary,
                     alignItems: "center",
                     justifyContent: "center",
                 }}
@@ -106,7 +114,7 @@ const ActionBar = ({ user, event, width }) => {
             >
                 <Ionicons
                     name="ellipsis-horizontal"
-                    color="white"
+                    color={colors.primary500}
                     size={(width / 100) * 5}
                 />
             </Pressable>
