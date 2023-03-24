@@ -6,6 +6,7 @@ import { decodeLnurl } from "../utils/bitcoin/lnurl";
 import { createZapEvent } from "../utils/nostrV2";
 import * as Haptics from "expo-haptics";
 import { addZap } from "../features/interactionSlice";
+import { dbAddZap } from "../utils/database";
 
 export const useZapNote = (eventId, dest, name, pubkey) => {
     const zapAmount = useSelector((state) => state.user.zapAmount);
@@ -79,7 +80,8 @@ export const useZapNote = (eventId, dest, name, pubkey) => {
                     invoice,
                 });
                 if (result.data && !result.data.error) {
-                    dispatch(addZap(eventId));
+                    dbAddZap(eventId);
+                    dispatch(addZap([eventId]));
                     Haptics.notificationAsync(
                         Haptics.NotificationFeedbackType.Success
                     );
@@ -126,7 +128,8 @@ export const useZapNote = (eventId, dest, name, pubkey) => {
                                     invoice,
                                 });
                                 if (result.data && !result.data.error) {
-                                    dispatch(addZap(eventId));
+                                    dbAddZap(eventId);
+                                    dispatch(addZap([eventId]));
                                     Haptics.notificationAsync(
                                         Haptics.NotificationFeedbackType.Success
                                     );

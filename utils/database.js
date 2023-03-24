@@ -1,6 +1,7 @@
 import * as SQLite from "expo-sqlite";
-import { addUser, hydrate } from "../features/messagesSlice";
-import { followMultiplePubkeys, followPubkey, mutePubkey } from "../features/userSlice";
+import { addZap } from "../features/interactionSlice";
+import { hydrate } from "../features/messagesSlice";
+import { followMultiplePubkeys, mutePubkey } from "../features/userSlice";
 import { store } from "../store/store";
 
 const openDatabase = () => SQLite.openDatabase("current.db");
@@ -48,6 +49,9 @@ const initArray = [
     `
     CREATE TABLE IF NOT EXISTS muted_users (
     pubkey TEXT PRIMARY KEY NOT NULL)`,
+    `
+    CREATE TABLE IF NOT EXISTS zapped_posts (
+    eventId TEXT PRIMARY KEY NOT NULL)`,
 ];
 
 export const getUsersFromDb = () => {
@@ -75,11 +79,11 @@ export const hydrateFromDatabase = async () => {
             "SELECT * FROM users",
             [],
             (_, { rows: { _array } }) => {
-                const usersObj = {}
+                const usersObj = {};
                 _array.forEach((user) => {
-                    usersObj[user.pubkey] = user
+                    usersObj[user.pubkey] = user;
                 });
-                store.dispatch(hydrate(usersObj))
+                store.dispatch(hydrate(usersObj));
             },
             (_, error) => {
                 console.log("Error querying users", error);
@@ -91,7 +95,7 @@ export const hydrateFromDatabase = async () => {
             [],
             (_, { rows: { _array } }) => {
                 const pubkeys = _array.map((row) => row.pubkey);
-                store.dispatch(followMultiplePubkeys(pubkeys))
+                store.dispatch(followMultiplePubkeys(pubkeys));
             },
             (_, error) => {
                 console.log("Error querying users", error);
@@ -111,6 +115,15 @@ export const hydrateFromDatabase = async () => {
                 return false;
             }
         );
+        tx.executeSql(
+            "SELECT eventId from zapped_posts",
+            [],
+            (_, {rows: {_array}}) => {
+                const zapIds = _array.map(row => row.eventId)
+                console.log(zapIds);
+                store.dispatch(addZap(zapIds))
+            }, () => {}
+        );
     });
 };
 
@@ -118,4 +131,25 @@ export const dbLogout = async () => {
     db.transaction((tx) => {
         tx.executeSql("DELETE FROM followed_users");
     });
+};
+
+export const dbAddZap = (eventId) => {
+    const sql = `INSERT OR REPLACE INTO zapped_posts (eventId) VALUES (?)`;
+    const params = [eventId];
+    try {
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql,
+                params,
+                () => {
+                    console.log("Successfully added to DB");
+                },
+                (_, error) => {
+                    console.error(error);
+                }
+            );
+        });
+    } catch (e) {
+        console.log(e);
+    }
 };

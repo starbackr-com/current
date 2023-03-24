@@ -9,9 +9,10 @@ export const interactionSlice = createSlice({
     initialState,
     reducers: {
         addZap: (state, action) => {
-            if (!state.zappedEvents.includes(action.payload)) {
-                state.zappedEvents.push(action.payload);
-            }
+            const deduplicated = [
+                ...new Set([...action.payload, ...state.zappedEvents]),
+            ];
+            state.zappedEvents = deduplicated;
         },
     },
 });
