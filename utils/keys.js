@@ -1,6 +1,5 @@
+import { privateKeyFromSeedWords } from "nostr-tools/lib/nip06";
 import wordlist from "./wordlist.json";
-import { privateKeyFromSeedWords } from "nostr-tools/nip06";
-
 export const generateMnemonic = async () => {
     const ent = window.crypto.getRandomValues(new Uint8Array(16));
     const entBits = Array.from(bitsFromOctets(ent));
