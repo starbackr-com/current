@@ -15,4 +15,3 @@ web-build/
 *.local
 *.xcworkspacedata
 *.plist
-yarn.lock
