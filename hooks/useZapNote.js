@@ -26,7 +26,7 @@ export const useZapNote = (eventId, dest, name, pubkey) => {
                         text: "Settings",
                         onPress: () => {
                             navigation.navigate("Settings", {
-                                screen: "Payments",
+                                screen: "Payment Settings",
                             });
                         },
                     },
