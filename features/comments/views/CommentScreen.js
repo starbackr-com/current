@@ -19,10 +19,10 @@ import BackButton from "../../../components/BackButton";
 import { publishReply } from "../utils/publishReply";
 import { getEventById } from "../../../utils/nostrV2/getEvents";
 import { ImagePost, TextPost, ZapPost } from "../../../components/Posts";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const CommentScreen = ({ route, navigation }) => {
     const { eventId } = route?.params;
-
     const [event, setEvent] = useState();
     const [width, setWidth] = useState();
     const [input, setInput] = useState("");
@@ -30,6 +30,7 @@ const CommentScreen = ({ route, navigation }) => {
     const height = useWindowDimensions().height;
     const replies = useReplies(eventId);
     const users = useSelector((state) => state.messages.users);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onLayoutViewWidth = (e) => {
         setWidth(e.nativeEvent.layout.width);
@@ -63,12 +64,14 @@ const CommentScreen = ({ route, navigation }) => {
     };
 
     const submitHandler = async () => {
+        setIsLoading(true);
         const success = await publishReply(input, event);
         if (!success) {
             alert("Something went wrong publishing your note...");
         } else {
             setInput("");
         }
+        setIsLoading(false);
     };
 
     return (
@@ -84,29 +87,35 @@ const CommentScreen = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            {event ? <View
-                style={{ flex: 1, width: "100%" }}
-                onLayout={onLayoutViewWidth}
-            >
-                <FlashList
-                    ListHeaderComponent={<CommentHeader parentEvent={event} />}
-                    data={replies}
-                    renderItem={renderItem}
-                    extraData={users}
-                    ItemSeparatorComponent={() => (
-                        <View
-                            style={{
-                                height: 1,
-                                backgroundColor: colors.backgroundSecondary,
-                                width: "100%",
-                                marginVertical: 5,
-                            }}
-                        />
-                    )}
-                    estimatedItemSize={100}
-                    keyExtractor={(item) => item.id}
-                />
-            </View> : <ActivityIndicator style={{flex: 1}}/>}
+            {event ? (
+                <View
+                    style={{ flex: 1, width: "100%" }}
+                    onLayout={onLayoutViewWidth}
+                >
+                    <FlashList
+                        ListHeaderComponent={
+                            <CommentHeader parentEvent={event} />
+                        }
+                        data={replies}
+                        renderItem={renderItem}
+                        extraData={users}
+                        ItemSeparatorComponent={() => (
+                            <View
+                                style={{
+                                    height: 1,
+                                    backgroundColor: colors.backgroundSecondary,
+                                    width: "100%",
+                                    marginVertical: 5,
+                                }}
+                            />
+                        )}
+                        estimatedItemSize={100}
+                        keyExtractor={(item) => item.id}
+                    />
+                </View>
+            ) : (
+                <ActivityIndicator style={{ flex: 1 }} />
+            )}
             <View
                 style={{
                     width: "100%",
@@ -126,13 +135,19 @@ const CommentScreen = ({ route, navigation }) => {
                         inputStyle={{ maxHeight: height / 5 }}
                     />
                 </View>
-                <Ionicons
-                    name="send"
-                    size={24}
-                    color={colors.primary500}
-                    style={{ marginLeft: 12 }}
-                    onPress={submitHandler}
-                />
+                {!isLoading ? (
+                    <Ionicons
+                        name="send"
+                        size={24}
+                        color={colors.primary500}
+                        style={{ marginLeft: 12 }}
+                        onPress={submitHandler}
+                    />
+                ) : (
+                    <View style={{ marginLeft: 12 }}>
+                        <LoadingSpinner size={24} />
+                    </View>
+                )}
             </View>
         </KeyboardAvoidingView>
     );
