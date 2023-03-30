@@ -25,6 +25,7 @@ import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
 import { Image } from "expo-image";
 import { BackHeader } from "../components";
 import MentionsNavigator from "../features/mentions/nav/MentionsNavigator";
+import { PlebhyNavigator } from "../features/plebhy";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -204,13 +205,6 @@ const AuthedNavigator = () => {
                     options={({ route, navigation }) => {
                         return {
                             presentation: "modal",
-                            // headerStyle: {
-                            //     backgroundColor: "#18181b",
-                            // },
-                            // headerShadowVisible: false,
-                            // headerTitle: route.params.params.name,
-                            // headerTitleStyle: {color: 'white'},
-                            // header: ({route}) => <ProfileHeader route={route}/>
                             headerShown: false
                         };
                     }}
@@ -255,6 +249,11 @@ const AuthedNavigator = () => {
                 <Stack.Screen
                     name="MentionsModal"
                     component={MentionsNavigator}
+                    options={{ presentation: "modal", header: ({ route }) => <BackHeader /> }}
+                />
+                <Stack.Screen
+                    name="PlebhyModal"
+                    component={PlebhyNavigator}
                     options={{ presentation: "modal", header: ({ route }) => <BackHeader /> }}
                 />
             </Stack.Navigator>

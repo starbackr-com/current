@@ -1,11 +1,4 @@
-import {
-    View,
-    Pressable,
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    Alert,
-} from "react-native";
+import { View, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Input from "../../components/Input";
@@ -20,10 +13,6 @@ import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
 import BackButton from "../../components/BackButton";
-import { MasonryFlashList } from "@shopify/flash-list";
-import { useNavigation } from "@react-navigation/native";
-import { getUserData } from "../../utils/nostrV2";
-import { useZapPlebhy } from "../../features/plebhy/hooks/useZapPlebhy";
 
 const Stack = createStackNavigator();
 
@@ -34,8 +23,6 @@ const PostModal = ({ navigation, route }) => {
     const headerHeight = useHeaderHeight();
 
     const { pubKey, walletBearer } = useSelector((state) => state.auth);
-
-    const expiresAt = route?.params?.expiresAt;
     const gif = route?.params?.gif;
     const prefilledContent = route?.params?.prefilledContent;
     useEffect(() => {
@@ -207,20 +194,11 @@ ${gif}`
                             size={24}
                         />
                     </Pressable>
-                    {/* <Pressable
-                        onPress={() => {
-                            navigation.navigate("PostExpiryModal");
-                        }}
-                    >
-                        <Ionicons
-                            name="time"
-                            color={colors.primary500}
-                            size={24}
-                        />
-                    </Pressable> */}
                     <Pressable
                         onPress={() => {
-                            navigation.navigate("PostGifModal");
+                            navigation.navigate("PlebhyModal", {
+                                opener: "PostModal",
+                            });
                         }}
                     >
                         <MaterialCommunityIcons
@@ -235,231 +213,10 @@ ${gif}`
     );
 };
 
-const PostExpiryModal = ({ navigation }) => {
-    return (
-        <View style={globalStyles.screenContainer}>
-            <Pressable
-                style={{
-                    width: "100%",
-                    height: "25%",
-                    backgroundColor: "#222222",
-                }}
-                onPress={() => {
-                    navigation.navigate("PostModal", { expiresAt: 12345 });
-                }}
-            ></Pressable>
-        </View>
-    );
-};
-const PostGifModal = ({ navigation }) => {
-    const [gifs, setGifs] = useState();
-    const [containerWidth, setContainerWidth] = useState();
-    const [input, setInput] = useState();
-    const [searchTerm, setSearchTerm] = useState("");
-
-    const getTrendingGifs = async () => {
-        let plebhyGifs = [];
-        setSearchTerm(input);
-        try {
-            if (input?.length > 0) {
-                const response = await fetch(
-                    encodeURI(
-                        `https:/api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&limit=25&q=${input}`
-                    )
-                );
-                const data = await response.json();
-                const giphyData = data.data.map((gif) => ({
-                    id: gif.id,
-                    thumbnail: gif.images.fixed_width_downsampled.url,
-                    result: gif.images.downsized_medium.url?.split("?")[0],
-                    height: Number(gif.images.fixed_width_downsampled.height),
-                    width: Number(gif.images.fixed_width_downsampled.width),
-                    source: "GIPHY",
-                }));
-                setGifs(giphyData);
-            } else {
-                const response = await fetch(
-                    `https://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=25`
-                );
-                const data = await response.json();
-                const giphyData = data.data.map((gif) => ({
-                    id: gif.id,
-                    thumbnail: gif.images.fixed_width_downsampled.url,
-                    result: gif.images.downsized_medium.url?.split("?")[0],
-                    height: Number(gif.images.fixed_width_downsampled.height),
-                    width: Number(gif.images.fixed_width_downsampled.width),
-                    source: "GIPHY",
-                }));
-                try {
-                    const plebhyResponse = await fetch(
-                        "https://current.fyi/plebhy?limit=10&search=trending"
-                    );
-                    const plebhyData = await plebhyResponse.json();
-                    plebhyGifs = plebhyData.data.map((gif) => ({
-                        id: gif.sid,
-                        pTag: gif.ptag,
-                        eTag: gif.etag,
-                        thumbnail: decodeURIComponent(gif.images.downsized.url),
-                        result: decodeURIComponent(gif.images.original.url),
-                        height: Number(gif.images.downsized.height),
-                        width: Number(gif.images.downsized.width),
-                        source: "PLEBHY",
-                    }));
-                    const plebhyPubkeys = plebhyData.data.map(gif => gif.ptag)
-                    getUserData(plebhyPubkeys)
-                } catch (e) {
-                    console.log("There was an issue getting PLEBHY gifs...", e);
-                }
-                setGifs([...plebhyGifs, ...giphyData]);
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    useEffect(() => {
-        getTrendingGifs();
-    }, []);
-
-    const onLayoutView = (e) => {
-        setContainerWidth(e.nativeEvent.layout.width);
-    };
-
-    return (
-        <View style={[globalStyles.screenContainer]}>
-            <View
-                style={{
-                    width: "100%",
-                    flex: 1,
-                    alignItems: "center",
-                }}
-            >
-                <View style={{ width: "100%" }}>
-                    <BackButton
-                        onPress={() => {
-                            navigation.goBack();
-                        }}
-                    />
-                </View>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        width: "95%",
-                        alignItems: "center",
-                        paddingVertical: 12,
-                    }}
-                >
-                    <View style={{ flex: 1, marginRight: 12 }}>
-                        <Input
-                            textInputConfig={{
-                                onChangeText: setInput,
-                                onSubmitEditing: getTrendingGifs,
-                            }}
-                        />
-                    </View>
-                    <Ionicons
-                        name="search"
-                        size={24}
-                        color={colors.primary500}
-                        onPress={getTrendingGifs}
-                    />
-                </View>
-                <View
-                    style={{ width: "100%", flex: 1 }}
-                    onLayout={onLayoutView}
-                >
-                    {gifs ? (
-                        <View style={{ flex: 1 }}>
-                            <Text
-                                style={[
-                                    globalStyles.textBodyBold,
-                                    { textAlign: "left" },
-                                ]}
-                            >
-                                {searchTerm?.length > 0
-                                    ? searchTerm
-                                    : "Trending"}
-                            </Text>
-                            <MasonryFlashList
-                                numColumns={2}
-                                data={gifs}
-                                renderItem={({ item }) => (
-                                    <GifContainer
-                                        item={item}
-                                        width={containerWidth}
-                                    />
-                                )}
-                                estimatedItemSize={180}
-                                showsVerticalScrollIndicator={false}
-                            />
-                        </View>
-                    ) : undefined}
-                </View>
-            </View>
-        </View>
-    );
-};
-
-const GifContainer = ({ item, width }) => {
-    const navigation = useNavigation();
-    const user = useSelector(state => state.messages.users[item.pTag])
-    const zapPlebhy = useZapPlebhy()
-
-    const yesHandler = () => {
-        zapPlebhy(item.eTag, user, item.pTag)
-        navigation.navigate("PostModal", { gif: item.result });
-    };
-
-    const noHandler = () => {
-        navigation.navigate("PostModal", { gif: item.result });
-    };
-    return (
-        <Pressable
-            onPress={() => {
-                if (item.source === 'GIPHY') {
-                    navigation.navigate("PostModal", { gif: item.result });
-                } else if (item.source === 'PLEBHY' && user) {
-                    Alert.alert('Support the creator?', `This GIF was created by ${user.name || item.pTag.slice(0,8)}. Do you want to send them a Zap?`, [{text: 'Yes!', onPress: yesHandler}, {text: 'No!', style:'destructive', onPress: noHandler}])
-                }
-            }}
-        >
-            <Image
-                style={{
-                    width: width / 2,
-                    height: item.height,
-                }}
-                source={item.thumbnail}
-            />
-            <View
-                style={{
-                    position: "absolute",
-                    backgroundColor:
-                        item.source === "PLEBHY" ? colors.primary500 : "white",
-                    padding: 3,
-                    opacity: 0.8,
-                    right: 5,
-                    bottom: 5,
-                    borderRadius: 2,
-                }}
-            >
-                <Text style={[globalStyles.textBodyS, { color: "black" }]}>
-                    {item.source}
-                </Text>
-            </View>
-        </Pressable>
-    );
-};
-
-const PostView = ({ route }) => {
+const PostView = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="PostModal" component={PostModal} />
-            <Stack.Screen
-                name="PostExpiryModal"
-                component={PostExpiryModal}
-                options={{ presentation: "transparentModal" }}
-            />
-            <Stack.Screen name="PostGifModal" component={PostGifModal} />
         </Stack.Navigator>
     );
 };
