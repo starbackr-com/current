@@ -25,6 +25,7 @@ const ZapMention = ({ item }) => {
                     user?.picture ||
                     require("../../../assets/user_placeholder.jpg")
                 }
+                recyclingKey={item.payer}
                 style={{ height: 50, width: 50, borderRadius: 25 }}
             />
             <View style={{ flex: 1, marginLeft: 12 }}>
