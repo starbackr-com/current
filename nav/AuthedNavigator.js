@@ -21,11 +21,10 @@ import ProfileNavigator from "./ProfileNavigator";
 import ZapListModal from "../views/home/ZapListModal";
 import PostMenuModal from "../views/post/PostMenuModal";
 import ReportPostModal from "../features/reports/views/ReportPostModal";
-import MentionsModal from "../features/mentions/views/MentionsModal";
-import CustomTabBar from "../components/CustomTabBar";
 import { useUpdateFollowing } from "../hooks/useUpdateFollowing";
 import { Image } from "expo-image";
-import ProfileHeader from "../features/profile/components/ProfileHeader";
+import { BackHeader } from "../components";
+import MentionsNavigator from "../features/mentions/nav/MentionsNavigator";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -255,8 +254,8 @@ const AuthedNavigator = () => {
                 />
                 <Stack.Screen
                     name="MentionsModal"
-                    component={MentionsModal}
-                    options={{ presentation: "modal", headerShown: false }}
+                    component={MentionsNavigator}
+                    options={{ presentation: "modal", header: ({ route }) => <BackHeader /> }}
                 />
             </Stack.Navigator>
         </>

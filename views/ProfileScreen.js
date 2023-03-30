@@ -10,11 +10,8 @@ import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
-import BackButton from "../components/BackButton";
 import {
     useFollowUser,
-    useGetBadges,
-    useSubscribePosts,
     useUnfollowUser,
     usePaginatedPosts
 } from "../hooks";
