@@ -14,13 +14,6 @@ const MentionsView = ({ navigation }) => {
 
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{ width: "100%" }}>
-                <BackButton
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                />
-            </View>
             <View style={{ flex: 1, width: "100%" }}>
                 <FlashList
                     data={data}
