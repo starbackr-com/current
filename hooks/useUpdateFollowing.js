@@ -1,34 +1,53 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { pool } from "../utils/nostrV2";
+import { useDispatch, useSelector } from "react-redux";
+import { connectedRelayPool, pool } from "../utils/nostrV2";
 import { useFollowUser } from "./useFollowUser";
+import { addRelays } from "../features/userSlice";
 
 export const useUpdateFollowing = () => {
     const pk = useSelector((state) => state.auth.pubKey);
+    const dispatch = useDispatch();
     const { follow } = useFollowUser();
 
     const getFollowingList = async () => {
-        const response = await fetch(process.env.BASEURL + "/relays");
-        const data = await response.json();
+        const urls = connectedRelayPool.map((relay) => relay.url);
+        const receivedEvents = [];
 
         const sub = pool.sub(
-            [data.result[0].relay],
+            urls,
             [
                 {
                     kinds: [3],
                     authors: [pk],
                 },
-            ], {skipVerification: true}
+            ],
+            { skipVerification: true }
         );
-        const tags = await new Promise((resolve) => {
+        const event = await new Promise((resolve) => {
             sub.on("event", (event) => {
-                resolve(event.tags);
+                console.log(event);
+                receivedEvents.push(event);
+            });
+            sub.on("eose", () => {
+                const [newestEvent] = receivedEvents.sort(
+                    (a, b) => b.created_at - a.created_at
+                );
+                resolve(newestEvent);
             });
         });
         sub.unsub();
-        const pubkeys = tags.map((tag) => tag[1]);
+        if (event) {
+            const pubkeys = event.tags.map((tag) => tag[1]);
         console.log(`Following ${pubkeys.length} keys from kind 3...`);
+        try {
+            const relays = JSON.parse(event.content);
+            dispatch(addRelays(relays));
+        } catch (e) {
+            console.log('Could not parse relays from kind 3');
+        }
         return pubkeys;
+        }
+        return []
     };
 
     const updateFollowers = async () => {

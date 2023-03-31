@@ -6,7 +6,7 @@ import { relays } from "../utils/nostrV2";
 import { pool } from "../utils/nostrV2/relayPool";
 import { getValue } from "../utils/secureStore";
 
-const publishKind3 = async (oldKeys, removedKey) => {
+const publishKind3 = async (oldKeys, removedKey, relays) => {
     filteredKeys = oldKeys.filter(key => key != removedKey)
     filteredKeysTags = filteredKeys.map((key) => ["p", key, ""]);
     try {
@@ -18,7 +18,7 @@ const publishKind3 = async (oldKeys, removedKey) => {
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
             tags: [...filteredKeysTags],
-            content: "",
+            content: JSON.stringify(relays),
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, sk);
@@ -43,6 +43,7 @@ const publishKind3 = async (oldKeys, removedKey) => {
 export const useUnfollowUser = () => {
     const dispatch = useDispatch();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const relays = useSelector(state => state.user.relays)
 
     const unfollow = (pubkeyInHex) => {
         try {
@@ -71,7 +72,7 @@ export const useUnfollowUser = () => {
                 } catch (e) {
                     console.log(e);
                 }
-            publishKind3(followedPubkeys, pubkeyInHex);
+            publishKind3(followedPubkeys, pubkeyInHex, relays);
         } catch (e) {
             console.log(e);
         }
