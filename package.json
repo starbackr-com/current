@@ -8,9 +8,11 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/config-plugins": "~6.0.0",
     "@expo/ngrok": "^4.1.0",
+    "@expo/prebuild-config": "~6.0.0",
     "@noble/secp256k1": "^1.7.1",
-    "@react-native-async-storage/async-storage": "~1.17.3",
+    "@react-native-async-storage/async-storage": "1.17.11",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.1",
@@ -22,15 +24,18 @@
     "bech32": "^2.0.0",
     "big-integer": "^1.6.51",
     "buffer": "^4.9.2",
+    "eas-cli": "3.8.1",
     "events": "^1.1.1",
-    "expo": "^48.0.4",
+    "expo": "^48.0.0",
     "expo-av": "~13.2.1",
     "expo-barcode-scanner": "~12.3.2",
+    "expo-build-properties": "~0.5.1",
     "expo-checkbox": "~2.3.1",
+    "expo-cli": "^6.3.2",
     "expo-clipboard": "~4.1.2",
     "expo-crypto": "~12.2.1",
-    "expo-dev-client": "~2.1.5",
-    "expo-file-system": "~15.2.1",
+    "expo-dev-client": "~2.1.6",
+    "expo-file-system": "~15.2.2",
     "expo-font": "~11.1.1",
     "expo-haptics": "~12.2.1",
     "expo-image": "~1.0.0",
@@ -50,7 +55,7 @@
     "react": "18.2.0",
     "react-native": "0.71.4",
     "react-native-gesture-handler": "~2.9.0",
-    "react-native-get-random-values": "^1.8.0",
+    "react-native-get-random-values": "~1.8.0",
     "react-native-pager-view": "6.1.2",
     "react-native-randombytes": "^3.6.1",
     "react-native-reanimated": "~2.14.4",
@@ -69,8 +74,13 @@
     "text-encoding": "^0.7.0",
     "text-encoding-polyfill": "^0.6.7"
   },
+  "resolutions": {
+    "@expo/config-plugins": "^6.0.0",
+    "@expo/prebuild-config": "^6.0.0",
+    "expo-modules-autolinking": "~1.1.0"
+  },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
+    "@babel/core": "^7.20.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4"
   },
   "private": true,
