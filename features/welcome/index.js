@@ -1,0 +1,1 @@
+export {default as WelcomeNavigator} from './nav/WelcomeNavigator'; 

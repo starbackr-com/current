@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
-import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
-import { generateMnemonic, generateSeedphrase } from "../../utils/keys";
-import colors from "../../styles/colors";
-import { generateRandomString } from "../../utils/cache/asyncStorage";
+import globalStyles from "../../../styles/globalStyles";
+import CustomButton from "../../../components/CustomButton";
+import { Image } from "expo-image";
+import { generateRandomString } from "../../../utils/cache/asyncStorage";
+import { generateSeedphrase } from "../../../utils/keys";
 
-const WelcomeScreen = ({ navigation }) => {
+const StartUpView = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();
 
     const importHandler = async () => {
@@ -18,8 +18,7 @@ const WelcomeScreen = ({ navigation }) => {
     const createHandler = async () => {
         generateRandomString(12);
         setIsLoading(true);
-        const mem = generateSeedphrase();
-        navigation.navigate("EULA", { mem });
+        navigation.navigate("Introduction");
         setIsLoading(false);
         return;
     };
@@ -33,7 +32,7 @@ const WelcomeScreen = ({ navigation }) => {
         >
             <View style={{ flex: 1, alignItems: "center" }}>
                 <Image
-                    source={require("../../assets/lightning_logo_negativ.png")}
+                    source={require("../../../assets/lightning_logo_negativ.png")}
                     style={{
                         height: 100,
                         width: 100,
@@ -72,4 +71,4 @@ const WelcomeScreen = ({ navigation }) => {
     );
 };
 
-export default WelcomeScreen;
+export default StartUpView;

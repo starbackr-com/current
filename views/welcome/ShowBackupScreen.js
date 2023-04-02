@@ -36,21 +36,21 @@ const ShowBackupScreen = ({ route, navigation }) => {
 
     const nextHandler = async () => {
         setIsLoading(true);
-        try{
-            const privKey = await mnemonicToSeed(mem);
-        await saveValue("mem", JSON.stringify(mem));
-        navigation.navigate("UsernameScreen", { privKey });
-        setIsLoading(false)
-        } catch(e) {
-            console.log(e)
-            setIsLoading(false)
+        try {
+            const privKey = mnemonicToSeed(mem);
+            await saveValue("mem", JSON.stringify(mem));
+            navigation.navigate("UsernameScreen", { privKey });
+            setIsLoading(false);
+        } catch (e) {
+            console.log(e);
+            setIsLoading(false);
         }
     };
     return (
         <View style={globalStyles.screenContainer}>
-            <View style={{ flex: 4, alignItems: 'center' }}>
+            <View style={{ flex: 4, alignItems: "center" }}>
                 <Text style={globalStyles.textBodyBold}>Backup</Text>
-                <Text style={[globalStyles.textBody, {marginBottom: 16}]}>
+                <Text style={[globalStyles.textBody, { marginBottom: 16 }]}>
                     These 12 words can be used to restore your access to your
                     account. Make sure to write them down. You can display your
                     backup at any time in the settings.

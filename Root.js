@@ -16,6 +16,7 @@ import { getPublicKey } from "nostr-tools";
 import { updateFollowedUsers } from "./utils/nostrV2/getUserData";
 import { hydrateStore } from "./utils/cache/asyncStorage";
 import { initRelayPool } from "./utils/nostrV2/relayPool";
+import { WelcomeNavigator } from "./features/welcome";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -79,7 +80,7 @@ const Root = () => {
             <StatusBar style="light" />
             <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
                 {isLoggedIn == false ? (
-                    <UnauthedNavigator />
+                    <WelcomeNavigator />
                 ) : (
                     <AuthedNavigator />
                 )}
