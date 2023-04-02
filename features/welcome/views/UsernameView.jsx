@@ -2,6 +2,7 @@ import { View, Text, Keyboard, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { CustomButton, Input, LoadingSpinner } from "../../../components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { usernameRegex } from "../../../constants";
 
 const UsernameView = ({ navigation, route }) => {
     const [error, setError] = useState(false);
@@ -11,12 +12,11 @@ const UsernameView = ({ navigation, route }) => {
 
     const insets = useSafeAreaInsets();
 
-    const { sk, mem, isImport, updateData, oldData } =
-        route.params;
+    const { sk, mem, isImport, updateData } = route.params;
 
     const fetchAvailableUsernames = async () => {
         setError(false);
-        if (!username.match(/^[a-z0-9]{4,32}$/i)) {
+        if (!username.match(usernameRegex)) {
             setError(true);
             return;
         }
@@ -32,19 +32,27 @@ const UsernameView = ({ navigation, route }) => {
 
     const nextHandler = (address) => {
         if (isImport && updateData === "none") {
-            navigation.navigate("LoadingProfileScreen", {
+            navigation.navigate("Profile", {
                 privKey,
                 address,
                 publishProfile: false,
-                isImport
+                isImport,
             });
             return;
         }
-        navigation.navigate("CreateProfileScreen", { sk, address, mem });
+        navigation.navigate("Profile", {
+            screen: "EditProfile",
+            params: { sk, address, mem },
+        });
     };
 
     return (
-        <View style={[globalStyles.screenContainer, {paddingTop: insets.top + 6, paddingBottom: insets.bottom}]}>
+        <View
+            style={[
+                globalStyles.screenContainer,
+                { paddingTop: insets.top + 6, paddingBottom: insets.bottom },
+            ]}
+        >
             <Text style={[globalStyles.textBodyBold, { textAlign: "center" }]}>
                 Choose your username
             </Text>
@@ -78,6 +86,7 @@ const UsernameView = ({ navigation, route }) => {
                             },
                             autoCapitalize: "none",
                             autoCorrect: false,
+                            onsubmit: fetchAvailableUsernames,
                         }}
                     />
                     <CustomButton
@@ -88,7 +97,10 @@ const UsernameView = ({ navigation, route }) => {
                 </View>
             </View>
             {isFetching ? <LoadingSpinner size={50} /> : undefined}
-            <ScrollView style={{ width: "100%"}} contentContainerStyle={{alignItems: 'center'}}>
+            <ScrollView
+                style={{ width: "100%" }}
+                contentContainerStyle={{ alignItems: "center" }}
+            >
                 {available && available.length > 0 && !isFetching && !error ? (
                     <Text style={[globalStyles.textBody, { marginBottom: 32 }]}>
                         Choose one from the list below

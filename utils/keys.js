@@ -4,7 +4,6 @@ import { wordlist } from "@scure/bip39/wordlists/english.js";
 
 export const generateSeedphrase = () => {
     const mem = generateMnemonic(wordlist, 128).split(' ');
-    console.log(mem)
     return mem;
 };
 

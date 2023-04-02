@@ -8,7 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { generateRandomString } from "../../../utils/cache/asyncStorage";
 import { generateSeedphrase, mnemonicToSeed } from "../../../utils/keys";
 
-const IntroductionView = ({navigation}) => {
+const IntroductionView = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const insets = useSafeAreaInsets();
 
@@ -31,6 +31,13 @@ const IntroductionView = ({navigation}) => {
                 style={{ marginTop: 32, width: "100%" }}
                 horizontal={false}
             >
+                <View style={{width: '100%', justifyContent: 'center'}}>
+                    <Text
+                        style={[globalStyles.textH2, { textAlign: "center" }]}
+                    >
+                        The power of nostr + bitcoin at your hands!
+                    </Text>
+                </View>
                 <IntroductionItem
                     title="Runs on nostr"
                     text="Current is your gateway to the decentralised social network 'nostr'"
@@ -52,7 +59,11 @@ const IntroductionView = ({navigation}) => {
                     icon="person-circle-outline"
                 />
             </ScrollView>
-            <CustomButton text="Let's go!" loading={isLoading} buttonConfig={{onPress: createHandler}}/>
+            <CustomButton
+                text="Let's go!"
+                loading={isLoading}
+                buttonConfig={{ onPress: createHandler }}
+            />
         </View>
     );
 };

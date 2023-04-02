@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { EULAView, IntroductionView, StartUpView, UsernameView } from "../views";
+import CreateProfileNavigator from "./CreateProfileNavigator";
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,14 @@ const WelcomeNavigator = () => {
             <Stack.Screen
                 name="Username"
                 component={UsernameView}
+                options={{
+                    title: "",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="Profile"
+                component={CreateProfileNavigator}
                 options={{
                     title: "",
                     headerShown: false,
