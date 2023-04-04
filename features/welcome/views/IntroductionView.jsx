@@ -1,24 +1,18 @@
 import { View, Text } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 import globalStyles from '../../../styles/globalStyles';
 import { IntroductionItem } from '../components';
 import CustomButton from '../../../components/CustomButton';
 import { generateRandomString } from '../../../utils/cache/asyncStorage';
-import { generateSeedphrase, mnemonicToSeed } from '../../../utils/keys';
 
-function IntroductionView({ navigation }) {
-  const [isLoading, setIsLoading] = useState(false);
+const IntroductionView = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
   const createHandler = () => {
-    setIsLoading(true);
     generateRandomString(12);
-    const mem = generateSeedphrase();
-    const sk = mnemonicToSeed(mem);
-    navigation.navigate('EULA', { mem, sk });
-    setIsLoading(false);
+    navigation.navigate('EULA');
   };
   return (
     <View
@@ -56,11 +50,10 @@ function IntroductionView({ navigation }) {
       </ScrollView>
       <CustomButton
         text="Let's go!"
-        loading={isLoading}
         buttonConfig={{ onPress: createHandler }}
       />
     </View>
   );
-}
+};
 
 export default IntroductionView;

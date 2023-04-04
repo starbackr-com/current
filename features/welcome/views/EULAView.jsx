@@ -4,19 +4,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CustomButton } from '../../../components';
 import globalStyles from '../../../styles/globalStyles';
 
-function EULAView({ navigation, route }) {
+const EULAView = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
-  const mem = route?.params?.mem;
-  const sk = route?.params?.sk;
+
+  const isImport = route?.params?.isImport;
 
   const acceptHandler = () => {
-    if (mem && sk) {
-      navigation.navigate('Username', { mem, sk });
+    if (isImport) {
+      navigation.navigate('Import');
     } else {
-      navigation.navigate('ImportKeys');
+      navigation.navigate('Username');
     }
   };
   const declineHandler = () => {
+    // eslint-disable-next-line no-alert
     alert(
       'If you do not accept the EULA you will not be able to use Current... Sorry!',
     );
@@ -138,6 +139,6 @@ function EULAView({ navigation, route }) {
       </ScrollView>
     </View>
   );
-}
+};
 
 export default EULAView;

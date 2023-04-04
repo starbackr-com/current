@@ -13,7 +13,7 @@ const UsernameView = ({ navigation, route }) => {
 
   const insets = useSafeAreaInsets();
 
-  const { sk, mem, isImport, updateData } = route.params;
+  const { isImport, updateData, sk } = route?.params || {};
 
   const fetchAvailableUsernames = async () => {
     setError(false);
@@ -34,16 +34,16 @@ const UsernameView = ({ navigation, route }) => {
   const nextHandler = (address) => {
     if (isImport && updateData === 'none') {
       navigation.navigate('Profile', {
-        sk,
         address,
+        sk,
         publishProfile: false,
         isImport,
       });
       return;
     }
-    navigation.navigate('Profile', {
+    navigation.navigate('CreateProfile', {
       screen: 'EditProfile',
-      params: { sk, address, mem },
+      params: { address },
     });
   };
 
