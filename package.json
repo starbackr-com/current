@@ -46,7 +46,7 @@
     "light-bolt11-decoder": "^2.1.0",
     "lottie-react-native": "5.1.4",
     "match-sorter": "^6.3.1",
-    "nostr-tools": "^1.7.1",
+    "nostr-tools": "1.8.2",
     "react": "18.2.0",
     "react-native": "0.71.4",
     "react-native-gesture-handler": "~2.9.0",
