@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable camelcase */
 import { View, Text } from 'react-native';
 import React, { useEffect } from 'react';
@@ -13,7 +14,7 @@ import { followUser } from '../../../utils/users';
 import { generateSeedphrase, mnemonicToSeed } from '../../../utils/keys';
 
 const LoadingProfileScreen = ({ route }) => {
-  const { image, svg, svgId, address, bio, isImport } = route.params;
+  const { image, svg, svgId, address, bio, isImport, sk, mem } = route.params;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -94,6 +95,20 @@ const LoadingProfileScreen = ({ route }) => {
       } catch (error) {
         console.log(`Failed to create profile: ${error}`);
       }
+    } else {
+      console.log('importing...');
+      const pk = getPublicKey(sk);
+      await createWallet(sk, address);
+      if (mem) {
+        await saveValue('mem', JSON.stringify(mem));
+      }
+      await saveValue('privKey', sk);
+      await saveValue('address', address);
+      const result = await loginToWallet(sk);
+      const { access_token, username } = result.data;
+      await followUser(pk);
+      await updateFollowedUsers();
+      dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
     }
   }
 

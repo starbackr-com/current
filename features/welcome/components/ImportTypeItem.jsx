@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, globalStyles } from '../../../styles';
@@ -15,8 +15,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const ImportTypeItem = ({ title, text, example, icon }) => (
-  <View style={styles.container}>
+const ImportTypeItem = ({ title, text, example, icon, onPress }) => (
+  <Pressable
+    style={({ pressed }) => [
+      styles.container,
+      pressed ? { backgroundColor: '#333333' } : {},
+    ]}
+    onPress={onPress}
+  >
     <Ionicons color={colors.primary500} name={icon} size={32} />
     <View style={{ marginLeft: 12, flex: 1 }}>
       <Text
@@ -36,7 +42,7 @@ const ImportTypeItem = ({ title, text, example, icon }) => (
         </Text>
       ) : undefined}
     </View>
-  </View>
+  </Pressable>
 );
 
 export default ImportTypeItem;

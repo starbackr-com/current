@@ -46,6 +46,7 @@ const TabNavigator = () => (
       headerShadowVisible: false,
       headerRight: TabBarHeaderRight,
       headerLeft: TabBarHeaderLeft,
+      tabBarHideOnKeyboard: true,
     })}
   >
     <Tab.Screen name="Home" component={HomeView} />

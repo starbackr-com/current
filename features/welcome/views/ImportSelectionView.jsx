@@ -26,12 +26,18 @@ const ImportSelectionView = ({ navigation }) => {
           text="Import a single private key"
           example="nsec1wae9gwn52p2qa4f50xhe2hrefqn8kat4..."
           icon="key"
+          onPress={() => {
+            navigation.navigate('ImportKey');
+          }}
         />
         <ImportTypeItem
           title="Seed Words"
           text="Derive keys from a Seed Phrase"
           example="target traffic extend boss maximum zero illegal much people bitter crack fire"
           icon="newspaper"
+          onPress={() => {
+            navigation.navigate('ImportWords');
+          }}
         />
         <ImportTypeItem
           title="I don't have keys"

@@ -13,7 +13,7 @@ const UsernameView = ({ navigation, route }) => {
 
   const insets = useSafeAreaInsets();
 
-  const { isImport, updateData, sk } = route?.params || {};
+  const { isImport, sk, mem } = route?.params || {};
 
   const fetchAvailableUsernames = async () => {
     setError(false);
@@ -32,12 +32,13 @@ const UsernameView = ({ navigation, route }) => {
   };
 
   const nextHandler = (address) => {
-    if (isImport && updateData === 'none') {
-      navigation.navigate('Profile', {
+    if (isImport) {
+      navigation.navigate('Loading', {
         address,
         sk,
         publishProfile: false,
         isImport,
+        mem,
       });
       return;
     }

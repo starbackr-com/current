@@ -1,9 +1,11 @@
 import { View, Text } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image } from 'expo-image';
 import globalStyles from '../../../styles/globalStyles';
 import CustomButton from '../../../components/CustomButton';
 import { generateRandomString } from '../../../utils/cache/asyncStorage';
+
+const logo = require('../../../assets/lightning_logo_negativ.png');
 
 const StartUpView = ({ navigation }) => {
   const importHandler = async () => {
@@ -22,7 +24,7 @@ const StartUpView = ({ navigation }) => {
     >
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Image
-          source={require('../../../assets/lightning_logo_negativ.png')}
+          source={logo}
           style={{
             height: 100,
             width: 100,
