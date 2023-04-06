@@ -19,5 +19,12 @@ module.exports = {
       },
     ],
     'object-curly-newline': 0,
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: ['state'],
+      },
+    ],
   },
 };

@@ -24,11 +24,11 @@ export const authSlice = createSlice({
       state.walletBearer = action.payload;
     },
     logOut: (state) => {
-      (state.isLoggedIn = false),
-        (state.pubKey = null),
-        (state.username = null),
-        (state.walletBearer = null),
-        (state.walletExpires = null);
+      state.isLoggedIn = false;
+      state.pubKey = null;
+      state.username = null;
+      state.walletBearer = null;
+      state.walletExpires = null;
     },
   },
 });
