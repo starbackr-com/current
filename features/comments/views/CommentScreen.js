@@ -1,11 +1,11 @@
 import {
     View,
-    Text,
     KeyboardAvoidingView,
     Platform,
     useWindowDimensions,
+    ActivityIndicator,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import globalStyles from "../../../styles/globalStyles";
 import Input from "../../../components/Input";
 import { FlashList } from "@shopify/flash-list";
@@ -14,27 +14,36 @@ import colors from "../../../styles/colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import CommentHeader from "../components/CommentHeader";
 import { useReplies } from "../hooks/useReplies";
-import TextPost from "../../../components/Posts/TextPost";
 import { useSelector } from "react-redux";
 import BackButton from "../../../components/BackButton";
-import ImagePost from "../../../components/Posts/ImagePost";
 import { publishReply } from "../utils/publishReply";
-import ZapPost from "../../../components/Posts/ZapPost";
+import { getEventById } from "../../../utils/nostrV2/getEvents";
+import { ImagePost, TextPost, ZapPost } from "../../../components/Posts";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const CommentScreen = ({ route, navigation }) => {
-    const { eventId, type, rootId, nestedReplies, event } = route?.params;
-
+    const { eventId } = route?.params;
+    const [event, setEvent] = useState();
     const [width, setWidth] = useState();
     const [input, setInput] = useState("");
-    const listRef = useRef();
     const headerHeight = useHeaderHeight();
     const height = useWindowDimensions().height;
-    const replies = useReplies(event.id);
+    const replies = useReplies(eventId);
     const users = useSelector((state) => state.messages.users);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onLayoutViewWidth = (e) => {
         setWidth(e.nativeEvent.layout.width);
     };
+
+    const getEvent = async () => {
+        const parentEvent = await getEventById(eventId);
+        setEvent(parentEvent);
+    };
+
+    useEffect(() => {
+        getEvent();
+    }, []);
 
     const renderItem = ({ item }) => {
         if (item.kind === 1) {
@@ -55,14 +64,14 @@ const CommentScreen = ({ route, navigation }) => {
     };
 
     const submitHandler = async () => {
-        listRef.current.prepareForLayoutAnimationRender();
+        setIsLoading(true);
         const success = await publishReply(input, event);
-        console.log(success);
         if (!success) {
             alert("Something went wrong publishing your note...");
         } else {
             setInput("");
         }
+        setIsLoading(false);
     };
 
     return (
@@ -78,30 +87,35 @@ const CommentScreen = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            <View
-                style={{ flex: 1, width: "100%" }}
-                onLayout={onLayoutViewWidth}
-            >
-                <FlashList
-                    ListHeaderComponent={<CommentHeader parentEvent={event} />}
-                    data={replies}
-                    renderItem={renderItem}
-                    extraData={users}
-                    ItemSeparatorComponent={() => (
-                        <View
-                            style={{
-                                height: 1,
-                                backgroundColor: colors.backgroundSecondary,
-                                width: "100%",
-                                marginVertical: 5,
-                            }}
-                        />
-                    )}
-                    estimatedItemSize={100}
-                    ref={listRef}
-                    keyExtractor={(item) => item.id}
-                />
-            </View>
+            {event ? (
+                <View
+                    style={{ flex: 1, width: "100%" }}
+                    onLayout={onLayoutViewWidth}
+                >
+                    <FlashList
+                        ListHeaderComponent={
+                            <CommentHeader parentEvent={event} />
+                        }
+                        data={replies}
+                        renderItem={renderItem}
+                        extraData={users}
+                        ItemSeparatorComponent={() => (
+                            <View
+                                style={{
+                                    height: 1,
+                                    backgroundColor: colors.backgroundSecondary,
+                                    width: "100%",
+                                    marginVertical: 5,
+                                }}
+                            />
+                        )}
+                        estimatedItemSize={100}
+                        keyExtractor={(item) => item.id}
+                    />
+                </View>
+            ) : (
+                <ActivityIndicator style={{ flex: 1 }} />
+            )}
             <View
                 style={{
                     width: "100%",
@@ -121,13 +135,19 @@ const CommentScreen = ({ route, navigation }) => {
                         inputStyle={{ maxHeight: height / 5 }}
                     />
                 </View>
-                <Ionicons
-                    name="send"
-                    size={24}
-                    color={colors.primary500}
-                    style={{ marginLeft: 12 }}
-                    onPress={submitHandler}
-                />
+                {!isLoading ? (
+                    <Ionicons
+                        name="send"
+                        size={24}
+                        color={colors.primary500}
+                        style={{ marginLeft: 12 }}
+                        onPress={submitHandler}
+                    />
+                ) : (
+                    <View style={{ marginLeft: 12 }}>
+                        <LoadingSpinner size={24} />
+                    </View>
+                )}
             </View>
         </KeyboardAvoidingView>
     );

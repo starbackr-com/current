@@ -1,13 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Pressable, Alert } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useState } from "react";
-import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, {
-    withSequence,
     withTiming,
-    withRepeat,
     useAnimatedStyle,
+    interpolateColor,
+    useDerivedValue,
 } from "react-native-reanimated";
 import { useParseContent } from "../../../hooks/useParseContent";
 import colors from "../../../styles/colors";
@@ -15,35 +14,34 @@ import globalStyles from "../../../styles/globalStyles";
 import { getAge } from "../../shared/utils/getAge";
 import { useZapNote } from "../../../hooks/useZapNote";
 import UserBanner from "./UserBanner";
+import { useIsZapped } from "../../zaps/hooks/useIsZapped";
+import ActionBar from "./ActionBar";
 
 const PostItem = ({ item, height, width, user, zaps }) => {
-    const [isLoading, setIsLoading] = useState();
     const navigation = useNavigation();
     const [hasMore, setHasMore] = useState(false);
     const [numOfLines, setNumOfLines] = useState();
     const readMoreText = "Read More...";
-    const animatedStyle = useAnimatedStyle(() => ({
-        opacity: withRepeat(
-            withSequence(
-                withTiming(0.1, { duration: 1000 }),
-                withTiming(1, { duration: 1000 })
-            ),
-            -1,
-            true
-        ),
-    }));
+
+    const isZapped = useIsZapped(item.id);
+
+    const bgProgress = useDerivedValue(() => {
+        return withTiming(isZapped ? 1 : 0);
+    });
+
+    const backgroundStyle = useAnimatedStyle(() => {
+        const borderColor = interpolateColor(
+            bgProgress.value,
+            [0, 1],
+            ["#222222", colors.primary500]
+        );
+        
+        return { borderColor };
+    });
 
     const content = useParseContent(item);
 
-    const zap = useZapNote(
-        item.id,
-        user?.lud06 || user?.lud16,
-        user?.name || item?.pubkey.slice(0, 16),
-        item.pubkey
-    );
-
     const { created_at, pubkey } = item;
-
     const age = getAge(created_at);
 
     const textLayout = (e) => {
@@ -69,7 +67,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                 alignItems: "center",
             }}
         >
-            <View
+            <Animated.View
                 style={[
                     {
                         backgroundColor: "#222222",
@@ -79,7 +77,9 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                         padding: 12,
                         borderRadius: 10,
                         justifyContent: "space-between",
+                        borderWidth: 1,
                     },
+                    backgroundStyle,
                 ]}
             >
                 <View>
@@ -87,6 +87,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                         event={item}
                         user={user}
                         width={((width - 16) / 100) * 85}
+                        isZapped={isZapped}
                     />
                     <Text
                         onTextLayout={textLayout}
@@ -176,93 +177,14 @@ const PostItem = ({ item, height, width, user, zaps }) => {
                     <Text
                         style={[
                             globalStyles.textBodyS,
-                            { textAlign: "right", padding: 4 },
+                            { textAlign: "right", padding: 4, color: 'white'}
                         ]}
                     >
                         {age}
                     </Text>
                 </View>
-            </View>
-            <View
-                style={{
-                    flexDirection: "column",
-                    width: "10%",
-                }}
-            >
-                {user?.lud06 || user?.lud16 ? (
-                    <Pressable
-                        style={({ pressed }) => [
-                            {
-                                width: (width / 100) * 8,
-                                height: (width / 100) * 8,
-                                borderRadius: (width / 100) * 4,
-                                backgroundColor: colors.primary500,
-                                marginBottom: 16,
-                                alignItems: "center",
-                                justifyContent: "center",
-                            },
-                            pressed
-                                ? { backgroundColor: "#777777" }
-                                : undefined,
-                        ]}
-                        onPress={zap}
-                    >
-                        <Animated.View
-                            style={isLoading ? animatedStyle : { opacity: 1 }}
-                        >
-                            <Ionicons
-                                name="flash"
-                                color="white"
-                                size={(width / 100) * 5}
-                            />
-                        </Animated.View>
-                    </Pressable>
-                ) : undefined}
-                <Pressable
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        marginBottom: 16,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                    onPress={() => {
-                        navigation.navigate("CommentScreen", {
-                            eventId: item.id,
-                            rootId: item.id,
-                            type: "root",
-                            event: item,
-                        });
-                    }}
-                >
-                    <Ionicons
-                        name="chatbubble-ellipses"
-                        color="white"
-                        size={(width / 100) * 5}
-                    />
-                </Pressable>
-                <Pressable
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                    onPress={() => {
-                        navigation.navigate("PostMenuModal", { event: item });
-                    }}
-                >
-                    <Ionicons
-                        name="ellipsis-horizontal"
-                        color="white"
-                        size={(width / 100) * 5}
-                    />
-                </Pressable>
-            </View>
+            </Animated.View>
+            <ActionBar user={user} event={item} width={width}/>
         </View>
     );
 };

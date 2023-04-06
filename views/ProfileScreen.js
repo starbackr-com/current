@@ -10,16 +10,8 @@ import { getUserData } from "../utils/nostrV2";
 import { encodePubkey } from "../utils/nostr/keys";
 import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
-import ImagePost from "../components/Posts/ImagePost";
-import TextPost from "../components/Posts/TextPost";
-import BackButton from "../components/BackButton";
-import {
-    useFollowUser,
-    useGetBadges,
-    useSubscribePosts,
-    useUnfollowUser,
-    usePaginatedPosts
-} from "../hooks";
+import { useFollowUser, useUnfollowUser, useSubscribeEvents } from "../hooks";
+import { ImagePost, TextPost } from "../components/Posts";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();
@@ -167,9 +159,8 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     );
 };
 
-const ProfileScreen = ({ route, navigation }) => {
+const ProfileScreen = ({ route }) => {
     const { pubkey } = route.params;
-    const [feed, setFeed] = useState();
     const users = useSelector((state) => state.messages.users);
     const [width, setWidth] = useState();
 
@@ -177,11 +168,7 @@ const ProfileScreen = ({ route, navigation }) => {
 
     const loggedInPubkey = useSelector((state) => state.auth.pubKey);
 
-    const now = new Date() / 1000;
-
-    // const [data, page, setPage] = useSubscribePosts([pubkey], now);
-
-    const [get25Posts, events, isLoading] = usePaginatedPosts([pubkey])
+    const events = useSubscribeEvents([pubkey]);
 
     const user = users[pubkey];
 
@@ -222,16 +209,6 @@ const ProfileScreen = ({ route, navigation }) => {
                         />
                     }
                     extraData={users}
-                    ListFooterComponent={
-                        <CustomButton
-                            text="Load more"
-                            buttonConfig={{
-                                onPress: get25Posts,
-                            }}
-                            disabled={isLoading}
-                            loading={isLoading}
-                        />
-                    }
                     estimatedItemSize={250}
                     ItemSeparatorComponent={() => (
                         <View

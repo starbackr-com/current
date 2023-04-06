@@ -5,9 +5,8 @@ import { db } from "../utils/database";
 import { connectedRelayPool, pool } from "../utils/nostrV2/relayPool";
 import { getValue } from "../utils/secureStore";
 
-const publishKind3 = async (oldKeys, newKeys) => {
+const publishKind3 = async (oldKeys, newKeys, relays) => {
     const dedupedKeys = new Set([...oldKeys, ...newKeys]);
-    console.log(`deduped length: ${[...dedupedKeys].length}`);
     const dedupedKeysTags = [...dedupedKeys].map((key) => ["p", key, ""]);
     try {
         const sk = await getValue("privKey");
@@ -18,7 +17,7 @@ const publishKind3 = async (oldKeys, newKeys) => {
             pubkey: pk,
             created_at: Math.floor(Date.now() / 1000),
             tags: [...dedupedKeysTags],
-            content: "",
+            content: JSON.stringify(relays),
         };
         event.id = getEventHash(event);
         event.sig = signEvent(event, sk);
@@ -43,6 +42,7 @@ const publishKind3 = async (oldKeys, newKeys) => {
 export const useFollowUser = () => {
     const dispatch = useDispatch();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+    const relays = useSelector(state => state.user.relays)
 
     const follow = async (pubkeysInHex) => {
         try {
@@ -78,7 +78,7 @@ export const useFollowUser = () => {
                     console.log(e);
                 }
             });
-            publishKind3(followedPubkeys, pubkeysInHex);
+            publishKind3(followedPubkeys, pubkeysInHex, relays);
         } catch (e) {
             console.log(e);
         }

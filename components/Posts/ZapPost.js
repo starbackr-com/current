@@ -1,13 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
-import Animated, { color, FadeIn, LightSpeedInLeft } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { getAge } from "../../features/shared/utils/getAge";
-import { useParseContent } from "../../hooks/useParseContent";
-import { useZapNote } from "../../hooks/useZapNote";
 import colors from "../../styles/colors";
-import PostActionBar from "./PostActionBar";
 
-const ZapPost = ({ event, user }) => {
+export const ZapPost = ({ event, user }) => {
     const navigation = useNavigation();
     return (
         <Animated.View
@@ -28,19 +25,31 @@ const ZapPost = ({ event, user }) => {
                 <Text
                     style={[
                         globalStyles.textBodyBold,
-                        { textAlign: "left", width: "50%", color: colors.backgroundPrimary },
+                        {
+                            textAlign: "left",
+                            width: "50%",
+                            color: colors.backgroundPrimary,
+                        },
                     ]}
                     numberOfLines={1}
                     onPress={() => {
                         navigation.navigate("Profile", {
                             screen: "ProfileScreen",
-                            params: { pubkey: event.payer, name: user.name || event.payer },
+                            params: {
+                                pubkey: event.payer,
+                                name: user?.name || event.payer,
+                            },
                         });
                     }}
                 >
                     {user?.name || event.pubkey}
                 </Text>
-                <Text style={[globalStyles.textBodyS, {color: colors.backgroundPrimary}]}>
+                <Text
+                    style={[
+                        globalStyles.textBodyS,
+                        { color: colors.backgroundPrimary },
+                    ]}
+                >
                     {getAge(event.created_at)}
                 </Text>
             </View>
@@ -48,7 +57,11 @@ const ZapPost = ({ event, user }) => {
             <Text
                 style={[
                     globalStyles.textBody,
-                    { textAlign: "left", marginTop: 16, color: colors.backgroundPrimary },
+                    {
+                        textAlign: "left",
+                        marginTop: 16,
+                        color: colors.backgroundPrimary,
+                    },
                 ]}
             >
                 Zapped {event.amount} SATS
@@ -56,5 +69,3 @@ const ZapPost = ({ event, user }) => {
         </Animated.View>
     );
 };
-
-export default ZapPost;

@@ -2,7 +2,15 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.0.6",
+    "version": "0.0.7",
+    "plugins": ['./plugins/withAndroidNamespace', [
+        "expo-build-properties",
+        {
+          "android": {
+            "flipper": "0.162.0"
+          }
+        }
+      ]],
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -24,7 +32,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +40,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 22
+      "versionCode": 25
+
     },
     "web": {
       "favicon": "./assets/favicon.png"

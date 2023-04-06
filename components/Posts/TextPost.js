@@ -6,7 +6,7 @@ import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
 import PostActionBar from "./PostActionBar";
 
-const TextPost = ({ event, user }) => {
+export const TextPost = ({ event, user }) => {
     const content = useParseContent(event);
     const navigation = useNavigation();
     const zap = useZapNote(
@@ -83,5 +83,3 @@ const TextPost = ({ event, user }) => {
         </Animated.View>
     );
 };
-
-export default TextPost;

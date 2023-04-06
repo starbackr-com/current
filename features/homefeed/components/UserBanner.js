@@ -2,13 +2,13 @@ import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { Image } from "expo-image";
 import globalStyles from "../../../styles/globalStyles";
-import colors from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const UserBanner = ({ user, event, width }) => {
+const UserBanner = ({ user, event, width, isZapped }) => {
     const imageDimensions = (width / 100) * 12;
     const navigation = useNavigation();
+
     return (
         <Pressable
             style={{
@@ -47,7 +47,7 @@ const UserBanner = ({ user, event, width }) => {
                 <Text
                     style={[
                         globalStyles.textBodyS,
-                        { textAlign: "left", color: colors.primary500 },
+                        { textAlign: "left" },
                     ]}
                 >
                     {user?.nip05}

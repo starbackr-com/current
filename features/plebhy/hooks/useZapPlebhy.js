@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { usePostPaymentMutation } from "../../../services/walletApi";
+import { decodeLnurl } from "../../../utils/bitcoin/lnurl";
 import { createZapEvent } from "../../../utils/nostrV2";
 
 export const useZapPlebhy = () => {

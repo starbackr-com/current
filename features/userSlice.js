@@ -6,6 +6,7 @@ const initialState = {
     zapAmount: null,
     zapComment: null,
     zapNoconf: false,
+    relays: {},
 };
 
 export const userSlice = createSlice({
@@ -20,11 +21,11 @@ export const userSlice = createSlice({
             state.followedPubkeys = [...state.followedPubkeys, newFollow];
         },
         unfollowPubkey: (state, action) => {
-            console.log(state.followedPubkeys.length)
+            console.log(state.followedPubkeys.length);
             const newArray = state.followedPubkeys.filter(
                 (pubkey) => pubkey !== action.payload
             );
-            console.log(newArray.length)
+            console.log(newArray.length);
             state.followedPubkeys = newArray;
         },
         mutePubkey: (state, action) => {
@@ -37,15 +38,17 @@ export const userSlice = createSlice({
         },
         unmutePubkey: (state, action) => {
             const newUnmute = action.payload;
-            const newState = state.mutedPubkeys.filter(pubkey => pubkey != newUnmute)
-            state.mutedPubkeys = newState
+            const newState = state.mutedPubkeys.filter(
+                (pubkey) => pubkey != newUnmute
+            );
+            state.mutedPubkeys = newState;
         },
         followMultiplePubkeys: (state, action) => {
             const newFollows = action.payload;
             const deduped = newFollows.filter(
                 (pubkey) => !state.followedPubkeys.includes(pubkey)
             );
-            console.log(deduped.length)
+            console.log(deduped.length);
             state.followedPubkeys = [...state.followedPubkeys, ...deduped];
         },
         setZapAmount: (state, action) => {
@@ -67,6 +70,10 @@ export const userSlice = createSlice({
             zapComment = null;
             zapNoconf = false;
         },
+        addRelays: (state, action) => {
+            const newRelaysObject = action.payload;
+            state.relays = { ...state.relays, ...newRelaysObject };
+        },
     },
 });
 
@@ -79,7 +86,8 @@ export const {
     setZapAmount,
     setZapComment,
     setZapNoconf,
-    clearUserStore
+    clearUserStore,
+    addRelays,
 } = userSlice.actions;
 
 export default userSlice.reducer;

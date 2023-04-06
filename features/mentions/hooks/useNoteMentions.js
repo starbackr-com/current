@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { connectedRelayPool, Note, pool } from "../../../utils/nostrV2";
 
-export const useNoteMentions = () => {
+const useNoteMentions = () => {
     const [data, setData] = useState([]);
     const pk = useSelector((state) => state.auth.pubKey);
     const mutedPubkeys = useSelector((state) => state.user.mutedPubkeys);
@@ -14,7 +14,7 @@ export const useNoteMentions = () => {
             if (mutedPubkeys.includes(event.pubkey)) {
                 return;
             } else {
-                if (!receivedEventIds.includes(event.id)) {
+                if (!receivedEventIds.includes(event.id) && event.pubkey != pk) {
                     receivedEventIds.push(event.id);
                     const newEvent = new Note(event).save();
                     setData((prev) => [...prev, newEvent].sort((a, b) => b.created_at - a.created_at));
@@ -40,3 +40,5 @@ export const useNoteMentions = () => {
 
     return data;
 };
+
+export default useNoteMentions;

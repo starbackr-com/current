@@ -2,22 +2,20 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, Pressable } from "react-native";
 import colors from "../../../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { usePostPaymentMutation } from "../../../services/walletApi";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Animated, {
-    withSequence,
     withTiming,
-    withRepeat,
     useAnimatedStyle,
+    useDerivedValue,
+    interpolateColor,
 } from "react-native-reanimated";
 import globalStyles from "../../../styles/globalStyles";
 import { Image } from "expo-image";
-
 import reactStringReplace from "react-string-replace";
-import { useCallback } from "react";
 import { getAge } from "../../shared/utils/getAge";
-import { useZapNote } from "../../../hooks/useZapNote";
 import UserBanner from "./UserBanner";
+import ActionBar from "./ActionBar";
+import { useIsZapped } from "../../zaps/hooks/useIsZapped";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
@@ -25,14 +23,14 @@ const FeedImage = ({ size, images }) => {
         "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
     return (
         <Pressable
-            style={{ height: size, width: size }}
+            style={{ width: size, flex: 1 }}
             onPress={() => {
                 navigation.navigate("ImageModal", { imageUri: images });
             }}
         >
             <Image
                 source={images[0]}
-                style={{ height: size, width: size }}
+                style={{ width: size, flex: 1 }}
                 contentFit="cover"
                 placeholder={blurhash}
                 recyclingKey={images[0]}
@@ -51,32 +49,12 @@ const FeedImage = ({ size, images }) => {
     );
 };
 
-const ImagePost = ({
-    item,
-    height,
-    width,
-    user,
-    zapSuccess,
-    zapAmount,
-    zaps,
-}) => {
-    const [isLoading, setIsLoading] = useState();
-    const [sendPayment] = usePostPaymentMutation();
+const ImagePost = ({ item, height, width, user, zaps }) => {
     const navigation = useNavigation();
     const [hasMore, setHasMore] = useState(false);
     const [showMore, setShowMore] = useState(false);
     const [numOfLines, setNumOfLines] = useState(NUM_LINES);
     const readMoreText = showMore ? "Show Less" : "Read More...";
-    const animatedStyle = useAnimatedStyle(() => ({
-        opacity: withRepeat(
-            withSequence(
-                withTiming(0.1, { duration: 1000 }),
-                withTiming(1, { duration: 1000 })
-            ),
-            -1,
-            true
-        ),
-    }));
 
     const parseMentions = useCallback((event) => {
         if (event.mentions.length < 1) {
@@ -104,13 +82,6 @@ const ImagePost = ({
 
     const { created_at, pubkey } = item;
 
-    const zap = useZapNote(
-        item.id,
-        user?.lud06 || user?.lud16,
-        user?.name || item?.pubkey.slice(0, 16),
-        item.pubkey
-    );
-
     const age = getAge(created_at);
 
     const NUM_LINES = 2;
@@ -125,6 +96,22 @@ const ImagePost = ({
         setNumOfLines(e.nativeEvent.lines.length);
     };
 
+    const isZapped = useIsZapped(item.id);
+
+    const bgProgress = useDerivedValue(() => {
+        return withTiming(isZapped ? 1 : 0);
+    });
+
+    const backgroundStyle = useAnimatedStyle(() => {
+        const borderColor = interpolateColor(
+            bgProgress.value,
+            [0, 1],
+            ["#222222", colors.primary500]
+        );
+        
+        return { borderColor };
+    });
+
     return (
         <View
             style={{
@@ -135,7 +122,7 @@ const ImagePost = ({
                 alignItems: "center",
             }}
         >
-            <View
+            <Animated.View
                 style={[
                     {
                         marginBottom: 16,
@@ -143,8 +130,10 @@ const ImagePost = ({
                         height: "90%",
                         borderRadius: 10,
                         backgroundColor: colors.backgroundSecondary,
-                        justifyContent: 'space-between'
-                    },
+                        justifyContent: "space-between",
+                        borderWidth: 1,
+                        overflow: "hidden"
+                    }, backgroundStyle
                 ]}
             >
                 <View
@@ -157,7 +146,7 @@ const ImagePost = ({
                         borderColor: colors.primary500,
                     }}
                 >
-                    <UserBanner event={item} user={user} width={width}/>
+                    <UserBanner event={item} user={user} width={width} />
                 </View>
                 <FeedImage
                     size={((width - 16) / 100) * 85}
@@ -264,8 +253,8 @@ const ImagePost = ({
                                             alignItems: "center",
                                             justifyContent: "center",
                                         }}
-                                    />
-                                    {" "}{zaps.amount}
+                                    />{" "}
+                                    {zaps.amount}
                                 </Text>
                             </Pressable>
                         ) : (
@@ -281,87 +270,8 @@ const ImagePost = ({
                         </Text>
                     </View>
                 </Pressable>
-            </View>
-            <View
-                style={{
-                    flexDirection: "column",
-                    width: "10%",
-                }}
-            >
-                {user?.lud06 || user?.lud16 ? (
-                    <Pressable
-                        style={({ pressed }) => [
-                            {
-                                width: (width / 100) * 8,
-                                height: (width / 100) * 8,
-                                borderRadius: (width / 100) * 4,
-                                backgroundColor: colors.primary500,
-                                marginBottom: 16,
-                                alignItems: "center",
-                                justifyContent: "center",
-                            },
-                            pressed
-                                ? { backgroundColor: "#777777" }
-                                : undefined,
-                        ]}
-                        onPress={zap}
-                    >
-                        <Animated.View
-                            style={isLoading ? animatedStyle : { opacity: 1 }}
-                        >
-                            <Ionicons
-                                name="flash"
-                                color="white"
-                                size={(width / 100) * 5}
-                            />
-                        </Animated.View>
-                    </Pressable>
-                ) : undefined}
-                <Pressable
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        marginBottom: 16,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                                        onPress={() => {
-                        navigation.navigate("CommentScreen", {
-                            eventId: item.id,
-                            rootId: item.id,
-                            type: "root",
-                            event: item
-                        });
-                    }}
-                >
-                    <Ionicons
-                        name="chatbubble-ellipses"
-                        color="white"
-                        size={(width / 100) * 5}
-                    />
-                </Pressable>
-                <Pressable
-                    style={{
-                        width: (width / 100) * 8,
-                        height: (width / 100) * 8,
-                        borderRadius: (width / 100) * 4,
-                        backgroundColor: colors.primary500,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                    onPress={() => {
-                        navigation.navigate("PostMenuModal", { event: item });
-                    }}
-                >
-                    <Ionicons
-                        name="ellipsis-horizontal"
-                        color="white"
-                        size={(width / 100) * 5}
-                    />
-                </Pressable>
-            </View>
+            </Animated.View>
+            <ActionBar user={user} event={item} width={width} />
         </View>
     );
 };
