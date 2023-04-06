@@ -17,6 +17,7 @@ const EULAView = ({ navigation, route }) => {
     }
   };
   const declineHandler = () => {
+    navigation.goBack();
     // eslint-disable-next-line no-alert
     alert(
       'If you do not accept the EULA you will not be able to use Current... Sorry!',

@@ -5,7 +5,7 @@ import { ImportSelectionView } from '../views';
 const Stack = createStackNavigator();
 
 const ImportNavigator = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="ImportSelection" component={ImportSelectionView} />
     {/* <Stack.Screen name="ImportWords" />
     <Stack.Screen name="ImportKey" /> */}
