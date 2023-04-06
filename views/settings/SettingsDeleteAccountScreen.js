@@ -20,6 +20,7 @@ import { getValue } from "../../utils/secureStore";
 import { deleteWallet } from "../../utils/wallet";
 import { ScrollView } from "react-native-gesture-handler";
 import BackButton from "../../components/BackButton";
+import { colors } from "../../styles";
 
 const SettingsDeleteAccountScreen = ({ navigation }) => {
     const dispatch = useDispatch();
