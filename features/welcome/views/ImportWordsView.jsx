@@ -96,6 +96,7 @@ const ImportWordsView = ({ navigation }) => {
             navigation.navigate('Username', {
               sk,
               isImport: true,
+              mem,
             });
           }
         } catch (e) {
@@ -105,6 +106,7 @@ const ImportWordsView = ({ navigation }) => {
         navigation.navigate('Username', {
           sk,
           isImport: true,
+          mem,
         });
       }
     }
