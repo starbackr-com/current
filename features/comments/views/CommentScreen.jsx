@@ -19,6 +19,7 @@ import { getEventById } from '../../../utils/nostrV2/getEvents';
 import { ImagePost, TextPost, ZapPost } from '../../../components/Posts';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { colors, globalStyles } from '../../../styles';
+import { ItemSeperator } from '../components';
 
 const CommentScreen = ({ route, navigation }) => {
   const { eventId } = route?.params || {};
@@ -48,14 +49,17 @@ const CommentScreen = ({ route, navigation }) => {
     if (item.kind === 1) {
       if (item.type === 'text') {
         return <TextPost event={item} user={users[item.pubkey]} />;
-      } else if (item.type === 'image') {
+      }
+      if (item.type === 'image') {
         return (
           <ImagePost event={item} user={users[item.pubkey]} width={width} />
         );
       }
-    } else if (item.kind === 9735) {
+    }
+    if (item.kind === 9735) {
       return <ZapPost event={item} user={users[item.payer]} />;
     }
+    return undefined;
   };
 
   const submitHandler = async () => {
@@ -89,16 +93,7 @@ const CommentScreen = ({ route, navigation }) => {
             data={replies}
             renderItem={renderItem}
             extraData={users}
-            ItemSeparatorComponent={() => (
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: colors.backgroundSecondary,
-                  width: '100%',
-                  marginVertical: 5,
-                }}
-              />
-            )}
+            ItemSeparatorComponent={ItemSeperator}
             estimatedItemSize={100}
             keyExtractor={(item) => item.id}
           />
