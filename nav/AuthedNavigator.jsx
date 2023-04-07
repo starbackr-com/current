@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
@@ -46,7 +46,7 @@ const TabNavigator = () => (
       headerShadowVisible: false,
       headerRight: TabBarHeaderRight,
       headerLeft: TabBarHeaderLeft,
-      tabBarHideOnKeyboard: true,
+      tabBarHideOnKeyboard: Platform.OS !== 'ios',
     })}
   >
     <Tab.Screen name="Home" component={HomeView} />
