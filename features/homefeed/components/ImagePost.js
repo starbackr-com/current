@@ -29,11 +29,11 @@ const FeedImage = ({ size, images }) => {
             }}
         >
             <Image
-                source={images[0]}
+                source={images[0][0]}
                 style={{ width: size, flex: 1 }}
                 contentFit="cover"
                 placeholder={blurhash}
-                recyclingKey={images[0]}
+                recyclingKey={images[0][0]}
             />
             {images.length > 1 ? (
                 <Text

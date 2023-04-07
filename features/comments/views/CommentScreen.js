@@ -76,7 +76,7 @@ const CommentScreen = ({ route, navigation }) => {
     return (
         <KeyboardAvoidingView
             style={[globalStyles.screenContainer, { paddingTop: 6 }]}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={"height"}
             keyboardVerticalOffset={headerHeight}
         >
             <View style={{ width: "100%" }}>
