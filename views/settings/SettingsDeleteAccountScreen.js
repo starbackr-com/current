@@ -1,6 +1,5 @@
 import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton";
@@ -20,7 +19,7 @@ import { getValue } from "../../utils/secureStore";
 import { deleteWallet } from "../../utils/wallet";
 import { ScrollView } from "react-native-gesture-handler";
 import BackButton from "../../components/BackButton";
-import { colors } from "../../styles";
+import { colors, globalStyles } from "../../styles";
 
 const SettingsDeleteAccountScreen = ({ navigation }) => {
     const dispatch = useDispatch();

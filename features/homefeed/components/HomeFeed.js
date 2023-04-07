@@ -1,15 +1,13 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { useHomefeed } from "../hooks/useHomefeed";
 import ImagePost from "./ImagePost";
 import PostItem from "./PostItem";
 import { useSelector } from "react-redux";
 import { getZaps } from "../../zaps/utils/getZaps";
-import globalStyles from "../../../styles/globalStyles";
-import colors from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
 import { usePaginatedFeed } from "../hooks/usePaginatedFeed";
+import { colors, globalStyles } from "../../../styles";
 
 const HomeFeed = ({ width, height }) => {
     const [checkedZaps, setCheckedZaps] = useState([]);

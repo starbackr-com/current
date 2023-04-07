@@ -1,11 +1,10 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import { generateMnemonic, generateSeedphrase } from "../../utils/keys";
-import colors from "../../styles/colors";
 import { generateRandomString } from "../../utils/cache/asyncStorage";
+import { globalStyles } from "../../styles";
 
 const WelcomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();

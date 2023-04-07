@@ -2,9 +2,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { Alert, Pressable, Text, View } from "react-native";
 import { useSelector } from "react-redux";
-import colors from "../../../styles/colors";
-import globalStyles from "../../../styles/globalStyles";
 import { useZapPlebhy } from "../hooks/useZapPlebhy";
+import { colors, globalStyles } from "../../../styles";
 
 const GifContainer = ({ item, width }) => {
   const navigation = useNavigation();

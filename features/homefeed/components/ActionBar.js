@@ -1,19 +1,15 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import React, { useState } from "react";
-import colors from "../../../styles/colors";
 import Animated, {
     withSequence,
     withTiming,
     withRepeat,
-    useAnimatedStyle,
-    interpolateColor,
-    useDerivedValue,
-    useSharedValue,
+    useAnimatedStyle
 } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useZapNote } from "../../../hooks/useZapNote";
-import { useGestureHandlerRef } from "@react-navigation/stack";
+import { colors } from "../../../styles";
 
 const ActionBar = ({ user, event, width }) => {
     const [zapPending, setZapPending] = useState(false);

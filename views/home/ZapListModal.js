@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
-import colors from "../../styles/colors";
 import { FlashList } from "@shopify/flash-list";
+import { colors } from "../../styles";
 
 const ZapListModal = ({route}) => {
     const zaps = route?.params?.zaps

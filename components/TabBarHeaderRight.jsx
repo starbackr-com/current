@@ -3,8 +3,7 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useGetWalletBalanceQuery } from '../services/walletApi';
-import globalStyles from '../styles/globalStyles';
-import colors from '../styles/colors';
+import { colors, globalStyles } from '../styles';
 
 const TabBarHeaderRight = () => {
   const navigation = useNavigation();
@@ -22,8 +21,7 @@ const TabBarHeaderRight = () => {
         }}
       >
         <Text style={globalStyles.textBody}>
-          {data ? `${data.balance}` : '----'}
-          {' '}
+          {data ? `${data.balance}` : '----'}{' '}
           <Text style={[globalStyles.textBodyS, { color: colors.primary500 }]}>
             SATS
           </Text>

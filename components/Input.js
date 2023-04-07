@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
-import React from 'react'
-import { TextInput } from 'react-native-gesture-handler'
-import globalStyles from '../styles/globalStyles'
-import colors from '../styles/colors'
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { TextInput } from 'react-native-gesture-handler';
+import { colors, globalStyles } from '../styles';
 
 const Input = ({label, textInputConfig, labelStyle, inputStyle, invalid, alignment}) => {
   return (

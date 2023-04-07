@@ -1,13 +1,12 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
 import QRCode from "react-qr-code";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 import { encodeLnurl } from "../../utils/bitcoin/lnurl";
 import BackButton from "../../components/BackButton";
-import Input from "../../components/Input";
 import * as Clipboard from "expo-clipboard";
+import { colors, globalStyles } from "../../styles";
 
 
 const WalletInfoScreen = ({ navigation }) => {

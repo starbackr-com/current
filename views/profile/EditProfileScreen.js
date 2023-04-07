@@ -6,18 +6,16 @@ import {
     Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import globalStyles from "../../styles/globalStyles";
 import { ScrollView } from "react-native-gesture-handler";
 import Input from "../../components/Input";
 import { Image } from "expo-image";
-import colors from "../../styles/colors";
 import * as ImagePicker from "expo-image-picker";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getUserData, publishKind0 } from "../../utils/nostrV2";
-import BackButton from '../../components/BackButton'
+import { colors, globalStyles } from "../../styles";
 
 const uploadImage = async (localUri, pubKey, bearer) => {
     const id = pubKey.slice(0, 16);

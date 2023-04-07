@@ -1,11 +1,10 @@
 import { View, Text, useWindowDimensions } from "react-native";
 import React from "react";
-import globalStyles from "../../../styles/globalStyles";
 import QRCode from "react-qr-code";
 import { encodePubkey } from "../../../utils/nostr/keys";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
-import colors from "../../../styles/colors";
+import { colors, globalStyles } from "../../../styles";
 
 const ProfileQRScreen = ({ route }) => {
     const { pk } = route.params;

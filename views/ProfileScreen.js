@@ -1,7 +1,5 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import globalStyles from "../styles/globalStyles";
-import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 import { FlashList } from "@shopify/flash-list";
@@ -12,6 +10,7 @@ import * as Clipboard from "expo-clipboard";
 import { useSelector } from "react-redux";
 import { useFollowUser, useUnfollowUser, useSubscribeEvents } from "../hooks";
 import { ImagePost, TextPost } from "../components/Posts";
+import { colors, globalStyles } from "../styles";
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     const [copied, setCopied] = useState();

@@ -1,8 +1,7 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import globalStyles from '../../../styles/globalStyles';
-import colors from '../../../styles/colors';
+import { colors, globalStyles } from '../../../styles';
 
 const IntroductionItem = ({ title, text, icon }) => (
   <View

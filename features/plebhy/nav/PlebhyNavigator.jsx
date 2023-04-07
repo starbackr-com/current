@@ -1,6 +1,7 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { PlebhyGifView, PlebhyStickerView } from "../Views";
+import { colors } from "../../../styles";
 
 const Tab = createMaterialTopTabNavigator();
 

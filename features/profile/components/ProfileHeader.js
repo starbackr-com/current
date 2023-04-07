@@ -1,10 +1,9 @@
 import { View, Text } from "react-native";
 import React from "react";
 import BackButton from "../../../components/BackButton";
-import globalStyles from "../../../styles/globalStyles";
-import colors from "../../../styles/colors";
 import { useIsAuthed } from "../hooks/useIsAuthed";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { colors, globalStyles } from "../../../styles";
 
 const ProfileHeader = ({ route, navigation }) => {
     const check = useIsAuthed(route?.params?.pubkey);

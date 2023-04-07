@@ -9,9 +9,8 @@ import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SvgCss } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import colors from '../../../styles/colors';
-import globalStyles from '../../../styles/globalStyles';
 import { CustomButton, Input } from '../../../components';
+import { colors, globalStyles } from '../../../styles';
 
 const CreateProfileView = ({ navigation, route }) => {
   const [bio, setBio] = useState();

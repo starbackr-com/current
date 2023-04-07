@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { getAge } from "../../features/shared/utils/getAge";
-import colors from "../../styles/colors";
+import { colors } from "../../styles";
 
 export const ZapPost = ({ event, user }) => {
     const navigation = useNavigation();

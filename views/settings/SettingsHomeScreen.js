@@ -1,21 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Text, FlatList, Pressable, Button } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteValue } from "../../utils/secureStore";
 import { logOut } from "../../features/authSlice";
 import { resetAll } from "../../features/introSlice";
 import { clearStore } from "../../features/messagesSlice";
 import { clearUserStore } from "../../features/userSlice";
 import { dbLogout } from "../../utils/database";
-import colors from "../../styles/colors";
 import * as Linking from "expo-linking";
 import CustomButton from "../../components/CustomButton";
 import { removeData } from "../../utils/cache/asyncStorage";
-import { useNoteMentions } from "../../features/mentions/hooks/useNoteMentions";
 import appJson from "../../app.json";
 import { generateRandomString } from "../../utils/cache/asyncStorage";
+import { colors, globalStyles } from "../../styles";
 
 const settings = [
     "Payment Settings",

@@ -13,9 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getPublicKey } from 'nostr-tools';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import colors from '../../../styles/colors';
-import globalStyles from '../../../styles/globalStyles';
 import CustomButton from '../../../components/CustomButton';
+import { colors, globalStyles } from '../../../styles';
 
 const SelectImageView = ({ navigation, route }) => {
   const [image, setImage] = useState(null);

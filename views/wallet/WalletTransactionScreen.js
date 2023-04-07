@@ -1,14 +1,13 @@
 import { View, Text } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
 import { FlashList } from "@shopify/flash-list";
 import {
     useGetIncomingTransactionsQuery,
     useGetOutgoingTransactionsQuery,
 } from "../../services/walletApi";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../styles/colors";
 import CustomButton from "../../components/CustomButton";
+import { colors, globalStyles } from "../../styles";
 
 const getAge = (timestamp) => {
     const now = new Date();

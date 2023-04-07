@@ -7,7 +7,7 @@ import Animated, {
     cancelAnimation,
     Easing,
 } from "react-native-reanimated";
-import colors from "../styles/colors";
+import { colors } from "../styles";
 
 const LoadingSpinner = ({ size }) => {
     const rotation = useSharedValue(0);

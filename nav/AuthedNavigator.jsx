@@ -5,7 +5,6 @@ import { Pressable } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
-import colors from '../styles/colors';
 import WalletNavigator from './WalletNavigator';
 import SettingsNavigator from './SettingsNavigator';
 import SearchScreen from '../views/SearchScreen';
@@ -22,6 +21,7 @@ import { BackHeader, TabBarHeaderLeft, TabBarHeaderRight } from '../components';
 import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
 import TabBarIcon from '../components/TabBarIcon';
+import { colors } from '../styles';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

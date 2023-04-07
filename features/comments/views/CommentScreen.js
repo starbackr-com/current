@@ -6,11 +6,9 @@ import {
     ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import globalStyles from "../../../styles/globalStyles";
 import Input from "../../../components/Input";
 import { FlashList } from "@shopify/flash-list";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../../styles/colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import CommentHeader from "../components/CommentHeader";
 import { useReplies } from "../hooks/useReplies";
@@ -20,6 +18,7 @@ import { publishReply } from "../utils/publishReply";
 import { getEventById } from "../../../utils/nostrV2/getEvents";
 import { ImagePost, TextPost, ZapPost } from "../../../components/Posts";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { colors, globalStyles } from "../../../styles";
 
 const CommentScreen = ({ route, navigation }) => {
     const { eventId } = route?.params;
