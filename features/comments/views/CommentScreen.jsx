@@ -4,6 +4,7 @@ import {
   Platform,
   useWindowDimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -66,7 +67,7 @@ const CommentScreen = ({ route, navigation }) => {
     setIsLoading(true);
     const success = await publishReply(input, event);
     if (!success) {
-      alert('Something went wrong publishing your note...');
+      Alert.alert('Something went wrong publishing your note...');
     } else {
       setInput('');
     }
