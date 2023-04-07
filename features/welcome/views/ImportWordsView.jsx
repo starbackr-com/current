@@ -18,7 +18,7 @@ import { CustomButton, Input } from '../../../components';
 import { loginToWallet, mnemonicToSeed, saveValue } from '../../../utils';
 import { followPubkey } from '../../userSlice';
 import { logIn } from '../../authSlice';
-import { getOldKind0 } from '../../../utils/nostrV2';
+import { getOldKind0Pool } from '../../../utils/nostrV2';
 
 const ImportWordsView = ({ navigation }) => {
   const [input, setInput] = useState('');
@@ -68,17 +68,8 @@ const ImportWordsView = ({ navigation }) => {
       dispatch(followPubkey(pk));
       dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
     } else {
-      const data = await getOldKind0(pk);
-      const events = [];
-      data.map((item) => item.map((event) => events.push(event)));
-      const mostRecent = events.reduce(
-        (p, c) => {
-          const r = c.created_at > p.created_at ? c : p;
-          return r;
-        },
-        { created_at: 0 },
-      );
-
+      const mostRecent = await getOldKind0Pool();
+      console.log(mostRecent);
       if (mostRecent && mostRecent.content) {
         try {
           const { deleted } = JSON.parse(mostRecent.content);
