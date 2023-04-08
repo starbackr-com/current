@@ -5,6 +5,7 @@ import SettingsNetworkScreen from "../views/settings/SettingsNetworkScreen";
 import SettingsPaymentsScreen from "../views/settings/SettingsPaymentsScreen";
 import SettingsUserScreen from "../views/settings/SettingsUserScreen";
 import SettingsDeleteAccountScreen from "../views/settings/SettingsDeleteAccountScreen";
+import RelaysSettingsView from "../features/relays/views/RelaysSettingsView";
 
 
 const Stack = createStackNavigator();
@@ -27,6 +28,10 @@ const SettingsNavigator = () => {
             <Stack.Screen
                 name="Relay Network"
                 component={SettingsNetworkScreen}
+            />
+            <Stack.Screen
+                name="Network Settings"
+                component={RelaysSettingsView}
             />
             <Stack.Screen
                 name="Payment Settings"

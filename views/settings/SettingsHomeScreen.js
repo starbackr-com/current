@@ -21,6 +21,7 @@ const settings = [
     "Relay Network",
     "Muted Users",
     "Delete Account",
+    "Network Settings",
 ];
 
 const SettingItem = ({ item, onNav }) => {
