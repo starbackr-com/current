@@ -16,7 +16,6 @@ import ProfileNavigator from './ProfileNavigator';
 import ZapListModal from '../views/home/ZapListModal';
 import PostMenuModal from '../views/post/PostMenuModal';
 import ReportPostModal from '../features/reports/views/ReportPostModal';
-import { useUpdateFollowing } from '../hooks/useUpdateFollowing';
 import { BackHeader, TabBarHeaderLeft, TabBarHeaderRight } from '../components';
 import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
@@ -69,93 +68,90 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-const AuthedNavigator = () => {
-  useUpdateFollowing();
-  return (
-    <Stack.Navigator initialRouteName="MainTabNav">
-      <Stack.Screen
-        name="MainTabNav"
-        component={TabNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="TwitterModal"
-        component={TwitterModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="VerifyTwitterModal"
-        component={VerifyTwitterModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="PostView"
-        component={PostView}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileNavigator}
-        options={() => ({
-          presentation: 'modal',
-          headerShown: false,
-        })}
-      />
-      <Stack.Screen
-        name="ImageModal"
-        component={FullScreenImage}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ReadMoreModal"
-        component={ReadMoreModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="PostMenuModal"
-        component={PostMenuModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ZapListModal"
-        component={ZapListModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ReportPostModal"
-        component={ReportPostModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="MentionsModal"
-        component={MentionsNavigator}
-        options={{
-          presentation: 'modal',
-          header: () => <BackHeader />,
-        }}
-      />
-      <Stack.Screen
-        name="PlebhyModal"
-        component={PlebhyNavigator}
-        options={{
-          presentation: 'modal',
-          header: () => <BackHeader />,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
+const AuthedNavigator = () => (
+  <Stack.Navigator initialRouteName="MainTabNav">
+    <Stack.Screen
+      name="MainTabNav"
+      component={TabNavigator}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="TwitterModal"
+      component={TwitterModal}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name="VerifyTwitterModal"
+      component={VerifyTwitterModal}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name="PostView"
+      component={PostView}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name="Profile"
+      component={ProfileNavigator}
+      options={() => ({
+        presentation: 'modal',
+        headerShown: false,
+      })}
+    />
+    <Stack.Screen
+      name="ImageModal"
+      component={FullScreenImage}
+      options={{
+        presentation: 'transparentModal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="ReadMoreModal"
+      component={ReadMoreModal}
+      options={{
+        presentation: 'transparentModal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="PostMenuModal"
+      component={PostMenuModal}
+      options={{
+        presentation: 'transparentModal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="ZapListModal"
+      component={ZapListModal}
+      options={{
+        presentation: 'transparentModal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="ReportPostModal"
+      component={ReportPostModal}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name="MentionsModal"
+      component={MentionsNavigator}
+      options={{
+        presentation: 'modal',
+        header: () => <BackHeader />,
+      }}
+    />
+    <Stack.Screen
+      name="PlebhyModal"
+      component={PlebhyNavigator}
+      options={{
+        presentation: 'modal',
+        header: () => <BackHeader />,
+      }}
+    />
+  </Stack.Navigator>
+);
 
 export default AuthedNavigator;
