@@ -1,8 +1,9 @@
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import { View, Text, Switch, StyleSheet, Pressable, Alert } from 'react-native';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Animated, { SlideOutRight } from 'react-native-reanimated';
 import { colors, globalStyles } from '../../../styles';
-import { changeRelayMode } from '../relaysSlice';
+import { changeRelayMode, removeRelay } from '../relaysSlice';
 
 const style = StyleSheet.create({
   container: {
@@ -28,6 +29,7 @@ const style = StyleSheet.create({
 const RelayItem = ({ relay }) => {
   const dispatch = useDispatch();
   const relayObject = useSelector((state) => state.relays.relays[relay]);
+
   const switchReadHandler = (updatedValue) => {
     const newObject = { ...relayObject, read: updatedValue };
     dispatch(changeRelayMode({ [relay]: newObject }));
@@ -36,30 +38,47 @@ const RelayItem = ({ relay }) => {
     const newObject = { ...relayObject, write: updatedValue };
     dispatch(changeRelayMode({ [relay]: newObject }));
   };
+  const removeHandler = () => {
+    Alert.alert('Remove Relay?', `Do you really want to remove ${relay}?`, [
+      {
+        text: 'Yes',
+        onPress: () => {
+          dispatch(removeRelay(relay));
+        },
+        style: 'destructive',
+      },
+      { text: 'No' },
+    ]);
+  };
+
   return (
-    <View style={style.container}>
-      <Text style={globalStyles.textBody}>{relay}</Text>
-      <View style={style.actionItems}>
-        <View style={style.action}>
-          <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>Read</Text>
-          <Switch
-            value={relayObject.read}
-            trackColor={{ true: colors.primary500 }}
-            onValueChange={switchReadHandler}
-          />
+    <Animated.View exiting={SlideOutRight}>
+      <Pressable onLongPress={removeHandler} style={style.container}>
+        <Text style={globalStyles.textBody}>{relay}</Text>
+        <View style={style.actionItems}>
+          <View style={style.action}>
+            <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>
+              Read
+            </Text>
+            <Switch
+              value={relayObject.read}
+              trackColor={{ true: colors.primary500 }}
+              onValueChange={switchReadHandler}
+            />
+          </View>
+          <View style={style.action}>
+            <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>
+              Write
+            </Text>
+            <Switch
+              value={relayObject.write}
+              trackColor={{ true: colors.primary500 }}
+              onValueChange={switchWriteHandler}
+            />
+          </View>
         </View>
-        <View style={style.action}>
-          <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>
-            Write
-          </Text>
-          <Switch
-            value={relayObject.write}
-            trackColor={{ true: colors.primary500 }}
-            onValueChange={switchWriteHandler}
-          />
-        </View>
-      </View>
-    </View>
+      </Pressable>
+    </Animated.View>
   );
 };
 

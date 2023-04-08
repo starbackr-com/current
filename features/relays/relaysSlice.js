@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  relays: { 'wss://test.123': { read: true, write: false }, 'wss://test.456': { read: true, write: false } },
+  relays: { 'wss://test.123': { read: true, write: false }, 'wss://test.456': { read: true, write: false }, 'wss://test.234': { read: true, write: false }, 'wss://test.789': { read: true, write: false } },
 };
 
 export const relaysSlice = createSlice({
