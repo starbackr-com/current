@@ -54,7 +54,11 @@ const RelayItem = ({ relay }) => {
   return (
     <Animated.View exiting={SlideOutRight}>
       <Pressable onLongPress={removeHandler} style={style.container}>
-        <Text style={globalStyles.textBody}>{relay}</Text>
+        <Text
+          style={[globalStyles.textBody, { maxWidth: '40%' }]}
+        >
+          {relay}
+        </Text>
         <View style={style.actionItems}>
           <View style={style.action}>
             <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>

@@ -42,7 +42,7 @@ const publishKind3 = async (oldKeys, newKeys, relays) => {
 export const useFollowUser = () => {
     const dispatch = useDispatch();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-    const relays = useSelector(state => state.user.relays)
+    const relays = useSelector(state => state.relays.relays)
 
     const follow = async (pubkeysInHex) => {
         try {

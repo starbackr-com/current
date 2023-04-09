@@ -8,7 +8,6 @@ export const useHomefeed = (unixNow) => {
     const [refresh, setRefresh] = useState();
     const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
     const ownPK = useSelector((state) => state.auth.pubKey);
-
     let hours;
 
     if (followedPubkeys < 100) {

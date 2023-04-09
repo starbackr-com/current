@@ -24,8 +24,8 @@ import { initRelayPool } from './utils/nostrV2/relayPool';
 import { WelcomeNavigator } from './features/welcome';
 import { store } from './store/store';
 import devLog from './utils/internal';
-import { addRelays } from './features/userSlice';
 import useSilentFollow from './hooks/useSilentFollow';
+import { addRelay } from './features/relays/relaysSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -70,7 +70,7 @@ const Root = () => {
               const contactList = await getContactAndRelayList(pubKey);
               if (contactList.content.length > 0) {
                 const relays = JSON.parse(contactList.content);
-                store.dispatch(addRelays(relays));
+                store.dispatch(addRelay(relays));
               }
               if (contactList.tags.length > 0) {
                 const pubkeys = contactList.tags.map((tag) => tag[1]);
