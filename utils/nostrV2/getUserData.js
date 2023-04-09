@@ -22,8 +22,9 @@ export const updateFollowedUsers = async () => {
       newEvent.save();
     });
     sub.on('eose', () => {
+      sub.unsub();
       resolve();
-    })
+    });
   });
 };
 
