@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Alert } from 'react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { globalStyles } from '../../../styles';
@@ -43,6 +43,19 @@ const ImportSelectionView = ({ navigation }) => {
           title="I don't have keys"
           text="You do not have any nostr-keys yet? No problem!"
           icon="help"
+          onPress={() => {
+            Alert.alert('No Keys?', 'Do you want to create a new key-pair?', [
+              {
+                text: 'Yes',
+                onPress: () => {
+                  navigation.navigate('Username');
+                },
+              },
+              {
+                text: 'No',
+              },
+            ]);
+          }}
         />
       </ScrollView>
       <CustomButton
