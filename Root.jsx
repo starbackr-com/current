@@ -20,13 +20,11 @@ import {
   updateFollowedUsers,
 } from './utils/nostrV2/getUserData';
 import { hydrateStore } from './utils/cache/asyncStorage';
-import { initRelayPool } from './utils/nostrV2/relayPool';
 import { WelcomeNavigator } from './features/welcome';
 import { store } from './store/store';
 import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
-import { addRelay, replaceRelays } from './features/relays/relaysSlice';
-import { getAllRelays } from './utils/nostrV2/relays';
+import { replaceRelays } from './features/relays/relaysSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -82,7 +80,6 @@ const Root = () => {
                 const pubkeys = contactList.tags.map((tag) => tag[1]);
                 silentFollow(pubkeys);
               }
-              console.log(getAllRelays())
               await updateFollowedUsers();
             } catch (e) {
               devLog(e);

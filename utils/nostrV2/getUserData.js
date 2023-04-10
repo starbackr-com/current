@@ -1,15 +1,13 @@
-import { SimplePool } from 'nostr-tools';
 import { store } from '../../store/store';
 import { Event } from './Event';
-
-const pool = new SimplePool();
+import { getReadRelays, pool } from './relays.ts';
 
 export const updateFollowedUsers = async () => {
   const pubkeys = store.getState().user.followedPubkeys;
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const readRelayUrls = getReadRelays().map((relay) => relay.url);
   await new Promise((resolve) => {
     const sub = pool.sub(
-      urls,
+      readRelayUrls,
       [
         {
           authors: pubkeys,
@@ -45,39 +43,6 @@ export const getUserData = async (pubkeysInHex) => {
     sub.unsub();
   });
 };
-
-export const getOldKind0 = async (pubkeyInHex) =>
-  Promise.allSettled(
-    connectedRelayPool.map(
-      (relay) =>
-        new Promise((resolve, reject) => {
-          const allEvents = [];
-          const sub = relay.sub([
-            {
-              authors: [pubkeyInHex],
-              kinds: [0],
-            },
-          ]);
-          const timer = setTimeout(() => {
-            console.log(`${relay.url} timed out after 5 sec...`);
-            reject();
-          }, 5000);
-          sub.on('event', (event) => {
-            allEvents.push(event);
-          });
-          sub.on('eose', () => {
-            console.log('eose!');
-            sub.unsub();
-            clearTimeout(timer);
-            resolve(allEvents);
-          });
-        }),
-    ),
-  ).then((result) =>
-    result
-      .filter((promise) => promise.status === 'fulfilled')
-      .map((promise) => promise.value),
-  );
 
 export const getOldKind0Pool = async (pubkeyInHex) => {
   const { relays } = store.getState().relays;

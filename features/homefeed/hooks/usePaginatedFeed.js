@@ -1,22 +1,20 @@
+/* eslint-disable operator-assignment */
+/* eslint-disable no-loop-func */
+/* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Note, pool } from '../../../utils/nostrV2';
+import { useRelayUrls } from '../../relays';
 
-export const usePaginatedFeed = (unixNow) => {
-  const relays = useSelector((state) => state.relays.relays);
-  const readRelayUrls = relays.filter((relay) => relay.read).map(relay => relay.url);
+export const usePaginatedFeed = () => {
+  const { readUrls } = useRelayUrls();
 
   const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
   let timer;
 
   const untilRef = useRef(Math.floor(Date.now() / 1000));
 
-  const refresh = () => {
-    untilRef.current = Math.floor(Date.now() / 1000);
-    get25RootPosts();
-  };
-
-  const get25RootPosts = async () => {
+  async function get25RootPosts() {
     let windowHours = 1;
 
     if (followedPubkeys.length < 100) {
@@ -32,12 +30,8 @@ export const usePaginatedFeed = (unixNow) => {
     const results = [];
     while (results.length < 25) {
       await new Promise((resolve) => {
-        const next = () => {
-          resolve();
-          sub.unsub();
-        };
         const sub = pool.sub(
-          readRelayUrls,
+          readUrls,
           [
             {
               authors: followedPubkeys,
@@ -48,6 +42,10 @@ export const usePaginatedFeed = (unixNow) => {
           ],
           { skipVerification: true },
         );
+        const next = () => {
+          resolve();
+          sub.unsub();
+        };
         timer = setTimeout(next, 3200);
         sub.on('event', (event) => {
           clearTimeout(timer);
@@ -65,13 +63,18 @@ export const usePaginatedFeed = (unixNow) => {
       since = since - windowHours * 3600;
     }
     untilRef.current = until;
+  }
+
+  const refresh = () => {
+    untilRef.current = Math.floor(Date.now() / 1000);
+    get25RootPosts();
   };
 
   useEffect(() => {
-    if (readRelayUrls.length > 0 && followedPubkeys.length > 0) {
+    if (readUrls.length > 0 && followedPubkeys.length > 0) {
       get25RootPosts();
     }
-  }, [followedPubkeys, readRelayUrls]);
+  }, [followedPubkeys, readUrls]);
 
   return [get25RootPosts, refresh];
 };

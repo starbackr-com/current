@@ -42,3 +42,17 @@ export function getWriteRelays(): Relay[] {
   const writeRelays = relays.filter((relay) => relay.write);
   return writeRelays;
 }
+
+export function getRelayUrls(relays: Relay[]): string[] {
+  return relays.map((relay) => relay.url);
+}
+
+export function getRelayObject() {
+  const relays = getAllRelays();
+  const relayObject = {};
+  relays.forEach(
+    (relay) =>
+      (relayObject[relay.url] = { read: relay.read, write: relay.write }),
+  );
+  return relayObject
+}
