@@ -4,7 +4,7 @@ import { Note, pool } from '../../../utils/nostrV2';
 
 export const usePaginatedFeed = (unixNow) => {
   const relays = useSelector((state) => state.relays.relays);
-  const relayArray = Object.keys(relays).filter((relay) => relays[relay].read);
+  const readRelayUrls = relays.filter((relay) => relay.read).map(relay => relay.url);
 
   const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
   let timer;
@@ -37,7 +37,7 @@ export const usePaginatedFeed = (unixNow) => {
           sub.unsub();
         };
         const sub = pool.sub(
-          relayArray,
+          readRelayUrls,
           [
             {
               authors: followedPubkeys,
@@ -68,10 +68,10 @@ export const usePaginatedFeed = (unixNow) => {
   };
 
   useEffect(() => {
-    if (relayArray.length > 0 && followedPubkeys.length > 0) {
+    if (readRelayUrls.length > 0 && followedPubkeys.length > 0) {
       get25RootPosts();
     }
-  }, [followedPubkeys, relayArray]);
+  }, [followedPubkeys, readRelayUrls]);
 
   return [get25RootPosts, refresh];
 };

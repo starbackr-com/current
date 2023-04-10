@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  relays: {},
+  relays: [],
+  knownRelayUrls: [],
 };
 
 export const relaysSlice = createSlice({
@@ -9,8 +10,13 @@ export const relaysSlice = createSlice({
   initialState,
   reducers: {
     addRelay: (state, action) => {
-      const newRelayObject = action.payload;
-      state.relays = { ...state.relays, ...newRelayObject };
+      const relayArray = action.payload;
+      const deduplicatedRelays = relayArray.filter(
+        (relayObject) => !state.knownRelayUrls.includes(relayObject.url),
+      );
+      const newRelayUrls = deduplicatedRelays.map((relay) => relay.url);
+      state.knownRelayUrls = [...state.knownRelayUrls, ...newRelayUrls];
+      state.relays = [...state.relays, ...deduplicatedRelays];
     },
     removeRelay: (state, action) => {
       delete state.relays[action.payload];
@@ -20,9 +26,15 @@ export const relaysSlice = createSlice({
       console.log(updatedRelay);
       state.relays = { ...state.relays, ...updatedRelay };
     },
+    replaceRelays: (state, action) => {
+      const relayArray = action.payload;
+      const relayUrls = relayArray.map((relay) => relay.url);
+      state.knownRelayUrls = relayUrls;
+      state.relays = relayArray;
+    },
   },
 });
 
-export const { addRelay, removeRelay, changeRelayMode } = relaysSlice.actions;
+export const { addRelay, removeRelay, changeRelayMode, replaceRelays } = relaysSlice.actions;
 
 export default relaysSlice.reducer;

@@ -25,7 +25,8 @@ import { WelcomeNavigator } from './features/welcome';
 import { store } from './store/store';
 import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
-import { addRelay } from './features/relays/relaysSlice';
+import { addRelay, replaceRelays } from './features/relays/relaysSlice';
+import { getAllRelays } from './utils/nostrV2/relays';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +50,7 @@ const Root = () => {
   useEffect(() => {
     const prepare = async () => {
       try {
-        await initRelayPool();
+        // await initRelayPool();
         await init();
         await hydrateFromDatabase();
         await hydrateStore();
@@ -69,13 +70,19 @@ const Root = () => {
             try {
               const contactList = await getContactAndRelayList(pubKey);
               if (contactList.content.length > 0) {
-                const relays = JSON.parse(contactList.content);
-                store.dispatch(addRelay(relays));
+                const relayMetadata = JSON.parse(contactList.content);
+                const relays = Object.keys(relayMetadata).map((relay) => ({
+                  url: relay,
+                  read: relayMetadata[relay].read,
+                  write: relayMetadata[relay].write,
+                }));
+                store.dispatch(replaceRelays(relays));
               }
               if (contactList.tags.length > 0) {
                 const pubkeys = contactList.tags.map((tag) => tag[1]);
                 silentFollow(pubkeys);
               }
+              console.log(getAllRelays())
               await updateFollowedUsers();
             } catch (e) {
               devLog(e);

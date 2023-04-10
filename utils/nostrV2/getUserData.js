@@ -1,7 +1,8 @@
+import { SimplePool } from 'nostr-tools';
 import { store } from '../../store/store';
 import { Event } from './Event';
-import { connectedRelays } from './relay';
-import { connectedRelayPool, pool } from './relayPool';
+
+const pool = new SimplePool();
 
 export const updateFollowedUsers = async () => {
   const pubkeys = store.getState().user.followedPubkeys;
@@ -79,10 +80,11 @@ export const getOldKind0 = async (pubkeyInHex) =>
   );
 
 export const getOldKind0Pool = async (pubkeyInHex) => {
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const { relays } = store.getState().relays;
+  const readRelays = Object.keys(relays).filter((relay) => relays[relay].read);
   const result = await new Promise((resolve) => {
     const receviedEvents = [];
-    const sub = pool.sub(urls, [
+    const sub = pool.sub(readRelays, [
       {
         authors: [pubkeyInHex],
         kinds: [3],
@@ -101,56 +103,61 @@ export const getOldKind0Pool = async (pubkeyInHex) => {
   return result;
 };
 
-export const getKind3Followers = async (pubkeyInHex) => {
-  const events = await Promise.allSettled(
-    connectedRelays.map(
-      (relay) =>
-        new Promise((resolve, reject) => {
-          const allEvents = [];
-          const sub = relay.sub([
-            {
-              authors: [pubkeyInHex],
-              kinds: [3],
-            },
-          ]);
-          const timer = setTimeout(() => {
-            console.log(`${relay.url} timed out after 5 sec...`);
-            reject();
-          }, 5000);
-          sub.on('event', (event) => {
-            allEvents.push(event);
-          });
-          sub.on('eose', () => {
-            sub.unsub();
-            clearTimeout(timer);
-            resolve(allEvents);
-          });
-        }),
-    ),
-  ).then((result) =>
-    result
-      .filter((promise) => promise.status === 'fulfilled')
-      .map((promise) => promise.value),
-  );
-  const array = [];
-  try {
-    events.forEach((event) =>
-      event[0]?.tags.forEach((tag) => array.push(tag[1])),
-    );
-    const deduped = [];
-    array.forEach((key) => {
-      if (!deduped.includes(key)) {
-        deduped.push(key);
-      }
-    });
-    return deduped;
-  } catch (e) {
-    console.log(e);
-  }
-};
+// export const getKind3Followers = async (pubkeyInHex) => {
+//   const events = await Promise.allSettled(
+//     connectedRelays.map(
+//       (relay) =>
+//         new Promise((resolve, reject) => {
+//           const allEvents = [];
+//           const sub = relay.sub([
+//             {
+//               authors: [pubkeyInHex],
+//               kinds: [3],
+//             },
+//           ]);
+//           const timer = setTimeout(() => {
+//             console.log(`${relay.url} timed out after 5 sec...`);
+//             reject();
+//           }, 5000);
+//           sub.on('event', (event) => {
+//             allEvents.push(event);
+//           });
+//           sub.on('eose', () => {
+//             sub.unsub();
+//             clearTimeout(timer);
+//             resolve(allEvents);
+//           });
+//         }),
+//     ),
+//   ).then((result) =>
+//     result
+//       .filter((promise) => promise.status === 'fulfilled')
+//       .map((promise) => promise.value),
+//   );
+//   const array = [];
+//   try {
+//     events.forEach((event) =>
+//       event[0]?.tags.forEach((tag) => array.push(tag[1])),
+//     );
+//     const deduped = [];
+//     array.forEach((key) => {
+//       if (!deduped.includes(key)) {
+//         deduped.push(key);
+//       }
+//     });
+//     return deduped;
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 
 export async function getContactAndRelayList(pubkeyInHex) {
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const urls = [
+    'wss://nostr1.current.fyi',
+    'wss://relay.current.fyi',
+    'wss://nos.lol',
+    'wss://nostr-pub.wellorder.net',
+  ];
   const mostRecentEvent = await new Promise((resolve, reject) => {
     const receivedEvents = [];
     const sub = pool.sub(urls, [
