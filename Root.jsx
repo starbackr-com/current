@@ -47,6 +47,7 @@ const Root = () => {
 
   useEffect(() => {
     const prepare = async () => {
+      setAppIsReady(false);
       try {
         // await initRelayPool();
         await init();

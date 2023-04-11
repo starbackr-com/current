@@ -19,10 +19,7 @@ const HomeFeed = ({ width, height }) => {
 
     const now = new Date() / 1000;
 
-    const [get25RootPosts, refresh] = usePaginatedFeed(now);
-
-    const events = useSelector(state => state.messages.messages)
-
+    const [get25RootPosts, refresh, events] = usePaginatedFeed(now);
     const navigation = useNavigation();
 
     const loadZaps = async (arrayOfIds) => {

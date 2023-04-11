@@ -10,6 +10,8 @@ export const usePaginatedFeed = () => {
   const { readUrls } = useRelayUrls();
 
   const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
+  const events = useSelector(state => state.messages.messages)
+
   let timer;
 
   const untilRef = useRef(Math.floor(Date.now() / 1000));
@@ -74,9 +76,9 @@ export const usePaginatedFeed = () => {
     if (readUrls.length > 0 && followedPubkeys.length > 0) {
       get25RootPosts();
     }
-  }, [followedPubkeys, readUrls]);
+  }, []);
 
-  return [get25RootPosts, refresh];
+  return [get25RootPosts, refresh, events];
 };
 
 export default usePaginatedFeed;
