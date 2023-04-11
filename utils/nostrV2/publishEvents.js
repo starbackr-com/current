@@ -1,54 +1,57 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getEventHash, getPublicKey, signEvent } from 'nostr-tools';
 import { getValue } from '../secureStore';
-
-import { connectedRelayPool, pool } from './relayPool';
 import devLog from '../internal';
-import { getRelayUrls, getWriteRelays } from './relays.ts';
+import { getAllRelays, getRelayUrls, getWriteRelays, pool } from './relays.ts';
 
 export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
-  let privKey = await getValue('privKey');
+  const privKey = await getValue('privKey');
   if (!privKey) {
     throw new Error('No privKey in secure storage found');
   }
-  let pubKey = getPublicKey(privKey);
-  let event = {
+  const pubKey = getPublicKey(privKey);
+  const event = {
     kind: 0,
     pubkey: pubKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [],
     content: JSON.stringify({
       name: name || nip05.split('@')[0],
-      nip05: nip05,
+      nip05,
       about: bio,
       picture: imageUrl,
-      lud16: lud16,
+      lud16,
     }),
   };
   event.id = getEventHash(event);
   event.sig = signEvent(event, privKey);
-  // const newEvent = new Event(event);
-  // newEvent.save();
-  const successes = await Promise.allSettled(
-    connectedRelayPool.map((relay) => {
-      return new Promise((resolve, reject) => {
-        let pub = relay.publish(event);
-        pub.on('ok', () => {
-          resolve(relay.url);
-        });
-        pub.on('failed', () => {
-          reject();
-        });
-        setTimeout(() => {
-          reject();
-        }, 3000);
-      });
-    }),
-  );
+  const writeUrls = getRelayUrls(getWriteRelays());
+  const successes = await new Promise((resolve) => {
+    const publishedTo = [];
+    const handledRelays = [];
+    const timer = setTimeout(() => {
+      resolve(publishedTo);
+    }, 3200);
+    const checkAllHandled = () => {
+      if (handledRelays.length === writeUrls.length) {
+        resolve(publishedTo);
+        clearTimeout(timer);
+      }
+    };
+    const pubs = pool.publish(writeUrls, event);
+    pubs.on('ok', (relay) => {
+      publishedTo.push(relay);
+      handledRelays.push(relay);
+      checkAllHandled();
+    });
 
-  return successes
-    .filter((promise) => promise.status === 'fulfilled')
-    .map((promise) => promise.value);
+    pubs.on('failed', (relay) => {
+      handledRelays.push(relay);
+      checkAllHandled();
+    });
+  });
+  console.log(successes);
+  return successes;
 };
 
 export const publishEvent = async (content, tags) => {
@@ -111,28 +114,17 @@ export const publishEvent = async (content, tags) => {
 
 export const createZapEvent = async (content, tags) => {
   try {
+    const zapRelayUrls = getRelayUrls(getAllRelays());
     const sk = await getValue('privKey');
-    let pk = getPublicKey(sk);
+    const pk = getPublicKey(sk);
 
-    let addrelays = [];
-    connectedRelayPool.map((relay) => {
-      addrelays.push(relay.url);
-      console.log(relay.url);
-    });
+    tags.push(['relays', ...zapRelayUrls]);
 
-    tags.push([
-      'relays',
-      addrelays[0],
-      addrelays[1],
-      addrelays[2],
-      addrelays[3],
-    ]);
-
-    let event = {
+    const event = {
       kind: 9734,
       pubkey: pk,
       created_at: Math.floor(Date.now() / 1000),
-      tags: tags,
+      tags,
     };
 
     if (content) {
@@ -145,8 +137,7 @@ export const createZapEvent = async (content, tags) => {
 
     return event;
   } catch (e) {
-    console.log('error: ', e);
-    return;
+    devLog('error: ', e);
   }
 };
 
