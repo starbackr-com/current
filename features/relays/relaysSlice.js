@@ -22,9 +22,11 @@ export const relaysSlice = createSlice({
       delete state.relays[action.payload];
     },
     changeRelayMode: (state, action) => {
-      const updatedRelay = action.payload;
-      console.log(updatedRelay);
-      state.relays = { ...state.relays, ...updatedRelay };
+      const updatedRelayObject = action.payload;
+      const index = state.relays.findIndex(
+        (item) => item.url === updatedRelayObject.url,
+      );
+      state.relays[index] = updatedRelayObject;
     },
     replaceRelays: (state, action) => {
       console.log('relay action');
@@ -36,6 +38,7 @@ export const relaysSlice = createSlice({
   },
 });
 
-export const { addRelay, removeRelay, changeRelayMode, replaceRelays } = relaysSlice.actions;
+export const { addRelay, removeRelay, changeRelayMode, replaceRelays } =
+  relaysSlice.actions;
 
 export default relaysSlice.reducer;

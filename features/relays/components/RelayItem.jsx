@@ -1,7 +1,8 @@
 import { View, Text, Switch, StyleSheet, Pressable, Alert } from 'react-native';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Animated, { SlideOutRight } from 'react-native-reanimated';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, globalStyles } from '../../../styles';
 import { changeRelayMode, removeRelay } from '../relaysSlice';
 
@@ -18,6 +19,8 @@ const style = StyleSheet.create({
   actionItems: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '50%',
+    justifyContent: 'space-evenly',
   },
   action: {
     flexDirection: 'row',
@@ -28,22 +31,19 @@ const style = StyleSheet.create({
 
 const RelayItem = ({ relay }) => {
   const dispatch = useDispatch();
-  const relayObject = useSelector((state) => state.relays.relays[relay]);
 
-  const switchReadHandler = (updatedValue) => {
-    const newObject = { ...relayObject, read: updatedValue };
-    dispatch(changeRelayMode({ [relay]: newObject }));
+  const switchReadHandler = () => {
+    dispatch(changeRelayMode({ ...relay, read: !relay.read }));
   };
-  const switchWriteHandler = (updatedValue) => {
-    const newObject = { ...relayObject, write: updatedValue };
-    dispatch(changeRelayMode({ [relay]: newObject }));
+  const switchWriteHandler = () => {
+    dispatch(changeRelayMode({ ...relay, write: !relay.write }));
   };
   const removeHandler = () => {
-    Alert.alert('Remove Relay?', `Do you really want to remove ${relay}?`, [
+    Alert.alert('Remove Relay?', `Do you really want to remove ${relay.url}?`, [
       {
         text: 'Yes',
         onPress: () => {
-          dispatch(removeRelay(relay));
+          dispatch(removeRelay(relay.url));
         },
         style: 'destructive',
       },
@@ -54,32 +54,24 @@ const RelayItem = ({ relay }) => {
   return (
     <Animated.View exiting={SlideOutRight}>
       <Pressable onLongPress={removeHandler} style={style.container}>
-        <Text
-          style={[globalStyles.textBody, { maxWidth: '40%' }]}
-        >
-          {relay}
+        <Text style={[globalStyles.textBody, { maxWidth: '40%' }]}>
+          {relay.url}
         </Text>
         <View style={style.actionItems}>
-          <View style={style.action}>
-            <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>
-              Read
-            </Text>
-            <Switch
-              value={relayObject.read}
-              trackColor={{ true: colors.primary500 }}
-              onValueChange={switchReadHandler}
+          <Pressable onPress={switchReadHandler}>
+            <Ionicons
+              name="reader"
+              size={24}
+              color={relay.read ? colors.primary500 : '#333333'}
             />
-          </View>
-          <View style={style.action}>
-            <Text style={[globalStyles.textBodyS, { marginRight: 6 }]}>
-              Write
-            </Text>
-            <Switch
-              value={relayObject.write}
-              trackColor={{ true: colors.primary500 }}
-              onValueChange={switchWriteHandler}
+          </Pressable>
+          <Pressable onPress={switchWriteHandler}>
+            <Ionicons
+              name="pencil"
+              size={24}
+              color={relay.write ? colors.primary500 : '#333333'}
             />
-          </View>
+          </Pressable>
         </View>
       </Pressable>
     </Animated.View>

@@ -65,26 +65,24 @@ const Root = () => {
           } = await loginToWallet(privKey);
           const pubKey = getPublicKey(privKey);
           dispatch(logIn({ bearer: access_token, username, pubKey }));
-          if (isLoggedIn) {
-            try {
-              const contactList = await getContactAndRelayList(pubKey);
-              if (contactList.content.length > 0) {
-                const relayMetadata = JSON.parse(contactList.content);
-                const relays = Object.keys(relayMetadata).map((relay) => ({
-                  url: relay,
-                  read: relayMetadata[relay].read,
-                  write: relayMetadata[relay].write,
-                }));
-                store.dispatch(replaceRelays(relays));
-              }
-              if (contactList.tags.length > 0) {
-                const pubkeys = contactList.tags.map((tag) => tag[1]);
-                silentFollow(pubkeys);
-              }
-              await updateFollowedUsers();
-            } catch (e) {
-              devLog(e);
+          try {
+            const contactList = await getContactAndRelayList(pubKey);
+            if (contactList.content.length > 0) {
+              const relayMetadata = JSON.parse(contactList.content);
+              const relays = Object.keys(relayMetadata).map((relay) => ({
+                url: relay,
+                read: relayMetadata[relay].read,
+                write: relayMetadata[relay].write,
+              }));
+              store.dispatch(replaceRelays(relays));
             }
+            if (contactList.tags.length > 0) {
+              const pubkeys = contactList.tags.map((tag) => tag[1]);
+              silentFollow(pubkeys);
+            }
+            await updateFollowedUsers();
+          } catch (e) {
+            devLog(e);
           }
         }
       } catch (e) {
@@ -94,7 +92,7 @@ const Root = () => {
       }
     };
     prepare();
-  }, [isLoggedIn]);
+  }, []);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {
