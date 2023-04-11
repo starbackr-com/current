@@ -50,7 +50,6 @@ export const publishKind0 = async (nip05, bio, imageUrl, lud16, name) => {
       checkAllHandled();
     });
   });
-  console.log(successes);
   return successes;
 };
 
@@ -84,8 +83,6 @@ export const publishEvent = async (content, tags) => {
       if (event.content.includes('Current')) {
         const value = await AsyncStorage.getItem('appId');
         event.tags.push(['id', value]);
-      } else {
-        devLog('no current');
       }
     } catch (e) {
       devLog('error in setting up appId', e);
@@ -96,14 +93,23 @@ export const publishEvent = async (content, tags) => {
     const writeUrls = getRelayUrls(getWriteRelays());
     const pub = pool.publish(writeUrls, event);
     await new Promise((resolve) => {
-      let successes = 0;
+      let handledRelays = 0;
       const timer = setTimeout(resolve, 2500);
-      pub.on('ok', () => {
-        successes += 1;
-        if (successes === writeUrls.length) {
+      const checkAllHandled = () => {
+        console.log('Checking...');
+        if (handledRelays === writeUrls.length) {
+          devLog('All handled!');
           clearTimeout(timer);
           resolve();
         }
+      };
+      pub.on('ok', () => {
+        handledRelays += 1;
+        checkAllHandled();
+      });
+      pub.on('failed', () => {
+        handledRelays += 1;
+        checkAllHandled();
       });
     });
     return { event };
@@ -142,12 +148,12 @@ export const createZapEvent = async (content, tags) => {
 };
 
 export const publishDeleteAccount = async () => {
-  let privKey = await getValue('privKey');
+  const privKey = await getValue('privKey');
   if (!privKey) {
     throw new Error('No privKey in secure storage found');
   }
-  let pubKey = getPublicKey(privKey);
-  let event = {
+  const pubKey = getPublicKey(privKey);
+  const event = {
     kind: 0,
     pubkey: pubKey,
     created_at: Math.floor(Date.now() / 1000),

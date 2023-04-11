@@ -1,6 +1,6 @@
 import { store } from '../../store/store';
 import { Event } from './Event';
-import { getReadRelays, pool } from './relays.ts';
+import { getReadRelays, getRelayUrls, pool } from './relays.ts';
 
 export const updateFollowedUsers = async () => {
   const pubkeys = store.getState().user.followedPubkeys;
@@ -28,8 +28,8 @@ export const updateFollowedUsers = async () => {
 };
 
 export const getUserData = async (pubkeysInHex) => {
-  const urls = connectedRelayPool.map((relay) => relay.url);
-  const sub = pool.sub(urls, [
+  const readUrls = getRelayUrls(getReadRelays());
+  const sub = pool.sub(readUrls, [
     {
       authors: pubkeysInHex,
       kinds: [0],
@@ -45,11 +45,10 @@ export const getUserData = async (pubkeysInHex) => {
 };
 
 export const getOldKind0Pool = async (pubkeyInHex) => {
-  const { relays } = store.getState().relays;
-  const readRelays = Object.keys(relays).filter((relay) => relays[relay].read);
+  const readUrls = getRelayUrls(getReadRelays());
   const result = await new Promise((resolve) => {
     const receviedEvents = [];
-    const sub = pool.sub(readRelays, [
+    const sub = pool.sub(readUrls, [
       {
         authors: [pubkeyInHex],
         kinds: [3],
@@ -67,54 +66,6 @@ export const getOldKind0Pool = async (pubkeyInHex) => {
   });
   return result;
 };
-
-// export const getKind3Followers = async (pubkeyInHex) => {
-//   const events = await Promise.allSettled(
-//     connectedRelays.map(
-//       (relay) =>
-//         new Promise((resolve, reject) => {
-//           const allEvents = [];
-//           const sub = relay.sub([
-//             {
-//               authors: [pubkeyInHex],
-//               kinds: [3],
-//             },
-//           ]);
-//           const timer = setTimeout(() => {
-//             console.log(`${relay.url} timed out after 5 sec...`);
-//             reject();
-//           }, 5000);
-//           sub.on('event', (event) => {
-//             allEvents.push(event);
-//           });
-//           sub.on('eose', () => {
-//             sub.unsub();
-//             clearTimeout(timer);
-//             resolve(allEvents);
-//           });
-//         }),
-//     ),
-//   ).then((result) =>
-//     result
-//       .filter((promise) => promise.status === 'fulfilled')
-//       .map((promise) => promise.value),
-//   );
-//   const array = [];
-//   try {
-//     events.forEach((event) =>
-//       event[0]?.tags.forEach((tag) => array.push(tag[1])),
-//     );
-//     const deduped = [];
-//     array.forEach((key) => {
-//       if (!deduped.includes(key)) {
-//         deduped.push(key);
-//       }
-//     });
-//     return deduped;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
 
 export async function getContactAndRelayList(pubkeyInHex) {
   const urls = [
