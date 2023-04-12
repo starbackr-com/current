@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Note } from '../../../utils/nostrV2';
+import { Note, pool } from '../../../utils/nostrV2';
 import { useRelayUrls } from '../../relays';
-import { pool } from '../../../utils/nostrV2/relays.ts';
 
 const useNoteMentions = () => {
   const { readUrls } = useRelayUrls();
