@@ -1,26 +1,34 @@
 import { SimplePool } from 'nostr-tools';
 import { store } from '../../store/store';
+import { getData } from '../cache/asyncStorage';
+import { addRelay } from '../../features/relays/relaysSlice';
 
 type Relay = {
   url: string;
   read: boolean;
   write: boolean;
+  dm?: boolean;
 };
 
 export const pool = new SimplePool();
 
 export async function getRecommendedRelays() {
-  let recommendedRelays: string[];
+  let recommendedRelays: Relay[];
   try {
     const response = await fetch(`${process.env.BASEURL}/relays`);
     const data = await response.json();
     recommendedRelays = data.result;
   } catch (e) {
     recommendedRelays = [
-      'wss://nostr1.current.fyi',
-      'wss://relay.current.fyi',
-      'wss://nos.lol',
-      'wss://nostr-pub.wellorder.net',
+      { url: 'wss://nostr1.current.fyi', read: true, write: true, dm: true },
+      { url: 'wss://relay.current.fyi', read: true, write: true, dm: true },
+      { url: 'wss://nos.lol', read: true, write: true, dm: true },
+      {
+        url: 'wss://nostr-pub.wellorder.net',
+        read: true,
+        write: true,
+        dm: true,
+      },
     ];
   }
   return recommendedRelays;
@@ -54,5 +62,19 @@ export function getRelayObject() {
     (relay) =>
       (relayObject[relay.url] = { read: relay.read, write: relay.write }),
   );
-  return relayObject
+  return relayObject;
+}
+
+export async function initRelays() {
+  try {
+    const relaysFromStorage = JSON.parse(await getData('relays'));
+    if (relaysFromStorage) {
+      store.dispatch(addRelay(relaysFromStorage));
+    } else {
+      const relaysFromEndpoint = await getRecommendedRelays();
+      store.dispatch(addRelay(relaysFromEndpoint));
+    }
+  } catch(e) {
+    console.log(e)
+  }
 }

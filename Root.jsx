@@ -25,6 +25,7 @@ import { store } from './store/store';
 import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
 import { addRelay } from './features/relays/relaysSlice';
+import { initRelays } from './utils/nostrV2';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,8 +50,8 @@ const Root = () => {
     const prepare = async () => {
       setAppIsReady(false);
       try {
-        // await initRelayPool();
         await init();
+        await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
         const privKey = await getValue('privKey');

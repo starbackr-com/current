@@ -68,11 +68,6 @@ export const hydrateStore = async () => {
     const array = JSON.parse(getStartedItemsShown);
     array.forEach((id) => store.dispatch(setGetStartedItems(id)));
   }
-  if (relays) {
-    console.log(relays);
-    const relayArray = JSON.parse(relays);
-    store.dispatch(addRelay(relayArray));
-  }
 };
 
 export const getAllKeys = async () => {
