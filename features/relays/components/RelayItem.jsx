@@ -72,6 +72,13 @@ const RelayItem = ({ relay }) => {
               color={relay.write ? colors.primary500 : '#333333'}
             />
           </Pressable>
+          <Pressable onPress={switchWriteHandler}>
+            <Ionicons
+              name="mail"
+              size={24}
+              color={relay.write ? colors.primary500 : '#333333'}
+            />
+          </Pressable>
         </View>
       </Pressable>
     </Animated.View>

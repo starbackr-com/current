@@ -15,18 +15,24 @@ const style = StyleSheet.create({
   },
 });
 
-const RelaySettingsHeader = () => {
-  const navigation = useNavigation();
-  return (
-    <View style={style.container}>
-      <BackButton
+const RelaySettingsHeader = ({ route, navigation }) => (
+  <View style={style.container}>
+    <BackButton
+      onPress={() => {
+        navigation.goBack();
+      }}
+    />
+    {!(route.name === 'Add') ? (
+      <Ionicons
+        name="add"
+        size={24}
+        color={colors.primary500}
         onPress={() => {
-          navigation.goBack();
+          navigation.navigate('Add');
         }}
       />
-      <Ionicons name="add" size={24} color={colors.primary500} />
-    </View>
-  );
-};
+    ) : undefined}
+  </View>
+);
 
 export default RelaySettingsHeader;
