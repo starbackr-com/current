@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -13,14 +13,12 @@ const AddRelayView = () => {
   const submitHandler = async () => {
     try {
       const relay = await pool.ensureRelay(urlInput);
-      console.log(relay)
       if (!relay) {
         throw new Error('Could not connect to relay!');
       }
       dispatch(addRelay([{ url: relay.url, read: true, write: true }]));
     } catch (e) {
-      console.log(e)
-      alert('Something went wrong... Could not add relay.');
+      Alert.alert('Something went wrong... Could not add relay.');
     }
   };
   return (
