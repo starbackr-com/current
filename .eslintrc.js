@@ -10,6 +10,11 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react'],
+  settings: {
+    'import/resolver': {
+      typescript: {},
+    },
+  },
   rules: {
     'react/prop-types': 0,
     'react/function-component-definition': [
@@ -24,6 +29,16 @@ module.exports = {
       {
         props: true,
         ignorePropertyModificationsFor: ['state'],
+      },
+    ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
       },
     ],
   },
