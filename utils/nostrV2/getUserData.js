@@ -1,6 +1,6 @@
 import { store } from '../../store/store';
 import { Event } from './Event';
-import { getReadRelays, getRelayUrls, pool } from './relays.ts';
+import { getReadRelays, getRelayUrls, pool } from './relays';
 
 export const updateFollowedUsers = async () => {
   const pubkeys = store.getState().user.followedPubkeys;
@@ -68,15 +68,10 @@ export const getOldKind0Pool = async (pubkeyInHex) => {
 };
 
 export async function getContactAndRelayList(pubkeyInHex) {
-  const urls = [
-    'wss://nostr1.current.fyi',
-    'wss://relay.current.fyi',
-    'wss://nos.lol',
-    'wss://nostr-pub.wellorder.net',
-  ];
+  const relays = getRelayUrls(getReadRelays());
   const mostRecentEvent = await new Promise((resolve, reject) => {
     const receivedEvents = [];
-    const sub = pool.sub(urls, [
+    const sub = pool.sub(relays, [
       {
         authors: [pubkeyInHex],
         kinds: [3],

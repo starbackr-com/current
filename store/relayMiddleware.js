@@ -1,14 +1,14 @@
-import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { addRelay } from '../features/relays/relaysSlice';
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import { addRelay, changeRelayMode, removeRelay } from '../features/relays/relaysSlice';
 import { storeData } from '../utils/cache/asyncStorage';
 
 const relayListener = createListenerMiddleware();
 
 relayListener.startListening({
-  actionCreator: addRelay,
+  matcher: isAnyOf(addRelay, removeRelay, changeRelayMode),
   effect: async (action, listenerApi) => {
+    console.log('runs');
     const { relays } = listenerApi.getState().relays;
-    console.log('relays:', relays)
     const json = JSON.stringify(relays);
     await storeData('relays', json);
   },

@@ -15,7 +15,6 @@ export const relaysSlice = createSlice({
         (relayObject) => !state.knownRelayUrls.includes(relayObject.url),
       );
       const newRelayUrls = deduplicatedRelays.map((relay) => relay.url);
-      console.log('new Relays:', deduplicatedRelays);
       state.knownRelayUrls = [...state.knownRelayUrls, ...newRelayUrls];
       state.relays = [...state.relays, ...deduplicatedRelays];
     },
@@ -41,7 +40,6 @@ export const relaysSlice = createSlice({
   },
 });
 
-export const { addRelay, removeRelay, changeRelayMode, replaceRelays } =
-  relaysSlice.actions;
+export const { addRelay, removeRelay, changeRelayMode, replaceRelays } = relaysSlice.actions;
 
 export default relaysSlice.reducer;
