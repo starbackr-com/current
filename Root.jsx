@@ -24,7 +24,7 @@ import { WelcomeNavigator } from './features/welcome';
 import { store } from './store/store';
 import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
-import { replaceRelays } from './features/relays/relaysSlice';
+import { addRelay } from './features/relays/relaysSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -74,7 +74,7 @@ const Root = () => {
                 read: relayMetadata[relay].read,
                 write: relayMetadata[relay].write,
               }));
-              store.dispatch(replaceRelays(relays));
+              store.dispatch(addRelay(relays));
             }
             if (contactList.tags.length > 0) {
               const pubkeys = contactList.tags.map((tag) => tag[1]);

@@ -6,6 +6,7 @@ import { globalStyles } from '../../../styles';
 import { CustomButton, Input } from '../../../components';
 import { pool } from '../../../utils/nostrV2';
 import { addRelay } from '../relaysSlice';
+import { getData } from '../../../utils/cache/asyncStorage';
 
 const AddRelayView = () => {
   const [urlInput, setUrlInput] = useState();
@@ -31,6 +32,13 @@ const AddRelayView = () => {
         <CustomButton
           text="Add Relay"
           buttonConfig={{ onPress: submitHandler }}
+        />
+        <CustomButton
+          text="Test"
+          buttonConfig={{ onPress: async () => {
+            const relays = await getData('relays');
+            console.log(relays);
+          } }}
         />
       </ScrollView>
     </View>
