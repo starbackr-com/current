@@ -3,9 +3,7 @@ import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
 import { setZapAmount } from '../../features/userSlice';
 import { setZapComment } from '../../features/userSlice';
 import { setZapNoconf } from '../../features/userSlice';
-import { setAppId } from '../../features/userSlice';
 import { store } from '../../store/store';
-import { addRelay } from '../../features/relays/relaysSlice';
 
 export const generateRandomString = async (length) => {
   const value = await AsyncStorage.getItem('appId');
@@ -51,7 +49,6 @@ export const hydrateStore = async () => {
   const zapNoconf = await getData('zapNoconf');
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
-  const relays = await getData('relays');
   if (zapAmount) {
     store.dispatch(setZapAmount(zapAmount));
   }

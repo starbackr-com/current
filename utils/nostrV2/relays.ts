@@ -17,7 +17,7 @@ export async function getRecommendedRelays() {
   try {
     const response = await fetch(`${process.env.BASEURL}/relays`);
     const data = await response.json();
-    recommendedRelays = data.result;
+    recommendedRelays = data.result.map(relay => ({url: relay.relay, read: relay.read, write: relay.write, dm: relay.dm}))
   } catch (e) {
     recommendedRelays = [
       { url: 'wss://nostr1.current.fyi', read: true, write: true, dm: true },
