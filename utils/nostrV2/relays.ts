@@ -1,7 +1,7 @@
 import { SimplePool } from 'nostr-tools';
 import { store } from '../../store/store';
 import { getData } from '../cache/asyncStorage';
-import { addRelay } from '../../features/relays/relaysSlice';
+import { setupRelay } from '../../features/relays/relaysSlice';
 
 type Relay = {
   url: string;
@@ -69,9 +69,9 @@ export async function initRelays() {
   const relaysFromStorage = await getData('relays');
   if (relaysFromStorage) {
     const parsedRelays = JSON.parse(relaysFromStorage);
-    store.dispatch(addRelay(parsedRelays));
+    store.dispatch(setupRelay(parsedRelays));
   } else {
     const relaysFromEndpoint = await getRecommendedRelays();
-    store.dispatch(addRelay(relaysFromEndpoint));
+    store.dispatch(setupRelay(relaysFromEndpoint));
   }
 }

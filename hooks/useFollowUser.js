@@ -8,7 +8,7 @@ import {
   getRelayUrls,
   getWriteRelays,
   pool,
-} from '../utils/nostrV2/relays.ts';
+} from '../utils/nostrV2/relays';
 import devLog from '../utils/internal';
 
 const publishKind3 = async (oldKeys, newKeys) => {

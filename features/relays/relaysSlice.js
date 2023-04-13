@@ -37,9 +37,24 @@ export const relaysSlice = createSlice({
       state.knownRelayUrls = relayUrls;
       state.relays = relayArray;
     },
+    setupRelay: (state, action) => {
+      const relayArray = action.payload;
+      const deduplicatedRelays = relayArray.filter(
+        (relayObject) => !state.knownRelayUrls.includes(relayObject.url),
+      );
+      const newRelayUrls = deduplicatedRelays.map((relay) => relay.url);
+      state.knownRelayUrls = [...state.knownRelayUrls, ...newRelayUrls];
+      state.relays = [...state.relays, ...deduplicatedRelays];
+    },
   },
 });
 
-export const { addRelay, removeRelay, changeRelayMode, replaceRelays } = relaysSlice.actions;
+export const {
+  addRelay,
+  removeRelay,
+  changeRelayMode,
+  replaceRelays,
+  setupRelay,
+} = relaysSlice.actions;
 
 export default relaysSlice.reducer;

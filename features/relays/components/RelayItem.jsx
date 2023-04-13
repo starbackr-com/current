@@ -1,16 +1,18 @@
-import { View, Text, Switch, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import Animated, { SlideOutRight } from 'react-native-reanimated';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, globalStyles } from '../../../styles';
-import { changeRelayMode, removeRelay } from '../relaysSlice';
+import { removeRelay } from '../relaysSlice';
+import { Ionicons } from '@expo/vector-icons';
+import { pool } from '../../../utils/nostrV2';
 
 const style = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.backgroundSecondary,
-    padding: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -30,14 +32,9 @@ const style = StyleSheet.create({
 });
 
 const RelayItem = ({ relay }) => {
+  const relayUrl = relay.url.slice(-1) === '/' ? relay.url : `${relay.url}/`;
+  const state = pool._conn[relayUrl].status;
   const dispatch = useDispatch();
-
-  const switchReadHandler = () => {
-    dispatch(changeRelayMode({ ...relay, read: !relay.read }));
-  };
-  const switchWriteHandler = () => {
-    dispatch(changeRelayMode({ ...relay, write: !relay.write }));
-  };
   const removeHandler = () => {
     Alert.alert('Remove Relay?', `Do you really want to remove ${relay.url}?`, [
       {
@@ -54,31 +51,12 @@ const RelayItem = ({ relay }) => {
   return (
     <Animated.View exiting={SlideOutRight}>
       <Pressable onLongPress={removeHandler} style={style.container}>
-        <Text style={[globalStyles.textBody, { maxWidth: '40%' }]}>
-          {relay.url}
-        </Text>
-        <View style={style.actionItems}>
-          <Pressable onPress={switchReadHandler}>
-            <Ionicons
-              name="reader"
-              size={24}
-              color={relay.read ? colors.primary500 : '#333333'}
-            />
-          </Pressable>
-          <Pressable onPress={switchWriteHandler}>
-            <Ionicons
-              name="pencil"
-              size={24}
-              color={relay.write ? colors.primary500 : '#333333'}
-            />
-          </Pressable>
-          <Pressable onPress={switchWriteHandler}>
-            <Ionicons
-              name="mail"
-              size={24}
-              color={relay.write ? colors.primary500 : '#333333'}
-            />
-          </Pressable>
+        <Text style={[globalStyles.textBody]}>{relay.url}</Text>
+        <View>
+          <Ionicons
+            name="cloud-circle"
+            color={state === 1 ? 'green' : 'red'}
+          />
         </View>
       </Pressable>
     </Animated.View>
