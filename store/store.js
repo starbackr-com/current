@@ -7,7 +7,7 @@ import { walletApi } from '../services/walletApi';
 import userReducer from '../features/userSlice';
 import interactionReducer from '../features/interactionSlice';
 import relaysReducer from '../features/relays/relaysSlice';
-import relayMiddleware from './relayMiddleware';
+import listener from './listenerMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +20,6 @@ export const store = configureStore({
     [walletApi.reducerPath]: walletApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-    .prepend(relayMiddleware)
+    .prepend(listener)
     .concat([walletApi.middleware]),
 });

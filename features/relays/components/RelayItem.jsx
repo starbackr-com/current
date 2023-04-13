@@ -1,10 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import Animated, { SlideOutRight } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, globalStyles } from '../../../styles';
 import { removeRelay } from '../relaysSlice';
-import { Ionicons } from '@expo/vector-icons';
 import { pool } from '../../../utils/nostrV2';
 
 const style = StyleSheet.create({

@@ -1,4 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { publishGenericEvent } from '../../utils/nostrV2';
+import { getPrivateKey, storeData } from '../../utils/cache/asyncStorage';
+import { createKind3 } from '../../utils/nostrV2/createEvent';
 
 const initialState = {
   relays: [],
@@ -48,6 +51,18 @@ export const relaysSlice = createSlice({
     },
   },
 });
+
+export const relayListener = async (action, listenerApi) => {
+  const {
+    relays: { relays },
+    user: { followedPubkeys },
+  } = listenerApi.getState();
+  const json = JSON.stringify(relays);
+  await storeData('relays', json);
+  const sk = await getPrivateKey();
+  const event = await createKind3(followedPubkeys, relays, sk);
+  await publishGenericEvent(event);
+};
 
 export const {
   addRelay,

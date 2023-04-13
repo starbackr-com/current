@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
-import { setZapAmount } from '../../features/userSlice';
-import { setZapComment } from '../../features/userSlice';
-import { setZapNoconf } from '../../features/userSlice';
+import {
+  setZapAmount,
+  setZapNoconf,
+  setZapComment,
+} from '../../features/userSlice';
 import { store } from '../../store/store';
+import { getValue } from '../secureStore';
 
 export const generateRandomString = async (length) => {
   const value = await AsyncStorage.getItem('appId');
@@ -85,3 +88,8 @@ export const removeData = async (keys) => {
 
   console.log(`Removed ${keys} from AsyncStorage`);
 };
+
+export async function getPrivateKey() {
+  const sk = await getValue('privKey');
+  return sk;
+}
