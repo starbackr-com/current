@@ -7,7 +7,6 @@ const relayListener = createListenerMiddleware();
 relayListener.startListening({
   matcher: isAnyOf(addRelay, removeRelay, changeRelayMode),
   effect: async (action, listenerApi) => {
-    console.log('runs');
     const { relays } = listenerApi.getState().relays;
     const json = JSON.stringify(relays);
     await storeData('relays', json);

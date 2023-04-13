@@ -66,15 +66,12 @@ export function getRelayObject() {
 }
 
 export async function initRelays() {
-  try {
-    const relaysFromStorage = JSON.parse(await getData('relays'));
-    if (relaysFromStorage) {
-      store.dispatch(addRelay(relaysFromStorage));
-    } else {
-      const relaysFromEndpoint = await getRecommendedRelays();
-      store.dispatch(addRelay(relaysFromEndpoint));
-    }
-  } catch(e) {
-    console.log(e)
+  const relaysFromStorage = await getData('relays');
+  if (relaysFromStorage) {
+    const parsedRelays = JSON.parse(relaysFromStorage);
+    store.dispatch(addRelay(parsedRelays));
+  } else {
+    const relaysFromEndpoint = await getRecommendedRelays();
+    store.dispatch(addRelay(relaysFromEndpoint));
   }
 }
