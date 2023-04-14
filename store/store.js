@@ -8,6 +8,7 @@ import userReducer from '../features/userSlice';
 import interactionReducer from '../features/interactionSlice';
 import relaysReducer from '../features/relays/relaysSlice';
 import listener from './listenerMiddleware';
+import badgeReducer from '../features/badges/badgeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     user: userReducer,
     interaction: interactionReducer,
     relays: relaysReducer,
+    badges: badgeReducer,
     [walletApi.reducerPath]: walletApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
