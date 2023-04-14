@@ -7,10 +7,11 @@ import { useDispatch } from 'react-redux';
 import { followPubkey } from '../../userSlice';
 import { logIn } from '../../authSlice';
 import { decodePubkey, loginToWallet, saveValue } from '../../../utils';
-import { getOldKind0 } from '../../../utils/nostrV2';
+import { getOldKind0Pool } from '../../../utils/nostrV2';
 import { globalStyles } from '../../../styles';
 import { CustomButton, Input } from '../../../components';
 import { bech32Sk, hexRegex } from '../../../constants';
+import devLog from '../../../utils/internal';
 
 const ImportKeyView = ({ navigation }) => {
   const [key, setKey] = useState('');
@@ -40,17 +41,7 @@ const ImportKeyView = ({ navigation }) => {
         dispatch(logIn({ bearer: access_token, pubKey: pk, username }));
         return;
       }
-      const data = await getOldKind0(pk);
-      const events = [];
-      data.map((item) => item.map((event) => events.push(event)));
-      const mostRecent = events.reduce(
-        (p, c) => {
-          const r = c.created_at > p.created_at ? c : p;
-          return r;
-        },
-        { created_at: 0 },
-      );
-
+      const mostRecent = await getOldKind0Pool();
       if (mostRecent && mostRecent.content) {
         try {
           const { deleted } = JSON.parse(mostRecent.content);
@@ -71,7 +62,7 @@ const ImportKeyView = ({ navigation }) => {
             });
           }
         } catch (e) {
-          console.log(e);
+          devLog(e);
         }
       } else {
         navigation.navigate('Username', {
@@ -80,7 +71,7 @@ const ImportKeyView = ({ navigation }) => {
         });
       }
     } catch (e) {
-      console.log(e);
+      devLog(e);
     }
   };
 

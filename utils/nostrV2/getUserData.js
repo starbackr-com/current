@@ -1,14 +1,13 @@
 import { store } from '../../store/store';
 import { Event } from './Event';
-import { connectedRelays } from './relay';
-import { connectedRelayPool, pool } from './relayPool';
+import { getReadRelays, getRelayUrls, pool } from './relays';
 
 export const updateFollowedUsers = async () => {
   const pubkeys = store.getState().user.followedPubkeys;
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const readRelayUrls = getReadRelays().map((relay) => relay.url);
   await new Promise((resolve) => {
     const sub = pool.sub(
-      urls,
+      readRelayUrls,
       [
         {
           authors: pubkeys,
@@ -22,14 +21,15 @@ export const updateFollowedUsers = async () => {
       newEvent.save();
     });
     sub.on('eose', () => {
+      sub.unsub();
       resolve();
-    })
+    });
   });
 };
 
 export const getUserData = async (pubkeysInHex) => {
-  const urls = connectedRelayPool.map((relay) => relay.url);
-  const sub = pool.sub(urls, [
+  const readUrls = getRelayUrls(getReadRelays());
+  const sub = pool.sub(readUrls, [
     {
       authors: pubkeysInHex,
       kinds: [0],
@@ -44,44 +44,11 @@ export const getUserData = async (pubkeysInHex) => {
   });
 };
 
-export const getOldKind0 = async (pubkeyInHex) =>
-  Promise.allSettled(
-    connectedRelayPool.map(
-      (relay) =>
-        new Promise((resolve, reject) => {
-          const allEvents = [];
-          const sub = relay.sub([
-            {
-              authors: [pubkeyInHex],
-              kinds: [0],
-            },
-          ]);
-          const timer = setTimeout(() => {
-            console.log(`${relay.url} timed out after 5 sec...`);
-            reject();
-          }, 5000);
-          sub.on('event', (event) => {
-            allEvents.push(event);
-          });
-          sub.on('eose', () => {
-            console.log('eose!');
-            sub.unsub();
-            clearTimeout(timer);
-            resolve(allEvents);
-          });
-        }),
-    ),
-  ).then((result) =>
-    result
-      .filter((promise) => promise.status === 'fulfilled')
-      .map((promise) => promise.value),
-  );
-
 export const getOldKind0Pool = async (pubkeyInHex) => {
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const readUrls = getRelayUrls(getReadRelays());
   const result = await new Promise((resolve) => {
     const receviedEvents = [];
-    const sub = pool.sub(urls, [
+    const sub = pool.sub(readUrls, [
       {
         authors: [pubkeyInHex],
         kinds: [3],
@@ -100,59 +67,11 @@ export const getOldKind0Pool = async (pubkeyInHex) => {
   return result;
 };
 
-export const getKind3Followers = async (pubkeyInHex) => {
-  const events = await Promise.allSettled(
-    connectedRelays.map(
-      (relay) =>
-        new Promise((resolve, reject) => {
-          const allEvents = [];
-          const sub = relay.sub([
-            {
-              authors: [pubkeyInHex],
-              kinds: [3],
-            },
-          ]);
-          const timer = setTimeout(() => {
-            console.log(`${relay.url} timed out after 5 sec...`);
-            reject();
-          }, 5000);
-          sub.on('event', (event) => {
-            allEvents.push(event);
-          });
-          sub.on('eose', () => {
-            sub.unsub();
-            clearTimeout(timer);
-            resolve(allEvents);
-          });
-        }),
-    ),
-  ).then((result) =>
-    result
-      .filter((promise) => promise.status === 'fulfilled')
-      .map((promise) => promise.value),
-  );
-  const array = [];
-  try {
-    events.forEach((event) =>
-      event[0]?.tags.forEach((tag) => array.push(tag[1])),
-    );
-    const deduped = [];
-    array.forEach((key) => {
-      if (!deduped.includes(key)) {
-        deduped.push(key);
-      }
-    });
-    return deduped;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 export async function getContactAndRelayList(pubkeyInHex) {
-  const urls = connectedRelayPool.map((relay) => relay.url);
+  const relays = getRelayUrls(getReadRelays());
   const mostRecentEvent = await new Promise((resolve, reject) => {
     const receivedEvents = [];
-    const sub = pool.sub(urls, [
+    const sub = pool.sub(relays, [
       {
         authors: [pubkeyInHex],
         kinds: [3],

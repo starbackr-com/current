@@ -69,7 +69,6 @@ const ImportWordsView = ({ navigation }) => {
       dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
     } else {
       const mostRecent = await getOldKind0Pool();
-      console.log(mostRecent);
       if (mostRecent && mostRecent.content) {
         try {
           const { deleted } = JSON.parse(mostRecent.content);

@@ -20,12 +20,12 @@ import {
   updateFollowedUsers,
 } from './utils/nostrV2/getUserData';
 import { hydrateStore } from './utils/cache/asyncStorage';
-import { initRelayPool } from './utils/nostrV2/relayPool';
 import { WelcomeNavigator } from './features/welcome';
 import { store } from './store/store';
 import devLog from './utils/internal';
-import { addRelays } from './features/userSlice';
 import useSilentFollow from './hooks/useSilentFollow';
+import { setupRelay } from './features/relays/relaysSlice';
+import { initRelays } from './utils/nostrV2';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,9 +48,10 @@ const Root = () => {
 
   useEffect(() => {
     const prepare = async () => {
+      setAppIsReady(false);
       try {
-        await initRelayPool();
         await init();
+        await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
         const privKey = await getValue('privKey');
@@ -65,21 +66,24 @@ const Root = () => {
           } = await loginToWallet(privKey);
           const pubKey = getPublicKey(privKey);
           dispatch(logIn({ bearer: access_token, username, pubKey }));
-          if (isLoggedIn) {
-            try {
-              const contactList = await getContactAndRelayList(pubKey);
-              if (contactList.content.length > 0) {
-                const relays = JSON.parse(contactList.content);
-                store.dispatch(addRelays(relays));
-              }
-              if (contactList.tags.length > 0) {
-                const pubkeys = contactList.tags.map((tag) => tag[1]);
-                silentFollow(pubkeys);
-              }
-              await updateFollowedUsers();
-            } catch (e) {
-              devLog(e);
+          try {
+            const contactList = await getContactAndRelayList(pubKey);
+            if (contactList.content.length > 0) {
+              const relayMetadata = JSON.parse(contactList.content);
+              const relays = Object.keys(relayMetadata).map((relay) => ({
+                url: relay,
+                read: relayMetadata[relay].read,
+                write: relayMetadata[relay].write,
+              }));
+              store.dispatch(setupRelay(relays));
             }
+            if (contactList.tags.length > 0) {
+              const pubkeys = contactList.tags.map((tag) => tag[1]);
+              silentFollow(pubkeys);
+            }
+            await updateFollowedUsers();
+          } catch (e) {
+            devLog(e);
           }
         }
       } catch (e) {
@@ -89,7 +93,7 @@ const Root = () => {
       }
     };
     prepare();
-  }, [isLoggedIn]);
+  }, []);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {

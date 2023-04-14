@@ -1,9 +1,10 @@
 import { getEventHash, getPublicKey, signEvent } from 'nostr-tools';
-import { connectedRelayPool, pool } from '../../../utils/nostrV2/relayPool';
 import { getValue } from '../../../utils/secureStore';
 import devLog from '../../../utils/internal';
+import { getRelayUrls, getWriteRelays, pool } from '../../../utils/nostrV2/relays.ts';
 
 export const publishReply = async (content, event) => {
+  const writeUrls = getRelayUrls(getWriteRelays());
   let replyETags;
   let replyPTags;
   try {
@@ -34,9 +35,8 @@ export const publishReply = async (content, event) => {
     };
     reply.id = getEventHash(reply);
     reply.sig = signEvent(reply, sk);
-    const urls = connectedRelayPool.map((relay) => relay.url);
     const success = await new Promise((resolve, reject) => {
-      const pubs = pool.publish(urls, reply);
+      const pubs = pool.publish(writeUrls, reply);
       const timer = setTimeout(() => {
         resolve(true);
       }, 2500);
