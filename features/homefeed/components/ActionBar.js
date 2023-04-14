@@ -18,7 +18,7 @@ const ActionBar = ({ user, event, width }) => {
   const navigation = useNavigation();
   const zap = useZapNote(
     event.id,
-    user?.lud06 || user?.lud16,
+    user?.lud16 || user?.lud06,
     user?.name || event?.pubkey.slice(0, 16),
     event.pubkey,
   );
