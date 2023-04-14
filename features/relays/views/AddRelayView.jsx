@@ -2,11 +2,12 @@ import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { utils } from 'nostr-tools/';
 import { globalStyles } from '../../../styles';
 import { CustomButton, Input } from '../../../components';
 import { pool } from '../../../utils/nostrV2';
 import { addRelay } from '../relaysSlice';
-import { useHeaderHeight } from '@react-navigation/elements';
 
 const AddRelayView = ({ navigation, route }) => {
   const [urlInput, setUrlInput] = useState();
@@ -29,9 +30,8 @@ const AddRelayView = ({ navigation, route }) => {
 
   const addHandler = () => {
     if (canAdd) {
-      const normalizedUrl = new URL(urlInput);
-      const relayObj = { url: normalizedUrl.toString(), read: true, write: true };
-      console.log(relayObj);
+      const normalizedUrl = utils.normalizeURL(urlInput);
+      const relayObj = { url: normalizedUrl, read: true, write: true };
       dispatch(addRelay([relayObj]));
       navigation.goBack();
     }

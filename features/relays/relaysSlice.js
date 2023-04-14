@@ -22,10 +22,14 @@ export const relaysSlice = createSlice({
       state.relays = [...state.relays, ...deduplicatedRelays];
     },
     removeRelay: (state, action) => {
-      const newArray = state.relays.filter(
+      const newRelayArray = state.relays.filter(
         (item) => item.url !== action.payload,
       );
-      state.relays = newArray;
+      const newKnownRelayUrls = state.knownRelayUrls.filter(
+        (relayUrl) => relayUrl !== action.payload,
+      );
+      state.relays = newRelayArray;
+      state.knownRelayUrls = newKnownRelayUrls;
     },
     changeRelayMode: (state, action) => {
       const updatedRelayObject = action.payload;
