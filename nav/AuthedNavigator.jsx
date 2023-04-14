@@ -43,7 +43,7 @@ const TabNavigator = () => (
       },
       tabBarShowLabel: false,
       headerShadowVisible: false,
-      headerRight: TabBarHeaderRight,
+      headerRight: () => <TabBarHeaderRight />,
       headerLeft: TabBarHeaderLeft,
       tabBarHideOnKeyboard: Platform.OS !== 'ios',
     })}
