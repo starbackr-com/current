@@ -33,7 +33,7 @@ const style = StyleSheet.create({
 });
 
 const RelayItem = ({ relay }) => {
-  const relayUrl = relay.url.slice(-1) === '/' ? relay.url : `${relay.url}/`;
+  const relayUrl = new URL(relay.url);
   const state = pool._conn[relayUrl].status;
   const dispatch = useDispatch();
   const removeHandler = () => {
