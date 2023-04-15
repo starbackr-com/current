@@ -21,6 +21,7 @@ import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
 import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
+import SearchView from '../features/search/views/SearchView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -63,7 +64,7 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Search" component={SearchScreen} />
+    <Tab.Screen name="Search" component={SearchView} />
     <Tab.Screen name="Settings" component={SettingsNavigator} />
   </Tab.Navigator>
 );
