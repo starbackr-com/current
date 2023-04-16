@@ -9,8 +9,8 @@ export const badgeSlice = createSlice({
   initialState,
   reducers: {
     addBadge: (state, action) => {
-      const badge = action.payload;
-      state.zappedEvents[badge.id] = badge;
+      const { badgeUID, event } = action.payload;
+      state.badges[badgeUID] = event;
     },
   },
 });

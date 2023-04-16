@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBadge } from '../utils';
 import { addBadge } from '../badgeSlice';
 
-const useBadge = (badgeEventId) => {
-  const badge = useSelector((state) => state.badges.badges[badgeEventId]);
+const useBadge = (badgeUID) => {
+  const badge = useSelector((state) => state.badges.badges[badgeUID]);
   const dispatch = useDispatch();
 
   async function addBadgeToStore() {
-    const event = await getBadge(badgeEventId);
-    dispatch(addBadge(event));
+    const event = await getBadge(badgeUID);
+    dispatch(addBadge({ badgeUID, event }));
   }
 
   useEffect(() => {
