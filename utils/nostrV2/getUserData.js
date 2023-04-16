@@ -32,7 +32,7 @@ export const getUserData = async (pubkeysInHex) => {
   const sub = pool.sub(readUrls, [
     {
       authors: pubkeysInHex,
-      kinds: [0],
+      kinds: [0, 30008],
     },
   ]);
   sub.on('event', (event) => {

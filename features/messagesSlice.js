@@ -5,6 +5,7 @@ const initialState = {
   noteIds: [],
   users: {},
   relayReady: false,
+  userBadges: {},
 };
 
 export const messageSlice = createSlice({
@@ -40,6 +41,16 @@ export const messageSlice = createSlice({
             : state.users[newUser.pubkey];
       } else state.users[newUser.pubkey] = newUser;
     },
+    setUserBadges: (state, action) => {
+      const badgeEvent = action.payload;
+      const exists = state.userBadges.hasOwnProperty(badgeEvent.pubkey);
+      if (exists) {
+        state.userBadges[badgeEvent.pubkey] =
+          state.userBadges[badgeEvent.pubkey].created_at < badgeEvent.created_at
+            ? badgeEvent
+            : state.userBadges[badgeEvent.pubkey];
+      } else state.userBadges[badgeEvent.pubkey] = badgeEvent;
+    },
     hydrate: (state, action) => {
       const databaseUsers = action.payload;
       state.users = databaseUsers;
@@ -58,6 +69,7 @@ export const {
   removeAuthorsMessages,
   clearStore,
   hydrate,
+  setUserBadges
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
