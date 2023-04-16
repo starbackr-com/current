@@ -1,8 +1,7 @@
 import { getReadRelays, getRelayUrls, pool } from '../../../utils/nostrV2';
 
 async function getBadge(badgeUID) {
-  console.log(badgeUID);
-  const [kind, author, identifier] = badgeUID.split(':');
+  const [, author, identifier] = badgeUID.split(':');
   const readUrls = getRelayUrls(getReadRelays());
   const badgeEvent = await new Promise((resolve) => {
     const sub = pool.sub(readUrls, [

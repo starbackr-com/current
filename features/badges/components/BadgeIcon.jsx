@@ -1,15 +1,14 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
 import useBadge from '../hooks/useBadge';
 import LoadingSkeleton from '../../../components/LoadingSkeleton';
-import { useNavigation } from '@react-navigation/native';
 
 const BadgeIcon = ({ badgeDefinition }) => {
   const badgeUID = badgeDefinition[1];
   const badge = useBadge(badgeUID);
   const navigation = useNavigation();
-  console.log(badge);
   let src;
   if (badge) {
     [[, src]] = badge.tags.filter((tag) => tag[0] === 'thumb');
