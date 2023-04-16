@@ -20,7 +20,7 @@ const LoadingSkeleton = () => {
   }));
   return (
     <Animated.View
-      style={[{ backgroundColor: colors.backgroundSecondary, flex: 1 }, pulseStyle]}
+      style={[{ backgroundColor: colors.backgroundSecondary, flex: 1, borderRadius: 10 }, pulseStyle]}
     />
   );
 };
