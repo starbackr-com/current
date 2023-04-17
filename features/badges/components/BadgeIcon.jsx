@@ -24,6 +24,7 @@ const BadgeIcon = ({ badgeDefinition }) => {
           source={src}
           style={{ width: 40, height: 40, borderRadius: 10 }}
           contentFit="contain"
+          priority="low"
         />
       ) : (
         <View style={{ width: 40, height: 40, borderRadius: 10 }}>

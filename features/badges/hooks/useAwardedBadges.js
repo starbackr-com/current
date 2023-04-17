@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { getReadRelays, getRelayUrls, pool } from '../../../utils/nostrV2';
 
-const useAwardedBadges = (pubkeyInHex) => {
+const useAwardedBadges = () => {
   const [events, setEvents] = useState([]);
   const readUrls = getRelayUrls(getReadRelays());
+  const pk = useSelector((state) => state.auth.pubKey);
   useEffect(() => {
     const sub = pool.sub(readUrls, [
       {
         kinds: [8],
-        '#p': [
-          '1577e4599dd10c863498fe3c20bd82aafaf829a595ce83c5cf8ac3463531b09b',
-        ],
+        '#p': [pk],
       },
     ]);
     sub.on('event', (event) => {
       const [[, badgeUID]] = event.tags.filter((tag) => tag[0] === 'a');
-      setEvents((prev) => [...prev, badgeUID]);
+      const awardId = event.id;
+      setEvents((prev) => [...prev, { badgeUID, awardId }]);
     });
     return () => {
       sub.unsub();

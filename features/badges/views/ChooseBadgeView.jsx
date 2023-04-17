@@ -2,13 +2,16 @@
 import { View, Text, SectionList } from 'react-native';
 import React, { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
 import { AwardedBadge } from '../components';
 import useAwardedBadges from '../hooks/useAwardedBadges';
 import { CustomButton } from '../../../components';
+import publishProfileBadges from '../utils/publishProfileBadges';
 
-const ChooseBadgeView = () => {
+const ChooseBadgeView = ({ navigation }) => {
   const events = useAwardedBadges();
+  const pk = useSelector((state) => state.auth.pubKey);
   const [active, setActive] = useState([]);
   const insets = useSafeAreaInsets();
 
@@ -17,7 +20,18 @@ const ChooseBadgeView = () => {
     { title: 'All Awarded', data: events },
   ];
 
-  function submitHandler() {}
+  async function submitHandler() {
+    await publishProfileBadges(active, pk);
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'ProfileScreen',
+          params: { pubkey: pk },
+        },
+      ],
+    });
+  }
 
   function moveUp(index) {
     if (index === 0) {
@@ -56,7 +70,7 @@ const ChooseBadgeView = () => {
     if (section.title === 'Active') {
       return (
         <AwardedBadge
-          badgeUID={item}
+          badgeUID={item.badgeUID}
           index={index}
           onUp={moveUp.bind(undefined, index)}
           onDown={moveDown.bind(undefined, index)}
@@ -68,7 +82,7 @@ const ChooseBadgeView = () => {
     }
     return (
       <AwardedBadge
-        badgeUID={item}
+        badgeUID={item.badgeUID}
         index={index}
         onUp={moveUp.bind(undefined, index)}
         onDown={moveDown.bind(undefined, index)}
