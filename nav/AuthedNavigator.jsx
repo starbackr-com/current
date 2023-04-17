@@ -40,12 +40,14 @@ const TabNavigator = () => (
       tabBarInactiveTintColor: 'gray',
       tabBarStyle: {
         backgroundColor: '#222222',
+        borderTopColor: colors.backgroundPrimary,
       },
       tabBarShowLabel: false,
       headerShadowVisible: false,
       headerRight: () => <TabBarHeaderRight />,
       headerLeft: TabBarHeaderLeft,
       tabBarHideOnKeyboard: Platform.OS !== 'ios',
+
     })}
   >
     <Tab.Screen name="Home" component={HomeView} />
