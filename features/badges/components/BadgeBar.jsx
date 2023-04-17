@@ -9,7 +9,7 @@ const BadgeBar = ({ badgeDefinition }) => {
       style={{ flexDirection: 'row', width: '100%' }}
     >
       {badges
-        ? badges.map((badge) => <BadgeIcon badgeDefinition={badge} key={badge}/>)
+        ? badges.map((badge) => <BadgeIcon badgeDefinition={badge} key={badge} />)
         : undefined}
     </View>
   );

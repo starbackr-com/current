@@ -9,6 +9,7 @@ async function getBadge(badgeUID) {
         { authors: [author], '#d': [identifier], kinds: [30009] },
       ]);
       sub.on('event', (event) => {
+        sub.unsub();
         resolve(event);
       });
     });

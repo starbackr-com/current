@@ -42,7 +42,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     if (user && user?.nip05) {
       verifyNip05(user.pubkey, user.nip05);
     }
-  }, []);
+  }, [pubkey]);
 
   const copyHandler = async () => {
     await Clipboard.setStringAsync(npub);
@@ -163,7 +163,7 @@ const ProfileScreen = ({ route }) => {
 
   const loggedInPubkey = useSelector((state) => state.auth.pubKey);
 
-  const events = useSubscribeEvents([pubkey]);
+  const events = useSubscribeEvents(pubkey);
 
   const user = users[pubkey];
 
