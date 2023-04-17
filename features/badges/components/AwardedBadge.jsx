@@ -32,7 +32,8 @@ const AwardedBadge = ({
   badgeUID,
   onUp,
   onDown,
-  onPress,
+  onAdd,
+  onRemove,
   active,
   section,
 }) => {
@@ -55,7 +56,7 @@ const AwardedBadge = ({
   return (
     <Pressable
       style={[styles.container, active ? styles.active : undefined]}
-      onPress={onPress}
+      onPress={active ? onRemove : onAdd}
     >
       <View style={styles.content}>
         <Image
