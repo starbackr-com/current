@@ -15,15 +15,14 @@ export const generateRandomString = async (length) => {
     const char =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     const random = Array.from(
-      { length: length },
+      { length },
       () => char[Math.floor(Math.random() * char.length)],
     );
     const randomString = random.join('');
     await AsyncStorage.setItem('appId', randomString);
-    console.log('appId created: ', randomString);
-  } else {
-    console.log('appId exists', value);
+    return randomString;
   }
+  return value;
 };
 
 export const storeData = async (key, value) => {
