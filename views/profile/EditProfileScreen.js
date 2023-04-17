@@ -209,6 +209,11 @@ const EditProfileScreen = ({ navigation }) => {
                     buttonConfig={{ onPress: submitHandler }}
                     loading={isLoading}
                 />
+                <CustomButton
+                    text="Badges"
+                    buttonConfig={{ onPress: () => {navigation.navigate('ChooseBadge')} }}
+                    loading={isLoading}
+                />
             </View>
         </ScrollView>
     );

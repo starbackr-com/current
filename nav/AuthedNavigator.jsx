@@ -48,7 +48,19 @@ const TabNavigator = () => (
       tabBarHideOnKeyboard: Platform.OS !== 'ios',
     })}
   >
-    <Tab.Screen name="Home" component={HomeView} />
+    <Tab.Screen
+      name="Home"
+      component={HomeView}
+      options={({ navigation }) => ({
+        tabBarButton: (props) => (
+          <Pressable
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            onPress={() => navigation.navigate('Home')}
+          />
+        ),
+      })}
+    />
     <Tab.Screen name="Wallet" component={WalletNavigator} />
     <Tab.Screen
       name="New"

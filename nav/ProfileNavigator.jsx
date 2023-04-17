@@ -6,6 +6,7 @@ import EditProfileScreen from '../views/profile/EditProfileScreen';
 import ProfileHeader from '../features/profile/components/ProfileHeader';
 import ProfileQRScreen from '../features/profile/views/ProfileQRScreen';
 import { BadgeDetaiView } from '../features/badges';
+import ChooseBadgeView from '../features/badges/views/ChooseBadgeView';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ const ProfileNavigator = () => (
     <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
     <Stack.Screen name="ProfileQRScreen" component={ProfileQRScreen} />
     <Stack.Screen name="BadgeDetails" component={BadgeDetaiView} />
+    <Stack.Screen name="ChooseBadge" component={ChooseBadgeView} />
   </Stack.Navigator>
 );
 
