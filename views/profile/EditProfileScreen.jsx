@@ -13,13 +13,13 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { useSelector } from 'react-redux';
+import { useHeaderHeight } from '@react-navigation/elements';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
 import Input from '../../components/Input';
 import { getUserData, publishKind0 } from '../../utils/nostrV2';
 import { colors, globalStyles } from '../../styles';
 import { BadgeBar } from '../../features/badges';
-import { useHeaderHeight } from '@react-navigation/elements';
 
 const uploadImage = async (localUri, pubKey, bearer) => {
   const id = pubKey.slice(0, 16);

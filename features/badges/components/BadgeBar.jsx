@@ -1,13 +1,14 @@
 import { View } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import BadgeIcon from './BadgeIcon';
 import { colors } from '../../../styles';
-import { useNavigation } from '@react-navigation/native';
 
 const BadgeBar = ({ badgeDefinition, edit }) => {
   const badges = badgeDefinition.slice(0, 5);
   const navigation = useNavigation();
+
   return (
     <View
       style={{
@@ -20,8 +21,8 @@ const BadgeBar = ({ badgeDefinition, edit }) => {
     >
       {badges
         ? badges.map((badge) => (
-            <BadgeIcon badgeDefinition={badge} key={badge} />
-          ))
+          <BadgeIcon badgeDefinition={badge} key={badge} />
+        ))
         : undefined}
       {edit ? (
         <Ionicons

@@ -2,11 +2,11 @@ import { View, Text, useWindowDimensions } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { nip19 } from 'nostr-tools';
 import { colors, globalStyles } from '../../../styles';
 import useBadge from '../hooks/useBadge';
 import { useParseContent } from '../../../hooks';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IssuedBy = ({ rawText }) => {
   const content = useParseContent({ content: rawText });
@@ -51,7 +51,7 @@ const BadgeDetailView = ({ route }) => {
       />
       <Text style={globalStyles.textBody}>{description}</Text>
       <IssuedBy rawText={rawIssuedText} />
-      <View style={{height: insets.bottom * 2}}/>
+      <View style={{ height: insets.bottom * 2 }} />
     </ScrollView>
   );
 };
