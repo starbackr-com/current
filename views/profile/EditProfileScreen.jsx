@@ -13,7 +13,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { useSelector } from 'react-redux';
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
 import Input from '../../components/Input';
@@ -48,6 +48,7 @@ const uploadImage = async (localUri, pubKey, bearer) => {
 const EditProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(false);
+  const [viewHeight, setViewHeight] = useState(0);
   const [, setSelected] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState();
@@ -56,7 +57,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [bio, setBio] = useState();
 
   const device = useWindowDimensions();
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
 
   const bearer = useSelector((state) => state.auth.walletBearer);
   const pk = useSelector((state) => state.auth.pubKey);
@@ -130,95 +131,98 @@ const EditProfileScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={headerHeight}
-      style={{ flex: 1 }}
+    <View
+      style={globalStyles.screenContainer}
+      onLayout={(event) => {
+        const { height } = event.nativeEvent.layout;
+        setViewHeight(height);
+      }}
     >
-      <ScrollView
-        style={globalStyles.screenContainerScroll}
-        contentContainerStyle={{ alignItems: 'center' }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={device.height - viewHeight}
+        style={{ flex: 1 }}
       >
-        <Pressable
-          style={({ pressed }) => [
-            {
-              width: device.width / 5,
-              height: device.width / 5,
-              borderRadius: device.width / 10,
-              borderWidth: 1,
-              borderColor: colors.primary500,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 12,
-            },
-            pressed ? { backgroundColor: '#222222' } : undefined,
-          ]}
-          onPress={pickImage}
-        >
-          {image ? (
-            <Image
-              source={image.uri || image}
-              style={{
-                width: device.width / 5,
-                height: device.width / 5,
-                borderRadius: device.width / 10,
-                borderWidth: 1,
-                borderColor: colors.primary500,
-              }}
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={globalStyles.screenContainerScroll}
+            contentContainerStyle={{ alignItems: 'center' }}
+          >
+            <Pressable
+              style={({ pressed }) => [
+                {
+                  width: device.width / 5,
+                  height: device.width / 5,
+                  borderRadius: device.width / 10,
+                  borderWidth: 1,
+                  borderColor: colors.primary500,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 12,
+                },
+                pressed ? { backgroundColor: '#222222' } : undefined,
+              ]}
+              onPress={pickImage}
+            >
+              {image ? (
+                <Image
+                  source={image.uri || image}
+                  style={{
+                    width: device.width / 5,
+                    height: device.width / 5,
+                    borderRadius: device.width / 10,
+                    borderWidth: 1,
+                    borderColor: colors.primary500,
+                  }}
+                />
+              ) : (
+                <Ionicons
+                  name="images"
+                  color={colors.primary500}
+                  size={device.width / 16}
+                />
+              )}
+            </Pressable>
+            <BadgeBar badgeDefinition={badgeDefinitions} edit />
+            <Text style={[globalStyles.textBodyS, { marginBottom: 12 }]}>
+              Profile Badges
+            </Text>
+            <View style={{ width: '80%', marginBottom: 32 }}>
+              <Input
+                label="Name"
+                textInputConfig={{ value: name, onChangeText: setName }}
+                inputStyle={{ marginBottom: 12 }}
+              />
+              <Input
+                label="Lightning Address"
+                textInputConfig={{ value: lud16, onChangeText: setLud16 }}
+                inputStyle={{ marginBottom: 12 }}
+              />
+              <Input
+                label="NIP05"
+                textInputConfig={{ value: nip05, onChangeText: setNip05 }}
+                inputStyle={{ marginBottom: 12 }}
+              />
+              <Input
+                label="Bio"
+                textInputConfig={{
+                  multiline: true,
+                  value: bio,
+                  onChangeText: setBio,
+                }}
+                inputStyle={{ height: 64 }}
+              />
+            </View>
+            <CustomButton
+              text="Save"
+              buttonConfig={{ onPress: submitHandler }}
+              loading={isLoading}
             />
-          ) : (
-            <Ionicons
-              name="images"
-              color={colors.primary500}
-              size={device.width / 16}
-            />
-          )}
-        </Pressable>
-        <BadgeBar badgeDefinition={badgeDefinitions} edit />
-        <Text style={[globalStyles.textBodyS, { marginBottom: 12 }]}>
-          Profile Badges
-        </Text>
-        <View style={{ width: '80%', marginBottom: 32 }}>
-          <Input
-            label="Name"
-            textInputConfig={{ value: name, onChangeText: setName }}
-            inputStyle={{ marginBottom: 12 }}
-          />
-          <Input
-            label="Lightning Address"
-            textInputConfig={{ value: lud16, onChangeText: setLud16 }}
-            inputStyle={{ marginBottom: 12 }}
-          />
-          <Input
-            label="NIP05"
-            textInputConfig={{ value: nip05, onChangeText: setNip05 }}
-            inputStyle={{ marginBottom: 12 }}
-          />
-          <Input
-            label="Bio"
-            textInputConfig={{
-              multiline: true,
-              value: bio,
-              onChangeText: setBio,
-            }}
-            inputStyle={{ height: 64 }}
-          />
+            <View style={{ height: insets.bottom }} />
+          </ScrollView>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '80%',
-            justifyContent: 'space-evenly',
-          }}
-        >
-          <CustomButton
-            text="Save"
-            buttonConfig={{ onPress: submitHandler }}
-            loading={isLoading}
-          />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
