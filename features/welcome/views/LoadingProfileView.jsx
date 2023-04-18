@@ -11,7 +11,7 @@ import { logIn } from '../../authSlice';
 import globalStyles from '../../../styles/globalStyles';
 import { LoadingSpinner } from '../../../components';
 import { followUser } from '../../../utils/users';
-import { generateSeedphrase, mnemonicToSeed } from '../../../utils/keys';
+import devLog from '../../../utils/internal';
 
 const LoadingProfileScreen = ({ route }) => {
   const { image, svg, svgId, address, bio, isImport, sk, mem } = route.params;
@@ -41,7 +41,6 @@ const LoadingProfileScreen = ({ route }) => {
       },
     });
     const data = await response.json();
-    console.log(data.data);
     return data.data;
   };
 
@@ -55,12 +54,12 @@ const LoadingProfileScreen = ({ route }) => {
       });
       const data = await response.json();
       if (data.error === true) {
-        console.log(data);
+        devLog(data);
         throw new Error(`Error getting svg-image url: ${data}`);
       }
       return data.data;
     } catch (err) {
-      console.log(err);
+      devLog(err);
     }
     return undefined;
   };
@@ -68,8 +67,6 @@ const LoadingProfileScreen = ({ route }) => {
     let imageUrl;
     if (!isImport) {
       try {
-        const mem = generateSeedphrase();
-        const sk = mnemonicToSeed(mem);
         const pk = getPublicKey(sk);
         await createWallet(sk, address);
         await saveValue('mem', JSON.stringify(mem));
@@ -88,15 +85,15 @@ const LoadingProfileScreen = ({ route }) => {
           await publishKind0(address, bio, imageUrl, address);
           await updateFollowedUsers();
         } catch (error) {
-          console.log(error);
+          devLog(error);
         } finally {
           dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
         }
       } catch (error) {
-        console.log(`Failed to create profile: ${error}`);
+        devLog(`Failed to create profile: ${error}`);
       }
     } else {
-      console.log('importing...');
+      devLog('importing...');
       const pk = getPublicKey(sk);
       await createWallet(sk, address);
       if (mem) {

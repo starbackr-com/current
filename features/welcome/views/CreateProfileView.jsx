@@ -19,8 +19,7 @@ const CreateProfileView = ({ navigation, route }) => {
 
   let data;
 
-  const { image, svg, svgId, sk, address, updateData, oldData } = route?.params || {};
-
+  const { image, svg, svgId, sk, address, updateData, oldData, mem } = route?.params || {};
   useEffect(() => {
     if (oldData && JSON.parse(oldData?.content)?.about.length > 0) {
       setBio(
@@ -50,6 +49,7 @@ const CreateProfileView = ({ navigation, route }) => {
           navigation.navigate('SelectImage', {
             sk,
             address,
+            mem,
           });
         }}
       >
@@ -83,6 +83,7 @@ const CreateProfileView = ({ navigation, route }) => {
           navigation.navigate('SelectImage', {
             sk,
             address,
+            mem,
           });
         }}
       >
@@ -109,6 +110,7 @@ const CreateProfileView = ({ navigation, route }) => {
           navigation.navigate('SelectImage', {
             sk,
             address,
+            mem,
           });
         }}
       >
@@ -173,6 +175,7 @@ const CreateProfileView = ({ navigation, route }) => {
                 sk,
                 address,
                 bio,
+                mem,
               });
             },
           }}

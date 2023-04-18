@@ -24,7 +24,7 @@ const SelectImageView = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const device = useWindowDimensions();
 
-  const { sk, address } = route.params;
+  const { sk, address, mem } = route.params;
 
   const resizeImage = async (imageObj) => {
     const manipResult = await manipulateAsync(
@@ -156,6 +156,7 @@ const SelectImageView = ({ navigation, route }) => {
               address,
               svg: selected ? svgs[selected] : undefined,
               svgId: selected,
+              mem,
             });
           },
         }}

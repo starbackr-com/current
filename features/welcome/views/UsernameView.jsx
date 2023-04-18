@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CustomButton, Input, LoadingSpinner } from '../../../components';
 import { usernameRegex } from '../../../constants';
 import globalStyles from '../../../styles/globalStyles';
+import { generateSeedphrase, mnemonicToSeed } from '../../../utils';
 
 const UsernameView = ({ navigation, route }) => {
   const [error, setError] = useState(false);
@@ -40,12 +41,14 @@ const UsernameView = ({ navigation, route }) => {
         isImport,
         mem,
       });
-      return;
+    } else {
+      const newMem = generateSeedphrase();
+      const newSk = mnemonicToSeed(newMem);
+      navigation.navigate('CreateProfile', {
+        screen: 'EditProfile',
+        params: { address, sk: newSk, mem: newMem },
+      });
     }
-    navigation.navigate('CreateProfile', {
-      screen: 'EditProfile',
-      params: { address },
-    });
   };
 
   return (
