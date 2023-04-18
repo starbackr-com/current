@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { View, Text, SectionList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
@@ -10,10 +10,24 @@ import { CustomButton } from '../../../components';
 import publishProfileBadges from '../utils/publishProfileBadges';
 
 const ChooseBadgeView = ({ navigation }) => {
-  const events = useAwardedBadges();
   const pk = useSelector((state) => state.auth.pubKey);
+  const oldActive = useSelector((state) => state.messages.userBadges[pk]);
+
   const [active, setActive] = useState([]);
+  const events = useAwardedBadges();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (oldActive.badgeDefinitions) {
+      const oldBadgeUIDs = oldActive.badgeDefinitions.map(
+        (definition) => definition[1],
+      );
+      const initActive = events.filter((item) =>
+        oldBadgeUIDs.includes(item.badgeUID),
+      );
+      setActive(initActive);
+    }
+  }, [events]);
 
   const sections = [
     { title: 'Active', data: active },
@@ -21,7 +35,7 @@ const ChooseBadgeView = ({ navigation }) => {
   ];
 
   async function submitHandler() {
-    await publishProfileBadges(active, pk);
+    publishProfileBadges(active, pk);
     navigation.reset({
       index: 0,
       routes: [
@@ -117,7 +131,10 @@ const ChooseBadgeView = ({ navigation }) => {
         />
       </View>
       <View style={{ position: 'absolute', bottom: insets.bottom + 12 }}>
-        <CustomButton text="Save" buttonConfig={{ onPress: submitHandler }} />
+        <CustomButton
+          text="Save"
+          buttonConfig={{ onPress: submitHandler }}
+        />
       </View>
     </View>
   );
