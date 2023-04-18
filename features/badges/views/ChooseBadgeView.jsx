@@ -71,7 +71,9 @@ const ChooseBadgeView = ({ navigation }) => {
 
   function addActive(item) {
     const newArr = active.slice();
-    newArr.push(item);
+    if (!newArr.includes(item)) {
+      newArr.push(item);
+    }
     setActive(newArr);
   }
 
@@ -131,10 +133,7 @@ const ChooseBadgeView = ({ navigation }) => {
         />
       </View>
       <View style={{ position: 'absolute', bottom: insets.bottom + 12 }}>
-        <CustomButton
-          text="Save"
-          buttonConfig={{ onPress: submitHandler }}
-        />
+        <CustomButton text="Save" buttonConfig={{ onPress: submitHandler }} />
       </View>
     </View>
   );

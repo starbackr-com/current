@@ -15,9 +15,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundSecondary,
     marginBottom: 12,
     width: '100%',
+    alignItems: 'center',
   },
   content: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   active: {
     borderColor: colors.primary500,
@@ -61,7 +63,7 @@ const AwardedBadge = ({
       <View style={styles.content}>
         <Image
           source={thumbSrc || imageSrc}
-          style={{ width: 30, height: 30 }}
+          style={{ width: 30, height: 30, marginRight: 6, borderRadius: 8 }}
         />
         <Text style={globalStyles.textBody}>{name}</Text>
       </View>
@@ -72,12 +74,21 @@ const AwardedBadge = ({
             onPress={onUp}
             size={24}
             color={colors.primary500}
+            style={{ marginLeft: 12 }}
           />
           <Ionicons
             name="chevron-down"
             onPress={onDown}
             size={24}
             color={colors.primary500}
+            style={{ marginLeft: 12 }}
+          />
+          <Ionicons
+            name="trash"
+            onPress={onRemove}
+            size={24}
+            color={colors.primary500}
+            style={{ marginLeft: 12 }}
           />
         </View>
       ) : undefined}
