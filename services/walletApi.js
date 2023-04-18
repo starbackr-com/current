@@ -38,12 +38,13 @@ export const walletApi = createApi({
             }),
         }),
         postLogin: builder.mutation({
-            query: ({ login, password }) => ({
+            query: ({ login, password, appId }) => ({
                 url: `auth`,
                 method: "POST",
                 body: {
-                    login: login,
-                    password: password,
+                    login,
+                    password,
+                    appId,
                 },
             }),
         }),

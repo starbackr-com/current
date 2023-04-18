@@ -35,12 +35,13 @@ export const createWallet = async (privKey, address) => {
 };
 
 export const loginToWallet = async (privKey) => {
+  let appId;
   try {
     if (!privKey) {
       throw new Error('Expected to get a valid private key');
     }
     try {
-      const appId = await generateRandomString();
+      appId = await generateRandomString();
       devLog(appId);
     } catch (e) {
       devLog(e);
@@ -53,6 +54,7 @@ export const loginToWallet = async (privKey) => {
       walletApi.endpoints.postLogin.initiate({
         login: pubKey,
         password,
+        appId,
       }),
     );
     // if (result?.error?.status === 400) {
