@@ -18,12 +18,12 @@ const BadgeIcon = ({ badgeDefinition }) => {
     navigation.navigate('BadgeDetails', { badgeUID });
   };
   return (
-    <Pressable style={{ marginRight: 12 }} onPress={navigationHandler}>
+    <Pressable style={{ marginHorizontal: 6}} onPress={navigationHandler}>
       {src ? (
         <Image
           source={src}
           style={{ width: 40, height: 40, borderRadius: 10 }}
-          contentFit="contain"
+          contentFit="cover"
           priority="low"
         />
       ) : (

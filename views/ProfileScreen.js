@@ -42,7 +42,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
     if (user && user?.nip05) {
       verifyNip05(user.pubkey, user.nip05);
     }
-  }, [pubkey]);
+  }, []);
 
   const copyHandler = async () => {
     await Clipboard.setStringAsync(npub);
@@ -55,7 +55,6 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
   const npub = encodePubkey(pubkey) || 'npub100000000000000000';
   return (
     <View style={{ width: '100%' }}>
-      <View style={{ width: '100%', height: 20 }}></View>
       <View style={{ padding: 12, width: '100%' }}>
         <View
           style={{
@@ -107,7 +106,10 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
             </Text>
           </View>
         </View>
-        <BadgeBar badgeDefinition={badgeDefinitions}/>
+        <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+          <BadgeBar badgeDefinition={badgeDefinitions} />
+          <View style={{ flex: 1 }} />
+        </View>
         <View>
           <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
             {user?.about}

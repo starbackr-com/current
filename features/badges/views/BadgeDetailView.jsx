@@ -6,6 +6,7 @@ import { nip19 } from 'nostr-tools';
 import { colors, globalStyles } from '../../../styles';
 import useBadge from '../hooks/useBadge';
 import { useParseContent } from '../../../hooks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IssuedBy = ({ rawText }) => {
   const content = useParseContent({ content: rawText });
@@ -20,6 +21,7 @@ const BadgeDetailView = ({ route }) => {
   const { badgeUID } = route.params || {};
   const badge = useBadge(badgeUID);
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   let src;
   let name;
   let description;
@@ -32,7 +34,7 @@ const BadgeDetailView = ({ route }) => {
   }
   return (
     <ScrollView
-      style={globalStyles.screenContainerScroll}
+      style={[globalStyles.screenContainerScroll]}
       contentContainerStyle={{ alignItems: 'center' }}
     >
       <Text style={[globalStyles.textH2, { textAlign: 'center' }]}>{name}</Text>
@@ -49,6 +51,7 @@ const BadgeDetailView = ({ route }) => {
       />
       <Text style={globalStyles.textBody}>{description}</Text>
       <IssuedBy rawText={rawIssuedText} />
+      <View style={{height: insets.bottom * 2}}/>
     </ScrollView>
   );
 };
