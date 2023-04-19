@@ -18,7 +18,7 @@ const ChooseBadgeView = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    if (oldActive.badgeDefinitions) {
+    if (oldActive && oldActive.badgeDefinitions) {
       const oldBadgeUIDs = oldActive.badgeDefinitions.map(
         (definition) => definition[1],
       );
