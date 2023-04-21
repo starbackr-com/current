@@ -5,6 +5,8 @@ import globalStyles from "../../../styles/globalStyles";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+const placeholder = require("../../../assets/user_placeholder.jpg")
+
 const UserBanner = ({ user, event, width, isZapped }) => {
     const imageDimensions = (width / 100) * 12;
     const navigation = useNavigation();
@@ -27,15 +29,13 @@ const UserBanner = ({ user, event, width, isZapped }) => {
         >
             <Image
                 source={
-                    user?.picture ||
-                    require("../../../assets/user_placeholder.jpg")
+                    user?.picture || placeholder
                 }
                 style={{
                     width: imageDimensions,
                     height: imageDimensions,
                     borderRadius: imageDimensions / 2,
                 }}
-                placeholder={require("../../../assets/user_placeholder.jpg")}
                 recyclingKey={event.pubkey}
             />
             <View style={{ flex: 1, marginLeft: 12 }}>

@@ -3,12 +3,11 @@ import React from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as Linking from "expo-linking";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../../styles/colors";
-import globalStyles from "../../../styles/globalStyles";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setGetStartedItems } from "../../introSlice";
 import {getData, storeData} from '../../../utils/cache/asyncStorage'
+import { colors, globalStyles } from "../../../styles";
 
 const ToDoItem = ({ item }) => {
     return (

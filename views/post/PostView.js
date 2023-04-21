@@ -5,14 +5,13 @@ import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
-import colors from "../../styles/colors";
-import globalStyles from "../../styles/globalStyles";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { publishEvent } from "../../utils/nostrV2/publishEvents";
 import BackButton from "../../components/BackButton";
+import { colors, globalStyles } from "../../styles";
 
 const Stack = createStackNavigator();
 

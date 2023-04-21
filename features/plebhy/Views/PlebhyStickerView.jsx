@@ -1,66 +1,62 @@
-import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
-import Input from "../../../components/Input";
-import globalStyles from "../../../styles/globalStyles";
-import { getUserData } from "../../../utils/nostrV2";
-import { Ionicons } from "@expo/vector-icons";
-import { MasonryFlashList } from "@shopify/flash-list";
-import { GifContainer } from "../components";
-import CustomButton from "../../../components/CustomButton";
+import React, { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
+import { MasonryFlashList } from '@shopify/flash-list';
+import globalStyles from '../../../styles/globalStyles';
+import { getUserData } from '../../../utils/nostrV2';
+import { GifContainer } from '../components';
+import devLog from '../../../utils/internal';
 
-const PlebhyStickerView = ({ navigation, route }) => {
-    const [sticker, setSticker] = useState([]);
-    const [containerWidth, setContainerWidth] = useState();
-    const [input, setInput] = useState();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [page, setPage] = useState(0);
+const PlebhyStickerView = () => {
+  const [sticker, setSticker] = useState([]);
+  const [containerWidth, setContainerWidth] = useState();
+  const [page, setPage] = useState(0);
 
-    const { opener } = route?.params;
+  //   const { opener } = route?.params;
 
-    const getTrendingStickers = async (page) => {
-        let plebhySticker = [];
-        const offset = page > 0 ? `&offset=${page * 25}` : "";
-        try {
-            const plebhyResponse = await fetch(
-                `https://getcurrent.io/plebhy?apikey=${process.env.PLEBHY_API_KEY}&search=trending&limit=25&type=sticker${offset}`
-            );
-            const plebhyData = await plebhyResponse.json();
-            plebhySticker = plebhyData.data.map((sticker) => ({
-                id: sticker.sid,
-                pTag: sticker.ptag,
-                eTag: sticker.etag,
-                thumbnail: decodeURIComponent(sticker.images.downsized.url),
-                result: decodeURIComponent(sticker.images.original.url),
-                height: Number(sticker.images.downsized.height),
-                width: Number(sticker.images.downsized.width),
-                source: "PLEBHY",
-            }));
-            const plebhyPubkeys = plebhyData.data.map((sticker) => sticker.ptag);
-            getUserData(plebhyPubkeys);
-            setSticker((prev) => [...prev, ...plebhySticker]);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+  const getTrendingStickers = async (currentPage) => {
+    let plebhySticker = [];
+    const offset = currentPage > 0 ? `&offset=${currentPage * 25}` : '';
+    try {
+      const plebhyResponse = await fetch(
+        `https://getcurrent.io/plebhy?apikey=${process.env.PLEBHY_API_KEY}&search=trending&limit=25&type=sticker${offset}`,
+      );
+      const plebhyData = await plebhyResponse.json();
+      plebhySticker = plebhyData.data.map((item) => ({
+        id: item.sid,
+        pTag: item.ptag,
+        eTag: item.etag,
+        thumbnail: decodeURIComponent(item.images.downsized.url),
+        result: decodeURIComponent(item.images.original.url),
+        height: Number(item.images.downsized.height),
+        width: Number(item.images.downsized.width),
+        source: 'PLEBHY',
+      }));
+      const plebhyPubkeys = plebhyData.data.map((item) => item.ptag);
+      getUserData(plebhyPubkeys);
+      setSticker((prev) => [...prev, ...plebhySticker]);
+    } catch (e) {
+      devLog(e);
+    }
+  };
 
-    useEffect(() => {
-        getTrendingStickers(page);
-    }, [page]);
+  useEffect(() => {
+    getTrendingStickers(page);
+  }, [page]);
 
-    const onLayoutView = (e) => {
-        setContainerWidth(e.nativeEvent.layout.width);
-    };
+  const onLayoutView = (e) => {
+    setContainerWidth(e.nativeEvent.layout.width);
+  };
 
-    return (
-        <View style={[globalStyles.screenContainer]}>
-            <View
-                style={{
-                    width: "100%",
-                    flex: 1,
-                    alignItems: "center",
-                }}
-            >
-                {/* <View
+  return (
+    <View style={[globalStyles.screenContainer]}>
+      <View
+        style={{
+          width: '100%',
+          flex: 1,
+          alignItems: 'center',
+        }}
+      >
+        {/* <View
                     style={{
                         flexDirection: "row",
                         width: "95%",
@@ -83,45 +79,35 @@ const PlebhyStickerView = ({ navigation, route }) => {
                         onPress={getTrendingGifs}
                     />
                 </View> */}
-                <View
-                    style={{ width: "100%", flex: 1 }}
-                    onLayout={onLayoutView}
-                >
-                    {sticker ? (
-                        <View style={{ flex: 1 }}>
-                            <Text
-                                style={[
-                                    globalStyles.textBodyBold,
-                                    { textAlign: "left" },
-                                ]}
-                            >
-                                {searchTerm?.length > 0
-                                    ? searchTerm
-                                    : "Trending"}
-                            </Text>
-                            <MasonryFlashList
-                                numColumns={2}
-                                data={sticker}
-                                renderItem={({ item }) => (
-                                    <GifContainer
-                                        item={item}
-                                        width={containerWidth}
-                                    />
-                                )}
-                                estimatedItemSize={180}
-                                showsVerticalScrollIndicator={false}
-                                onEndReached={() => {
-                                    setPage((prev) => prev + 1);
-                                }}
-                                overrideItemLayout={(layout, item) => {layout.size = item.height}}
-                                optimizeItemArrangement
-                            />
-                        </View>
-                    ) : undefined}
-                </View>
+        <View style={{ width: '100%', flex: 1 }} onLayout={onLayoutView}>
+          {sticker ? (
+            <View style={{ flex: 1 }}>
+              <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
+                Trending
+              </Text>
+              <MasonryFlashList
+                numColumns={2}
+                data={sticker}
+                renderItem={({ item }) => (
+                  <GifContainer item={item} width={containerWidth} />
+                )}
+                estimatedItemSize={180}
+                showsVerticalScrollIndicator={false}
+                onEndReached={() => {
+                  setPage((prev) => prev + 1);
+                }}
+                overrideItemLayout={(layout, item) => {
+                  // eslint-disable-next-line no-param-reassign
+                  layout.size = item.height;
+                }}
+                optimizeItemArrangement
+              />
             </View>
+          ) : undefined}
         </View>
-    );
+      </View>
+    </View>
+  );
 };
 
 export default PlebhyStickerView;

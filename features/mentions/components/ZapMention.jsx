@@ -2,8 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 import { useSelector } from "react-redux";
-import colors from "../../../styles/colors";
-import globalStyles from "../../../styles/globalStyles";
+import { colors, globalStyles } from "../../../styles";
 
 const ZapMention = ({ item }) => {
     const user = useSelector((state) => state.messages.users[item.payer]);

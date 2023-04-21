@@ -1,8 +1,8 @@
 import { Image, Text, Pressable, useWindowDimensions } from "react-native";
 import React from "react";
-import colors from "../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SvgCss } from "react-native-svg";
+import { colors } from "../styles";
 
 const SelectProfilePicture = ({ onPress, image, svg}) => {
     const device = useWindowDimensions();

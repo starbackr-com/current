@@ -1,20 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    zappedEvents: [],
+  zappedEvents: [],
 };
 
 export const interactionSlice = createSlice({
-    name: "interaction",
-    initialState,
-    reducers: {
-        addZap: (state, action) => {
-            const deduplicated = [
-                ...new Set([...action.payload, ...state.zappedEvents]),
-            ];
-            state.zappedEvents = deduplicated;
-        },
+  name: 'interaction',
+  initialState,
+  reducers: {
+    addZap: (state, action) => {
+      const deduplicated = [
+        ...new Set([...action.payload, ...state.zappedEvents]),
+      ];
+      state.zappedEvents = deduplicated;
     },
+  },
 });
 
 export const { addZap } = interactionSlice.actions;

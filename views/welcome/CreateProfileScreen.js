@@ -8,15 +8,12 @@ import {
     Text,
     Alert,
 } from "react-native";
-import React from "react";
-import globalStyles from "../../styles/globalStyles";
+import React, {useState, useEffect} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../styles/colors";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
-import { useState } from "react";
 import { SvgCss } from "react-native-svg";
-import { useEffect } from "react";
+import { colors, globalStyles } from "../../styles";
 
 const CreateProfileScreen = ({ navigation, route }) => {
     const [bio, setBio] = useState();

@@ -1,11 +1,10 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
-import { generateMnemonic } from "../../utils/keys";
-import colors from "../../styles/colors";
+import { generateMnemonic, generateSeedphrase } from "../../utils/keys";
 import { generateRandomString } from "../../utils/cache/asyncStorage";
+import { globalStyles } from "../../styles";
 
 const WelcomeScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState();
@@ -18,7 +17,7 @@ const WelcomeScreen = ({ navigation }) => {
     const createHandler = async () => {
         generateRandomString(12);
         setIsLoading(true);
-        const mem = await generateMnemonic();
+        const mem = generateSeedphrase();
         navigation.navigate("EULA", { mem });
         setIsLoading(false);
         return;
@@ -73,20 +72,3 @@ const WelcomeScreen = ({ navigation }) => {
 };
 
 export default WelcomeScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#18181b",
-        alignItems: "center",
-        textAlign: "center",
-    },
-
-    createKeyText: {
-        color: "white",
-        textAlign: "center",
-        margin: 12,
-        fontFamily: "Montserrat-Regular",
-        fontWeight: "400",
-    },
-});

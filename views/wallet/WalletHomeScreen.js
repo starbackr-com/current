@@ -1,11 +1,10 @@
 import { View, Text, useWindowDimensions, Pressable } from "react-native";
 import React from "react";
 import { useGetWalletBalanceQuery } from "../../services/walletApi";
-import globalStyles from "../../styles/globalStyles";
-import colors from "../../styles/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomButton from "../../components/CustomButton";
 import { useIsFocused } from "@react-navigation/native";
+import { colors, globalStyles } from "../../styles";
 
 const WalletHomeScreen = ({ navigation: { navigate } }) => {
     const { data, error, refetch } = useGetWalletBalanceQuery(null, {

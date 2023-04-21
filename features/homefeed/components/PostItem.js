@@ -9,13 +9,11 @@ import Animated, {
     useDerivedValue,
 } from "react-native-reanimated";
 import { useParseContent } from "../../../hooks/useParseContent";
-import colors from "../../../styles/colors";
-import globalStyles from "../../../styles/globalStyles";
 import { getAge } from "../../shared/utils/getAge";
-import { useZapNote } from "../../../hooks/useZapNote";
 import UserBanner from "./UserBanner";
 import { useIsZapped } from "../../zaps/hooks/useIsZapped";
 import ActionBar from "./ActionBar";
+import { colors, globalStyles } from "../../../styles";
 
 const PostItem = ({ item, height, width, user, zaps }) => {
     const navigation = useNavigation();

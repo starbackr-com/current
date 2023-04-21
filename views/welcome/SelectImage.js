@@ -5,17 +5,15 @@ import {
     Image,
     useWindowDimensions,
 } from "react-native";
-import React, { useState } from "react";
-import globalStyles from "../../styles/globalStyles";
+import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { SvgCss } from "react-native-svg";
-import { useEffect } from "react";
 import { getPublicKey } from "nostr-tools";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { FlatList } from "react-native";
 import CustomButton from "../../components/CustomButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../styles/colors";
+import { colors, globalStyles } from "../../styles";
 
 const SelectImage = ({ navigation, route }) => {
     const [image, setImage] = useState(null);

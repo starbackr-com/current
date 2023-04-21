@@ -1,14 +1,11 @@
 import { View, Text, Pressable, Alert } from "react-native";
 import React from "react";
-import globalStyles from "../../styles/globalStyles";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import colors from "../../styles/colors";
 import { unmuteUser } from "../../utils/users";
-import CustomButton from "../../components/CustomButton";
 import BackButton from "../../components/BackButton";
+import { colors, globalStyles } from "../../styles";
 
 const UserCard = ({ pk }) => {
     const user = useSelector((state) => state.messages.users[pk]);

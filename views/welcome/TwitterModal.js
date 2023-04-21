@@ -2,19 +2,17 @@ import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import globalStyles from "../../styles/globalStyles";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colors from "../../styles/colors";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import { FlashList } from "@shopify/flash-list";
-import { followMultipleUsers } from "../../utils/users";
 import { decodePubkey } from "../../utils/nostr/keys";
 import { useDispatch } from "react-redux";
 import { setTwitterModal } from "../../features/introSlice";
 import { twitterRegex } from "../../constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useFollowUser } from "../../hooks/useFollowUser";
+import { colors, globalStyles } from "../../styles";
 
 const Stack = createStackNavigator();
 

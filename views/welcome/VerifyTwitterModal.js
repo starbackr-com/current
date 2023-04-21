@@ -1,16 +1,15 @@
 import { View, Text } from "react-native";
 import React, { useState } from "react";
-import globalStyles from "../../styles/globalStyles";
 import Input from "../../components/Input";
 import CustomButton from "../../components/CustomButton";
 import { Event, publishEvent } from "../../utils/nostrV2";
 import { ScrollView } from "react-native-gesture-handler";
-import colors from "../../styles/colors";
 import BackButton from "../../components/BackButton";
 import * as Linking from "expo-linking";
 import { useSelector } from "react-redux";
 import { twitterRegex } from "../../constants";
 import { encodePubkey } from "../../utils/nostr/keys";
+import { colors, globalStyles } from "../../styles";
 
 const VerifyTwitterModal = ({ navigation }) => {
     const [handle, setHandle] = useState("");

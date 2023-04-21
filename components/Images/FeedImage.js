@@ -1,8 +1,7 @@
-import {Text, Pressable } from "react-native";
+import { Pressable } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
-import colors from "../../styles/colors";
 
 const FeedImage = ({ size, images }) => {
     const navigation = useNavigation();
