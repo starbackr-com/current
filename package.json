@@ -1,6 +1,6 @@
 {
   "name": "current",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
@@ -98,3 +98,4 @@
     "stream": "stream-browserify"
   }
 }
+
