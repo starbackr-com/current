@@ -21,6 +21,7 @@ import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
 import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
+import { ActiveConversationScreen } from '../features/messages';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -47,6 +48,7 @@ const TabNavigator = () => (
       headerRight: () => <TabBarHeaderRight />,
       headerLeft: TabBarHeaderLeft,
       tabBarHideOnKeyboard: Platform.OS !== 'ios',
+      headerTitle: ''
 
     })}
   >
@@ -64,6 +66,7 @@ const TabNavigator = () => (
       })}
     />
     <Tab.Screen name="Wallet" component={WalletNavigator} />
+    <Tab.Screen name="Messages" component={ActiveConversationScreen} />
     <Tab.Screen
       name="New"
       component={WalletNavigator}
