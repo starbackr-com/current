@@ -2,7 +2,7 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -24,7 +24,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "7"
+      "buildNumber": "1",
+      "infoPlist":{
+        "UIBackgroundModes":["remote-notification"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +35,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 29
+      "versionCode": 31
     },
     "web": {
       "favicon": "./assets/favicon.png"
