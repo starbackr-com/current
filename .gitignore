@@ -74,6 +74,7 @@ yarn-error.log
 .expo/
 web-build/
 dist/
+google-services.json
 
 # @end expo-cli
 
