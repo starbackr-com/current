@@ -7,23 +7,49 @@ import SettingsPaymentsScreen from '../views/settings/SettingsPaymentsScreen';
 import SettingsUserScreen from '../views/settings/SettingsUserScreen';
 import SettingsDeleteAccountScreen from '../views/settings/SettingsDeleteAccountScreen';
 import RelaySettingsNav from '../features/relays/nav/RelaySettingsNav';
+import SettingsNotifcationsScreen from '../views/settings/SettingsNotifcationsScreen';
+import { BackHeader } from '../components';
 
 const Stack = createStackNavigator();
 
 const SettingsNavigator = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen name="SettingsHomeScreen" component={SettingsHomeScreen} />
-    <Stack.Screen name="Backup Keys" component={DisplayKeysScreen} />
-    <Stack.Screen name="Network Settings" component={RelaySettingsNav} />
-    <Stack.Screen name="Payment Settings" component={SettingsPaymentsScreen} />
-    <Stack.Screen name="Muted Users" component={SettingsUserScreen} />
+  <Stack.Navigator>
+    <Stack.Screen
+      name="SettingsHomeScreen"
+      component={SettingsHomeScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Backup Keys"
+      component={DisplayKeysScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Notifications"
+      component={SettingsNotifcationsScreen}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
+    />
+    <Stack.Screen
+      name="Network Settings"
+      component={RelaySettingsNav}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Payment Settings"
+      component={SettingsPaymentsScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Muted Users"
+      component={SettingsUserScreen}
+      options={{ headerShown: false }}
+    />
     <Stack.Screen
       name="Delete Account"
       component={SettingsDeleteAccountScreen}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );

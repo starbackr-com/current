@@ -24,6 +24,7 @@ const settings = [
   'Payment Settings',
   'Backup Keys',
   'Network Settings',
+  'Notifications',
   'Muted Users',
   'Delete Account',
 ];

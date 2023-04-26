@@ -14,6 +14,8 @@ const TabBarIcon = ({ route, focused, color, size }) => {
     iconName = focused ? 'search-circle' : 'search-circle-outline';
   } else if (route.name === 'New') {
     iconName = focused ? 'add-circle' : 'add-circle-outline';
+  } else if (route.name === 'Messages') {
+    iconName = focused ? 'mail-sharp' : 'mail-outline';
   }
   return <Ionicons name={iconName} size={size} color={color} />;
 };
