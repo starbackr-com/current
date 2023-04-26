@@ -7,3 +7,4 @@ export { default as TabBarHeaderLeft } from './TabBarHeaderLeft';
 export { default as TabBarIcon } from './TabBarIcon';
 export { default as ExpandableInput } from './ExpandableInput';
 export { default as ExpandingSearch } from './ExpandingSearch';
+export { default as SwitchBar } from './SwitchBar';
