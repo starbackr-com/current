@@ -4,3 +4,4 @@ export * from './publishEvents';
 export * from './getUserData';
 export * from './relays';
 export * from './createEvent'
+export * from './Message'

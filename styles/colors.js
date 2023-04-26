@@ -4,7 +4,8 @@ const colors = {
   secondary500: '#777777',
 
   backgroundPrimary: '#18181b',
-  backgroundSecondary: '#222222',
+  backgroundSecondary: '#27272a',
+  backgroundActive: '#3f3f46',
 };
 
 export default colors;

@@ -19,19 +19,19 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#222222',
+    backgroundColor: colors.backgroundSecondary,
     borderColor: colors.primary500,
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
   },
   pressed: {
-    backgroundColor: '#333333'
+    backgroundColor: '#3f3f46'
   },
   containerDisabled: {
-    backgroundColor: '#333333',
+    backgroundColor: '#3f3f46',
   },
   text:{
     textAlign: 'center'

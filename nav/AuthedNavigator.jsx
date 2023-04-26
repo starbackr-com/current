@@ -21,7 +21,8 @@ import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
 import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
-import { ActiveConversationScreen } from '../features/messages';
+import { ConversationNavigator } from '../features/messages';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -32,7 +33,7 @@ const TabNavigator = () => (
       tabBarIcon: ({ focused, color, size }) => (
         <TabBarIcon route={route} focused={focused} color={color} size={size} />
       ),
-      headerStyle: { backgroundColor: '#222222' },
+      headerStyle: { backgroundColor: colors.backgroundSecondary },
       headerTitleStyle: {
         color: 'white',
         fontFamily: 'Montserrat-Bold',
@@ -40,7 +41,7 @@ const TabNavigator = () => (
       tabBarActiveTintColor: colors.primary500,
       tabBarInactiveTintColor: 'gray',
       tabBarStyle: {
-        backgroundColor: '#222222',
+        backgroundColor: colors.backgroundSecondary,
         borderTopColor: colors.backgroundPrimary,
       },
       tabBarShowLabel: false,
@@ -48,8 +49,7 @@ const TabNavigator = () => (
       headerRight: () => <TabBarHeaderRight />,
       headerLeft: TabBarHeaderLeft,
       tabBarHideOnKeyboard: Platform.OS !== 'ios',
-      headerTitle: ''
-
+      headerTitle: '',
     })}
   >
     <Tab.Screen
@@ -66,7 +66,7 @@ const TabNavigator = () => (
       })}
     />
     <Tab.Screen name="Wallet" component={WalletNavigator} />
-    <Tab.Screen name="Messages" component={ActiveConversationScreen} />
+    <Tab.Screen name="Messages" component={ConversationNavigator} />
     <Tab.Screen
       name="New"
       component={WalletNavigator}
@@ -86,89 +86,91 @@ const TabNavigator = () => (
 );
 
 const AuthedNavigator = () => (
-  <Stack.Navigator initialRouteName="MainTabNav">
-    <Stack.Screen
-      name="MainTabNav"
-      component={TabNavigator}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="TwitterModal"
-      component={TwitterModal}
-      options={{ presentation: 'modal', headerShown: false }}
-    />
-    <Stack.Screen
-      name="VerifyTwitterModal"
-      component={VerifyTwitterModal}
-      options={{ presentation: 'modal', headerShown: false }}
-    />
-    <Stack.Screen
-      name="PostView"
-      component={PostView}
-      options={{ presentation: 'modal', headerShown: false }}
-    />
-    <Stack.Screen
-      name="Profile"
-      component={ProfileNavigator}
-      options={() => ({
-        presentation: 'modal',
-        headerShown: false,
-      })}
-    />
-    <Stack.Screen
-      name="ImageModal"
-      component={FullScreenImage}
-      options={{
-        presentation: 'transparentModal',
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="ReadMoreModal"
-      component={ReadMoreModal}
-      options={{
-        presentation: 'transparentModal',
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="PostMenuModal"
-      component={PostMenuModal}
-      options={{
-        presentation: 'transparentModal',
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="ZapListModal"
-      component={ZapListModal}
-      options={{
-        presentation: 'transparentModal',
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="ReportPostModal"
-      component={ReportPostModal}
-      options={{ presentation: 'modal', headerShown: false }}
-    />
-    <Stack.Screen
-      name="MentionsModal"
-      component={MentionsNavigator}
-      options={{
-        presentation: 'modal',
-        header: () => <BackHeader />,
-      }}
-    />
-    <Stack.Screen
-      name="PlebhyModal"
-      component={PlebhyNavigator}
-      options={{
-        presentation: 'modal',
-        header: () => <BackHeader />,
-      }}
-    />
-  </Stack.Navigator>
+  <BottomSheetModalProvider>
+    <Stack.Navigator initialRouteName="MainTabNav">
+      <Stack.Screen
+        name="MainTabNav"
+        component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="TwitterModal"
+        component={TwitterModal}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+      <Stack.Screen
+        name="VerifyTwitterModal"
+        component={VerifyTwitterModal}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+      <Stack.Screen
+        name="PostView"
+        component={PostView}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileNavigator}
+        options={() => ({
+          presentation: 'modal',
+          headerShown: false,
+        })}
+      />
+      <Stack.Screen
+        name="ImageModal"
+        component={FullScreenImage}
+        options={{
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReadMoreModal"
+        component={ReadMoreModal}
+        options={{
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PostMenuModal"
+        component={PostMenuModal}
+        options={{
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ZapListModal"
+        component={ZapListModal}
+        options={{
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReportPostModal"
+        component={ReportPostModal}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+      <Stack.Screen
+        name="MentionsModal"
+        component={MentionsNavigator}
+        options={{
+          presentation: 'modal',
+          header: () => <BackHeader />,
+        }}
+      />
+      <Stack.Screen
+        name="PlebhyModal"
+        component={PlebhyNavigator}
+        options={{
+          presentation: 'modal',
+          header: () => <BackHeader />,
+        }}
+      />
+    </Stack.Navigator>
+  </BottomSheetModalProvider>
 );
 
 export default AuthedNavigator;

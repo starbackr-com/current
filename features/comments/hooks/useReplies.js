@@ -17,7 +17,9 @@ export const useReplies = (eventId) => {
       }
       if (event.kind === 1) {
         const newEvent = new Note(event).saveReply();
-        setReplies((prev) => [...prev, newEvent].sort((a, b) => b.created_at - a.created_at));
+        if (newEvent.repliesTo === eventId) {
+          setReplies((prev) => [...prev, newEvent].sort((a, b) => b.created_at - a.created_at));
+        }
       } else if (event.kind === 9735) {
         const newZap = new Zap(event);
         setReplies((prev) => [...prev, newZap].sort((a, b) => b.created_at - a.created_at));

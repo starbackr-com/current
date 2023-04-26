@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 import { useRelayUrls } from '../../relays';
 import { pool } from '../../../utils/nostrV2';
 
-const useConversations = () => {
+const useConversations = (timing) => {
   const { readUrls } = useRelayUrls();
+  const now = Math.floor(Date.now() / 1000);
   const pk = useSelector((state) => state.auth.pubKey);
   const [activeConversation, setActiveConversations] = useState();
   const authors = new Set();
@@ -15,8 +16,13 @@ const useConversations = () => {
         {
           kinds: [4],
           authors: [pk],
+          since: now - timing,
         },
-        { kinds: [4], '#p': [pk] },
+        {
+          kinds: [4],
+          '#p': [pk],
+          since: now - timing,
+        },
       ],
       { skipVerification: true },
     );
@@ -29,7 +35,10 @@ const useConversations = () => {
         setActiveConversations([...authors]);
       }
     });
-  }, []);
+    return () => {
+      sub.unsub();
+    };
+  }, [timing]);
   return activeConversation;
 };
 
