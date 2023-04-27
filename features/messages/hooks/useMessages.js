@@ -10,10 +10,14 @@ const useMessages = (partnerPubkey, sk) => {
   const { readUrls } = useRelayUrls();
 
   useEffect(() => {
-    const sub = pool.sub(readUrls, [
-      { kinds: [4], authors: [pk], '#p': [partnerPubkey] },
-      { kinds: [4], authors: [partnerPubkey], '#p': [pk] },
-    ]);
+    const sub = pool.sub(
+      readUrls,
+      [
+        { kinds: [4], authors: [pk], '#p': [partnerPubkey] },
+        { kinds: [4], authors: [partnerPubkey], '#p': [pk] },
+      ],
+      { skipVerification: true },
+    );
     sub.on('event', async (event) => {
       const message = await new Message(event).decrypt(pk, sk);
       setMessages((prev) => [...prev, message].sort((a, b) => b.created_at - a.created_at));

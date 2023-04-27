@@ -22,12 +22,14 @@ import { CustomButton, Input } from '../../../components';
 import useConversations from '../hooks/useConversations';
 import { getUserData } from '../../../utils/nostrV2';
 import { getValue } from '../../../utils';
+import UserSearchList from '../../../components/UserSearchList';
+import UserSearchResultItem from '../../../components/UserSearchResultItem';
 
 const timings = [
   { title: 'Last Day', value: 86400 },
   { title: 'Last Week', value: 604800 },
   { title: 'Last Month', value: 2678400 },
-  { title: 'Last Year', value: 31536000 },
+  { title: 'All Time', value: 0 },
 ];
 
 const Conversation = ({ item }) => {
@@ -67,11 +69,13 @@ const Conversation = ({ item }) => {
 const ActiveConversationsScreen = () => {
   const [timing, setTiming] = useState({ title: 'Last Week', value: 604800 });
   const [searching, setSearching] = useState(false);
+  const [searchInput, setSearchInput] = useState('')
 
   const activeConversation = useConversations(timing.value);
   const insets = useSafeAreaInsets();
 
   const bottomSheetModalRef = useRef(null);
+  const inputRef = useRef(null);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
@@ -84,37 +88,63 @@ const ActiveConversationsScreen = () => {
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
+    bottomSheetModalRef.current?.present('Testing!');
   }, []);
 
   const renderBackground = (props) => (
     <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
   );
 
+  const renderFunction = ({item}) => <UserSearchResultItem userData={item}/>
+
   return (
     <View style={[globalStyles.screenContainer, { paddingTop: 12 }]}>
-      <Input
-        textInputConfig={{
-          onFocus: () => {
-            setSearching(true);
-          },
-        }}
-      />
-      <View style={{ width: '100%', flexDirection: 'row', marginTop: 12 }}>
-        <CustomButton
-          text={timing.title}
-          buttonConfig={{ onPress: handlePresentModalPress }}
-        />
-        <View style={{ flex: 1 }} />
+      <View
+        style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}
+      >
+        <View style={{ flex: 1 }}>
+          <Input
+            textInputConfig={{
+              onFocus: () => {
+                setSearching(true);
+              },
+              onChangeText: setSearchInput,
+              value: searchInput,
+              ref: inputRef,
+            }}
+          />
+        </View>
+        {searching ? (
+          <Text
+            style={[globalStyles.textBody, { marginLeft: 12 }]}
+            onPress={() => {
+              setSearching(false);
+              setSearchInput('');
+              inputRef.current.blur();
+            }}
+          >
+            Cancel
+          </Text>
+        ) : undefined}
       </View>
-      <FlatList
-        data={activeConversation}
-        renderItem={({ item }) => <Conversation item={item} />}
-        style={{ width: '100%' }}
-      />
-      <Modal visible={searching}>
-        <Text>Test</Text>
-      </Modal>
+      {searching ? (
+        <UserSearchList searchTerm={searchInput} renderFunction={renderFunction} />
+      ) : (
+        <View style={{ width: '100%' }}>
+          <View style={{ width: '100%', flexDirection: 'row', marginTop: 12 }}>
+            <CustomButton
+              text={`Filter by: ${timing.title}`}
+              buttonConfig={{ onPress: handlePresentModalPress }}
+            />
+            <View style={{ flex: 1 }} />
+          </View>
+          <FlatList
+            data={activeConversation}
+            renderItem={({ item }) => <Conversation item={item} />}
+            style={{ width: '100%' }}
+          />
+        </View>
+      )}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         snapPoints={animatedSnapPoints}
