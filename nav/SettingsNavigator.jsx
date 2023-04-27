@@ -25,7 +25,7 @@ const SettingsNavigator = () => (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="Notifications"
+      name="Push Notifications"
       component={SettingsNotifcationsScreen}
       options={({ navigation }) => ({
         header: () => <BackHeader navigation={navigation} />,

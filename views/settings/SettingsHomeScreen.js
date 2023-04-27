@@ -14,9 +14,8 @@ import { removeData } from '../../utils/cache/asyncStorage';
 import appJson from '../../app.json';
 import { generateRandomString } from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
-import Checkbox from 'expo-checkbox';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
+
+
 import { useSelector } from "react-redux";
 
 
@@ -24,7 +23,7 @@ const settings = [
   'Payment Settings',
   'Backup Keys',
   'Network Settings',
-  'Notifications',
+  'Push Notifications',
   'Muted Users',
   'Delete Account',
 ];
@@ -55,23 +54,7 @@ const SettingItem = ({ item, onNav }) => {
   );
 };
 
-const pushHandler = async () => {
 
-  const [expoPushToken, setExpoPushToken] = useState('');
-
-  try {
-
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-  } catch (e) {
-
-    console.log('push error: ', e);
-
-  } finally {
-
-  }
-
-};
 
 
 
@@ -79,7 +62,6 @@ const pushHandler = async () => {
 const SettingsHomeScreen = ({ navigation }) => {
 
 
-  const { pubKey, walletBearer } = useSelector((state) => state.auth);
   const [ispushnotifyChecked, setpushnotifyChecked] = useState(false);
   const dispatch = useDispatch();
   const navigationHandler = (route) => {
@@ -166,19 +148,12 @@ const SettingsHomeScreen = ({ navigation }) => {
             width: '100%',
             justifyContent: 'space-evenly',
             flexDirection: 'row',
-            marginBottom: 200,
+            marginBottom: 50,
           })
         }
       >
 
-      <Text
-        style={
-          (globalStyles.textH2, { color: colors.primary500, marginTop: 32 })
-        }
-        onPress={pushtoken}
-      >
-        Enable Push notification?
-      </Text>
+
       </View>
 
 
@@ -200,46 +175,5 @@ const SettingsHomeScreen = ({ navigation }) => {
   );
 };
 
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  console.log(Device);
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync({ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-      allowAnnouncements: true,
-    },
-    });
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-
-
-
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token;
-}
 
 export default SettingsHomeScreen;

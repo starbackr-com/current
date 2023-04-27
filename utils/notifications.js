@@ -46,7 +46,7 @@ async function registerPushToken(walletBearer) {
   const settings = await Notifications.getPermissionsAsync();
 
   if (settings.granted) {
-    alert('Push notification is enabled..!');
+    //alert('Push notification is enabled..!');
     // return;
   }
 
@@ -66,6 +66,8 @@ async function registerPushToken(walletBearer) {
     const data = await response.json();
     if (data.data !== 'updated')
       alert('Push token update failed. Please contact support');
+
+    return token;
   }
 }
 

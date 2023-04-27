@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist":{
         "UIBackgroundModes":["remote-notification"]
       }
@@ -36,7 +36,7 @@
         "googleServicesFile": "./google-services.json"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 32
+      "versionCode": 33
     },
     "web": {
       "favicon": "./assets/favicon.png"
