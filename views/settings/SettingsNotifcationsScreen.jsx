@@ -6,6 +6,7 @@ import registerPushToken from '../../utils/notifications';
 import { useDispatch, useSelector } from "react-redux";
 import { storeData } from '../../utils/cache/asyncStorage';
 import { setPushToken } from '../../features/userSlice';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
@@ -44,7 +45,7 @@ const SettingsNotifcationsScreen = () => {
 
 
   return (
-    <View style={globalStyles.screenContainer}>
+    <ScrollView style={globalStyles.screenContainerScroll}>
     <Text style={globalStyles.textH2}>Push Notifications</Text>
 
       <SwitchBar
@@ -150,7 +151,7 @@ const SettingsNotifcationsScreen = () => {
             Push notification is a premium service that allows you to receive notifications directly from Nostr Current relays.
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
