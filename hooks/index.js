@@ -8,3 +8,4 @@ export * from './useLinking';
 export * from './usePaginatedPosts';
 
 export { default as useSubscribeEvents } from './useSubscribeEvents';
+export { default as useUsersInStore } from './useUsersInStore';

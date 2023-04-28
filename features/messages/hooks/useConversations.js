@@ -9,23 +9,22 @@ const useConversations = (timing) => {
   const pk = useSelector((state) => state.auth.pubKey);
   const [activeConversation, setActiveConversations] = useState();
   const authors = new Set();
+  const filter1 = {
+    kinds: [4],
+    authors: [pk],
+  };
+  const filter2 = {
+    kinds: [4],
+    '#p': [pk],
+  };
   useEffect(() => {
-    const sub = pool.sub(
-      readUrls,
-      [
-        {
-          kinds: [4],
-          authors: [pk],
-          since: now - timing,
-        },
-        {
-          kinds: [4],
-          '#p': [pk],
-          since: now - timing,
-        },
-      ],
-      { skipVerification: true },
-    );
+    if (timing > 0) {
+      filter1.since = now - timing;
+      filter2.since = now - timing;
+    }
+    const sub = pool.sub(readUrls, [filter1, filter2], {
+      skipVerification: true,
+    });
     sub.on('event', (event) => {
       if (event.pubkey === pk) {
         authors.add(event.tags[0][1]);
