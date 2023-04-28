@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "infoPlist":{
         "UIBackgroundModes":["remote-notification"]
       }
@@ -32,11 +32,18 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#FFFFFF",
-        "googleServicesFile": "./google-services.json"
+        "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 33
+      "versionCode": 34,
+      "googleServicesFile": "./google-services.json"
+    },
+    "notification": {
+      "icon": "./assets/current-android-logo-transparent.png",
+      "color": "#faa200",
+      "iosDisplayInForeground": true,
+      "androidMode": "default",
+      "androidCollapsedTitle": "Updates from Current App"
     },
     "web": {
       "favicon": "./assets/favicon.png"
