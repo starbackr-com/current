@@ -104,12 +104,15 @@ const ActiveConversationsScreen = () => {
         style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}
       >
         <View style={{ flex: 1 }}>
+          <Text style={globalStyles.textH2}>Direct Messages</Text>
           <Input
             textInputConfig={{
               onFocus: () => {
                 setSearching(true);
               },
               onChangeText: setSearchInput,
+              placeholderTextColor: colors.backgroundActive,
+              placeholder: "Search to start a DM",
               value: searchInput,
               ref: inputRef,
             }}
@@ -117,7 +120,7 @@ const ActiveConversationsScreen = () => {
         </View>
         {searching ? (
           <Text
-            style={[globalStyles.textBody, { marginLeft: 12 }]}
+            style={[globalStyles.textBody, { marginLeft: 12, marginTop: 50 }]}
             onPress={() => {
               setSearching(false);
               setSearchInput('');

@@ -136,15 +136,12 @@ const SettingsHomeScreen = ({ navigation }) => {
             <SettingItem item={item} onNav={navigationHandler} />
           )}
         />
-
         <CustomButton
-          text="Sign Out"
-          buttonConfig={{ onPress: logoutHandler }}
-        />
-        <CustomButton
-          text="Delete Messages"
+          text="Delete Message Cache"
           buttonConfig={{ onPress: () => {deleteMessageCache();} }}
         />
+
+
       </View>
 
       <View
@@ -158,7 +155,10 @@ const SettingsHomeScreen = ({ navigation }) => {
           })
         }
       >
-
+      <CustomButton
+        text="Sign Out"
+        buttonConfig={{ onPress: logoutHandler }}
+      />
 
       </View>
 

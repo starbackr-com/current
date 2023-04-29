@@ -31,7 +31,8 @@ const ConversationScreen = ({ route }) => {
   };
 
   const sendHandler = async (content) => {
-    await publishMessage(sk, pk, content);
+    publishMessage(sk, pk, content);
+
   };
 
   return (
