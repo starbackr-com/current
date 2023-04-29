@@ -17,7 +17,7 @@ const initialState = {
   mention: false,
   reposts: false,
   likes: false,
-  lntxn: false
+  lntxn: false,
 
 };
 
@@ -50,14 +50,7 @@ const SettingsNotifcationsScreen = () => {
 
   };
 
-
-  useEffect(
-    () => {
-      if (!pushTokenInput) {
-          console.log('inside getNotificationSettings');
-          getNotificationSettings();
-
-      } else {
+  const postNotificationSettings = () => {
 
         let jsonBody = notificationSettings;
         jsonBody.token = pushTokenInput;
@@ -69,21 +62,26 @@ const SettingsNotifcationsScreen = () => {
           headers: {
             'content-type': 'application/json',
             Authorization: `Bearer ${walletBearer}`,
-          },
+        }
         });
 
 
+  };
+
+
+  useEffect(
+    () => {
+      if (!pushTokenInput) {
+          getNotificationSettings();
+      } else {
+          postNotificationSettings();
       }
 
-      console.log(notificationSettings);
       setPushTokenInput(pushToken);
 
     },
     [notificationSettings],
   );
-
-  console.log('push token from storage: ', pushTokenInput);
-  console.log(pubKey);
 
   return (
     <ScrollView style={globalStyles.screenContainerScroll}>
@@ -91,14 +89,12 @@ const SettingsNotifcationsScreen = () => {
 
       <SwitchBar
         text="Allow Notifications"
-        value={pushTokenInput?true:false}
+        value={notificationSettings.status}
         onChange={async () => {
           try {
             if (!pushTokenInput) {
-              //const token = await registerPushToken(walletBearer);
+              const token = await registerPushToken(walletBearer);
 
-              //Enable testng this on Simulator...
-              const token = 'ExponentPushToken[cmUeZ_N1zwYu3cWEG8xtwp]';
               if (token) {
                 console.log('token is: ', token);
                 await storeData('pushToken', token);
@@ -111,10 +107,10 @@ const SettingsNotifcationsScreen = () => {
               }
 
             } else {
+              setNotificationSettings(initialState);
               await storeData('pushToken', '');
               dispatch(setPushToken(''));
               setPushTokenInput('');
-              setNotificationSettings(initialState);
 
             }
 
