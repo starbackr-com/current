@@ -1,14 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable } from 'react-native';
 import React from 'react';
+import * as Linking from 'expo-linking';
 import { useDispatch } from 'react-redux';
 import { deleteValue } from '../../utils/secureStore';
 import { logOut } from '../../features/authSlice';
 import { resetAll } from '../../features/introSlice';
 import { clearStore } from '../../features/messagesSlice';
 import { clearUserStore } from '../../features/userSlice';
-import { dbLogout, deleteMessageCache } from '../../utils/database';
-import * as Linking from 'expo-linking';
 import CustomButton from '../../components/CustomButton';
 import { removeData } from '../../utils/cache/asyncStorage';
 import appJson from '../../app.json';
@@ -24,28 +23,26 @@ const settings = [
   'Delete Account',
 ];
 
-const SettingItem = ({ item, onNav }) => {
-  return (
-    <Pressable
-      style={({ pressed }) => [
-        {
-          width: '100%',
-          backgroundColor: '#222222',
-          paddingVertical: 16,
-          paddingHorizontal: 8,
-          borderRadius: 10,
-          marginBottom: 16,
-        },
-        pressed ? { backgroundColor: '#333333' } : undefined,
-      ]}
-      onPress={() => {
-        onNav(item);
-      }}
-    >
-      <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>{item}</Text>
-    </Pressable>
-  );
-};
+const SettingItem = ({ item, onNav }) => (
+  <Pressable
+    style={({ pressed }) => [
+      {
+        width: '100%',
+        backgroundColor: '#222222',
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+        borderRadius: 10,
+        marginBottom: 16,
+      },
+      pressed ? { backgroundColor: '#333333' } : undefined,
+    ]}
+    onPress={() => {
+      onNav(item);
+    }}
+  >
+    <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>{item}</Text>
+  </Pressable>
+);
 
 const SettingsHomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -57,7 +54,12 @@ const SettingsHomeScreen = ({ navigation }) => {
     await deleteValue('username');
     await deleteValue('mem');
     await dbLogout();
-    await removeData(['twitterModalShown', 'zapAmount', 'zapComment', 'relays']);
+    await removeData([
+      'twitterModalShown',
+      'zapAmount',
+      'zapComment',
+      'relays',
+    ]);
     dispatch(clearStore());
     dispatch(clearUserStore());
     dispatch(logOut());
@@ -85,10 +87,6 @@ const SettingsHomeScreen = ({ navigation }) => {
         <CustomButton
           text="Sign Out"
           buttonConfig={{ onPress: logoutHandler }}
-        />
-        <CustomButton
-          text="Delete Messages"
-          buttonConfig={{ onPress: () => {deleteMessageCache();} }}
         />
       </View>
       <Text
