@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Modal } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, {
   useCallback,
   useEffect,
@@ -69,7 +69,7 @@ const Conversation = ({ item }) => {
 const ActiveConversationsScreen = () => {
   const [timing, setTiming] = useState({ title: 'Last Week', value: 604800 });
   const [searching, setSearching] = useState(false);
-  const [searchInput, setSearchInput] = useState('')
+  const [searchInput, setSearchInput] = useState('');
 
   const activeConversation = useConversations(timing.value);
   const insets = useSafeAreaInsets();
@@ -92,10 +92,11 @@ const ActiveConversationsScreen = () => {
   }, []);
 
   const renderBackground = (props) => (
+    // eslint-disable-next-line react/jsx-props-no-spreading
     <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
   );
 
-  const renderFunction = ({item}) => <UserSearchResultItem userData={item}/>
+  const renderFunction = ({ item }) => <UserSearchResultItem userData={item} />;
 
   return (
     <View style={[globalStyles.screenContainer, { paddingTop: 12 }]}>
@@ -128,7 +129,10 @@ const ActiveConversationsScreen = () => {
         ) : undefined}
       </View>
       {searching ? (
-        <UserSearchList searchTerm={searchInput} renderFunction={renderFunction} />
+        <UserSearchList
+          searchTerm={searchInput}
+          renderFunction={renderFunction}
+        />
       ) : (
         <View style={{ width: '100%' }}>
           <View style={{ width: '100%', flexDirection: 'row', marginTop: 12 }}>
@@ -142,6 +146,7 @@ const ActiveConversationsScreen = () => {
             data={activeConversation}
             renderItem={({ item }) => <Conversation item={item} />}
             style={{ width: '100%' }}
+            keyExtractor={(item) => item.id}
           />
         </View>
       )}
