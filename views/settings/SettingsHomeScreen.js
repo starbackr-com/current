@@ -7,7 +7,7 @@ import { logOut } from '../../features/authSlice';
 import { resetAll } from '../../features/introSlice';
 import { clearStore } from '../../features/messagesSlice';
 import { clearUserStore } from '../../features/userSlice';
-import { dbLogout } from '../../utils/database';
+import { dbLogout, deleteMessageCache } from '../../utils/database';
 import * as Linking from 'expo-linking';
 import CustomButton from '../../components/CustomButton';
 import { removeData } from '../../utils/cache/asyncStorage';
@@ -85,6 +85,10 @@ const SettingsHomeScreen = ({ navigation }) => {
         <CustomButton
           text="Sign Out"
           buttonConfig={{ onPress: logoutHandler }}
+        />
+        <CustomButton
+          text="Delete Messages"
+          buttonConfig={{ onPress: () => {deleteMessageCache();} }}
         />
       </View>
       <Text
