@@ -74,6 +74,7 @@ export const userSlice = createSlice({
       state.zapAmount = null;
       state.zapComment = null;
       state.zapNoconf = false;
+      state.pushToken = null;
     },
     addRelays: (state, action) => {
       const newRelaysObject = action.payload;

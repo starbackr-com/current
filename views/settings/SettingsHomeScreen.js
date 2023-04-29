@@ -67,55 +67,57 @@ const SettingsHomeScreen = ({ navigation }) => {
   const navigationHandler = (route) => {
     navigation.navigate(route);
   };
+
+  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { pushToken } = useSelector((state) => state.user,);
+
+
   const logoutHandler = async () => {
+
+    //clear push notifications
+    const initialState = {
+      status: false,
+      zaps: false,
+      dm: false,
+      mention: false,
+      reposts: false,
+      likes: false,
+      lntxn: false,
+      token: pushToken
+
+    };
+
+    console.log(initialState);
+
+    fetch(`${process.env.BASEURL}/v2/pushtoken`, {
+      method: 'POST',
+      body: JSON.stringify(initialState),
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${walletBearer}`,
+      },
+    });
+
+
     await deleteValue('privKey');
     await deleteValue('username');
     await deleteValue('mem');
     await dbLogout();
-    await removeData(['twitterModalShown', 'zapAmount', 'zapComment', 'relays']);
+    await removeData(['twitterModalShown', 'zapAmount', 'zapComment', 'relays', 'pushToken']);
     dispatch(clearStore());
     dispatch(clearUserStore());
     dispatch(logOut());
     dispatch(resetAll());
+
+
+
+
+
+
   };
 
 
 
-  const pushtoken = async () => {
-
-    const settings = await Notifications.getPermissionsAsync();
-
-    console.log(settings);
-
-    if (settings.granted) {
-          alert('Push notification is enabled..!');
-          //return;
-
-    }
-
-    const token = await registerForPushNotificationsAsync();
-
-    if (token) {
-
-      const response = await fetch(`${process.env.BASEURL}/v2/pushtoken`, {
-          method: "POST",
-          body: JSON.stringify({token : token}),
-          headers: {
-              "content-type": "application/json",
-              Authorization: `Bearer ${walletBearer}`,
-          },
-      });
-
-      const data = await response.json();
-      console.log(data);
-      if (data.data != 'updated') alert('Push token update failed. Please contact support');
-
-    }
-
-
-
-
-  }
 
   const introHandler = async () => {
     await AsyncStorage.removeItem('appId');
