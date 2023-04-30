@@ -7,8 +7,6 @@ import { logOut } from '../../features/authSlice';
 import { resetAll } from '../../features/introSlice';
 import { clearStore } from '../../features/messagesSlice';
 import { clearUserStore } from '../../features/userSlice';
-import { dbLogout, deleteMessageCache } from '../../utils/database';
-import * as Linking from 'expo-linking';
 import CustomButton from '../../components/CustomButton';
 import { removeData } from '../../utils/cache/asyncStorage';
 import appJson from '../../app.json';

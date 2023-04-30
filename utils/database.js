@@ -220,8 +220,8 @@ export const getMessagesFromDb = (conversationId) => {
   return promise;
 };
 
-export const deleteMessageCache = () => {
+export const deleteMessageCache = (conversationId) => {
   db.transaction((tx) => {
-    tx.executeSql(`DELETE FROM messages`);
+    tx.executeSql(`DELETE FROM messages WHERE conversation = "${conversationId}"`);
   });
 };

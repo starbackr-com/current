@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import { colors, globalStyles } from '../../../styles';
 import { useParseContent } from '../../../hooks';
-import { getAge } from '../../shared/utils/getAge';
+import { getHourAndMinute } from '../../../utils';
 
 const styles = StyleSheet.create({
   outer: {
@@ -33,7 +33,7 @@ const ConversationText = ({ type, event }) => {
         </Text>
         <View style={{ width: '100%', justifyContent: 'flex-end' }}>
           <Text style={[globalStyles.textBodyS, { textAlign: 'right' }]}>
-            {getAge(event.created_at)}
+            {getHourAndMinute(event.created_at)}
           </Text>
         </View>
       </View>
