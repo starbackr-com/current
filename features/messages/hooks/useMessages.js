@@ -15,7 +15,7 @@ const useMessages = (partnerPubkey) => {
   useEffect(() => {
     let sub;
     async function getMessages() {
-      const sk = getValue('privKey');
+      const sk = await getValue('privKey');
       const knownIds = [];
       try {
         const cachedMessages = await getMessagesFromDb(partnerPubkey);
