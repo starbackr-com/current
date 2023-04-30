@@ -149,7 +149,7 @@ const ActiveConversationsScreen = () => {
             data={activeConversation}
             renderItem={({ item }) => <Conversation item={item} />}
             style={{ width: '100%' }}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item}
           />
         </View>
       )}
