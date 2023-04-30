@@ -3,7 +3,7 @@ import { publishGenericEvent } from '../../../utils/nostrV2';
 import { getValue } from '../../../utils';
 
 async function publishMessage(receiverPk, content) {
-  const sk = getValue('privKey');
+  const sk = await getValue('privKey');
   const pk = getPublicKey(sk);
   const encryptedMessage = await nip04.encrypt(sk, receiverPk, content);
   const event = {

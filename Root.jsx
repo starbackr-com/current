@@ -2,7 +2,7 @@
 /* eslint-disable react/style-prop-object */
 /* eslint-disable global-require */
 import { View, Linking } from 'react-native';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef  } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSelector, useDispatch } from 'react-redux';
@@ -37,6 +37,8 @@ const Root = () => {
   const silentFollow = useSilentFollow();
   const dispatch = useDispatch();
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const refreshToken = async () => {
     if (isLoggedIn && Date.now() > walletExpires) {
@@ -50,6 +52,18 @@ const Root = () => {
   };
 
   useEffect(() => {
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+
+
+
+
     const prepare = async () => {
       setAppIsReady(false);
       try {
@@ -172,11 +186,12 @@ const Root = () => {
           const subscription =
             Notifications.addNotificationResponseReceivedListener(
               (response) => {
+                console.log(response);
                 if (
-                  response?.notification.request.content.data.event.kind === 4
+                  response?.notification.request.content.data.kind === 4
                 ) {
                   const author =
-                    response?.notification.request.content.data.event.pubkey;
+                    response?.notification.request.content.data.pubkey;
                   listener(`nostr://message/${author}`);
                 }
               },
