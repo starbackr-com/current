@@ -112,7 +112,7 @@ const ActiveConversationsScreen = () => {
               },
               onChangeText: setSearchInput,
               placeholderTextColor: colors.backgroundActive,
-              placeholder: "Search to start a DM",
+              placeholder: 'Search to start a DM',
               value: searchInput,
               ref: inputRef,
             }}
@@ -137,7 +137,7 @@ const ActiveConversationsScreen = () => {
           renderFunction={renderFunction}
         />
       ) : (
-        <View style={{ width: '100%' }}>
+        <View style={{ width: '100%', flex: 1 }}>
           <View style={{ width: '100%', flexDirection: 'row', marginTop: 12 }}>
             <CustomButton
               text={`Filter by: ${timing.title}`}
@@ -150,6 +150,7 @@ const ActiveConversationsScreen = () => {
             renderItem={({ item }) => <Conversation item={item} />}
             style={{ width: '100%' }}
             keyExtractor={(item) => item}
+            ListFooterComponent={<View style={{ height: insets.bottom }} />}
           />
         </View>
       )}
