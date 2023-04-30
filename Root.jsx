@@ -137,6 +137,7 @@ const Root = () => {
             MainTabNav: {
               screens: {
                 Messages: {
+                  initialRouteName: 'All Chats',
                   screens: {
                     Chat: 'message/:pk',
                   },
