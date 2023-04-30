@@ -10,7 +10,6 @@ import { loadAsync } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import {
   NavigationContainer,
-  getStateFromPath,
 } from '@react-navigation/native';
 import { getPublicKey, nip19 } from 'nostr-tools';
 
@@ -112,13 +111,22 @@ const Root = () => {
     <NavigationContainer
       onStateChange={refreshToken}
       linking={{
-        prefixes: ['exp://', 'exp://192.168.3.116:19000/--/'],
+        prefixes: ['exp://', 'exp://192.168.3.116:19000/--/', 'nostr:'],
         config: {
           screens: {
             Profile: {
               initialRouteName: 'MainTabNav',
               screens: {
                 ProfileScreen: 'profile/:pubkey',
+              },
+            },
+            MainTabNav: {
+              screens: {
+                Messages: {
+                  screens: {
+                    Chat: 'message/:pk',
+                  },
+                },
               },
             },
           },
@@ -129,18 +137,21 @@ const Root = () => {
           if (url != null) {
             if (url.startsWith('exp://192.168.3.116:19000/--/')) {
               const { type, data } = nip19.decode(url.slice(29));
-              console.log(data);
               if (type === 'npub') {
                 return `exp://profile/${data}`;
               }
             }
-            // return url;
+            return url;
           }
 
-          // Handle URL from expo push notifications
-          // const response =
-          //   await Notifications.getLastNotificationResponseAsync();
-          // return response?.notification.request.content.data.url;
+          const response =
+            await Notifications.getLastNotificationResponseAsync();
+          if (response?.notification.request.content.data.event.kind === 4) {
+            const author =
+              response?.notification.request.content.data.event.pubkey;
+            return `nostr://message/${author}`;
+          }
+          return null;
         },
         subscribe(listener) {
           const onReceiveURL = ({ url }) => {
@@ -153,24 +164,27 @@ const Root = () => {
             }
           };
 
-          // Listen to incoming links from deep linking
           const eventListenerSubscription = Linking.addEventListener(
             'url',
             onReceiveURL,
           );
 
-          // Listen to expo push notifications
-          // const subscription =
-          //   Notifications.addNotificationResponseReceivedListener(
-          //     (response) => {
-          //       const url = response.notification.request.content.data.url;
-          //       listener(url);
-          //     },
-          //   );
+          const subscription =
+            Notifications.addNotificationResponseReceivedListener(
+              (response) => {
+                if (
+                  response?.notification.request.content.data.event.kind === 4
+                ) {
+                  const author =
+                    response?.notification.request.content.data.event.pubkey;
+                  listener(`nostr://message/${author}`);
+                }
+              },
+            );
 
           return () => {
             eventListenerSubscription.remove();
-            // subscription.remove();
+            subscription.remove();
           };
         },
       }}
