@@ -29,7 +29,6 @@ const ConversationNavigator = () => {
           headerRight: () => (
             <CustomButton
               buttonConfig={{ onPress: () => {
-                console.log(route)
                 deleteMessageCache(route.params.pk);
                 navigation.goBack();
               } }}
