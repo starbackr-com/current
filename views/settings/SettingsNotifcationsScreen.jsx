@@ -1,14 +1,13 @@
 import { View, Text } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { colors, globalStyles } from '../../styles';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { globalStyles } from '../../styles';
 import { SwitchBar } from '../../components';
 import registerPushToken from '../../utils/notifications';
-import { useDispatch, useSelector } from "react-redux";
 import { storeData } from '../../utils/cache/asyncStorage';
 import { setPushToken } from '../../features/userSlice';
-import { ScrollView } from 'react-native-gesture-handler';
-
-
 
 const initialState = {
   status: false,
@@ -18,74 +17,57 @@ const initialState = {
   reposts: false,
   likes: false,
   lntxn: false,
-
 };
 
 const SettingsNotifcationsScreen = () => {
-
-
   const dispatch = useDispatch();
   const [notificationSettings, setNotificationSettings] = useState(initialState);
   const [pushTokenInput, setPushTokenInput] = useState();
 
-  const { pushToken } = useSelector(
-    (state) => state.user,
-  );
+  const { pushToken } = useSelector((state) => state.user);
 
-  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { walletBearer } = useSelector((state) => state.auth);
 
   const getNotificationSettings = () => {
-
-    fetch(`${process.env.BASEURL}/v2/pushtoken/` + pushToken, {
-    method: 'GET',
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${walletBearer}`,
-    },
-    }).then((response) => response.json())
+    fetch(`${process.env.BASEURL}/v2/pushtoken/${pushToken}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${walletBearer}`,
+      },
+    })
+      .then((response) => response.json())
       .then((jsonData) => {
-      if (jsonData.length > 0) setNotificationSettings(jsonData[0]);
-
-      })
-
+        if (jsonData.length > 0) setNotificationSettings(jsonData[0]);
+      });
   };
 
   const postNotificationSettings = () => {
+    const jsonBody = notificationSettings;
+    jsonBody.token = pushTokenInput;
 
-        let jsonBody = notificationSettings;
-        jsonBody.token = pushTokenInput;
-        console.log(jsonBody);
-
-        fetch(`${process.env.BASEURL}/v2/pushtoken`, {
-          method: 'POST',
-          body: JSON.stringify(jsonBody),
-          headers: {
-            'content-type': 'application/json',
-            Authorization: `Bearer ${walletBearer}`,
-        }
-        });
-
-
+    fetch(`${process.env.BASEURL}/v2/pushtoken`, {
+      method: 'POST',
+      body: JSON.stringify(jsonBody),
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${walletBearer}`,
+      },
+    });
   };
 
-
-  useEffect(
-    () => {
-      if (!pushTokenInput) {
-          getNotificationSettings();
-      } else {
-          postNotificationSettings();
-      }
-
-      setPushTokenInput(pushToken);
-
-    },
-    [notificationSettings],
-  );
+  useEffect(() => {
+    if (!pushTokenInput) {
+      getNotificationSettings();
+    } else {
+      postNotificationSettings();
+    }
+    setPushTokenInput(pushToken);
+  }, [notificationSettings]);
 
   return (
     <ScrollView style={globalStyles.screenContainerScroll}>
-    <Text style={globalStyles.textH2}>Push Notifications</Text>
+      <Text style={globalStyles.textH2}>Push Notifications</Text>
 
       <SwitchBar
         text="Allow Notifications"
@@ -96,7 +78,7 @@ const SettingsNotifcationsScreen = () => {
               const token = await registerPushToken(walletBearer);
 
               if (token) {
-                console.log('token is: ', token);
+                // console.log('token is: ', token);
                 await storeData('pushToken', token);
                 dispatch(setPushToken(token));
                 setPushTokenInput(token);
@@ -105,23 +87,18 @@ const SettingsNotifcationsScreen = () => {
                   status: !prev.status,
                 }));
               }
-
             } else {
               setNotificationSettings(initialState);
               await storeData('pushToken', '');
               dispatch(setPushToken(''));
               setPushTokenInput('');
-
             }
-
           } catch (e) {
             console.log(e);
           }
         }}
       />
       <View style={{ width: '100%', marginTop: 16 }}>
-
-
         <SwitchBar
           text="Direct Messages"
           value={notificationSettings.dm}
@@ -191,9 +168,9 @@ const SettingsNotifcationsScreen = () => {
           disabled={!pushToken}
         />
 
-
-        <Text style={globalStyles.textBody}>
-            Push notification is a premium service that allows you to receive notifications directly from Nostr Current relays.
+        <Text style={globalStyles.textBodyS}>
+          Push notification is a premium service that allows you to receive
+          notifications directly from Current relays.
         </Text>
       </View>
     </ScrollView>
