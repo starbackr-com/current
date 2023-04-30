@@ -5,8 +5,9 @@ import { useRelayUrls } from '../../relays';
 import Message from '../../../utils/nostrV2/Message';
 import { dbAddMessage, getMessagesFromDb } from '../../../utils/database';
 import devLog from '../../../utils/internal';
+import { getValue } from '../../../utils';
 
-const useMessages = (partnerPubkey, sk) => {
+const useMessages = (partnerPubkey) => {
   const [messages, setMessages] = useState([]);
   const pk = useSelector((state) => state.auth.pubKey);
   const { readUrls } = useRelayUrls();
@@ -14,6 +15,7 @@ const useMessages = (partnerPubkey, sk) => {
   useEffect(() => {
     let sub;
     async function getMessages() {
+      const sk = getValue('privKey');
       const knownIds = [];
       try {
         const cachedMessages = await getMessagesFromDb(partnerPubkey);
