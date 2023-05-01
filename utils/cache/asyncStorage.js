@@ -46,11 +46,20 @@ export const getData = async (key) => {
   }
 };
 
+export async function getLastOpenedMessages() {
+  try {
+    const lastOpenedMessages = await getData('lastOpenedMessages');
+    return lastOpenedMessages;
+  } catch {
+    return Math.floor(Date.now() / 1000);
+  }
+}
+
 export const hydrateStore = async () => {
   const zapAmount = await getData('zapAmount');
   const zapComment = await getData('zapComment');
   const zapNoconf = await getData('zapNoconf');
-  const pushToken = await getData('pushToken')
+  const pushToken = await getData('pushToken');
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
   if (zapAmount) {
@@ -63,7 +72,7 @@ export const hydrateStore = async () => {
     store.dispatch(setZapNoconf(zapNoconf));
   }
   if (pushToken) {
-    store.dispatch(setPushToken(pushToken));    
+    store.dispatch(setPushToken(pushToken));
   }
   if (twitterModalShown) {
     store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)));

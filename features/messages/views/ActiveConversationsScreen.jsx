@@ -14,7 +14,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { FlatList } from 'react-native-gesture-handler';
 import { Image } from 'expo-image';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
@@ -24,6 +24,7 @@ import { getUserData } from '../../../utils/nostrV2';
 import { getValue } from '../../../utils';
 import UserSearchList from '../../../components/UserSearchList';
 import UserSearchResultItem from '../../../components/UserSearchResultItem';
+import { storeData } from '../../../utils/cache/asyncStorage';
 
 const timings = [
   { title: 'Last Day', value: 86400 },
@@ -77,7 +78,16 @@ const ActiveConversationsScreen = () => {
   const bottomSheetModalRef = useRef(null);
   const inputRef = useRef(null);
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const initialSnapPoints = ['CONTENT_HEIGHT'];
+
+  useFocusEffect(
+    useCallback(() => {
+      async function setLastOpened() {
+        await storeData('lastOpenedMessages', Math.floor(Date.now() / 1000));
+      }
+      setLastOpened();
+    }),
+  );
 
   const {
     animatedHandleHeight,

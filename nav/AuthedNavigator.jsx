@@ -23,67 +23,76 @@ import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
 import { ConversationNavigator } from '../features/messages';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import useMessageNotifications from '../features/messages/hooks/useMessageNotifications';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => (
-        <TabBarIcon route={route} focused={focused} color={color} size={size} />
-      ),
-      headerStyle: { backgroundColor: colors.backgroundSecondary },
-      headerTitleStyle: {
-        color: 'white',
-        fontFamily: 'Montserrat-Bold',
-      },
-      tabBarActiveTintColor: colors.primary500,
-      tabBarInactiveTintColor: 'gray',
-      tabBarStyle: {
-        backgroundColor: colors.backgroundSecondary,
-        borderTopColor: colors.backgroundPrimary,
-      },
-      tabBarShowLabel: false,
-      headerShadowVisible: false,
-      headerRight: () => <TabBarHeaderRight />,
-      headerLeft: TabBarHeaderLeft,
-      tabBarHideOnKeyboard: Platform.OS !== 'ios',
-      headerTitle: '',
-    })}
-  >
-    <Tab.Screen
-      name="Home"
-      component={HomeView}
-      options={({ navigation }) => ({
-        tabBarButton: (props) => (
-          <Pressable
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            onPress={() => navigation.navigate('Home')}
+const TabNavigator = () => {
+  useMessageNotifications();
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => (
+          <TabBarIcon
+            route={route}
+            focused={focused}
+            color={color}
+            size={size}
           />
         ),
+        headerStyle: { backgroundColor: colors.backgroundSecondary },
+        headerTitleStyle: {
+          color: 'white',
+          fontFamily: 'Montserrat-Bold',
+        },
+        tabBarActiveTintColor: colors.primary500,
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: colors.backgroundSecondary,
+          borderTopColor: colors.backgroundPrimary,
+        },
+        tabBarShowLabel: false,
+        headerShadowVisible: false,
+        headerRight: () => <TabBarHeaderRight />,
+        headerLeft: TabBarHeaderLeft,
+        tabBarHideOnKeyboard: Platform.OS !== 'ios',
+        headerTitle: '',
       })}
-    />
-    <Tab.Screen name="Wallet" component={WalletNavigator} />
-    <Tab.Screen name="Messages" component={ConversationNavigator} />
-    <Tab.Screen
-      name="New"
-      component={WalletNavigator}
-      options={({ navigation }) => ({
-        tabBarButton: (props) => (
-          <Pressable
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            onPress={() => navigation.navigate('PostView')}
-          />
-        ),
-      })}
-    />
-    <Tab.Screen name="Search" component={SearchScreen} />
-    <Tab.Screen name="Settings" component={SettingsNavigator} />
-  </Tab.Navigator>
-);
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeView}
+        options={({ navigation }) => ({
+          tabBarButton: (props) => (
+            <Pressable
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              onPress={() => navigation.navigate('Home')}
+            />
+          ),
+        })}
+      />
+      <Tab.Screen name="Wallet" component={WalletNavigator} />
+      <Tab.Screen name="Messages" component={ConversationNavigator} />
+      <Tab.Screen
+        name="New"
+        component={WalletNavigator}
+        options={({ navigation }) => ({
+          tabBarButton: (props) => (
+            <Pressable
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              onPress={() => navigation.navigate('PostView')}
+            />
+          ),
+        })}
+      />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Settings" component={SettingsNavigator} />
+    </Tab.Navigator>
+  );
+};
 
 const AuthedNavigator = () => (
   <BottomSheetModalProvider>
