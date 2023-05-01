@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "7",
+      "buildNumber": "8",
       "infoPlist":{
         "UIBackgroundModes":["remote-notification"]
       }

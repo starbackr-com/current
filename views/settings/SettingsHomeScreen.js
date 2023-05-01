@@ -115,14 +115,6 @@ const SettingsHomeScreen = ({ navigation }) => {
             <SettingItem item={item} onNav={navigationHandler} />
           )}
         />
-        <CustomButton
-          text="Delete Message Cache"
-          buttonConfig={{
-            onPress: () => {
-              deleteMessageCache();
-            },
-          }}
-        />
       </View>
 
       <View
