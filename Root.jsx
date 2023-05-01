@@ -132,6 +132,11 @@ const Root = () => {
             },
             MainTabNav: {
               screens: {
+                Home: {
+                  screens: {
+                    CommentScreen: 'note/:eventId',
+                  },
+                },
                 Messages: {
                   initialRouteName: 'All Chats',
                   screens: {
@@ -163,10 +168,13 @@ const Root = () => {
         },
         subscribe(listener) {
           const onReceiveURL = ({ url }) => {
-            if (url.startsWith('exp://192.168.3.116:19000/--/')) {
-              const { type, data } = nip19.decode(url.slice(29));
+            if (url.startsWith('nostr:')) {
+              const { type, data } = nip19.decode(url.slice(6));
               if (type === 'npub') {
                 listener(`nostr://profile/${data}`);
+              }
+              if (type === 'note') {
+                listener(`nostr://note/${data}`);
               }
             }
           };

@@ -53,6 +53,7 @@ const HomeView = () => {
             screenOptions={{
                 headerShown: false,
             }}
+            initialRouteName="HomeScreen"
         >
             <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
             <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
