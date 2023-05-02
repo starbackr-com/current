@@ -1,8 +1,9 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { imageRegex } from '../../../constants';
 import devLog from '../../../utils/internal';
+import { useNavigation } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
 const TrendingImages = () => {
   const [imageNotes, setImageNotes] = useState();
   const [viewWidth, setViewWidth] = useState();
+  const navigation = useNavigation();
   useEffect(() => {
     async function getTrendingImages() {
       try {
@@ -35,11 +37,17 @@ const TrendingImages = () => {
   const renderImage = (note) => {
     const imageURL = note.content.match(imageRegex);
     return (
-      <Image
-        style={{ width: viewWidth / 3, height: viewWidth / 3 }}
-        source={imageURL}
-        transition={300}
-      />
+      <Pressable
+        onPress={() => {
+          navigation.push('Trending Post Item', { eventId: note.id });
+        }}
+      >
+        <Image
+          style={{ width: viewWidth / 3, height: viewWidth / 3 }}
+          source={imageURL}
+          transition={300}
+        />
+      </Pressable>
     );
   };
 
@@ -50,9 +58,7 @@ const TrendingImages = () => {
         setViewWidth(e.nativeEvent.layout.width);
       }}
     >
-      {imageNotes ? (
-        imageNotes.map(renderImage)
-      ) : undefined}
+      {imageNotes ? imageNotes.map(renderImage) : undefined}
     </View>
   );
 };

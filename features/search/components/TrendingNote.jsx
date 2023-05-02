@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParseContent } from '../../../hooks';
@@ -6,6 +6,7 @@ import { colors, globalStyles } from '../../../styles';
 import UserBanner from '../../homefeed/components/UserBanner';
 import ActionBar from '../../homefeed/components/ActionBar';
 import PostActionBar from '../../../components/Posts/PostActionBar';
+import { useNavigation } from '@react-navigation/native';
 
 const style = StyleSheet.create({
   container: {
@@ -20,13 +21,15 @@ const TrendingNote = ({ event }) => {
   const [viewWidth, setViewWidth] = useState();
   const content = useParseContent(event);
   const user = useSelector((state) => state.messages.users[event.pubkey]);
+  const navigation = useNavigation();
 
   return (
-    <View
+    <Pressable
       onLayout={(e) => {
         setViewWidth(e.nativeEvent.layout.width);
       }}
       style={style.container}
+      onPress={() => {navigation.push('Trending Post Item', { eventId: event.id });}}
     >
       {viewWidth ? (
         <UserBanner user={user} event={event} width={viewWidth} />
@@ -37,8 +40,7 @@ const TrendingNote = ({ event }) => {
       >
         {content}
       </Text>
-      {viewWidth ? <PostActionBar/> : undefined}
-    </View>
+    </Pressable>
   );
 };
 
