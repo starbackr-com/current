@@ -35,7 +35,7 @@ const SearchView = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={headerHeight}
     >
-      <View>
+      <View style={{ flexDirection: 'row' }}>
         <TrendingItem icon="star" title="Trending Users" />
         <TrendingItem icon="reader" title="Trending Posts" />
       </View>

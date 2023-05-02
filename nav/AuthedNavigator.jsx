@@ -7,7 +7,6 @@ import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
 import WalletNavigator from './WalletNavigator';
 import SettingsNavigator from './SettingsNavigator';
-import SearchScreen from '../views/SearchScreen';
 import PostView from '../views/post/PostView';
 import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
@@ -21,7 +20,7 @@ import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
 import { PlebhyNavigator } from '../features/plebhy';
 import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
-import SearchView from '../features/search/views/SearchView';
+import { SearchNavigator } from '../features/search';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,7 +63,7 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Search" component={SearchView} />
+    <Tab.Screen name="Search" component={SearchNavigator} />
     <Tab.Screen name="Settings" component={SettingsNavigator} />
   </Tab.Navigator>
 );
