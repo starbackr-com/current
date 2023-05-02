@@ -28,7 +28,7 @@ const TrendingItem = ({ icon, title }) => {
         pressed ? style.pressed : undefined,
       ]}
       onPress={() => {
-        navigation.navigate('Search Trending', { type: title });
+        navigation.navigate(title);
       }}
     >
       <Ionicons name={icon} color={colors.primary500} />

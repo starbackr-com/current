@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SearchView, TrendingView } from '../views';
+import { SearchView, TrendingPostView } from '../views';
 import { colors } from '../../../styles';
 import { BackHeader } from '../../../components';
 
@@ -14,8 +14,8 @@ const SearchNavigator = () => (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="Search Trending"
-      component={TrendingView}
+      name="Trending Posts"
+      component={TrendingPostView}
       options={({ navigation }) => ({
         header: () => <BackHeader navigation={navigation} />,
       })}
