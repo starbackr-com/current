@@ -22,7 +22,7 @@ const SearchNavigator = () => (
       })}
     />
     <Stack.Screen
-      name="Trending Post Item"
+      name="CommentScreen"
       component={CommentScreen}
       options={{headerShown: false}}
     />

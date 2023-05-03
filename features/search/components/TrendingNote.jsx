@@ -29,7 +29,7 @@ const TrendingNote = ({ event }) => {
         setViewWidth(e.nativeEvent.layout.width);
       }}
       style={style.container}
-      onPress={() => {navigation.push('Trending Post Item', { eventId: event.id });}}
+      onPress={() => {navigation.push('CommentScreen', { eventId: event.id });}}
     >
       {viewWidth ? (
         <UserBanner user={user} event={event} width={viewWidth} />

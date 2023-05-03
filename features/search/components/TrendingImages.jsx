@@ -39,7 +39,7 @@ const TrendingImages = () => {
     return (
       <Pressable
         onPress={() => {
-          navigation.push('Trending Post Item', { eventId: note.id });
+          navigation.push('CommentScreen', { eventId: note.id });
         }}
       >
         <Image
