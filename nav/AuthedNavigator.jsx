@@ -63,7 +63,7 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Search" component={SearchNavigator} />
+    <Tab.Screen name="Search" component={SearchNavigator} options={{headerShown: false}}/>
     <Tab.Screen name="Settings" component={SettingsNavigator} />
   </Tab.Navigator>
 );

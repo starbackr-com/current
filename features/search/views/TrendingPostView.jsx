@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlashList } from '@shopify/flash-list';
 import devLog from '../../../utils/internal';
 import TrendingNote from '../components/TrendingNote';
 import { globalStyles } from '../../../styles';
@@ -17,7 +17,6 @@ const TrendingPostView = () => {
           throw new Error('Request failed...');
         }
         const data = await res.json();
-        console.log(data);
         const trending = data.notes.map((note) => note.event);
         setTrendingNotes(trending);
       } catch (e) {
@@ -28,12 +27,14 @@ const TrendingPostView = () => {
   }, []);
   return (
     <View style={globalStyles.screenContainer}>
-      <FlatList
-        style={{ width: '100%' }}
-        data={trendingNotes}
-        renderItem={({ item }) => <TrendingNote event={item} />}
-        ListHeaderComponent={<TrendingImages />}
-      />
+      <View style={{ flex: 1, width: '100%' }}>
+        <FlashList
+          data={trendingNotes}
+          renderItem={({ item }) => <TrendingNote event={item} />}
+          ListHeaderComponent={<TrendingImages />}
+          estimatedItemSize={300}
+        />
+      </View>
     </View>
   );
 };

@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { useParseContent } from '../../../hooks';
 import { colors, globalStyles } from '../../../styles';
 import UserBanner from '../../homefeed/components/UserBanner';
-import ActionBar from '../../homefeed/components/ActionBar';
 import PostActionBar from '../../../components/Posts/PostActionBar';
 import { useNavigation } from '@react-navigation/native';
 
@@ -29,7 +28,7 @@ const TrendingNote = ({ event }) => {
         setViewWidth(e.nativeEvent.layout.width);
       }}
       style={style.container}
-      onPress={() => {navigation.push('CommentScreen', { eventId: event.id });}}
+      onPress={() => { navigation.push('CommentScreen', { eventId: event.id }); }}
     >
       {viewWidth ? (
         <UserBanner user={user} event={event} width={viewWidth} />
@@ -40,6 +39,7 @@ const TrendingNote = ({ event }) => {
       >
         {content}
       </Text>
+      <PostActionBar />
     </Pressable>
   );
 };

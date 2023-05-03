@@ -1,15 +1,19 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
 import { imageRegex } from '../../../constants';
 import devLog from '../../../utils/internal';
-import { useNavigation } from '@react-navigation/native';
+import { colors } from '../../../styles';
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  image: {
+    borderWidth: 1, borderColor: colors.backgroundPrimary,
   },
 });
 
@@ -43,7 +47,7 @@ const TrendingImages = () => {
         }}
       >
         <Image
-          style={{ width: viewWidth / 3, height: viewWidth / 3 }}
+          style={[styles.image, { width: viewWidth / 3, height: viewWidth / 3 }]}
           source={imageURL}
           transition={300}
         />
