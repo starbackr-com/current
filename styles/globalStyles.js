@@ -5,7 +5,7 @@ const globalStyles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     paddingTop: 16,
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
     backgroundColor: colors.backgroundPrimary,
     alignItems: 'center',
   },

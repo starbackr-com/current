@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
-import { colors, globalStyles } from '../../../styles';
+import { Text, StyleSheet, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
+import { colors, globalStyles } from '../../../styles';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ResultItem = ({ userData, color }) => {
+const ResultItem = ({ userData }) => {
   const navigation = useNavigation();
   const pressHandler = () => {
     navigation.navigate('Profile', {
@@ -36,8 +36,8 @@ const ResultItem = ({ userData, color }) => {
   };
 
   return (
-    <Pressable style={[styles.container, {backgroundColor: color}]} onPress={pressHandler}>
-      <Image source={userData.picture} style={styles.image} />
+    <Pressable style={styles.container} onPress={pressHandler}>
+      <Image source={userData.picture} style={styles.image} transition={300} />
       <Text style={globalStyles.textBody}>{userData.name}</Text>
     </Pressable>
   );

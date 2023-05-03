@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, Pressable } from 'react-native';
-import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { useParseContent } from '../../../hooks';
+import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
 import UserBanner from '../../homefeed/components/UserBanner';
-import PostActionBar from '../../../components/Posts/PostActionBar';
 
 const style = StyleSheet.create({
   container: {
@@ -18,7 +16,6 @@ const style = StyleSheet.create({
 
 const TrendingNote = ({ event }) => {
   const [viewWidth, setViewWidth] = useState();
-  const content = useParseContent(event);
   const user = useSelector((state) => state.messages.users[event.pubkey]);
   const navigation = useNavigation();
 
@@ -29,7 +26,12 @@ const TrendingNote = ({ event }) => {
       }}
       style={style.container}
       onPress={() => {
-        navigation.push('CommentScreen', { eventId: event.id });
+        navigation.push('Profile', {
+          screen: 'ProfileScreen',
+          params: {
+            pubkey: event.pubkey,
+          },
+        });
       }}
     >
       {viewWidth ? (
@@ -39,9 +41,8 @@ const TrendingNote = ({ event }) => {
         style={[globalStyles.textBody, { textAlign: 'left' }]}
         numberOfLines={event.content.length > 100 ? 10 : undefined}
       >
-        {content}
+        {JSON.parse(event.content).about}
       </Text>
-      <PostActionBar />
     </Pressable>
   );
 };

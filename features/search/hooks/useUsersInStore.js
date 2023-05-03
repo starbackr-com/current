@@ -7,7 +7,7 @@ const useUsersInStore = (searchTerm) => {
 
   const result = matchSorter(userArray, searchTerm, {
     keys: ['name', 'pubkey', 'nip05'],
-  }).slice(0, 25);
+  }).slice(0, 15);
   return result;
 };
 

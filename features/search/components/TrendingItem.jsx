@@ -31,7 +31,7 @@ const TrendingItem = ({ icon, title }) => {
         navigation.navigate(title);
       }}
     >
-      <Ionicons name={icon} color={colors.primary500} />
+      <Ionicons name={icon} color={colors.primary500} size={20} />
       <Text style={globalStyles.textBody}>{title}</Text>
     </Pressable>
   );

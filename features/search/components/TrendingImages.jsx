@@ -45,6 +45,7 @@ const TrendingImages = () => {
         onPress={() => {
           navigation.push('CommentScreen', { eventId: note.id });
         }}
+        key={note.id}
       >
         <Image
           style={[styles.image, { width: viewWidth / 3, height: viewWidth / 3 }]}
