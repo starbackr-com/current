@@ -63,7 +63,11 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Search" component={SearchNavigator} options={{headerShown: false}}/>
+    <Tab.Screen
+      name="Search"
+      component={SearchNavigator}
+      options={{ headerShown: false }}
+    />
     <Tab.Screen name="Settings" component={SettingsNavigator} />
   </Tab.Navigator>
 );
@@ -138,10 +142,10 @@ const AuthedNavigator = () => (
     <Stack.Screen
       name="MentionsModal"
       component={MentionsNavigator}
-      options={{
+      options={({ navigation }) => ({
         presentation: 'modal',
-        header: () => <BackHeader />,
-      }}
+        header: () => <BackHeader navigation={navigation} />,
+      })}
     />
     <Stack.Screen
       name="PlebhyModal"
