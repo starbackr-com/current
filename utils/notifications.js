@@ -46,7 +46,7 @@ async function registerPushToken(walletBearer) {
   const settings = await Notifications.getPermissionsAsync();
 
   if (settings.granted) {
-    alert('Push notification is enabled..!');
+    //alert('Push notification is enabled..!');
     // return;
   }
 
@@ -54,9 +54,14 @@ async function registerPushToken(walletBearer) {
   console.log(token);
 
   if (token) {
+
+    const jsonBody = {
+            token: token,
+            status: true
+    }
     const response = await fetch(`${process.env.BASEURL}/v2/pushtoken`, {
       method: 'POST',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify(jsonBody),
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${walletBearer}`,
@@ -66,6 +71,8 @@ async function registerPushToken(walletBearer) {
     const data = await response.json();
     if (data.data !== 'updated')
       alert('Push token update failed. Please contact support');
+
+    return token;
   }
 }
 

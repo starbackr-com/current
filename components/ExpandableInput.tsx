@@ -73,7 +73,8 @@ const ExpandableInput = ({ onSubmit }) => {
         <View style={{ flex: 1, marginHorizontal: 6, maxHeight: 100 }}>
           <Input
             textInputConfig={{
-              placeholder: 'Message...',
+              placeholderTextColor: colors.backgroundActive,
+              placeholder: 'Type a message',
               onChangeText: setInput,
               value: input,
               multiline: true
@@ -90,6 +91,7 @@ const ExpandableInput = ({ onSubmit }) => {
               setLoading(true);
               await onSubmit(input)
               setLoading(false);
+              setInput('');
             }}
           />}
         </View>

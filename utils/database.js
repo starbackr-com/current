@@ -221,7 +221,13 @@ export const getMessagesFromDb = (conversationId) => {
 };
 
 export const deleteMessageCache = (conversationId) => {
-  db.transaction((tx) => {
-    tx.executeSql(`DELETE FROM messages WHERE conversation = "${conversationId}"`);
-  });
+  if (conversationId) {
+    db.transaction((tx) => {
+      tx.executeSql(`DELETE FROM messages WHERE conversation = "${conversationId}"`);
+    });
+  } else {
+    db.transaction((tx) => {
+      tx.executeSql('DELETE FROM messages');
+    });
+  }
 };

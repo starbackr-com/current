@@ -104,12 +104,15 @@ const ActiveConversationsScreen = () => {
         style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}
       >
         <View style={{ flex: 1 }}>
+          <Text style={globalStyles.textH2}>Direct Messages</Text>
           <Input
             textInputConfig={{
               onFocus: () => {
                 setSearching(true);
               },
               onChangeText: setSearchInput,
+              placeholderTextColor: colors.backgroundActive,
+              placeholder: 'Search to start a DM',
               value: searchInput,
               ref: inputRef,
             }}
@@ -117,7 +120,7 @@ const ActiveConversationsScreen = () => {
         </View>
         {searching ? (
           <Text
-            style={[globalStyles.textBody, { marginLeft: 12 }]}
+            style={[globalStyles.textBody, { marginLeft: 12, marginTop: 50 }]}
             onPress={() => {
               setSearching(false);
               setSearchInput('');
@@ -134,7 +137,7 @@ const ActiveConversationsScreen = () => {
           renderFunction={renderFunction}
         />
       ) : (
-        <View style={{ width: '100%' }}>
+        <View style={{ width: '100%', flex: 1 }}>
           <View style={{ width: '100%', flexDirection: 'row', marginTop: 12 }}>
             <CustomButton
               text={`Filter by: ${timing.title}`}
@@ -146,7 +149,8 @@ const ActiveConversationsScreen = () => {
             data={activeConversation}
             renderItem={({ item }) => <Conversation item={item} />}
             style={{ width: '100%' }}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item}
+            ListFooterComponent={<View style={{ height: insets.bottom }} />}
           />
         </View>
       )}

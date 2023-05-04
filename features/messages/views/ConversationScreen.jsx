@@ -14,10 +14,10 @@ import ConversationText from '../components/ConversationText';
 import publishMessage from '../utils/publishMessage';
 
 const ConversationScreen = ({ route }) => {
-  const { pk, sk } = route.params || {};
+  const { pk } = route.params || {};
   const [viewHeight, setViewHeight] = useState();
 
-  const messages = useMessages(pk, sk);
+  const messages = useMessages(pk);
   const tabBarHeight = useBottomTabBarHeight();
   const { height } = useWindowDimensions();
 
@@ -31,7 +31,7 @@ const ConversationScreen = ({ route }) => {
   };
 
   const sendHandler = async (content) => {
-    await publishMessage(sk, pk, content);
+    publishMessage(pk, content);
   };
 
   return (

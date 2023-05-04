@@ -1,14 +1,17 @@
 /* eslint-disable camelcase */
 /* eslint-disable react/style-prop-object */
 /* eslint-disable global-require */
-import { View } from 'react-native';
-import React, { useState, useCallback, useEffect } from 'react';
+import { View, Linking } from 'react-native';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadAsync } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { getPublicKey } from 'nostr-tools';
+import {
+  NavigationContainer,
+} from '@react-navigation/native';
+import { getPublicKey, nip19 } from 'nostr-tools';
 
 import { getValue } from './utils/secureStore';
 import { logIn } from './features/authSlice';
@@ -34,6 +37,8 @@ const Root = () => {
   const silentFollow = useSilentFollow();
   const dispatch = useDispatch();
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const refreshToken = async () => {
     if (isLoggedIn && Date.now() > walletExpires) {
@@ -47,6 +52,14 @@ const Root = () => {
   };
 
   useEffect(() => {
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response);
+    });
+
     const prepare = async () => {
       setAppIsReady(false);
       try {
@@ -105,7 +118,90 @@ const Root = () => {
     return null;
   }
   return (
-    <NavigationContainer onStateChange={refreshToken}>
+    <NavigationContainer
+      onStateChange={refreshToken}
+      linking={{
+        prefixes: ['exp://', 'exp://192.168.3.116:19000/--/', 'nostr:'],
+        config: {
+          screens: {
+            Profile: {
+              initialRouteName: 'MainTabNav',
+              screens: {
+                ProfileScreen: 'profile/:pubkey',
+              },
+            },
+            MainTabNav: {
+              screens: {
+                Home: {
+                  screens: {
+                    CommentScreen: 'note/:eventId',
+                  },
+                },
+                Messages: {
+                  initialRouteName: 'All Chats',
+                  screens: {
+                    Chat: 'message/:pk',
+                  },
+                },
+              },
+            },
+          },
+        },
+        async getInitialURL() {
+          const url = await Linking.getInitialURL();
+
+          if (url != null) {
+            if (url.startsWith('nostr:')) {
+              const { type, data } = nip19.decode(url.slice(29));
+              if (type === 'npub') {
+                return `exp://profile/${data}`;
+              }
+            }
+          }
+
+          const response = await Notifications.getLastNotificationResponseAsync();
+          if (response?.notification.request.content.data.kind === 4) {
+            const author = response?.notification.request.content.data.kind === 4;
+            return `nostr://message/${author}`;
+          }
+          return null;
+        },
+        subscribe(listener) {
+          const onReceiveURL = ({ url }) => {
+            if (url.startsWith('nostr:')) {
+              const { type, data } = nip19.decode(url.slice(6));
+              if (type === 'npub') {
+                listener(`nostr://profile/${data}`);
+              }
+              if (type === 'note') {
+                listener(`nostr://note/${data}`);
+              }
+            }
+          };
+
+          const eventListenerSubscription = Linking.addEventListener(
+            'url',
+            onReceiveURL,
+          );
+
+          const subscription = Notifications.addNotificationResponseReceivedListener(
+            (response) => {
+              if (
+                response?.notification.request.content.data.kind === 4
+              ) {
+                const author = response?.notification.request.content.data.pubkey;
+                listener(`nostr://message/${author}`);
+              }
+            },
+          );
+
+          return () => {
+            eventListenerSubscription.remove();
+            subscription.remove();
+          };
+        },
+      }}
+    >
       <StatusBar style="light" />
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         {isLoggedIn === false ? <WelcomeNavigator /> : <AuthedNavigator />}

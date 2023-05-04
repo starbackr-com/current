@@ -1,7 +1,9 @@
 import { getEventHash, getPublicKey, nip04, signEvent } from 'nostr-tools';
 import { publishGenericEvent } from '../../../utils/nostrV2';
+import { getValue } from '../../../utils';
 
-async function publishMessage(sk, receiverPk, content) {
+async function publishMessage(receiverPk, content) {
+  const sk = await getValue('privKey');
   const pk = getPublicKey(sk);
   const encryptedMessage = await nip04.encrypt(sk, receiverPk, content);
   const event = {

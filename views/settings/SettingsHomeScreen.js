@@ -1,24 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Linking from 'expo-linking';
-import { useDispatch } from 'react-redux';
 import { deleteValue } from '../../utils/secureStore';
 import { logOut } from '../../features/authSlice';
 import { resetAll } from '../../features/introSlice';
 import { clearStore } from '../../features/messagesSlice';
 import { clearUserStore } from '../../features/userSlice';
 import CustomButton from '../../components/CustomButton';
-import { removeData } from '../../utils/cache/asyncStorage';
 import appJson from '../../app.json';
-import { generateRandomString } from '../../utils/cache/asyncStorage';
+import {
+  generateRandomString,
+  removeData,
+} from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
+import { dbLogout, deleteMessageCache } from '../../utils/database';
 
 const settings = [
   'Payment Settings',
   'Backup Keys',
   'Network Settings',
-  'Notifications',
+  'Push Notifications',
   'Muted Users',
   'Delete Account',
 ];
@@ -45,11 +48,39 @@ const SettingItem = ({ item, onNav }) => (
 );
 
 const SettingsHomeScreen = ({ navigation }) => {
+  const [ispushnotifyChecked, setpushnotifyChecked] = useState(false);
   const dispatch = useDispatch();
   const navigationHandler = (route) => {
     navigation.navigate(route);
   };
+
+  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { pushToken } = useSelector((state) => state.user);
+
   const logoutHandler = async () => {
+    //clear push notifications
+    const initialState = {
+      status: false,
+      zaps: false,
+      dm: false,
+      mention: false,
+      reposts: false,
+      likes: false,
+      lntxn: false,
+      token: pushToken,
+    };
+
+    console.log(initialState);
+
+    fetch(`${process.env.BASEURL}/v2/pushtoken`, {
+      method: 'POST',
+      body: JSON.stringify(initialState),
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${walletBearer}`,
+      },
+    });
+
     await deleteValue('privKey');
     await deleteValue('username');
     await deleteValue('mem');
@@ -59,6 +90,7 @@ const SettingsHomeScreen = ({ navigation }) => {
       'zapAmount',
       'zapComment',
       'relays',
+      'pushToken',
     ]);
     dispatch(clearStore());
     dispatch(clearUserStore());
@@ -83,12 +115,25 @@ const SettingsHomeScreen = ({ navigation }) => {
             <SettingItem item={item} onNav={navigationHandler} />
           )}
         />
+      </View>
 
+      <View
+        style={
+          (globalStyles.screenContainer,
+          {
+            width: '100%',
+            justifyContent: 'space-evenly',
+            flexDirection: 'row',
+            marginBottom: 50,
+          })
+        }
+      >
         <CustomButton
           text="Sign Out"
           buttonConfig={{ onPress: logoutHandler }}
         />
       </View>
+
       <Text
         style={[
           globalStyles.textBody,
@@ -101,7 +146,7 @@ const SettingsHomeScreen = ({ navigation }) => {
         Terms and Privacy
       </Text>
       <Text onPress={introHandler} style={globalStyles.textBodyS}>
-        v{appJson.expo.version} ({appJson.expo.ios.buildNumber})
+        {`v${appJson.expo.version} ${appJson.expo.ios.buildNumber}`}
       </Text>
     </View>
   );
