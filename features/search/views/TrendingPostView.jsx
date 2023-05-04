@@ -1,14 +1,41 @@
 import { Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import devLog from '../../../utils/internal';
 import TrendingNote from '../components/TrendingNote';
-import { globalStyles } from '../../../styles';
+import { colors, globalStyles } from '../../../styles';
 import TrendingImages from '../components/TrendingImages';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView, useBottomSheetDynamicSnapPoints } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CustomButton } from '../../../components';
 
 const TrendingPostView = () => {
   const [trendingNotes, setTrendingNotes] = useState([]);
   const [error, setError] = useState();
+
+  const bottomSheetModalRef = useRef();
+
+  const insets = useSafeAreaInsets();
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+
+  // callbacks
+  const handlePresentModalPress = (data) => {
+    console.log(data);
+    bottomSheetModalRef.current?.present('Testing!');
+  };
+
+  const renderBackground = (props) => (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
+  );
 
   useEffect(() => {
     async function getTrendingNotes() {
@@ -34,11 +61,29 @@ const TrendingPostView = () => {
       <View style={{ flex: 1, width: '100%' }}>
         {!error ? <FlashList
           data={trendingNotes}
-          renderItem={({ item }) => <TrendingNote event={item} />}
+          renderItem={({ item }) => <TrendingNote event={item} onMenu={handlePresentModalPress}/>}
           ListHeaderComponent={<TrendingImages />}
           estimatedItemSize={300}
         /> : <Text style={globalStyles.textBodyError}>{error}</Text>}
       </View>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        snapPoints={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}
+        backgroundStyle={{ backgroundColor: colors.backgroundPrimary }}
+        backdropComponent={renderBackground}
+        handleIndicatorStyle={{backgroundColor: colors.backgroundSecondary}}
+      >
+        <BottomSheetView onLayout={handleContentLayout}>
+          <View style={{ padding: 24, paddingBottom: insets.bottom }}>
+            <CustomButton text="Repost Event" icon="repeat" containerStyles={{ marginVertical: 6 }} />
+            <CustomButton text="Copy Event ID" icon="clipboard-outline" containerStyles={{ marginVertical: 6 }} />
+            <CustomButton text="Report Event" icon="alert-circle" containerStyles={{ marginVertical: 6 }} />
+            <CustomButton text="Mute User" icon="volume-mute" containerStyles={{ marginVertical: 6 }} />
+          </View>
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   );
 };

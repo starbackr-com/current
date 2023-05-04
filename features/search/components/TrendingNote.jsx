@@ -16,7 +16,7 @@ const style = StyleSheet.create({
   },
 });
 
-const TrendingNote = ({ event }) => {
+const TrendingNote = ({ event, onMenu }) => {
   const [viewWidth, setViewWidth] = useState();
   const content = useParseContent(event);
   const user = useSelector((state) => state.messages.users[event.pubkey]);
@@ -41,7 +41,7 @@ const TrendingNote = ({ event }) => {
       >
         {content}
       </Text>
-      <PostActionBar />
+      <PostActionBar onPressMore={onMenu.bind(undefined, event.id)}/>
     </Pressable>
   );
 };
