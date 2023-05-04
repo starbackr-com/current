@@ -27,6 +27,12 @@ const globalStyles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  textBodyG: {
+    fontFamily: 'Montserrat-Regular',
+    color: 'grey',
+    fontSize: 12,
+    textAlign: 'center',
+  },
   textBodyBold: {
     fontFamily: 'Montserrat-Bold',
     color: 'white',

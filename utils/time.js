@@ -17,6 +17,15 @@ export function getAge(timestamp) {
 }
 
 export function getHourAndMinute(unixInSeconds) {
+  const timePassedInMins = Math.floor(
+    (now - new Date(unixInSeconds * 1000)) / 1000 / 60,
+  );
+  if (timePassedInMins > 10080)
+      return `on ${new Date(timestamp * 1000).toLocaleDateString()}`;
+  const now = new Date();
   const date = new Date(unixInSeconds * 1000);
-  return `${date.getHours()}:${date.getMinutes()}`;
+  let day = date.getDay();
+  if (now.getDay() - day === 0) day = 7;
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+  return `${dayNames[day]} ${date.getHours()}:${date.getMinutes()<10?'0'+date.getMinutes() :date.getMinutes()}`;
 }

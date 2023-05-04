@@ -186,12 +186,19 @@ const Root = () => {
 
           const subscription = Notifications.addNotificationResponseReceivedListener(
             (response) => {
-              if (
-                response?.notification.request.content.data.kind === 4
-              ) {
-                const author = response?.notification.request.content.data.pubkey;
-                listener(`nostr://message/${author}`);
+              try {
+
+                if (
+                  response?.notification.request.content.data.kind === 4
+                ) {
+                  const author = response?.notification.request.content.data.pubkey;
+                  listener(`nostr://message/${author}`);
+                }
+
+              } catch (e) {
+                  console.log(e);
               }
+
             },
           );
 

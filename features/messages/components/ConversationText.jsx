@@ -32,7 +32,7 @@ const ConversationText = ({ type, event }) => {
           {parsedContent}
         </Text>
         <View style={{ width: '100%', justifyContent: 'flex-end' }}>
-          <Text style={[globalStyles.textBodyS, { textAlign: 'right' }]}>
+          <Text style={[globalStyles.textBodyG, { textAlign: 'right' }]}>
             {getHourAndMinute(event.created_at)}
           </Text>
         </View>
