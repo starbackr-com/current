@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
 import UserBanner from '../../homefeed/components/UserBanner';
+import { CustomButton } from '../../../components';
+import { useFollowUser, useIsFollowed, useUnfollowUser } from '../../../hooks';
 
 const style = StyleSheet.create({
   container: {
@@ -14,9 +16,12 @@ const style = StyleSheet.create({
   },
 });
 
-const TrendingNote = ({ event }) => {
+const TrendingProfile = ({ event }) => {
   const [viewWidth, setViewWidth] = useState();
   const user = useSelector((state) => state.messages.users[event.pubkey]);
+  const isFollowed = useIsFollowed(event.pubkey);
+  const { follow } = useFollowUser();
+  const { unfollow } = useUnfollowUser();
   const navigation = useNavigation();
 
   return (
@@ -38,13 +43,26 @@ const TrendingNote = ({ event }) => {
         <UserBanner user={user} event={event} width={viewWidth} />
       ) : undefined}
       <Text
-        style={[globalStyles.textBody, { textAlign: 'left' }]}
+        style={[globalStyles.textBody, { textAlign: 'left', marginBottom: 12 }]}
         numberOfLines={event.content.length > 100 ? 10 : undefined}
       >
         {JSON.parse(event.content).about}
       </Text>
+      <CustomButton
+        text={isFollowed ? 'Unfollow' : 'Follow'}
+        icon={isFollowed ? 'person-remove' : 'person-add'}
+        buttonConfig={{
+          onPress: () => {
+            if (isFollowed) {
+              unfollow([event.pubkey]);
+            } else {
+              follow([event.pubkey]);
+            }
+          },
+        }}
+      />
     </Pressable>
   );
 };
 
-export default TrendingNote;
+export default TrendingProfile;

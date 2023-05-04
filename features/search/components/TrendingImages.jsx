@@ -1,10 +1,11 @@
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { imageRegex } from '../../../constants';
 import devLog from '../../../utils/internal';
-import { colors } from '../../../styles';
+import { colors, globalStyles } from '../../../styles';
+import { LoadingSkeleton } from '../../../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +14,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   image: {
-    borderWidth: 1, borderColor: colors.backgroundPrimary,
+    borderWidth: 1,
+    borderColor: colors.backgroundPrimary,
   },
 });
 
@@ -48,7 +50,10 @@ const TrendingImages = () => {
         key={note.id}
       >
         <Image
-          style={[styles.image, { width: viewWidth / 3, height: viewWidth / 3 }]}
+          style={[
+            styles.image,
+            { width: viewWidth / 3, height: viewWidth / 3 },
+          ]}
           source={imageURL}
           transition={300}
         />
@@ -57,13 +62,17 @@ const TrendingImages = () => {
   };
 
   return (
-    <View
-      style={styles.container}
-      onLayout={(e) => {
-        setViewWidth(e.nativeEvent.layout.width);
-      }}
-    >
-      {imageNotes ? imageNotes.map(renderImage) : undefined}
+    <View>
+      <Text style={[globalStyles.textBodyBold, {textAlign: 'left', marginBottom: 12}]}>Trending Images</Text>
+      <View
+        style={styles.container}
+        onLayout={(e) => {
+          setViewWidth(e.nativeEvent.layout.width);
+        }}
+      >
+        {imageNotes ? imageNotes.map(renderImage) : viewWidth ? <View style={{height: viewWidth, width: viewWidth}}><LoadingSkeleton/></View> : undefined}
+      </View>
+      <Text style={[globalStyles.textBodyBold, {textAlign: 'left', marginTop: 12}]}>Trending Posts</Text>
     </View>
   );
 };

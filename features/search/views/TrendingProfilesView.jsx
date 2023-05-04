@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import devLog from '../../../utils/internal';
@@ -34,6 +34,7 @@ const TrendingPostView = () => {
           data={trendingProfiles}
           renderItem={({ item }) => <TrendingProfile event={item} />}
           estimatedItemSize={300}
+          ListHeaderComponent={<Text style={[globalStyles.textH2, {textAlign: 'left', width: '100%'}]}>Trending Profiles</Text>}
         />
       </View>
     </View>

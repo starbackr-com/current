@@ -23,6 +23,8 @@ const styles = StyleSheet.create({
   },
 });
 
+const placeholder = require('../../../assets/user_placeholder.jpg');
+
 const ResultItem = ({ userData }) => {
   const navigation = useNavigation();
   const pressHandler = () => {
@@ -37,7 +39,7 @@ const ResultItem = ({ userData }) => {
 
   return (
     <Pressable style={styles.container} onPress={pressHandler}>
-      <Image source={userData.picture} style={styles.image} transition={300} />
+      <Image source={userData.picture || placeholder} style={styles.image} transition={300}/>
       <Text style={globalStyles.textBody}>{userData.name}</Text>
     </Pressable>
   );

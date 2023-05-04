@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { nip19 } from 'nostr-tools';
@@ -45,18 +40,24 @@ const SearchView = ({ navigation }) => {
   const renderItem = ({ item }) => <ResultItem userData={item} />;
 
   let searchResult;
-  if (search && input) {
+  if (search && input && storedData.length !== 0) {
     searchResult = (
       <View style={{ width: '100%', flex: 1 }}>
         <FlatList
           data={storedData}
           renderItem={renderItem}
-          ListHeaderComponent={(
+          ListHeaderComponent={
             <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
               Did you mean?
             </Text>
-            )}
+          }
         />
+      </View>
+    );
+  } else if (search && input && storedData.length === 0) {
+    searchResult = (
+      <View style={{ width: '100%', flex: 1 }}>
+        <Text style={globalStyles.textBody}>No user found...</Text>
       </View>
     );
   } else if (result && input) {
@@ -92,7 +93,12 @@ const SearchView = ({ navigation }) => {
         <TrendingItem icon="reader" title="Trending Posts" />
       </View>
       <View
-        style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginBottom: 12,
+        }}
       >
         <View style={{ flex: 1 }}>
           <Input
