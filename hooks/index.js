@@ -6,6 +6,7 @@ export * from './useUpdateFollowing';
 export * from './useZapNote';
 export * from './useLinking';
 export * from './usePaginatedPosts';
+export { default as useIsFollowed } from './useIsFollowed';
 
 export { default as useSubscribeEvents } from './useSubscribeEvents';
 export { default as useUsersInStore } from './useUsersInStore';
