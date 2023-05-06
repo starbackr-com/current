@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -21,6 +21,7 @@ import { ImagePost, TextPost, ZapPost } from '../../../components/Posts';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { colors, globalStyles } from '../../../styles';
 import { ItemSeperator } from '../components';
+import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
 
 const CommentScreen = ({ route, navigation }) => {
   const { eventId } = route?.params || {};
@@ -32,6 +33,12 @@ const CommentScreen = ({ route, navigation }) => {
   const replies = useReplies(eventId);
   const users = useSelector((state) => state.messages.users);
   const [isLoading, setIsLoading] = useState(false);
+
+  const bottomSheetModalRef = useRef();
+
+  const handlePresentModalPress = (data) => {
+    bottomSheetModalRef.current?.present(data);
+  };
 
   const onLayoutViewWidth = (e) => {
     setWidth(e.nativeEvent.layout.width);
@@ -49,11 +56,11 @@ const CommentScreen = ({ route, navigation }) => {
   const renderItem = ({ item }) => {
     if (item.kind === 1) {
       if (item.type === 'text') {
-        return <TextPost event={item} user={users[item.pubkey]} />;
+        return <TextPost event={item} user={users[item.pubkey]} onMenu={handlePresentModalPress} />;
       }
       if (item.type === 'image') {
         return (
-          <ImagePost event={item} user={users[item.pubkey]} width={width} />
+          <ImagePost event={item} user={users[item.pubkey]} width={width} onMenu={handlePresentModalPress} />
         );
       }
     }
@@ -135,6 +142,7 @@ const CommentScreen = ({ route, navigation }) => {
           </View>
         )}
       </View>
+      <PostMenuBottomSheet ref={bottomSheetModalRef} />
     </KeyboardAvoidingView>
   );
 };

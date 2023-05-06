@@ -7,7 +7,7 @@ import { useZapNote } from '../../hooks/useZapNote';
 import PostActionBar from './PostActionBar';
 import { globalStyles } from '../../styles';
 
-export const TextPost = ({ event, user }) => {
+export const TextPost = ({ event, user, onMenu }) => {
   const content = useParseContent(event);
   const navigation = useNavigation();
   const zap = useZapNote(
@@ -29,9 +29,6 @@ export const TextPost = ({ event, user }) => {
     zap();
   };
 
-  const moreHandler = () => {
-    navigation.navigate('PostMenuModal', { event });
-  };
   return (
     <Animated.View
       entering={FadeIn}
@@ -73,7 +70,7 @@ export const TextPost = ({ event, user }) => {
       <PostActionBar
         onPressComment={commentHandler}
         onPressZap={zapHandler}
-        onPressMore={moreHandler}
+        onPressMore={() => {onMenu(event)}}
         zapDisabled={!user?.lud06 && !user?.lud16}
       />
     </Animated.View>
