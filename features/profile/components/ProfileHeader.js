@@ -8,7 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ProfileHeader = ({ route, navigation }) => {
   const check = useIsAuthed(route?.params?.pubkey);
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets();
+  const insets = {top: 0}
   return (
     <View
       style={{

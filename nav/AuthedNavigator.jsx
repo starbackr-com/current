@@ -23,6 +23,8 @@ import { colors } from '../styles';
 import { SearchNavigator } from '../features/search';
 import { ConversationNavigator } from '../features/messages';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ProfileHeader from '../features/profile/components/ProfileHeader';
+import OwnProfileNavigator from './OwnProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,7 +67,7 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Wallet" component={WalletNavigator} />
+    <Tab.Screen name="Wallet" component={WalletNavigator} options={{ headerShown: false }}/>
     <Tab.Screen name="Messages" component={ConversationNavigator} />
     <Tab.Screen
       name="New"
@@ -114,9 +116,8 @@ const AuthedNavigator = () => (
       />
       <Stack.Screen
         name="Profile"
-        component={ProfileNavigator}
-        options={() => ({
-          presentation: 'modal',
+        component={OwnProfileNavigator}
+        options={({ navigation, route }) => ({
           headerShown: false,
         })}
       />

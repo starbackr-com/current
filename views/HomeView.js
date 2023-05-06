@@ -8,6 +8,7 @@ import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import HomeFeed from "../features/homefeed/components/HomeFeed";
+import ProfileNavigator from "../nav/ProfileNavigator";
 
 const HomeStack = createStackNavigator();
 
@@ -57,6 +58,13 @@ const HomeView = () => {
         >
             <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
             <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
+            <HomeStack.Screen
+          name="Profile"
+          component={ProfileNavigator}
+          options={() => ({
+            headerShown: false,
+          })}
+        />
         </HomeStack.Navigator>
     );
 };
