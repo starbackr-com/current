@@ -41,7 +41,11 @@ const TrendingNote = ({ event, onMenu }) => {
       >
         {content}
       </Text>
-      <PostActionBar onPressMore={onMenu.bind(undefined, event.id)}/>
+      <PostActionBar
+        onPressMore={() => {
+          onMenu(event);
+        }}
+      />
     </Pressable>
   );
 };
