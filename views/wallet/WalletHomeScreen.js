@@ -85,6 +85,16 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                         containerStyles={{ width: "100%" }}
                         icon="arrow-down-circle"
                     />
+                    <CustomButton
+                        text="Wallet Connect"
+                        buttonConfig={{
+                            onPress: () => {
+                                navigate("WalletConnectScreen");
+                            },
+                        }}
+                        containerStyles={{ width: "100%" }}
+                        icon="key-outline"
+                    />
                 </View>
                 <View style={{ alignItems: "center", flex: 1 }}>
                     <Pressable
