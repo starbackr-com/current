@@ -56,9 +56,11 @@ const AddWalletconnectView = ({ navigation }) => {
           nwcpubkey: keys.pubKey,
           spentamount: 0,
           status: 'active',
+          relay: data.relay,
+          walletpubkey: data.walletpubkey,
         };
         dispatch(addWalletconnect([newWcData]));
-        navigation.navigate('WalletconnectInfoView', { newWcData });
+        navigation.navigate('WalletconnectInfoView', { data: newWcData });
       } else {
         alert('Something went wrong...');
       }
