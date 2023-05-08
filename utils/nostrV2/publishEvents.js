@@ -286,3 +286,15 @@ export async function publishGenericEvent(event) {
     });
   });
 }
+
+export async function publishGenericEventToRelay(event, relay) {
+        const pubs = await pool.publish([relay], event);
+        pubs.on('ok', () => {
+          console.log('ok - publish event');
+
+        });
+        pubs.on('failed', () => {
+          console.log('failed - publish event');
+
+        });
+  }

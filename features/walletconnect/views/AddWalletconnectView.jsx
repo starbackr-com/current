@@ -8,6 +8,8 @@ import { globalStyles } from '../../../styles';
 import { CustomButton, Input } from '../../../components';
 import { addWalletconnect } from '../walletconnectSlice';
 import genWalletConnectKey from '../utils/keys';
+import { publishGenericEventToRelay } from '../../../utils/nostrV2';
+import { createKind13194 } from '../../../utils/nostrV2/createEvent';
 
 const AddWalletconnectView = ({ navigation }) => {
   const [canAdd, setCanAdd] = useState(false);
@@ -59,6 +61,12 @@ const AddWalletconnectView = ({ navigation }) => {
           relay: data.relay,
           walletpubkey: data.walletpubkey,
         };
+
+        //publish an event to the relay using this privateKey
+        const event = await createKind13194(keys.privKey);
+        console.log('event13194: ', event);
+        publishGenericEventToRelay(event, data.relay);
+
         dispatch(addWalletconnect([newWcData]));
         navigation.navigate('WalletconnectInfoView', { data: newWcData });
       } else {
