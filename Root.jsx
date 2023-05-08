@@ -29,7 +29,7 @@ import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
 import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
-import { addWalletconnect } from './features/walletconnect/walletconnectSlice';
+import { addWalletconnect, hydrate } from './features/walletconnect/walletconnectSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,7 +45,7 @@ const Root = () => {
     const wcDataString = await getValue('wcdata');
     if (wcDataString) {
       const wcData = JSON.parse(wcDataString);
-      dispatch(addWalletconnect(wcData))
+      dispatch(hydrate(wcData));
     }
   };
 

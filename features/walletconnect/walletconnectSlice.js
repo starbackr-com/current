@@ -3,6 +3,7 @@ import { saveValue } from '../../utils';
 
 const initialState = {
   wcdata: [],
+  wcPubkeys: [],
 };
 
 export const walletconnectSlice = createSlice({
@@ -10,8 +11,15 @@ export const walletconnectSlice = createSlice({
   initialState,
   reducers: {
     addWalletconnect: (state, action) => {
-      const deduplicated = [...new Set([...action.payload, ...state.wcdata])];
-      state.wcdata = deduplicated;
+      const newWcData = action.payload.filter(
+        (wcKey) => !state.wcPubkeys.includes(wcKey.nwcpubkey),
+      );
+      const newPubkeys = [
+        ...state.wcPubkeys,
+        ...newWcData.map((item) => item.nwcpubkey),
+      ];
+      state.wcPubkeys = newPubkeys;
+      state.wcdata = [...newWcData, ...state.wcdata];
     },
     changeWalletconnect: (state, action) => {
       const updatedWalletconnectObject = action.payload;
@@ -20,6 +28,10 @@ export const walletconnectSlice = createSlice({
       );
 
       state.wcdata[index] = updatedWalletconnectObject;
+    },
+    hydrate: (state, action) => {
+      state.wcPubkeys = action.payload.map((item) => item.nwcpubkey);
+      state.wcdata = [...action.payload];
     },
   },
 });
@@ -32,6 +44,6 @@ export const wcListener = async (action, listenerApi) => {
   await saveValue('wcdata', json);
 };
 
-export const { addWalletconnect, changeWalletconnect } = walletconnectSlice.actions;
+export const { addWalletconnect, changeWalletconnect, hydrate } = walletconnectSlice.actions;
 
 export default walletconnectSlice.reducer;
