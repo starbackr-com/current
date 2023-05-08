@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { saveValue } from '../../utils';
 
 const initialState = {
   wcdata: [],
@@ -22,6 +23,14 @@ export const walletconnectSlice = createSlice({
     },
   },
 });
+
+export const wcListener = async (action, listenerApi) => {
+  const {
+    walletconnect: { wcdata },
+  } = listenerApi.getState();
+  const json = JSON.stringify(wcdata);
+  await saveValue('wcdata', json);
+};
 
 export const { addWalletconnect, changeWalletconnect } = walletconnectSlice.actions;
 

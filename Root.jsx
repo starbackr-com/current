@@ -29,6 +29,7 @@ import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
 import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
+import { addWalletconnect } from './features/walletconnect/walletconnectSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +40,14 @@ const Root = () => {
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
   const notificationListener = useRef();
   const responseListener = useRef();
+
+  const hydrateWc = async () => {
+    const wcDataString = await getValue('wcdata');
+    if (wcDataString) {
+      const wcData = JSON.parse(wcDataString);
+      dispatch(addWalletconnect(wcData))
+    }
+  };
 
   const refreshToken = async () => {
     if (isLoggedIn && Date.now() > walletExpires) {
@@ -67,6 +76,7 @@ const Root = () => {
         await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
+        await hydrateWc();
         const privKey = await getValue('privKey');
         await loadAsync({
           'Montserrat-Regular': require('./assets/Montserrat-Regular.ttf'),
