@@ -6,21 +6,20 @@ import { WalletconnectItem } from '../components';
 import { globalStyles } from '../../../styles';
 
 const WalletconnectSettingsView = () => {
-  const relays = useSelector((state) => state.relays.relays);
-  const wcdata = [{name: 'Damus App', maxamount:'100k'}, {name: 'Amethyst App', maxamount:'50k'}]
-  console.log(relays);
+  const wcdata = useSelector((state) => state.walletconnect);
   return (
     <View style={globalStyles.screenContainer}>
       <Text style={globalStyles.textH2}>Wallet Connect</Text>
-      <Text style={globalStyles.textBodyS}>Touch to view QR code or Hold to delete</Text>
+      {wcdata.wcdata.length > 0 ? (<Text style={globalStyles.textBodyS}>Touch to view QR code or Hold to deactivate</Text>)
+      : (<Text style={globalStyles.textBodyS}>Click '+' button to add new wallet connect link</Text>)}
       <Animated.FlatList
-        data={wcdata}
-        renderItem={({ item }) => <WalletconnectItem relay={item} />}
+        data={wcdata.wcdata}
+        renderItem={({ item }) => <WalletconnectItem wcdata={item} />}
         style={{ width: '100%' }}
-        keyExtractor={(item) => item.url}
+        keyExtractor={(item) => item.nwcpubkey}
       />
       <Text style={globalStyles.textBodyS}>
-        Wallet Connect (NIP-47) is an easy way to connect this wallet to any supported Nostr clients such as Amethyst.Just copy and paste the QR code.
+        Nostr Wallet Connect (NIP-47) is an easy way to connect this wallet to any supported Nostr clients such as Amethyst.Just copy and paste the QR code.
       </Text>
     </View>
   );

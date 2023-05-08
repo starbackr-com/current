@@ -32,9 +32,8 @@ const WalletconnectSettingsNav = () => {
         name="WalletconnectInfoView"
         component={WalletconnectInfoView}
         initialParams={{ headerHeight }}
-        options={({ navigation }) => ({
-          header: () => <BackHeader navigation={navigation} />,
-        })}
+        options={{ headerShown: false }}
+
       />
     </Stack.Navigator>
   );

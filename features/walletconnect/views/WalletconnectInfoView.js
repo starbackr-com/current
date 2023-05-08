@@ -11,25 +11,37 @@ import { colors, globalStyles } from "../../../styles";
 
 const WalletconnectInfoView = ({ route, navigation }) => {
     const username = useSelector((state) => state.auth.username);
-    let lnurl;
+    let nwcConnectUrl;
 
     let copyAddress;
-    let copyLnurl;
-    const { relay } = route.params;
-    console.log(relay);
+    let copyConnectUrl;
+    let copyWalletpubkey;
+    let copyRelay;
+    let copySecret;
+    const { data } = route.params;
+    console.log(data);
 
     if (username) {
-        const [name, domain] = username.split('@')
-        console.log(`https://${domain}/.well-known/lnurlp/${name}`)
-        lnurl = 'nostr+walletconnect://c7063ccd7e9adc0ddd4b77c6bfabffc8399b41e24de3a668a6ab62ede2c8aabd?relay=wss://wc1.current.ninja&pubkey=2d9b9c4fc24cdc1f72ac269bde65b791919728b9f22a5b44d3fae';
 
-          copyAddress = async () => {
-                await Clipboard.setStringAsync(username);
+        nwcConnectUrl = 'nostr+walletconnect://' +
+                        data.walletpubkey +
+                        '?relay=' + data.relay +
+                        '&secret=' + data.secret;
+
+
+          copyConnectUrl = async () => {
+                await Clipboard.setStringAsync(nwcConnectUrl);
             };
 
-          copyLnurl = async () => {
-                await Clipboard.setStringAsync(lnurl);
-            };
+            copyWalletpubkey = async () => {
+                  await Clipboard.setStringAsync(data.walletpubkey);
+              };
+            copyRelay = async () => {
+                    await Clipboard.setStringAsync(data.relay);
+                };
+            copySecret = async () => {
+                      await Clipboard.setStringAsync(data.secret);
+                  };
 
 
     }
@@ -37,6 +49,11 @@ const WalletconnectInfoView = ({ route, navigation }) => {
         <ScrollView style={globalStyles.screenContainerScroll}>
             <View style={{ alignItems: "center" }}>
                 <View style={{ width: "100%", alignItems: "flex-start" }}>
+                    <BackButton
+                        onPress={() => {
+                            navigation.navigate('WalletconnectOverview');
+                        }}
+                    />
                 </View>
                 <Text
                     style={[globalStyles.textBody, {color: colors.primary500, marginTop: 16, marginBottom: 16}]}
@@ -45,22 +62,40 @@ const WalletconnectInfoView = ({ route, navigation }) => {
                   {'Wallet Connect Address'}
 
                 </Text>
+                <Text style={globalStyles.textBodyS}>
+                  Click QR code to copy.
+                </Text>
 
-
-                {lnurl ? <View style={styles.qrContainer}>
-                    <QRCode value={lnurl}  onPress={copyLnurl} />
+                {nwcConnectUrl ? <View style={styles.qrContainer}>
+                    <QRCode value={nwcConnectUrl}  onPress={copyConnectUrl} />
 
                 </View> : undefined}
+
                 <Text
-                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 16}]}
-                    onPress={copyLnurl}
+                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 12}]}
+                    onPress={copyWalletpubkey}
                 >
-                   {lnurl}<Ionicons name="clipboard" />
+                   Wallet Connect pubkey: {data.walletpubkey}<Ionicons name="clipboard" />
+                </Text>
+                <Text
+                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 12}]}
+                    onPress={copyRelay}
+                >
+                   Wallet Connect Relay: {data.relay}<Ionicons name="clipboard" />
+                </Text>
+                <Text
+                    style={[globalStyles.textBody, {color: colors.primary500, marginBottom: 12}]}
+                    onPress={copySecret}
+                >
+                   Wallet Connect Secret: {data.secret}<Ionicons name="clipboard" />
                 </Text>
             </View>
             <View style={{height:32}}>
             <Text style={globalStyles.textBodyS}>
-              NOTE: This code contains secret that can be used to drain your wallet. DO NOT SHARE this publicly.
+              NOTE: Anyone can use the secret to drain your wallet.
+            </Text>
+            <Text style={globalStyles.textBodyS}>
+              DO NOT SHARE this publicly.
             </Text>
             </View>
         </ScrollView>
