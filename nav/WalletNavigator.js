@@ -12,6 +12,7 @@ import WalletTransactionScreen from '../views/wallet/WalletTransactionScreen';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../styles';
+import { BackHeader } from '../components';
 
 const Stack = createStackNavigator();
 
@@ -20,37 +21,41 @@ const WalletNavigator = () => {
   return (
     <View style={{ paddingTop: insets.top, flex: 1, backgroundColor: colors.backgroundPrimary }}>
       <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
+        screenOptions={({navigation}) => ({header: () => <BackHeader navigation={navigation} />})}
       >
-        <Stack.Screen name="WalletHomeScreen" component={WalletHomeScreen} />
-        <Stack.Screen name="WalletSendScreen" component={WalletSendScreen} />
+        <Stack.Screen name="WalletHomeScreen" component={WalletHomeScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="WalletSendScreen" component={WalletSendScreen}/>
         <Stack.Screen
           name="WalletConfirmScreen"
           component={WalletConfirmScreen}
+        
         />
         <Stack.Screen
           name="WalletReceiveScreen"
           component={WalletReceiveScreen}
+        
         />
         <Stack.Screen
                 name="WalletInvoiceScreen"
                 component={WalletInvoiceScreen}
+              
         />
         <Stack.Screen
                 name="WalletConnectScreen"
                 component={WalletConnectScreen}
+                options={{headerShown: false}}
             />
-        <Stack.Screen name="ScannerScreen" component={QrScanner} />
-        <Stack.Screen name="WalletInfoScreen" component={WalletInfoScreen} />
+        <Stack.Screen name="ScannerScreen" component={QrScanner}/>
+        <Stack.Screen name="WalletInfoScreen" component={WalletInfoScreen}/>
         <Stack.Screen
           name="WalletTransactionScreen"
           component={WalletTransactionScreen}
+          options={({navigation}) => ({header: () => <BackHeader navigation={navigation} />})}
         />
         <Stack.Screen
           name="WalletSendLnurlScreen"
           component={WalletSendLnurlScreen}
+        
         />
       </Stack.Navigator>
     </View>
