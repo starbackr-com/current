@@ -10,8 +10,15 @@ const WalletconnectSettingsView = () => {
   return (
     <View style={globalStyles.screenContainer}>
       <Text style={globalStyles.textH2}>Wallet Connect</Text>
-      {wcdata.wcdata.length > 0 ? (<Text style={globalStyles.textBodyS}>Touch to view QR code or Hold to deactivate</Text>)
-      : (<Text style={globalStyles.textBodyS}>Click '+' button to add new wallet connect link</Text>)}
+      {wcdata.wcdata.length > 0 ? (
+        <Text style={globalStyles.textBodyS}>
+          Touch to view QR code or Hold to deactivate
+        </Text>
+      ) : (
+        <Text style={globalStyles.textBodyS}>
+          Click + button to add new wallet connect link
+        </Text>
+      )}
       <Animated.FlatList
         data={wcdata.wcdata}
         renderItem={({ item }) => <WalletconnectItem wcdata={item} />}
@@ -19,7 +26,9 @@ const WalletconnectSettingsView = () => {
         keyExtractor={(item) => item.nwcpubkey}
       />
       <Text style={globalStyles.textBodyS}>
-        Nostr Wallet Connect (NIP-47) is an easy way to connect this wallet to any supported Nostr clients such as Amethyst.Just copy and paste the QR code.
+        Nostr Wallet Connect (NIP-47) is an easy way to connect this wallet to
+        any supported Nostr clients such as Amethyst.Just copy and paste the QR
+        code.
       </Text>
     </View>
   );

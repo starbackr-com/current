@@ -67,7 +67,7 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Wallet" component={WalletNavigator} options={{ headerShown: false }}/>
+    <Tab.Screen name="Wallet" component={WalletNavigator} options={{ headerShown: false}}/>
     <Tab.Screen name="Messages" component={ConversationNavigator} />
     <Tab.Screen
       name="New"
