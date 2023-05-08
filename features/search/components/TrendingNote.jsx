@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, StyleSheet, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { useParseContent } from '../../../hooks';
+import { useParseContent, useZapNote } from '../../../hooks';
 import { colors, globalStyles } from '../../../styles';
 import UserBanner from '../../homefeed/components/UserBanner';
 import PostActionBar from '../../../components/Posts/PostActionBar';
@@ -21,6 +21,12 @@ const TrendingNote = ({ event, onMenu }) => {
   const content = useParseContent(event);
   const user = useSelector((state) => state.messages.users[event.pubkey]);
   const navigation = useNavigation();
+  const zap = useZapNote(
+    event.id,
+    user?.lud16 || user?.lud06,
+    user?.name || event?.pubkey.slice(0, 16),
+    event.pubkey,
+  );
 
   return (
     <Pressable
@@ -41,7 +47,12 @@ const TrendingNote = ({ event, onMenu }) => {
       >
         {content}
       </Text>
-      <PostActionBar onPressMore={onMenu.bind(undefined, event.id)}/>
+      <PostActionBar
+        onPressZap={zap}
+        onPressMore={() => {
+          onMenu(event);
+        }}
+      />
     </Pressable>
   );
 };

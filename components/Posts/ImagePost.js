@@ -8,7 +8,7 @@ import globalStyles from "../../styles/globalStyles";
 import FeedImage from "../Images/FeedImage";
 import PostActionBar from "./PostActionBar";
 
-export const ImagePost = ({ event, user, width }) => {
+export const ImagePost = ({ event, user, width, onMenu }) => {
     const content = useParseContent(event);
     const navigation = useNavigation();
 
@@ -32,9 +32,6 @@ export const ImagePost = ({ event, user, width }) => {
         zap();
     };
 
-    const moreHandler = () => {
-        navigation.navigate("PostMenuModal", { event });
-    };
     return (
         <Animated.View
             entering={FadeIn}
@@ -77,7 +74,7 @@ export const ImagePost = ({ event, user, width }) => {
                 <PostActionBar
                     onPressComment={commentHandler}
                     onPressZap={zapHandler}
-                    onPressMore={moreHandler}
+                    onPressMore={() => {onMenu(event)}}
                     zapDisabled={!user?.lud06 && !user?.lud16}
                 />
             </View>

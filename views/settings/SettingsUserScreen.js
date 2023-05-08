@@ -8,7 +8,7 @@ import BackButton from "../../components/BackButton";
 import { colors, globalStyles } from "../../styles";
 
 const UserCard = ({ pk }) => {
-    const user = useSelector((state) => state.messages.users[pk]);
+    const user = useSelector((state) => state.messages.users[pk]) || {};
 
     const unmuteHandler = async () => {
         Alert.alert(

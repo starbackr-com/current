@@ -1,0 +1,130 @@
+import { View } from 'react-native';
+import React, { forwardRef, useMemo, useState } from 'react';
+import * as Clipboard from 'expo-clipboard';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
+import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CustomButton from './CustomButton';
+import { colors } from '../styles';
+import { encodeNoteID } from '../utils';
+import { publishRepost } from '../utils/nostrV2';
+import { muteUser } from '../utils/users';
+import devLog from '../utils/internal';
+
+const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
+  const [repostLoading, setRepostLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
+  const muteHandler = async (event) => {
+    try {
+      await muteUser(event.pubkey);
+    } catch (e) {
+      devLog(e);
+    }
+  };
+
+  const repostHandler = async (event) => {
+    setRepostLoading(true);
+    await publishRepost(event.id, event.pubkey);
+    setRepostLoading(false);
+  };
+
+  const reportHandler = (event) => {
+    navigation.navigate('ReportPostModal', { event });
+  };
+
+  const copyEventHandler = async (id) => {
+    const bech32Note = encodeNoteID(id);
+    await Clipboard.setStringAsync(bech32Note);
+  };
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+
+  const renderBackground = (backdropProps) => (
+    <BottomSheetBackdrop
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...backdropProps}
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+    />
+  );
+
+  return (
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      snapPoints={animatedSnapPoints}
+      handleHeight={animatedHandleHeight}
+      contentHeight={animatedContentHeight}
+      backgroundStyle={{ backgroundColor: colors.backgroundPrimary }}
+      backdropComponent={renderBackground}
+      handleIndicatorStyle={{ backgroundColor: colors.backgroundSecondary }}
+    >
+      {({ data: event }) => (
+        <BottomSheetView onLayout={handleContentLayout}>
+          <View style={{ padding: 24, paddingBottom: insets.bottom }}>
+            <CustomButton
+              text="Repost Event"
+              icon="repeat"
+              containerStyles={{ marginVertical: 6 }}
+              buttonConfig={{
+                onPress: async () => {
+                  await repostHandler(event);
+                  bottomSheetModalRef.current.dismiss();
+                },
+              }}
+              loading={repostLoading}
+            />
+            <CustomButton
+              text="Copy Event ID"
+              icon="clipboard-outline"
+              containerStyles={{ marginVertical: 6 }}
+              buttonConfig={{
+                onPress: () => {
+                  bottomSheetModalRef.current.dismiss();
+                  copyEventHandler(event.id);
+                },
+              }}
+            />
+            <CustomButton
+              text="Report Event"
+              icon="alert-circle"
+              containerStyles={{ marginVertical: 6 }}
+              buttonConfig={{
+                onPress: () => {
+                  bottomSheetModalRef.current.dismiss();
+                  reportHandler(event);
+                },
+              }}
+            />
+            <CustomButton
+              text="Mute User"
+              icon="volume-mute"
+              containerStyles={{ marginVertical: 6 }}
+              buttonConfig={{
+                onPress: async () => {
+                  await muteHandler(event);
+                  bottomSheetModalRef.current.dismiss();
+                },
+              }}
+            />
+          </View>
+        </BottomSheetView>
+      )}
+    </BottomSheetModal>
+  );
+});
+
+export default PostMenuBottomSheet;
