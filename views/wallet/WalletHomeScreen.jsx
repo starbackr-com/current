@@ -24,27 +24,42 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
           justifyContent: 'space-evenly',
         }}
       >
-        <PressableIcon
-          icon="list"
-          label="Transactions"
-          onPress={() => {
-            navigate('WalletTransactionScreen');
-          }}
-        />
-        <PressableIcon
-          icon="key"
-          label="Wallet Connect"
-          onPress={() => {
-            navigate('WalletConnectScreen');
-          }}
-        />
-        <PressableIcon
-          icon="information-circle"
-          label="Wallet Info"
-          onPress={() => {
-            navigate('WalletInfoScreen');
-          }}
-        />
+        <View style={{ flex: 1 }}>
+          <PressableIcon
+            icon="information-circle"
+            label="Info"
+            onPress={() => {
+              navigate('WalletInfoScreen');
+            }}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <PressableIcon
+            icon="list"
+            label="Transactions"
+            onPress={() => {
+              navigate('WalletTransactionScreen');
+            }}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <PressableIcon
+            icon="key"
+            label="Connect"
+            onPress={() => {
+              navigate('WalletConnectScreen');
+            }}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <PressableIcon
+            icon="reload"
+            label="Reload"
+            onPress={() => {
+              refetch();
+            }}
+          />
+        </View>
       </View>
       <View
         style={{ flex: 1, justifyContent: 'center', flexDirection: 'column' }}
