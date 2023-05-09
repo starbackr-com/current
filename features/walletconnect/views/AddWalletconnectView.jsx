@@ -20,6 +20,8 @@ const AddWalletconnectView = ({ navigation }) => {
   const [amount, setAmount] = useState('');
   const sheetRef = useRef();
 
+  const now = useRef(new Date());
+
   const { walletBearer } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -40,7 +42,7 @@ const AddWalletconnectView = ({ navigation }) => {
   }
 
   const addHandler = async () => {
-    if (canAdd) {
+    if (amount.length > 0 && name.length > 0) {
       const keys = genWalletConnectKey();
       const jsonBody = {
         status: 'active',
@@ -73,7 +75,6 @@ const AddWalletconnectView = ({ navigation }) => {
 
         //publish an event to the relay using this privateKey
         const event = await createKind13194(keys.privKey);
-        console.log('event13194: ', event);
         publishGenericEventToRelay(event, data.relay);
 
         dispatch(addWalletconnect([newWcData]));
@@ -154,6 +155,7 @@ const AddWalletconnectView = ({ navigation }) => {
             <Text style={globalStyles.textBodyG}>(0 = does not expire)</Text>
           </Text>
         </View>
+        {amount.length > 0 ? <Text style={[globalStyles.textBodyG, {marginBottom: 6}]}>{`Spend up to ${amount} SATS ${repeat !== 'Never' ? repeat.toLowerCase() : ''}. Valid for${expiry > 0 ? ` ${expiry} days` : 'ever'}.`}</Text> : undefined}
         <CustomButton
           text="Add"
           buttonConfig={{ onPress: addHandler }}
