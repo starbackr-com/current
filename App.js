@@ -5,6 +5,7 @@ import { store } from './store/store';
 import 'react-native-url-polyfill/auto';
 import Root from './Root';
 import { injectStore } from './utils/nostrV2/Event';
+import 'react-native-gesture-handler';
 import React from 'react';
 
 const App = () => {
