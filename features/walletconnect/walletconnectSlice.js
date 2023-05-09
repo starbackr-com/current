@@ -26,7 +26,6 @@ export const walletconnectSlice = createSlice({
       const index = state.wcdata.findIndex(
         (item) => item.nwcpubkey === updatedWalletconnectObject.nwcpubkey,
       );
-
       state.wcdata[index] = updatedWalletconnectObject;
     },
     hydrate: (state, action) => {
@@ -44,6 +43,7 @@ export const wcListener = async (action, listenerApi) => {
   await saveValue('wcdata', json);
 };
 
-export const { addWalletconnect, changeWalletconnect, hydrate } = walletconnectSlice.actions;
+export const { addWalletconnect, changeWalletconnect, hydrate } =
+  walletconnectSlice.actions;
 
 export default walletconnectSlice.reducer;

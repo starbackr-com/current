@@ -38,9 +38,7 @@ const WalletconnectItem = ({ wcdata }) => {
   const { walletBearer } = useSelector((state) => state.auth);
 
   const removeHandler = () => {
-
     if (wcdata.status === 'active') {
-
       Alert.alert(
         'Deactivate this link?',
         `Clients using this link "${wcdata.name}" cannot use this wallet.`,
@@ -61,10 +59,9 @@ const WalletconnectItem = ({ wcdata }) => {
                   },
                 },
               );
-              wcdata.status = 'inactive';
               const data = await response.json();
               if (data.status === 'success') {
-                dispatch(changeWalletconnect([wcUpdated]));
+                dispatch(changeWalletconnect(wcUpdated));
               }
             },
             style: 'destructive',
@@ -72,9 +69,7 @@ const WalletconnectItem = ({ wcdata }) => {
           { text: 'No' },
         ],
       );
-
     } else {
-
       Alert.alert(
         'Activate this link?',
         `Clients using this link "${wcdata.name}" can use this wallet.`,
@@ -106,10 +101,7 @@ const WalletconnectItem = ({ wcdata }) => {
           { text: 'No' },
         ],
       );
-
-
     }
-
   };
 
   return (
