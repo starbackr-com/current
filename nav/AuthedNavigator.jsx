@@ -25,6 +25,7 @@ import { ConversationNavigator } from '../features/messages';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ProfileHeader from '../features/profile/components/ProfileHeader';
 import OwnProfileNavigator from './OwnProfileNavigator';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -67,7 +68,11 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Wallet" component={WalletNavigator} options={{ headerShown: false }}/>
+    <Tab.Screen
+      name="Wallet"
+      component={WalletNavigator}
+      options={{ headerShown: false }}
+    />
     <Tab.Screen name="Messages" component={ConversationNavigator} />
     <Tab.Screen
       name="New"
@@ -92,90 +97,92 @@ const TabNavigator = () => (
 );
 
 const AuthedNavigator = () => (
-  <BottomSheetModalProvider>
-    <Stack.Navigator initialRouteName="MainTabNav">
-      <Stack.Screen
-        name="MainTabNav"
-        component={TabNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="TwitterModal"
-        component={TwitterModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="VerifyTwitterModal"
-        component={VerifyTwitterModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="PostView"
-        component={PostView}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={OwnProfileNavigator}
-        options={({ navigation, route }) => ({
-          headerShown: false,
-        })}
-      />
-      <Stack.Screen
-        name="ImageModal"
-        component={FullScreenImage}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ReadMoreModal"
-        component={ReadMoreModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="PostMenuModal"
-        component={PostMenuModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ZapListModal"
-        component={ZapListModal}
-        options={{
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ReportPostModal"
-        component={ReportPostModal}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name="MentionsModal"
-        component={MentionsNavigator}
-        options={({ navigation }) => ({
-          presentation: 'modal',
-          header: () => <BackHeader navigation={navigation} />,
-        })}
-      />
-      <Stack.Screen
-        name="PlebhyModal"
-        component={PlebhyNavigator}
-        options={{
-          presentation: 'modal',
-          header: () => <BackHeader />,
-        }}
-      />
-    </Stack.Navigator>
-  </BottomSheetModalProvider>
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <BottomSheetModalProvider>
+      <Stack.Navigator initialRouteName="MainTabNav">
+        <Stack.Screen
+          name="MainTabNav"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TwitterModal"
+          component={TwitterModal}
+          options={{ presentation: 'modal', headerShown: false }}
+        />
+        <Stack.Screen
+          name="VerifyTwitterModal"
+          component={VerifyTwitterModal}
+          options={{ presentation: 'modal', headerShown: false }}
+        />
+        <Stack.Screen
+          name="PostView"
+          component={PostView}
+          options={{ presentation: 'modal', headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={OwnProfileNavigator}
+          options={({ navigation, route }) => ({
+            headerShown: false,
+          })}
+        />
+        <Stack.Screen
+          name="ImageModal"
+          component={FullScreenImage}
+          options={{
+            presentation: 'transparentModal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ReadMoreModal"
+          component={ReadMoreModal}
+          options={{
+            presentation: 'transparentModal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="PostMenuModal"
+          component={PostMenuModal}
+          options={{
+            presentation: 'transparentModal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ZapListModal"
+          component={ZapListModal}
+          options={{
+            presentation: 'transparentModal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ReportPostModal"
+          component={ReportPostModal}
+          options={{ presentation: 'modal', headerShown: false }}
+        />
+        <Stack.Screen
+          name="MentionsModal"
+          component={MentionsNavigator}
+          options={({ navigation }) => ({
+            presentation: 'modal',
+            header: () => <BackHeader navigation={navigation} />,
+          })}
+        />
+        <Stack.Screen
+          name="PlebhyModal"
+          component={PlebhyNavigator}
+          options={{
+            presentation: 'modal',
+            header: () => <BackHeader />,
+          }}
+        />
+      </Stack.Navigator>
+    </BottomSheetModalProvider>
+  </GestureHandlerRootView>
 );
 
 export default AuthedNavigator;

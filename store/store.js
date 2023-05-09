@@ -7,6 +7,7 @@ import { walletApi } from '../services/walletApi';
 import userReducer from '../features/userSlice';
 import interactionReducer from '../features/interactionSlice';
 import relaysReducer from '../features/relays/relaysSlice';
+import walletconnectReducer from '../features/walletconnect/walletconnectSlice';
 import listener from './listenerMiddleware';
 import badgeReducer from '../features/badges/badgeSlice';
 
@@ -18,6 +19,7 @@ export const store = configureStore({
     user: userReducer,
     interaction: interactionReducer,
     relays: relaysReducer,
+    walletconnect: walletconnectReducer,
     badges: badgeReducer,
     [walletApi.reducerPath]: walletApi.reducer,
   },

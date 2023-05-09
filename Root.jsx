@@ -1,16 +1,15 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
 /* eslint-disable react/style-prop-object */
 /* eslint-disable global-require */
 import { View, Linking } from 'react-native';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadAsync } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import {
-  NavigationContainer,
-} from '@react-navigation/native';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { getPublicKey, nip19 } from 'nostr-tools';
 
 import { getValue } from './utils/secureStore';
@@ -29,6 +28,7 @@ import devLog from './utils/internal';
 import useSilentFollow from './hooks/useSilentFollow';
 import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
+import { hydrate } from './features/walletconnect/walletconnectSlice';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,8 +37,16 @@ const Root = () => {
   const silentFollow = useSilentFollow();
   const dispatch = useDispatch();
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
+
+  const hydrateWc = async () => {
+    const wcDataString = await getValue('wcdata');
+    if (wcDataString) {
+      const wcData = JSON.parse(wcDataString);
+      dispatch(hydrate(wcData));
+    }
+  };
 
   const refreshToken = async () => {
     if (isLoggedIn && Date.now() > walletExpires) {
@@ -52,13 +60,13 @@ const Root = () => {
   };
 
   useEffect(() => {
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-      setNotification(notification);
-    });
+    // notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+    //   setNotification(notification);
+    // });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log(response);
-    });
+    // responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+    //   console.log(response);
+    // });
 
     const prepare = async () => {
       setAppIsReady(false);
@@ -67,6 +75,7 @@ const Root = () => {
         await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
+        await hydrateWc();
         const privKey = await getValue('privKey');
         await loadAsync({
           'Montserrat-Regular': require('./assets/Montserrat-Regular.ttf'),
@@ -120,6 +129,7 @@ const Root = () => {
   return (
     <NavigationContainer
       onStateChange={refreshToken}
+      theme={DarkTheme}
       linking={{
         prefixes: ['exp://', 'exp://192.168.3.116:19000/--/', 'nostr:'],
         config: {
@@ -187,18 +197,13 @@ const Root = () => {
           const subscription = Notifications.addNotificationResponseReceivedListener(
             (response) => {
               try {
-
-                if (
-                  response?.notification.request.content.data.kind === 4
-                ) {
+                if (response?.notification.request.content.data.kind === 4) {
                   const author = response?.notification.request.content.data.pubkey;
                   listener(`nostr://message/${author}`);
                 }
-
               } catch (e) {
-                  console.log(e);
+                console.log(e);
               }
-
             },
           );
 
