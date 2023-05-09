@@ -49,6 +49,8 @@ const AddWalletconnectView = ({ navigation }) => {
         nwcpubkey: keys.pubKey,
         name,
         maxamount: amount,
+        expiry : parseInt(expiry),
+        repeat : repeat.toLowerCase()
       };
 
       const response = await fetch(`${process.env.BASEURL}/v2/walletconnect`, {
@@ -71,6 +73,9 @@ const AddWalletconnectView = ({ navigation }) => {
           status: 'active',
           relay: data.relay,
           walletpubkey: data.walletpubkey,
+          expiry : parseInt(expiry),
+          createdat: Math.floor(Date.now() / 1000),
+          repeat : repeat.toLowerCase()
         };
 
         //publish an event to the relay using this privateKey
@@ -107,7 +112,7 @@ const AddWalletconnectView = ({ navigation }) => {
         <View style={{ width: '100%', marginBottom: 12 }}>
           <Input
             textInputConfig={{
-              keyboardType: 'numeric',
+              keyboardType: 'number-pad',
               onChangeText: changeHandler,
               placeholder: 'in SATS',
             }}
@@ -147,7 +152,10 @@ const AddWalletconnectView = ({ navigation }) => {
           </Text>
           <View style={{}}>
             <Input
-              textInputConfig={{ onChangeText: setExpiry, value: expiry }}
+              textInputConfig={{type:'number',
+                                onChangeText: setExpiry,
+                                keyboardType: 'number-pad',
+                                value: expiry }}
             />
           </View>
           <Text style={[globalStyles.textBody, { marginLeft: 12 }]}>
@@ -155,7 +163,7 @@ const AddWalletconnectView = ({ navigation }) => {
             <Text style={globalStyles.textBodyG}>(0 = does not expire)</Text>
           </Text>
         </View>
-        {amount.length > 0 ? <Text style={[globalStyles.textBodyG, {marginBottom: 6}]}>{`Spend up to ${amount} SATS ${repeat !== 'Never' ? repeat.toLowerCase() : ''}. Valid for${expiry > 0 ? ` ${expiry} days` : 'ever'}.`}</Text> : undefined}
+        {amount.length > 0 ? <Text style={[globalStyles.textBodyS, {marginBottom: 6}]}>{`Spend up to ${amount} SATS ${repeat !== 'Never' ? repeat.toLowerCase() : ''}. Valid for${expiry > 0 ? ` ${expiry} days` : 'ever'}.`}</Text> : undefined}
         <CustomButton
           text="Add"
           buttonConfig={{ onPress: addHandler }}

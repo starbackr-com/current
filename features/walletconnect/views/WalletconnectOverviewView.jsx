@@ -27,7 +27,7 @@ const WalletconnectSettingsView = () => {
       />
       <Text style={globalStyles.textBodyS}>
         Nostr Wallet Connect (NIP-47) is an easy way to connect this wallet to
-        any supported Nostr clients such as Amethyst.Just copy and paste the QR
+        any supported Nostr clients such as Amethyst or Snort.social. Just copy and paste the QR
         code.
       </Text>
     </View>

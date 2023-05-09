@@ -26,15 +26,6 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
       >
         <View style={{ flex: 1 }}>
           <PressableIcon
-            icon="information-circle"
-            label="Info"
-            onPress={() => {
-              navigate('WalletInfoScreen');
-            }}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <PressableIcon
             icon="list"
             label="Transactions"
             onPress={() => {
@@ -44,8 +35,18 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
         </View>
         <View style={{ flex: 1 }}>
           <PressableIcon
+            icon="information-circle"
+            label="Info"
+            onPress={() => {
+              navigate('WalletInfoScreen');
+            }}
+          />
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <PressableIcon
             icon="key"
-            label="Connect"
+            label="Wallet Connect"
             onPress={() => {
               navigate('WalletConnectScreen');
             }}

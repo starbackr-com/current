@@ -117,16 +117,31 @@ const WalletconnectItem = ({ wcdata }) => {
           name="key-outline"
           color={wcdata.status === 'active' ? 'green' : 'red'}
         />
-        <Text style={[globalStyles.textBody]}>{wcdata.name} </Text>
-        <View>
-          <Text style={[globalStyles.textBodyG]}>
-            {' '}
-            SATS Limit: {wcdata.maxamount}
-          </Text>
-        </View>
+          <View style={{ width: '100%', marginBottom: 12 }}>
+              <Text style={[globalStyles.textBody]}>{wcdata.name} </Text>
+              <Text style={[globalStyles.textBodyG]}>
+                {' '}
+                {`Spend up to ${wcdata.maxamount} SATS ${(wcdata.repeat && wcdata.repeat !== 'never') ? wcdata.repeat.toLowerCase() : ''}. Valid for${(wcdata.expiry > 0 &&  wcdata.createdat > 0) ? ` ${daysBetween(wcdata.createdat,parseInt(wcdata.expiry))} days` : 'ever'}.`}
+              </Text>
+          </View>
       </Pressable>
     </Animated.View>
   );
 };
 
 export default WalletconnectItem;
+
+function daysBetween(createdAt,expiry) {
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const millisecondsPerDay = 86400000; // 1000 ms/s * 60 s/m * 60 m/h * 24 h/d
+  const createdAtDate = new Date(createdAt * 1000);
+  const currentDate = new Date(currentTimestamp * 1000);
+  const timeDiffInMs = currentDate.getTime() - createdAtDate.getTime();
+  const timeDiffInDays = Math.floor(timeDiffInMs / millisecondsPerDay);
+  //console.log(timeDiffInDays);
+  if ((expiry - timeDiffInDays) > 0) {
+      return expiry - timeDiffInDays;
+  } else {
+      return 0;
+  }
+}

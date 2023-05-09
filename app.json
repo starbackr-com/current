@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "13",
+      "buildNumber": "14",
       "infoPlist":{
         "UIBackgroundModes":["remote-notification"]
       }
@@ -35,7 +35,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 41,
+      "versionCode": 42,
       "googleServicesFile": "./google-services.json"
     },
     "notification": {

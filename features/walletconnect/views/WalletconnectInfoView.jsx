@@ -50,13 +50,18 @@ const WalletconnectInfoView = ({ route, navigation }) => {
           ]}
           onPress={copyUrlHandler}
         >
-          Wallet Connect Address
+          Wallet Connect Config
         </Text>
-        <Text style={globalStyles.textBodyS}>Click QR code to copy.</Text>
+        <Text style={globalStyles.textBodyS}>
+                  Click QR code to copy
+        </Text>
+        <Text style={globalStyles.textBodyS}>
+                  Wallet Connect config.
+        </Text>
 
         {nwcConnectUrl ? (
           <View style={styles.qrContainer}>
-            <QRCode value={nwcConnectUrl} onPress={copyUrlHandler} />
+            <QRCode size={180} value={nwcConnectUrl} onPress={copyUrlHandler} />
           </View>
         ) : undefined}
 
