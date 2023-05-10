@@ -5,6 +5,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { colors } from '../styles';
 
 const LoadingSkeleton = () => {
   const pulseStyle = useAnimatedStyle(() => ({
@@ -19,7 +20,7 @@ const LoadingSkeleton = () => {
   }));
   return (
     <Animated.View
-      style={[{ backgroundColor: '#333333', flex: 1, borderRadius: 10 }, pulseStyle]}
+      style={[{ backgroundColor: colors.backgroundSecondary, flex: 1 }, pulseStyle]}
     />
   );
 };

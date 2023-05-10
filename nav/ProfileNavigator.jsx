@@ -12,10 +12,8 @@ const Stack = createStackNavigator();
 
 const ProfileNavigator = () => (
   <Stack.Navigator
-    screenOptions={({ navigation }) => ({
-      header: ({ route }) => (
-        <ProfileHeader route={route} navigation={navigation} />
-      ),
+    screenOptions={({ navigation, route }) => ({
+      header: () => <ProfileHeader route={route} navigation={navigation} />,
     })}
   >
     <Stack.Screen name="ProfileScreen" component={ProfileScreen} />

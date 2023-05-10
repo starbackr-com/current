@@ -4,7 +4,7 @@ import colors from './colors';
 const globalStyles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    paddingTop: 32,
+    paddingTop: 16,
     paddingHorizontal: 8,
     backgroundColor: colors.backgroundPrimary,
     alignItems: 'center',
@@ -24,6 +24,12 @@ const globalStyles = StyleSheet.create({
   textBodyS: {
     fontFamily: 'Montserrat-Regular',
     color: 'white',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  textBodyG: {
+    fontFamily: 'Montserrat-Regular',
+    color: 'grey',
     fontSize: 12,
     textAlign: 'center',
   },

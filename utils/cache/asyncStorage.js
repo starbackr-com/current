@@ -4,6 +4,7 @@ import {
   setZapAmount,
   setZapNoconf,
   setZapComment,
+  setPushToken,
 } from '../../features/userSlice';
 import { store } from '../../store/store';
 import { getValue } from '../secureStore';
@@ -49,6 +50,7 @@ export const hydrateStore = async () => {
   const zapAmount = await getData('zapAmount');
   const zapComment = await getData('zapComment');
   const zapNoconf = await getData('zapNoconf');
+  const pushToken = await getData('pushToken')
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
   if (zapAmount) {
@@ -59,6 +61,9 @@ export const hydrateStore = async () => {
   }
   if (zapNoconf) {
     store.dispatch(setZapNoconf(zapNoconf));
+  }
+  if (pushToken) {
+    store.dispatch(setPushToken(pushToken));    
   }
   if (twitterModalShown) {
     store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)));

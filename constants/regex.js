@@ -21,3 +21,6 @@ export const bolt11Regex = /(lnbc\d+[munp][A-Za-z0-9]+)/i;
 export const nip27Regex = /(nostr:[A-Za-z0-9]+)/i;
 
 export const usernameRegex = /^[a-z0-9]{4,32}$/i;
+
+export const openGraphRegex =
+  /<meta [^>]*property=["']og:(.*)["'] [^>]*content=["']([^'^"]+?)["'][^>]*>/gi;

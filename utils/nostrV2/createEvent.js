@@ -21,3 +21,18 @@ export async function createKind3(followedPubkeyArray, relayArray, sk) {
   event.sig = signEvent(event, sk);
   return event;
 }
+
+export async function createKind13194(sk) {
+  const pk = getPublicKey(sk);
+  const event = {
+    kind: 13194,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [],
+    content: 'pay_invoice',
+    pubkey: pk,
+  };
+
+  event.id = getEventHash(event);
+  event.sig = signEvent(event, sk);
+  return event;
+}

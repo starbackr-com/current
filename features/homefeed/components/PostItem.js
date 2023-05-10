@@ -68,7 +68,7 @@ const PostItem = ({ item, height, width, user, zaps }) => {
             <Animated.View
                 style={[
                     {
-                        backgroundColor: "#222222",
+                        backgroundColor: colors.backgroundSecondary,
                         marginBottom: 16,
                         width: "85%",
                         height: "90%",

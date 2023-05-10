@@ -36,11 +36,7 @@ const WalletInfoScreen = ({ navigation }) => {
         <ScrollView style={globalStyles.screenContainerScroll}>
             <View style={{ alignItems: "center" }}>
                 <View style={{ width: "100%", alignItems: "flex-start" }}>
-                    <BackButton
-                        onPress={() => {
-                            navigation.goBack();
-                        }}
-                    />
+                    
                 </View>
                 <Text
                     style={[globalStyles.textBody, {color: colors.primary500, marginTop: 16, marginBottom: 16}]}

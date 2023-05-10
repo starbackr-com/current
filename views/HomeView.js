@@ -1,19 +1,18 @@
 import { View } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import globalStyles from "../styles/globalStyles";
 import { createStackNavigator } from "@react-navigation/stack";
+import globalStyles from "../styles/globalStyles";
 import CommentScreen from "../features/comments/views/CommentScreen";
 import { storeData } from "../utils/cache/asyncStorage";
 import { setTwitterModal } from "../features/introSlice";
 import GetStartedItems from "../features/homefeed/components/GetStartedItems";
 import HomeFeed from "../features/homefeed/components/HomeFeed";
-import { useLinking } from "../hooks";
+import ProfileNavigator from "../nav/ProfileNavigator";
 
 const HomeStack = createStackNavigator();
 
 const HomeScreen = ({ navigation }) => {
-    useLinking();
     const [height, setHeight] = useState();
     const [width, setWidth] = useState();
     const twitterModalShown = useSelector(
@@ -55,9 +54,17 @@ const HomeView = () => {
             screenOptions={{
                 headerShown: false,
             }}
+            initialRouteName="HomeScreen"
         >
             <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
             <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
+            <HomeStack.Screen
+          name="Profile"
+          component={ProfileNavigator}
+          options={() => ({
+            headerShown: false,
+          })}
+        />
         </HomeStack.Navigator>
     );
 };

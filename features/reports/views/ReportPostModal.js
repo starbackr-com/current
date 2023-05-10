@@ -7,6 +7,7 @@ import { publishReport } from "../utils/publishReport";
 
 const ReportPostModal = ({ navigation, route }) => {
     const { event } = route.params;
+    console.log(event)
     const [isLoading, setIsLoading] = useState(false);
 
     const reportHandler = async (reason) => {

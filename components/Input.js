@@ -7,7 +7,7 @@ const Input = ({label, textInputConfig, labelStyle, inputStyle, invalid, alignme
   return (
     <>
       {label ? <Text style={[globalStyles.textBody,styles.label, labelStyle]}>{label}</Text> : undefined}
-      <TextInput style={[globalStyles.textBody,styles.input, inputStyle, invalid ? {borderColor: 'darkred'} : undefined, alignment ? {textAlign: alignment} : {textAlign: 'left'}]} {...textInputConfig}/>
+      <TextInput style={[globalStyles.textBody,styles.input, inputStyle, invalid ? {borderColor: 'darkred'} : undefined, alignment ? {textAlign: alignment} : {textAlign: 'left'}]} {...textInputConfig} placeholderTextColor={colors.backgroundActive}/>
     </>
   )
 }
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '100%',
-        backgroundColor: '#222222',
+        backgroundColor: colors.backgroundSecondary,
         borderColor: colors.primary500,
         borderWidth: 1,
         borderRadius: 10,

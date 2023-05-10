@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import ImagePost from "./ImagePost";
 import PostItem from "./PostItem";
 import { useSelector } from "react-redux";
 import { getZaps } from "../../zaps/utils/getZaps";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useScrollToTop } from "@react-navigation/native";
 import { usePaginatedFeed } from "../hooks/usePaginatedFeed";
 import { colors, globalStyles } from "../../../styles";
 
@@ -14,6 +14,8 @@ const HomeFeed = ({ width, height }) => {
     const [zaps, setZaps] = useState();
     const [refreshing, setRefreshing] = useState(false);
 
+    const listRef = useRef();
+
     const zapAmount = useSelector((state) => state.user.zapAmount);
     const users = useSelector((state) => state.messages.users);
 
@@ -21,6 +23,7 @@ const HomeFeed = ({ width, height }) => {
 
     const [get25RootPosts, refresh, events] = usePaginatedFeed(now);
     const navigation = useNavigation();
+    useScrollToTop(listRef);
 
     const loadZaps = async (arrayOfIds) => {
         const allZaps = await getZaps(arrayOfIds);
@@ -94,6 +97,7 @@ const HomeFeed = ({ width, height }) => {
                         showsVerticalScrollIndicator={false}
                         refreshing={refreshing}
                         onRefresh={refreshHandler}
+                        ref={listRef}
                     />
                 </View>
             ) : (

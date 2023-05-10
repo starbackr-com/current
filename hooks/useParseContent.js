@@ -66,7 +66,7 @@ export const useParseContent = (event) => {
           <Text
             style={{ color: colors.primary500 }}
             onPress={() => {
-              Linking.openURL(data);
+              navigation.push('CommentScreen', { eventId: data });
             }}
             key={m + i}
           >

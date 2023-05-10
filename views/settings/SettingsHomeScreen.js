@@ -1,62 +1,97 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable } from 'react-native';
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Linking from 'expo-linking';
 import { deleteValue } from '../../utils/secureStore';
 import { logOut } from '../../features/authSlice';
 import { resetAll } from '../../features/introSlice';
 import { clearStore } from '../../features/messagesSlice';
 import { clearUserStore } from '../../features/userSlice';
-import { dbLogout } from '../../utils/database';
-import * as Linking from 'expo-linking';
 import CustomButton from '../../components/CustomButton';
-import { removeData } from '../../utils/cache/asyncStorage';
 import appJson from '../../app.json';
-import { generateRandomString } from '../../utils/cache/asyncStorage';
+import {
+  generateRandomString,
+  removeData,
+} from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
+import { dbLogout, deleteMessageCache } from '../../utils/database';
 
 const settings = [
   'Payment Settings',
   'Backup Keys',
   'Network Settings',
+  'Push Notifications',
   'Muted Users',
   'Delete Account',
 ];
 
-const SettingItem = ({ item, onNav }) => {
-  return (
-    <Pressable
-      style={({ pressed }) => [
-        {
-          width: '100%',
-          backgroundColor: '#222222',
-          paddingVertical: 16,
-          paddingHorizontal: 8,
-          borderRadius: 10,
-          marginBottom: 16,
-        },
-        pressed ? { backgroundColor: '#333333' } : undefined,
-      ]}
-      onPress={() => {
-        onNav(item);
-      }}
-    >
-      <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>{item}</Text>
-    </Pressable>
-  );
-};
+const SettingItem = ({ item, onNav }) => (
+  <Pressable
+    style={({ pressed }) => [
+      {
+        width: '100%',
+        backgroundColor: '#222222',
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+        borderRadius: 10,
+        marginBottom: 16,
+      },
+      pressed ? { backgroundColor: '#333333' } : undefined,
+    ]}
+    onPress={() => {
+      onNav(item);
+    }}
+  >
+    <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>{item}</Text>
+  </Pressable>
+);
 
 const SettingsHomeScreen = ({ navigation }) => {
+  const [ispushnotifyChecked, setpushnotifyChecked] = useState(false);
   const dispatch = useDispatch();
   const navigationHandler = (route) => {
     navigation.navigate(route);
   };
+
+  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { pushToken } = useSelector((state) => state.user);
+
   const logoutHandler = async () => {
+    //clear push notifications
+    const initialState = {
+      status: false,
+      zaps: false,
+      dm: false,
+      mention: false,
+      reposts: false,
+      likes: false,
+      lntxn: false,
+      token: pushToken,
+    };
+
+    console.log(initialState);
+
+    fetch(`${process.env.BASEURL}/v2/pushtoken`, {
+      method: 'POST',
+      body: JSON.stringify(initialState),
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${walletBearer}`,
+      },
+    });
+
     await deleteValue('privKey');
     await deleteValue('username');
     await deleteValue('mem');
     await dbLogout();
-    await removeData(['twitterModalShown', 'zapAmount', 'zapComment', 'relays']);
+    await removeData([
+      'twitterModalShown',
+      'zapAmount',
+      'zapComment',
+      'relays',
+      'pushToken',
+    ]);
     dispatch(clearStore());
     dispatch(clearUserStore());
     dispatch(logOut());
@@ -80,12 +115,25 @@ const SettingsHomeScreen = ({ navigation }) => {
             <SettingItem item={item} onNav={navigationHandler} />
           )}
         />
+      </View>
 
+      <View
+        style={
+          (globalStyles.screenContainer,
+          {
+            width: '100%',
+            justifyContent: 'space-evenly',
+            flexDirection: 'row',
+            marginBottom: 50,
+          })
+        }
+      >
         <CustomButton
           text="Sign Out"
           buttonConfig={{ onPress: logoutHandler }}
         />
       </View>
+
       <Text
         style={[
           globalStyles.textBody,
@@ -98,7 +146,7 @@ const SettingsHomeScreen = ({ navigation }) => {
         Terms and Privacy
       </Text>
       <Text onPress={introHandler} style={globalStyles.textBodyS}>
-        v{appJson.expo.version} ({appJson.expo.ios.buildNumber})
+        {`v${appJson.expo.version} ${appJson.expo.ios.buildNumber}`}
       </Text>
     </View>
   );

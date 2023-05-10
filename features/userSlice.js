@@ -6,6 +6,7 @@ const initialState = {
   zapAmount: null,
   zapComment: null,
   zapNoconf: false,
+  pushToken: null,
   relays: {},
 };
 
@@ -63,12 +64,17 @@ export const userSlice = createSlice({
       console.log(action.payload);
       state.zapNoconf = action.payload;
     },
+    setPushToken: (state, action) => {
+      console.log(action.payload);
+      state.pushToken = action.payload;
+    },
     clearUserStore: (state) => {
       state.followedPubkeys = [];
       state.mutedPubkeys = [];
       state.zapAmount = null;
       state.zapComment = null;
       state.zapNoconf = false;
+      state.pushToken = null;
     },
     addRelays: (state, action) => {
       const newRelaysObject = action.payload;
@@ -88,6 +94,7 @@ export const {
   setZapNoconf,
   clearUserStore,
   addRelays,
+  setPushToken,
 } = userSlice.actions;
 
 export default userSlice.reducer;
