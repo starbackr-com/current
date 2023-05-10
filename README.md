@@ -9,10 +9,17 @@ The Current App for iOS and Android is an open source react-native client on top
 [![Appstore](https://i.current.fyi/help/app-store-badge-blue.svg)](https://apps.apple.com/us/app/current-nostr-bitcoin/id1668517032)
 [![Playstore](https://i.current.fyi/help/play-store-badge-blue.svg)](https://play.google.com/store/apps/details?id=io.getcurrent.current)
 
-[![android](https://i.current.fyi/help/android-apk.png)](https://i.current.fyi/help/current-004.apk)
+[![android](https://i.current.fyi/help/android-apk.png)](https://i.current.fyi/help/current-009.apk)
 
 
+Update as of May 10th 2023 - As of v0.0.9-Tamrindo we successfully completed all base mode features and on par with other Nostr clients. We also implemnted expert mode feaures such as add/remove relays and using other lightning wallets.
 
+We have implemented many unique features that exists only on Current. Such as
+- Push Notifications from relays
+- Wallet connect link to use Current wallet with other Nostr clients
+- Easy on boarding for noobs coming from other social media platforms
+- Search profiles with twitter handle
+- Same look and feel on both iOS and android
 
 
 Website: [getcurrent.io](https://getcurrent.io)
@@ -42,8 +49,8 @@ One of the best use cases we have seen of users using the Nostr client is to sen
 #### Media storage management:
 Over 80% of social media posts are with images and videos. Users will be able to upload images and later videos directly within the app and share their experiences with their community. Uploaded images are scanned for inappropriate content and rejected immediately.
 
-#### Automated Relay management:
-App automatically scans and connects to appropriate relays suited for users to send and receive posts. Users do not need to pay for relays or manually configure them.
+#### Automated Relay management & Ability to add/remove relays:
+App automatically scans and connects to appropriate relays suited for users to send and receive posts. Users do not need to pay for relays or manually configure them. However, there is also an option for advanced users to change relays
 
 #### One address for NIP-05 and Lightning:
 To make it easier for users, we let them choose a single verified address to send and receive messages and send and receive sats. We also have choices on domain names such as current.tips, current.fyi
@@ -58,25 +65,52 @@ Global feed is overwhelmed by in-appropriate messages and unrelated messages whi
 
 Easily share sats by pressing the zap button. You can preset the amount of zaps to be sent each time you press the button. Or long press to set a custom amount. It is that easy.
 
+#### Wallet Connect
+
+Enjoy 1-click zaps on other Nostr clients like snort.social or Amethyst with ease. Simply create a wallet connect link and paste it into the client. Plus, you can manage multiple wallet connect links in a fine-grained way by limiting the amount of SATS and setting an expiry date.
+
+#### Wallet Home Screen Redesign
+
+We've listened to your feedback and redesigned the wallet home screen to make it even easier to use.
+
+#### Improved Search View
+
+Searching for profiles and trending posts is now easier than ever with our major search screen overhaul.
+
+#### Experimental Direct Messages (Alpha Version)
+
+Enjoy end-to-end encrypted direct messaging with the ability to share images. This is our first version, so please report any bugs you encounter.
+
+#### Push Notifications
+
+Never miss a DM or zap again! Receive push notifications for DMs, likes, mentions, and reposts, even when you're away from your desk. No other Nostr client offers this feature directly from relays.
+
+
 #### Already implemented NIPs
 
-NIP-01: Basic protocol flow
-
-NIP-05: Mapping Nostr keys to DNS-based internet identifiers
-
-NIP-19: bech32-encoded entities
+ - NIP-01: Basic protocol flow
+ - NIP-02: Contact List and Petnames
+ - NIP-04: Encrypted Direct Message
+ - NIP-05: Mapping Nostr keys to DNS-based internet identifiers
+ - NIP-06: Basic key derivation from mnemonic seed phrase
+ - NIP-18: Reposts
+ - NIP-19: bech32-encoded entities
+ - NIP-25: Reactions
+ - NIP-47: Nostr Wallet connect
+ - NIP-57: Lightning Zaps
+ - NIP-58: Badges
 
 #### To be implemented:
 
-NIP-08: Mentions
+ - NIP-12: Generic tag queries (hashtags)
+ - NIP-42: Authentication of clients to relays
+ - NIP-94: File Metadata
+ - NIP-69: Zap Polls
 
-NIP-10: Reply conventions
 
-NIP-12: Generic tag queries (hashtags)
 
 #### Expert Mode:
 
-Once base features are implemented we will start to open up the default features such as wallet, storage and relay management so that expert users will be able to set their own wallets, storage and relays.
 
 
 ## Screenshots
@@ -137,7 +171,7 @@ iOS: https://apps.apple.com/us/app/current-nostr-bitcoin/id1668517032
 
 Google play: https://play.google.com/store/apps/details?id=io.getcurrent.current
 
-Android APK: https://i.current.fyi/help/current-004.apk
+Android APK: https://i.current.fyi/help/current-009.apk
 
 ## Support
 
@@ -152,9 +186,9 @@ Contributions are always welcome!
 
 We are looking for developers to start building these features. Please reach out before getting started
 
- - Push notifications
- - Direct Messages
+ - Zap Polls
  - Embed Audio/video events
+ - NIP 94
 
  Please reach out to starbuilder@current.fyi on Nostr https://nostr.band/npub1mz3vx0ew9le6n48l9f2e8u745k0fzel6thksv0gwfxy3wanprcxq79mymx
 
