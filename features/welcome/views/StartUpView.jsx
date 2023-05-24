@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 const logo = require('../../../assets/lightning_logo_negativ.png');
 
 const StartUpView = ({ navigation }) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('welcome');
   const importHandler = async () => {
     generateRandomString(12);
     navigation.navigate('EULA', { isImport: true });

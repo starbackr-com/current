@@ -3,6 +3,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { getLocales } from 'expo-localization';
 import { getData } from '../utils/cache/asyncStorage';
+import welcomeTranslations from '../features/welcome/locale';
+import settingsTranslations from '../features/settings/locale'
 
 async function checkLanguage() {
   const selectedLanguage = await getData('language');
@@ -14,20 +16,12 @@ async function checkLanguage() {
 
 const resources = {
   en: {
-    translation: {
-      'StartUpView_Header': 'Welcome, stranger!',
-      'StartUpView_SelectionBody': 'Do you want to create a new key-pair or import an existing one?',
-      'StartUpView_StartFreshButton': 'Start Fresh',
-      'StartUpView_ImportButton': 'Import keys',
-    },
+    welcome: welcomeTranslations.en,
+    settings: settingsTranslations.en,
   },
   de: {
-    translation: {
-      'StartUpView_Header': 'Willkommen!',
-      'StartUpView_SelectionBody': 'Willst du ein neues Schlüsselpaar erstellen oder ein bestehendes importieren?',
-      'StartUpView_StartFreshButton': 'Schlüsselpaar erstellen',
-      'StartUpView_ImportButton': 'Schlüssel importieren',
-    },
+    welcome: welcomeTranslations.de,
+    settings: settingsTranslations.de,
   },
 };
 

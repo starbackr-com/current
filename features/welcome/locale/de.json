@@ -1,0 +1,10 @@
+{
+  "StartUpView_Header": "Willkommen!",
+  "StartUpView_SelectionBody": "Willst du ein neues Schlüsselpaar erstellen oder ein bestehendes importieren?",
+  "StartUpView_StartFreshButton": "Schlüsselpaar erstellen",
+  "StartUpView_ImportButton": "Schlüssel importieren",
+  "EULAView_H1": "Endnutzer Lizenzvereinbarung",
+  "EULAView_H2Intro": "Einführung",
+  "EULAView_BodyIntro": "This End User License Agreement (EULA) is a legal agreement between you and Lightning Digital Entertainment Inc. for the use of our mobile application current. By installing, accessing, or using out application, you agree to be bound by the terms and conditions of this EULA."
+}
+

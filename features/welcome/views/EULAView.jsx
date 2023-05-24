@@ -3,9 +3,11 @@ import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CustomButton } from '../../../components';
 import globalStyles from '../../../styles/globalStyles';
+import { useTranslation } from 'react-i18next';
 
 const EULAView = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
+  const {t} = useTranslation('welcome');
 
   const isImport = route?.params?.isImport;
 
@@ -32,8 +34,8 @@ const EULAView = ({ navigation, route }) => {
       ]}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={globalStyles.textH1}>End User License Agreement</Text>
-        <Text style={globalStyles.textH2}>Introduction</Text>
+        <Text style={globalStyles.textH1}>{t('EULAView_H1')}</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2Intro')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
           This End User License Agreement (EULA) is a legal agreement between
           you and Lightning Digital Entertainment Inc. for the use of our mobile

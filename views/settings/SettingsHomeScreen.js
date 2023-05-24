@@ -23,6 +23,7 @@ const settings = [
   'Network Settings',
   'Push Notifications',
   'Muted Users',
+  'Language Settings',
   'Delete Account',
 ];
 

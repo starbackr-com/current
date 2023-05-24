@@ -9,6 +9,7 @@ import SettingsDeleteAccountScreen from '../views/settings/SettingsDeleteAccount
 import RelaySettingsNav from '../features/relays/nav/RelaySettingsNav';
 import SettingsNotifcationsScreen from '../views/settings/SettingsNotifcationsScreen';
 import { BackHeader } from '../components';
+import SettingsLanguageView from '../views/settings/SettingsLanguageView';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,13 @@ const SettingsNavigator = () => (
       name="Delete Account"
       component={SettingsDeleteAccountScreen}
       options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Language Settings"
+      component={SettingsLanguageView}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
     />
   </Stack.Navigator>
 );
