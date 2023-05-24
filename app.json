@@ -25,8 +25,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
       "buildNumber": "14",
-      "infoPlist":{
-        "UIBackgroundModes":["remote-notification"]
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -52,6 +54,9 @@
       "eas": {
         "projectId": "04522974-aa48-4b3e-ad26-71be0648d73c"
       }
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

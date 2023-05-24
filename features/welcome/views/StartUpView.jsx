@@ -4,10 +4,12 @@ import { Image } from 'expo-image';
 import globalStyles from '../../../styles/globalStyles';
 import CustomButton from '../../../components/CustomButton';
 import { generateRandomString } from '../../../utils/cache/asyncStorage';
+import { useTranslation } from 'react-i18next';
 
 const logo = require('../../../assets/lightning_logo_negativ.png');
 
 const StartUpView = ({ navigation }) => {
+  const { t, i18n } = useTranslation();
   const importHandler = async () => {
     generateRandomString(12);
     navigation.navigate('EULA', { isImport: true });
@@ -31,14 +33,14 @@ const StartUpView = ({ navigation }) => {
             borderRadius: 10,
           }}
         />
-        <Text style={globalStyles.textH1}>Welcome, stranger!</Text>
+        <Text style={globalStyles.textH1}>{t('StartUpView_Header')}</Text>
         <Text style={globalStyles.textBody}>
-          Do you want to create a new key-pair or import an existing one?
+          {t('StartUpView_SelectionBody')}
         </Text>
       </View>
       <View style={{ flex: 1 }}>
         <CustomButton
-          text="Start fresh"
+          text={t('StartUpView_StartFreshButton')}
           buttonConfig={{ onPress: createHandler }}
           containerStyles={{
             margin: 16,
@@ -47,7 +49,7 @@ const StartUpView = ({ navigation }) => {
           }}
         />
         <CustomButton
-          text="Import keys/backup"
+          text={t('StartUpView_ImportButton')}
           buttonConfig={{ onPress: importHandler }}
           containerStyles={{
             margin: 16,

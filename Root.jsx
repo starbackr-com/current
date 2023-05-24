@@ -29,6 +29,7 @@ import useSilentFollow from './hooks/useSilentFollow';
 import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
+import './translations/translations';
 
 SplashScreen.preventAutoHideAsync();
 
