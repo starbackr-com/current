@@ -8,8 +8,10 @@ import settingsTranslations from '../features/settings/locale'
 
 async function checkLanguage() {
   const selectedLanguage = await getData('language');
+  console.log(selectedLanguage);
   if (selectedLanguage) {
     i18n.changeLanguage(selectedLanguage);
+    return;
   }
   i18n.changeLanguage(getLocales()[0].languageCode);
 }
@@ -29,12 +31,13 @@ i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources,
-    lng: 'en',
+    compatibilityJSON: 'v3',
+    lng: 'de',
     interpolation: {
       escapeValue: false,
     },
   });
 
-checkLanguage();
+// checkLanguage();
 
 export default i18n;

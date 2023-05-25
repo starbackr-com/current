@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 const EULAView = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
-  const {t} = useTranslation('welcome');
+  const { t } = useTranslation('welcome');
 
   const isImport = route?.params?.isImport;
 
@@ -35,91 +35,69 @@ const EULAView = ({ navigation, route }) => {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={globalStyles.textH1}>{t('EULAView_H1')}</Text>
-        <Text style={globalStyles.textH2}>{t('EULAView_H2Intro')}</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Intro')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          This End User License Agreement (EULA) is a legal agreement between
-          you and Lightning Digital Entertainment Inc. for the use of our mobile
-          application current. By installing, accessing, or using out
-          application, you agree to be bound by the terms and conditions of this
-          EULA.
+          {t('EULAView_Body_Intro')}
         </Text>
-        <Text style={globalStyles.textH2}>Prohibited Content and Conduct</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Prohibited')}</Text>
         <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
-          You agree not to use our application to create, upload, post, send, or
-          store any content that:
+          {t('EULAView_H3_ProhibitedList_1')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is illegal, infringing, or fraudulent
+          {t('EULAView_Body_ProhibitedList_1_1')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * is defamatory, libelous, or threatening
+          {t('EULAView_Body_ProhibitedList_1_2')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is pornographic, obscene, or offensive
+          {t('EULAView_Body_ProhibitedList_1_3')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is discriminatory or promotes hate speech
+          {t('EULAView_Body_ProhibitedList_1_4')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * is harmful to minors
+          {t('EULAView_Body_ProhibitedList_1_5')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is intended to harass or bully others
+          {t('EULAView_Body_ProhibitedList_1_6')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is intended to impersonate others
+          {t('EULAView_Body_ProhibitedList_1_7')}
         </Text>
         <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
-          You also agree not to engage in any conduct that:
+          {t('EULAView_H3_ProhibitedList_2')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Harasses or bullies others
+          {t('EULAView_Body_ProhibitedList_2_1')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Impersonates others
+          {t('EULAView_Body_ProhibitedList_2_2')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * le intended to intimidate or threaten others
+          {t('EULAView_Body_ProhibitedList_2_3')}
         </Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          * Is intended to promote or incite violence
+          {t('EULAView_Body_ProhibitedList_2_4')}
         </Text>
-        <Text style={globalStyles.textH2}>Consequences of Violation</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Consequences')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          Any violation of this EULA, including the prohibited content and
-          conduct outlined above, may result in the termination of your access
-          to our application.
+          {t('EULAView_Body_Consequences')}
         </Text>
-        <Text style={globalStyles.textH2}>
-          Disclaimer of Warranties and Limitation of Liability
-        </Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Disclaimer')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          Our application is provided -as is- and -as available- without
-          warranty of any kind, either express or implied, including but not
-          limited to the implied warranties of merchantability and fitness for a
-          particular purpose. We do not guarantee that our application will be
-          uninterrupted or error-free. In no event shall Lightning Digital
-          Entertainment Inc. be liable for any damages whatsoever, including but
-          not limited to direct, indirect, special, incidental, or consequential
-          damages, arising out of or in connection with the use or inability to
-          use our application.
+          {t('EULAView_Body_Disclaimer')}
         </Text>
-        <Text style={globalStyles.textH2}>Changes to EULA</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Changes')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          We reserve the right to undate or modifv this EULA at an time and
-          without prior notice. Your continued use of our application following
-          any changes to this EULA will be deemed to be your acceptance of such
-          changes.
+          {t('EULAView_Body_Changes')}
         </Text>
-        <Text style={globalStyles.textH2}>Contact Information</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Contact')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          If you have any questions about this EULA, please contact us at
-          hello@getcurrent.io
+          {t('EULAView_Body_Contact')}
         </Text>
-        <Text style={globalStyles.textH2}>Acceptance of Terms</Text>
+        <Text style={globalStyles.textH2}>{t('EULAView_H2_Acceptance')}</Text>
         <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
-          By using our Application, you signify your acceptance of this EULA. If
-          you do not agree to this EULA, you may not use our Application.
+          {t('EULAView_Body_Acceptance')}
         </Text>
         <View
           style={{
