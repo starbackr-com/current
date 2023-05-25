@@ -5,6 +5,7 @@ import useLanguage from '../../hooks/useLanguage';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
 import { storeData } from '../../utils/cache/asyncStorage';
+import MenuBottomSheetWithData from '../../components/MenuBottomSheetWithData';
 
 type Language = {
   code: string;
@@ -18,6 +19,8 @@ const availableLanguages = [
 
 const SettingsLanguageView = () => {
   const { t, i18n } = useTranslation('settings');
+
+  const modalRef = useRef();
 
   const changeHandler = (language: Language) => {
     Alert.alert(
@@ -71,6 +74,8 @@ const SettingsLanguageView = () => {
           )}
         />
       </View>
+      <Pressable onPress={() => {modalRef.current.present('Test123123!')}}><Text>Test</Text></Pressable>
+      <MenuBottomSheetWithData ref={modalRef} render={(data) => <Text>{data}</Text>}/>
     </View>
   );
 };

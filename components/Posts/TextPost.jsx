@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -7,7 +8,7 @@ import { useZapNote } from '../../hooks/useZapNote';
 import PostActionBar from './PostActionBar';
 import { globalStyles } from '../../styles';
 
-export const TextPost = ({ event, user, onMenu }) => {
+export const TextPost = React.memo(({ event, user, onMenu }) => {
   const content = useParseContent(event);
   const navigation = useNavigation();
   const zap = useZapNote(
@@ -21,7 +22,7 @@ export const TextPost = ({ event, user, onMenu }) => {
       eventId: event.id,
       rootId: event.id,
       type: 'root',
-      event: event,
+      event,
     });
   };
 
@@ -70,9 +71,11 @@ export const TextPost = ({ event, user, onMenu }) => {
       <PostActionBar
         onPressComment={commentHandler}
         onPressZap={zapHandler}
-        onPressMore={() => {onMenu(event)}}
+        onPressMore={() => {
+          onMenu(event);
+        }}
         zapDisabled={!user?.lud06 && !user?.lud16}
       />
     </Animated.View>
   );
-};
+});
