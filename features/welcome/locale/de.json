@@ -30,6 +30,17 @@
   "EULAView_H2_Contact": "Contact Information",
   "EULAView_Body_Contact": "If you have any questions about this EULA, please contact us at hello@getcurrent.io",
   "EULAView_H2_Acceptance": "Acceptance of Terms",
-  "EULAView_Body_Acceptance": "By using our Application, you signify your acceptance of this EULA. If you do not agree to this EULA, you may not use our Application."
+  "EULAView_Body_Acceptance": "By using our Application, you signify your acceptance of this EULA. If you do not agree to this EULA, you may not use our Application.",
+
+  "ImportSelectionView_H2": "Wähle die Art des Schlüssels die du importieren willst...",
+  "ImportSelectionView_H3_Item_1": "Einzelner Schlüssel",
+  "ImportSelectionView_Body_Item_1": "Importiere einen einzelnen privaten Schlüssel",
+  "ImportSelectionView_H3_Item_2": "Seed Wörter",
+  "ImportSelectionView_Body_Item_2": "Leite einen Schlüssel aus Seeds Wörtern ab",
+  "ImportSelectionView_H3_Item_3": "Ich habe keinen Schlüssel",
+  "ImportSelectionView_Body_Item_3": "Du hast noch kein nostr-Schlüsselpaar? Kein Problem",
+  "ImportSelectionView_H2_Item_3_Action": "Keine Schlüssel?",
+  "ImportSelectionView_Body_Item_3_Action": "Möchtest du ein neues Schlüsselpaar erstellen?",
+  "ImportSelectionView_Body_Item_Example": "Beispiel"
 }
 

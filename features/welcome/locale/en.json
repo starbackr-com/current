@@ -4,7 +4,6 @@
   "StartUpView_StartFreshButton": "Start Fresh",
   "StartUpView_ImportButton": "Import keys",
 
-  
   "EULAView_H1": "End User License Agreement",
   "EULAView_H2_Intro": "Introduction",
   "EULAView_Body_Intro": "This End User License Agreement (EULA) is a legal agreement between you and Lightning Digital Entertainment Inc. for the use of our mobile application current. By installing, accessing, or using out application, you agree to be bound by the terms and conditions of this EULA.",
@@ -31,5 +30,16 @@
   "EULAView_H2_Contact": "Contact Information",
   "EULAView_Body_Contact": "If you have any questions about this EULA, please contact us at hello@getcurrent.io",
   "EULAView_H2_Acceptance": "Acceptance of Terms",
-  "EULAView_Body_Acceptance": "By using our Application, you signify your acceptance of this EULA. If you do not agree to this EULA, you may not use our Application."
+  "EULAView_Body_Acceptance": "By using our Application, you signify your acceptance of this EULA. If you do not agree to this EULA, you may not use our Application.",
+
+  "ImportSelectionView_H2": "Choose the type of key that you want to import...",
+  "ImportSelectionView_H3_Item_1": "Single Key",
+  "ImportSelectionView_Body_Item_1": "Import a single private key",
+  "ImportSelectionView_H3_Item_2": "Seed Words",
+  "ImportSelectionView_Body_Item_2": "Derive keys from a seed phrase",
+  "ImportSelectionView_H3_Item_3": "I don't have keys",
+  "ImportSelectionView_Body_Item_3": "You do not have any nostr-keys yet? No problem!",
+  "ImportSelectionView_H2_Item_3_Action": "No Keys?",
+  "ImportSelectionView_Body_Item_3_Action": "Do you want to create a new key-pair?",
+  "ImportSelectionView_Body_Item_Example": "Example"
 }
