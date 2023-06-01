@@ -41,5 +41,17 @@
   "ImportSelectionView_Body_Item_3": "You do not have any nostr-keys yet? No problem!",
   "ImportSelectionView_H2_Item_3_Action": "No Keys?",
   "ImportSelectionView_Body_Item_3_Action": "Do you want to create a new key-pair?",
-  "ImportSelectionView_Body_Item_Example": "Example"
+
+  "CreateProfileView_Label_Name": "Name",
+  "CreateProfileView_Label_Address": "Tip Address",
+  "CreateProfileView_Label_Bio": "Bio",
+  "CreateProfileView_Button_Create": "Create Profile",
+  
+  "ImportKeyView_H2_Deleted": "Deleted Account?",
+  "ImportKeyView_Body_Deleted": "That account has been deleted. Please use a different key.",
+  "ImportKeyView_Button_Deleted": "Okay.",
+  "ImportKeyView_Error_Key": "Invalid private key! Only HEX (f57d...) or bech32 (nsec1...) keys are supported",
+  "ImportKeyView_Button_Import": "Import",
+
+  "ImportTypeItem_Body_Example": "Example"
 }

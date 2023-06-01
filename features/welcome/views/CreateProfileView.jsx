@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { SvgCss } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CustomButton, Input } from '../../../components';
@@ -16,6 +17,7 @@ const CreateProfileView = ({ navigation, route }) => {
   const [bio, setBio] = useState();
   const device = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation('welcome');
 
   let data;
 
@@ -135,7 +137,7 @@ const CreateProfileView = ({ navigation, route }) => {
       >
         {data}
         <Input
-          label="Name"
+          label={t('CreateProfileView_Label_Name')}
           textInputConfig={{
             value:
               updateData === 'none' || updateData === 'ln'
@@ -146,7 +148,7 @@ const CreateProfileView = ({ navigation, route }) => {
           inputStyle={{ marginBottom: 16, color: colors.primary600 }}
         />
         <Input
-          label="Tip Address"
+          label={t('CreateProfileView_Label_Address')}
           textInputConfig={{
             value:
               updateData === 'none' || updateData === 'ln'
@@ -157,7 +159,7 @@ const CreateProfileView = ({ navigation, route }) => {
           inputStyle={{ marginBottom: 16, color: colors.primary600 }}
         />
         <Input
-          label="Bio"
+          label={t('CreateProfileView_Label_Bio')}
           textInputConfig={{
             multiline: true,
             onChangeText: setBio,
@@ -165,7 +167,7 @@ const CreateProfileView = ({ navigation, route }) => {
           }}
         />
         <CustomButton
-          text="Create Profile"
+          text={t('CreateProfileView_Button_Create')}
           buttonConfig={{
             onPress: () => {
               navigation.navigate('Loading', {

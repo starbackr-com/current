@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { getPublicKey } from 'nostr-tools';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { followPubkey } from '../../userSlice';
 import { logIn } from '../../authSlice';
 import { decodePubkey, loginToWallet, saveValue } from '../../../utils';
@@ -18,6 +19,8 @@ const ImportKeyView = ({ navigation }) => {
   const [error, setError] = useState(false);
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
+
+  const { t } = useTranslation(['welcome', 'common']);
 
   const submitHandler = async () => {
     let sk;
@@ -47,11 +50,11 @@ const ImportKeyView = ({ navigation }) => {
           const { deleted } = JSON.parse(mostRecent.content);
           if (deleted) {
             Alert.alert(
-              'Deleted Account?',
-              'You cannot use deleted account. Please use a different key.',
+              t('ImportKeyView_H2_Deleted'),
+              t('ImportKeyView_Body_Deleted'),
               [
                 {
-                  text: 'OK',
+                  text: t('ImportKeyView_Button_Deleted'),
                 },
               ],
             );
@@ -97,15 +100,14 @@ const ImportKeyView = ({ navigation }) => {
         />
         {error ? (
           <Text style={[globalStyles.textBodyS, { color: 'red' }]}>
-            Invalid private key! Only HEX (f57d...) or bech32 (nsec1...) keys
-            are supported
+            {t('ImportKeyView_Error_Key')}
           </Text>
         ) : undefined}
       </View>
       <View>
         <CustomButton
           buttonConfig={{ onPress: submitHandler }}
-          text="Import"
+          text={t('ImportKeyView_Button_Import')}
           containerStyles={{ marginBottom: 16 }}
         />
         <CustomButton
@@ -114,7 +116,7 @@ const ImportKeyView = ({ navigation }) => {
               navigation.goBack();
             },
           }}
-          text="Go Back"
+          text={t('Common_GoBack')}
           secondary
           containerStyles={{ marginBottom: 16 }}
         />

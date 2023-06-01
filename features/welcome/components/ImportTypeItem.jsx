@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { colors, globalStyles } from '../../../styles';
 import { useTranslation } from 'react-i18next';
+import { colors, globalStyles } from '../../../styles';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +43,7 @@ const ImportTypeItem = ({ title, text, example, icon, onPress }) => {
               { textAlign: 'left', color: colors.primary500 },
             ]}
           >
-            {`${t('ImportSelectionView_Body_Item_Example')}: ${example}`}
+            {`${t('ImportTypeItem_Body_Example')}: ${example}`}
           </Text>
         ) : undefined}
       </View>

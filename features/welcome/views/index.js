@@ -8,3 +8,4 @@ export { default as LoadingProfileView } from './LoadingProfileView';
 export { default as ImportSelectionView } from './ImportSelectionView';
 export { default as ImportKeyView } from './ImportKeyView';
 export { default as ImportWordsView } from './ImportWordsView';
+export { default as NewImportWordsView } from './NewImportWordsView';
