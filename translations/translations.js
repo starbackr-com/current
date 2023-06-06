@@ -4,11 +4,10 @@ import { initReactI18next } from 'react-i18next';
 import { getLocales } from 'expo-localization';
 import { getData } from '../utils/cache/asyncStorage';
 import welcomeTranslations from '../features/welcome/locale';
-import settingsTranslations from '../features/settings/locale'
+import settingsTranslations from '../features/settings/locale';
 
 async function checkLanguage() {
   const selectedLanguage = await getData('language');
-  console.log(selectedLanguage);
   if (selectedLanguage) {
     i18n.changeLanguage(selectedLanguage);
     return;
@@ -38,6 +37,6 @@ i18n
     },
   });
 
-// checkLanguage();
+checkLanguage();
 
 export default i18n;
