@@ -15,7 +15,7 @@ type MenuBottomSheetProps = {
   render: (data) => React.ReactNode;
 };
 
-const MenuBottomSheetWithData = forwardRef(
+const MenuBottomSheetWithData = React.memo(forwardRef(
 (
   { render }: MenuBottomSheetProps,
     ref: React.Ref<BottomSheetModalMethods>,
@@ -60,6 +60,6 @@ const MenuBottomSheetWithData = forwardRef(
       </BottomSheetModal>
     );
   },
-);
+));
 
 export default MenuBottomSheetWithData;

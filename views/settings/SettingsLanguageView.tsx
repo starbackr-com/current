@@ -1,16 +1,11 @@
 import { View, Text, Pressable, Alert } from 'react-native';
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { colors, globalStyles } from '../../styles';
-import useLanguage from '../../hooks/useLanguage';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
 import { storeData } from '../../utils/cache/asyncStorage';
 import MenuBottomSheetWithData from '../../components/MenuBottomSheetWithData';
-
-type Language = {
-  code: string;
-  name: string;
-};
+import { CustomButton } from '../../components';
 
 const availableLanguages = [
   { code: 'de', name: 'Deutsch' },
@@ -22,29 +17,27 @@ const SettingsLanguageView = () => {
 
   const modalRef = useRef();
 
-  const changeHandler = (language: Language) => {
-    Alert.alert(
-      'Change Language?',
-      `Do you want to change the language to ${language.name}?`,
-      [
-        {
-          text: 'Yes',
-          onPress: async () => {
-            i18n.changeLanguage(language.code);
-            await storeData('language', language.code);
-          },
-        },
-        { text: 'No', style: 'destructive' },
-      ],
-    );
-  };
   return (
     <View style={globalStyles.screenContainer}>
-      <Text style={globalStyles.textBodyBold}>{t('test')}</Text>
-      {i18n ? (
-        <Text style={globalStyles.textBody}>{i18n.languages[0]}</Text>
-      ) : undefined}
-      <Text style={globalStyles.textBodyBold}>Select another language</Text>
+      <View
+        style={{
+          marginBottom: 32,
+          backgroundColor: colors.backgroundSecondary,
+          padding: 10,
+          borderRadius: 10,
+          width: '100%',
+        }}
+      >
+        <Text style={globalStyles.textBodyBold}>
+          {t('SettingsLanguageView_H2_Active')}
+        </Text>
+        {i18n ? (
+          <Text style={globalStyles.textBody}>{i18n.languages[0]}</Text>
+        ) : undefined}
+      </View>
+      <Text style={globalStyles.textBodyBold}>
+        {t('SettingsLanguageView_H2_Select')}
+      </Text>
       <View style={{ width: '100%' }}>
         <FlatList
           data={availableLanguages}
@@ -61,7 +54,9 @@ const SettingsLanguageView = () => {
                 marginBottom: 12,
               })}
               onPress={() => {
-                changeHandler(item);
+                if (modalRef.current) {
+                  modalRef.current.present(item);
+                }
               }}
             >
               <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
@@ -74,8 +69,40 @@ const SettingsLanguageView = () => {
           )}
         />
       </View>
-      <Pressable onPress={() => {modalRef.current.present('Test123123!')}}><Text>Test</Text></Pressable>
-      <MenuBottomSheetWithData ref={modalRef} render={(data) => <Text>{data}</Text>}/>
+      <MenuBottomSheetWithData
+        render={useCallback(
+          (data) => (
+            <>
+              <Text style={globalStyles.textBody}>
+                Do you want to change the selected language to{' '}
+                <Text style={globalStyles.textBodyBold}>{data.name}</Text>?
+              </Text>
+              <CustomButton
+                text="Change Language"
+                buttonConfig={{
+                  onPress: async () => {
+                    i18n.changeLanguage(data.code);
+                    await storeData('language', data.code);
+                    modalRef.current.dismiss();
+                  },
+                }}
+                containerStyles={{ marginTop: 12 }}
+              />
+              <CustomButton
+                text="Cancel"
+                buttonConfig={{
+                  onPress: () => {
+                    modalRef.current.dismiss();
+                  },
+                }}
+                containerStyles={{ marginTop: 12 }}
+              />
+            </>
+          ),
+          [],
+        )}
+        ref={modalRef}
+      />
     </View>
   );
 };

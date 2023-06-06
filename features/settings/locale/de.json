@@ -1,4 +1,6 @@
 {
-  "test": "Deutsch",
-  "English": "Englisch"
+  "English": "Englisch",
+  "Deutsch": "Deutsch",
+  "SettingsLanguageView_H2_Active": "Aktive Sprache:",
+  "SettingsLanguageView_H2_Select": "Wähle eine andere Sprache:"
 }
