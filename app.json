@@ -2,7 +2,7 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "14",
+      "buildNumber": "2",
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -37,7 +37,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 42,
+      "versionCode": 45,
       "googleServicesFile": "./google-services.json"
     },
     "notification": {
