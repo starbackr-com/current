@@ -51,7 +51,7 @@ const MenuBottomSheet = forwardRef(
           handleIndicatorStyle={{ backgroundColor: colors.backgroundSecondary }}
         >
           <BottomSheetView onLayout={handleContentLayout}>
-            <View style={{ padding: 24, paddingBottom: insets.bottom }}>
+            <View style={{ padding: 24, paddingBottom: Math.max(insets.bottom, 32)}}>
               {children}
             </View>
           </BottomSheetView>

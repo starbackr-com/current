@@ -52,7 +52,7 @@ const MenuBottomSheetWithData = React.memo(forwardRef(
       >
         {({ data }) => (
           <BottomSheetView onLayout={handleContentLayout}>
-            <View style={{ padding: 24, paddingBottom: insets.bottom }}>
+            <View style={{ padding: 24, paddingBottom: Math.max(insets.bottom, 32) }}>
               {render(data)}
             </View>
           </BottomSheetView>

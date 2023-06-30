@@ -16,6 +16,8 @@ const TabBarIcon = ({ route, focused, color, size }) => {
     iconName = focused ? 'add-circle' : 'add-circle-outline';
   } else if (route.name === 'Messages') {
     iconName = focused ? 'mail-sharp' : 'mail-outline';
+  } else if (route.name === 'Community') {
+    iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
   }
   return <Ionicons name={iconName} size={size} color={color} />;
 };
