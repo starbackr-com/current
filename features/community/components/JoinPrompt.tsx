@@ -36,7 +36,7 @@ const JoinPrompt = memo(({ communityObject, onClose }: JoinPromptProps) => {
         buttonConfig={{
           onPress: async () => {
             try {
-              // await publishJoinEvent(communityObject.communitySlug)
+              await publishJoinEvent(communityObject.communitySlug)
               dispatch(joinCommunity(communityObject.communitySlug));
               onClose();
             } catch(e) {

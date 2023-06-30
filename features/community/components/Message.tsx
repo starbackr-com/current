@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import React, { memo } from 'react';
 import { Event, nip19 } from 'nostr-tools';
 import { colors, globalStyles } from '../../../styles';
@@ -16,8 +16,8 @@ const Message = memo(({ event, sent }: MessageProps) => {
   return (
     <View
       style={[
-        { width: '100%', gap: 10, scaleY: -1 },
-        sent ? { flexDirection: 'row' } : { flexDirection: 'row-reverse' },
+        { width: '100%', gap: 10}, Platform.OS === 'android' ? {scaleY: -1} : undefined,
+        sent ? { flexDirection: 'row-reverse' } : { flexDirection: 'row' },
       ]}
     >
       {user && user.picture ? (

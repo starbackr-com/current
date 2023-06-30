@@ -17,7 +17,7 @@ index c0519ac..b5ea31d 100644
 +        } catch (e) {
 +        throw new Error("The environment doesn't have randomBytes function and we couldn't use expo-crypto");
 +        }
-+},
++}
  exports.randomBytes = randomBytes;
  //# sourceMappingURL=utils.js.map
 \ No newline at end of file

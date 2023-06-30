@@ -48,7 +48,7 @@ const CommunityView = ({ route }) => {
             renderItem={({ item }) => {
               if (item.pubkey === communityObject.relayKey) {
                 return (
-                  <View style={{ scaleY: -1 }}>
+                  <View style={Platform.OS === 'android' ? { scaleY: -1 } : undefined}>
                     <Text style={globalStyles.textBodyG}>{item.content}</Text>
                   </View>
                 );
@@ -59,7 +59,8 @@ const CommunityView = ({ route }) => {
               return <Message event={item} />;
             }}
             keyExtractor={(item) => item.id}
-            style={{ scaleY: -1 }}
+            style={Platform.OS === 'android' ? { scaleY: -1 } : undefined}
+            inverted={Platform.OS === 'ios'}
           />
         </View>
         <View style={{ width: '100%', marginTop: 6 }}>

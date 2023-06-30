@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -17,12 +18,22 @@ export const communitySlice = createSlice({
       }
     },
     joinCommunity: (state, action) => {
+      console.log('reducer runs');
       if (!state.joinedCommunities.includes(action.payload)) {
         state.joinedCommunities.push(action.payload);
       }
     },
   },
 });
+
+export const communityListener = async (action, listenerApi) => {
+  const {
+    community: { joinedCommunities },
+  } = listenerApi.getState();
+  const json = JSON.stringify(joinedCommunities);
+  console.log('listeneraction:', json);
+  await AsyncStorage.setItem('joinedCommunities', json);
+};
 
 export const { addCommunity, joinCommunity } = communitySlice.actions;
 
