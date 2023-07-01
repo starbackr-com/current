@@ -7,7 +7,7 @@ import useChat from '../hooks/useChat';
 import { globalStyles } from '../../../styles';
 import { CustomButton, ExpandableInput } from '../../../components';
 import MenuBottomSheetWithData from '../../../components/MenuBottomSheetWithData';
-import { JoinPrompt, Message } from '../components';
+import { JoinPrompt, Message, RelayMessage, SentMessage } from '../components';
 import { useIsMember } from '../hooks';
 import { publishCommunityMessage } from '../utils/nostr';
 
@@ -47,14 +47,10 @@ const CommunityView = ({ route }) => {
             data={messages}
             renderItem={({ item }) => {
               if (item.pubkey === communityObject.relayKey) {
-                return (
-                  <View style={Platform.OS === 'android' ? { scaleY: -1 } : undefined}>
-                    <Text style={globalStyles.textBodyG}>{item.content}</Text>
-                  </View>
-                );
+                return <RelayMessage event={item} />;
               }
               if (item.pubkey === ownPk) {
-                return <Message event={item} sent />;
+                return <SentMessage event={item} />;
               }
               return <Message event={item} />;
             }}
