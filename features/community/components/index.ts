@@ -4,3 +4,4 @@ export { default as JoinPrompt } from './JoinPrompt';
 export { default as Message } from './Message';
 export { default as SentMessage } from './SentMessage';
 export { default as RelayMessage } from './RelayMessage';
+export { default as CommunitiesTitle } from './CommunitiesTitle';
