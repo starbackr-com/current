@@ -26,6 +26,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ProfileHeader from '../features/profile/components/ProfileHeader';
 import OwnProfileNavigator from './OwnProfileNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { CommunitiesNavigator } from '../features/community';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -68,6 +69,7 @@ const TabNavigator = () => (
         ),
       })}
     />
+    <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/>
     <Tab.Screen
       name="Wallet"
       component={WalletNavigator}

@@ -6,6 +6,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { storeData } from '../../utils/cache/asyncStorage';
 import MenuBottomSheetWithData from '../../components/MenuBottomSheetWithData';
 import { CustomButton } from '../../components';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 const availableLanguages = [
   { code: 'de', name: 'Deutsch' },
@@ -15,7 +16,7 @@ const availableLanguages = [
 const SettingsLanguageView = () => {
   const { t, i18n } = useTranslation('settings');
 
-  const modalRef = useRef();
+  const modalRef = useRef<BottomSheetModalMethods>();
 
   return (
     <View style={globalStyles.screenContainer}>

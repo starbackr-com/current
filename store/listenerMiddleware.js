@@ -1,4 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import { communityListener, joinCommunity } from '../features/community/communitySlice';
 import {
   addRelay,
   changeRelayMode,
@@ -16,6 +17,10 @@ listener.startListening({
 listener.startListening({
   matcher: isAnyOf(addWalletconnect, changeWalletconnect),
   effect: wcListener,
+});
+listener.startListening({
+  actionCreator: joinCommunity,
+  effect: communityListener,
 });
 
 export default listener.middleware;

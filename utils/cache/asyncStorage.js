@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { joinCommunity } from '../../features/community/communitySlice';
 import { setGetStartedItems, setTwitterModal } from '../../features/introSlice';
 import {
   setZapAmount,
@@ -50,7 +51,8 @@ export const hydrateStore = async () => {
   const zapAmount = await getData('zapAmount');
   const zapComment = await getData('zapComment');
   const zapNoconf = await getData('zapNoconf');
-  const pushToken = await getData('pushToken')
+  const pushToken = await getData('pushToken');
+  const joinedCommunities = await getData('joinedCommunities');
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
   if (zapAmount) {
@@ -63,7 +65,7 @@ export const hydrateStore = async () => {
     store.dispatch(setZapNoconf(zapNoconf));
   }
   if (pushToken) {
-    store.dispatch(setPushToken(pushToken));    
+    store.dispatch(setPushToken(pushToken));
   }
   if (twitterModalShown) {
     store.dispatch(setTwitterModal(JSON.parse(twitterModalShown)));
@@ -71,6 +73,13 @@ export const hydrateStore = async () => {
   if (getStartedItemsShown) {
     const array = JSON.parse(getStartedItemsShown);
     array.forEach((id) => store.dispatch(setGetStartedItems(id)));
+  }
+  if (joinedCommunities) {
+    const array = JSON.parse(joinedCommunities);
+    array.forEach((slug) => {
+      console.log('adding community')
+      store.dispatch(joinCommunity(slug));
+    });
   }
 };
 

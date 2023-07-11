@@ -1,4 +1,7 @@
 import { registerRootComponent } from 'expo';
+import ViewReactNativeStyleAttributes from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+
+ViewReactNativeStyleAttributes.scaleY = true;
 
 import App from './App';
 import "react-native-get-random-values";
