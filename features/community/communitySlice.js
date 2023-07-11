@@ -18,7 +18,6 @@ export const communitySlice = createSlice({
       }
     },
     joinCommunity: (state, action) => {
-      console.log('reducer runs');
       if (!state.joinedCommunities.includes(action.payload)) {
         state.joinedCommunities.push(action.payload);
       }
@@ -31,7 +30,6 @@ export const communityListener = async (action, listenerApi) => {
     community: { joinedCommunities },
   } = listenerApi.getState();
   const json = JSON.stringify(joinedCommunities);
-  console.log('listeneraction:', json);
   await AsyncStorage.setItem('joinedCommunities', json);
 };
 

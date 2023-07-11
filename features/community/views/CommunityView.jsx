@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { FlatList } from 'react-native-gesture-handler';

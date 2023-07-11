@@ -1,4 +1,4 @@
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { useRef } from 'react';
 import { globalStyles } from '../../../styles';
 import CommunityList from '../components/CommunityList';
@@ -25,7 +25,14 @@ const CommunitiesView = () => {
           <Text style={globalStyles.textBody}>
             Switching Relays is not yet supported...
           </Text>
-          <CustomButton text="Okay" buttonConfig={{onPress: () => {modalRef.current.dismiss();}}}/>
+          <CustomButton
+            text="Okay"
+            buttonConfig={{
+              onPress: () => {
+                modalRef.current.dismiss();
+              },
+            }}
+          />
         </View>
       </MenuBottomSheet>
     </View>
