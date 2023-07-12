@@ -17,7 +17,7 @@ import { useReplies } from '../hooks/useReplies';
 import BackButton from '../../../components/BackButton';
 import { publishReply } from '../utils/publishReply';
 import { getEventById } from '../../../utils/nostrV2/getEvents';
-import { ImagePost, TextPost, ZapPost } from '../../../components/Posts';
+import { ImagePost, TextPost } from '../../../components/Posts';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { colors, globalStyles } from '../../../styles';
 import { ItemSeperator } from '../components';
@@ -56,16 +56,24 @@ const CommentScreen = ({ route, navigation }) => {
   const renderItem = ({ item }) => {
     if (item.kind === 1) {
       if (item.type === 'text') {
-        return <TextPost event={item} user={users[item.pubkey]} onMenu={handlePresentModalPress} />;
+        return (
+          <TextPost
+            event={item}
+            user={users[item.pubkey]}
+            onMenu={handlePresentModalPress}
+          />
+        );
       }
       if (item.type === 'image') {
         return (
-          <ImagePost event={item} user={users[item.pubkey]} width={width} onMenu={handlePresentModalPress} />
+          <ImagePost
+            event={item}
+            user={users[item.pubkey]}
+            width={width}
+            onMenu={handlePresentModalPress}
+          />
         );
       }
-    }
-    if (item.kind === 9735) {
-      return <ZapPost event={item} user={users[item.payer]} />;
     }
     return undefined;
   };
