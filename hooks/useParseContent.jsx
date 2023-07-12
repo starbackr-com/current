@@ -15,22 +15,27 @@ export const useParseContent = (event) => {
   const pTags = event.tags.filter((tag) => tag[0] === 'p');
   let { content } = event;
   content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
-    const position = Number(m);
-    return (
-      <Text
-        style={{ color: colors.primary500 }}
-        onPress={() => {
-          navigation.navigate('Profile', {
-            screen: 'ProfileScreen',
-            params: { pubkey: event.tags[position][1] },
-          });
-        }}
-        key={m + i}
-      >
-        @
-        {users[pTags[position][1]]?.name || `${nip19.npubEncode(pTags[position][1]).slice(0, 16)}...`}
-      </Text>
-    );
+    try {
+      const position = Number(m);
+      return (
+        <Text
+          style={{ color: colors.primary500 }}
+          onPress={() => {
+            navigation.navigate('Profile', {
+              screen: 'ProfileScreen',
+              params: { pubkey: event.tags[position][1] },
+            });
+          }}
+          key={m + i}
+        >
+          @
+          {users[pTags[position][1]]?.name || `${nip19.npubEncode(pTags[position][1]).slice(0, 16)}...`}
+        </Text>
+      );
+    } catch (e) {
+      console.log(e);
+      return <Text>PARSING ERROR</Text>;
+    }
   });
 
   content = reactStringReplace(content, httpRegex, (m, i) => (

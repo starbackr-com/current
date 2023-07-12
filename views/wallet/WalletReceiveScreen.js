@@ -69,17 +69,6 @@ const WalletReceiveScreen = ({ navigation }) => {
                     }}
                 />
             </View>
-            <View style={{ flex: 1 }}>
-                <CustomButton
-                    text="Back"
-                    buttonConfig={{
-                        onPress: () => {
-                            navigation.goBack();
-                        },
-                    }}
-                    containerStyles={{marginTop: 16, justifyContent: 'center'}}
-                />
-            </View>
         </View>
     );
 };

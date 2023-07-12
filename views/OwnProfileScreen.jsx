@@ -12,9 +12,10 @@ import { useFollowUser, useUnfollowUser, useSubscribeEvents } from '../hooks';
 import { ImagePost, TextPost } from '../components/Posts';
 import { colors, globalStyles } from '../styles';
 import BadgeBar from '../features/badges/components/BadgeBar';
+import Toast from 'react-native-root-toast';
+import { SuccessToast } from '../components';
 
 const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
-  const [copied, setCopied] = useState();
   const [verified, setVerified] = useState(false);
   const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
   const badges = useSelector((state) => state.messages.userBadges[pubkey]);
@@ -46,10 +47,11 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
 
   const copyHandler = async () => {
     await Clipboard.setStringAsync(npub);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
+    Toast.show(<SuccessToast text="Copied!" />, {
+      duration: Toast.durations.SHORT,
+      position: -100,
+      backgroundColor: 'green',
+    });
   };
 
   const npub = encodePubkey(pubkey) || 'npub100000000000000000';
@@ -121,8 +123,7 @@ const ProfileHeader = ({ pubkey, user, loggedInPubkey }) => {
                 textAlign: 'left',
                 color: 'grey',
                 marginBottom: 24,
-              },
-              copied ? { color: colors.primary500 } : undefined,
+              }
             ]}
             onPress={copyHandler}
           >
