@@ -30,6 +30,7 @@ import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
 import './translations/translations';
+import { getProducts, initRC } from './features/premium/utils/utils';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -73,6 +74,8 @@ const Root = () => {
       setAppIsReady(false);
       try {
         await init();
+        await initRC();
+        await getProducts();
         await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
