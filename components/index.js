@@ -10,3 +10,4 @@ export { default as ExpandableInput } from './ExpandableInput';
 export { default as ExpandingSearch } from './ExpandingSearch';
 export { default as SwitchBar } from './SwitchBar';
 export { default as SuccessToast } from './SuccessToast';
+export { default as CustomKeyboardView } from './CustomKeyboardView';

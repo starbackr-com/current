@@ -10,6 +10,7 @@ import MenuBottomSheetWithData from '../../../components/MenuBottomSheetWithData
 import { JoinPrompt, Message, RelayMessage, SentMessage } from '../components';
 import { useIsMember } from '../hooks';
 import { publishCommunityMessage } from '../utils/nostr';
+import CustomKeyboardView from '../../../components/CustomKeyboardView';
 
 const CommunityView = ({ route }) => {
   const { communityObject } = route.params;
@@ -36,11 +37,7 @@ const CommunityView = ({ route }) => {
   const headerHeight = useHeaderHeight();
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-      keyboardVerticalOffset={headerHeight}
-    >
+    <CustomKeyboardView>
       <View style={globalStyles.screenContainer}>
         <View style={{ width: '100%', flex: 1 }}>
           <FlatList
@@ -89,7 +86,7 @@ const CommunityView = ({ route }) => {
           ref={modalRef}
         />
       </View>
-    </KeyboardAvoidingView>
+    </CustomKeyboardView>
   );
 };
 
