@@ -69,7 +69,8 @@ const TabNavigator = () => (
         ),
       })}
     />
-    <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/>
+    {/* eslint-disable-next-line max-len */}
+    {/* <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/> */}
     <Tab.Screen
       name="Wallet"
       component={WalletNavigator}
