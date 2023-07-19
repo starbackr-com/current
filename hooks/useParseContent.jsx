@@ -15,12 +15,12 @@ export const useParseContent = (event) => {
   const users = useSelector((state) => state.messages.users);
   useEffect(() => {
     let pTags;
-    if (event.tags && event.tags.length > 0) {
-      pTags = event.tags.filter((tag) => tag[0] === 'p');
-    }
     let { content } = event;
     content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
       try {
+        if (event.tags && event.tags.length > 0) {
+          pTags = event.tags.filter((tag) => tag[0] === 'p');
+        }
         const position = Number(m);
         return (
           <Text
@@ -34,8 +34,8 @@ export const useParseContent = (event) => {
             key={m + i}
           >
             @
-            {users[pTags[position][1]]?.name
-            || `${nip19.npubEncode(pTags[position][1]).slice(0, 16)}...`}
+            {users[pTags[position][1]]?.name ||
+              `${nip19.npubEncode(pTags[position][1]).slice(0, 16)}...`}
           </Text>
         );
       } catch (e) {
