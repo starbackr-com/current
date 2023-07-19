@@ -178,10 +178,10 @@ const AuthedNavigator = () => (
         <Stack.Screen
           name="PlebhyModal"
           component={PlebhyNavigator}
-          options={{
+          options={({ navigation }) => ({
             presentation: 'modal',
-            header: () => <BackHeader />,
-          }}
+            header: () => <BackHeader navigation={navigation} />,
+          })}
         />
       </Stack.Navigator>
     </BottomSheetModalProvider>
