@@ -1,10 +1,21 @@
-import { getEventHash, getPublicKey, signEvent } from 'nostr-tools';
+import { getEventHash, getPublicKey, nip19, signEvent } from 'nostr-tools';
 import { getValue } from '../../../utils/secureStore';
 import devLog from '../../../utils/internal';
-import { getRelayUrls, getWriteRelays, pool } from '../../../utils/nostrV2/relays.ts';
+import {
+  getRelayUrls,
+  getWriteRelays,
+  pool,
+} from '../../../utils/nostrV2/relays.ts';
+import { mentionRegex, nip27Regex } from '../../../constants';
 
 export const publishReply = async (content, event) => {
   const writeUrls = getRelayUrls(getWriteRelays());
+  const fullMentions = [...content.matchAll(mentionRegex)];
+  const mentions = fullMentions.map((mention) => ['p', mention[2]]);
+  const parsedContent = content.replaceAll(
+    mentionRegex,
+    (m, g1, g2) => `nostr:${nip19.npubEncode(g2)}`,
+  );
   let replyETags;
   let replyPTags;
   try {
@@ -30,8 +41,8 @@ export const publishReply = async (content, event) => {
       kind: 1,
       pubkey: pk,
       created_at: Math.floor(Date.now() / 1000),
-      tags: [...replyETags, ...replyPTags],
-      content,
+      tags: [...replyETags, ...replyPTags, ...mentions],
+      content: parsedContent,
     };
     reply.id = getEventHash(reply);
     reply.sig = signEvent(reply, sk);

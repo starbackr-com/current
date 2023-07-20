@@ -104,7 +104,7 @@ export const useParseContent = (event) => {
       }
     });
     setParsedContent(content);
-  }, []);
+  }, [event]);
   return parsedContent;
 };
 

@@ -1,7 +1,10 @@
 import { View, StyleSheet, Pressable, Text, Keyboard } from 'react-native';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import Input from './Input';
+import {
+  MentionInput,
+  MentionSuggestionsProps,
+} from 'react-native-controlled-mentions';
 import { colors, globalStyles } from '../styles';
 import {
   BottomSheetBackdrop,
@@ -14,21 +17,37 @@ import CustomButton from './CustomButton';
 import pickImageResizeAndUpload from '../utils/images';
 import { useSelector } from 'react-redux';
 import LoadingSpinner from './LoadingSpinner';
+import { FlatList } from 'react-native-gesture-handler';
+import { matchSorter } from 'match-sorter';
+
+type ExpanableInputProps = {
+  onSubmit: (input: string) => {}
+}
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'column',
-    marginBottom: 12
+    marginVertical: 12,
   },
   textBar: {
     flexDirection: 'row',
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    backgroundColor: colors.backgroundSecondary,
+    borderColor: colors.primary500,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 8,
+    color: 'white',
+    maxHeight: 100,
   },
 });
 
-const ExpandableInput = ({ onSubmit }) => {
+const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -40,6 +59,49 @@ const ExpandableInput = ({ onSubmit }) => {
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
+  const users = useSelector((state) => state.messages.users);
+  const userArray = useMemo(() => {
+    return Object.keys(users).map((user) => users[user]);
+  }, [users]);
+
+  const renderSuggestions: FC<MentionSuggestionsProps> = ({
+    keyword,
+    onSuggestionPress,
+  }) => {
+    if (keyword == null) {
+      return null;
+    }
+    const matches = matchSorter(userArray, keyword, { keys: ['name'] })
+      .slice(0, 5)
+      .map((result) => ({ name: result.name, id: result.pubkey }));
+    if (matches.length < 1) {
+      return null;
+    }
+    return (
+      <View>
+        <FlatList
+          data={matches}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => onSuggestionPress(item)}
+              style={{
+                paddingHorizontal: 6,
+                paddingVertical: 3,
+                backgroundColor: colors.backgroundSecondary,
+                borderRadius: 2,
+              }}
+            >
+              <Text style={globalStyles.textBody}>{item.name}</Text>
+            </Pressable>
+          )}
+          horizontal
+          contentContainerStyle={{ gap: 10, marginBottom: 10 }}
+          keyboardShouldPersistTaps={'handled'}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+    );
+  };
   const {
     animatedHandleHeight,
     animatedSnapPoints,
@@ -70,30 +132,39 @@ const ExpandableInput = ({ onSubmit }) => {
             }}
           />
         </View>
-        <View style={{ flex: 1, marginHorizontal: 6, maxHeight: 100 }}>
-          <Input
-            textInputConfig={{
-              placeholderTextColor: colors.backgroundActive,
-              placeholder: 'Type a message',
-              onChangeText: setInput,
-              value: input,
-              multiline: true
-            }}
-            inputStyle={{ borderWidth: 0 }}
+        <View style={{ flex: 1, marginHorizontal: 6 }}>
+          <MentionInput
+            value={input}
+            style={styles.input}
+            onChange={setInput}
+            partTypes={[
+              {
+                trigger: '@',
+                renderSuggestions,
+                textStyle: { fontWeight: 'bold', color: colors.primary500 },
+              },
+            ]}
+            multiline
+            placeholderTextColor={colors.backgroundActive}
+            placeholder="Type a message"
           />
         </View>
         <View>
-          {loading ? <LoadingSpinner size={20}/> : <Ionicons
-            name="send"
-            size={20}
-            color={colors.primary500}
-            onPress={async () => {
-              setLoading(true);
-              await onSubmit(input)
-              setLoading(false);
-              setInput('');
-            }}
-          />}
+          {loading ? (
+            <LoadingSpinner size={20} />
+          ) : (
+            <Ionicons
+              name="send"
+              size={20}
+              color={colors.primary500}
+              onPress={async () => {
+                setLoading(true);
+                await onSubmit(input);
+                setLoading(false);
+                setInput('');
+              }}
+            />
+          )}
         </View>
       </View>
       <BottomSheetModal
@@ -113,7 +184,7 @@ const ExpandableInput = ({ onSubmit }) => {
               loading={uploading}
               buttonConfig={{
                 onPress: async () => {
-                  setUploading(true)
+                  setUploading(true);
                   const { data } = await pickImageResizeAndUpload(
                     pubKey,
                     walletBearer,
@@ -124,12 +195,11 @@ const ExpandableInput = ({ onSubmit }) => {
                 },
               }}
             />
-            <CustomButton text="GIF" icon="image" />
           </View>
         </BottomSheetView>
       </BottomSheetModal>
     </View>
   );
-};
+});
 
 export default ExpandableInput;
