@@ -21,8 +21,8 @@ import { FlatList } from 'react-native-gesture-handler';
 import { matchSorter } from 'match-sorter';
 
 type ExpanableInputProps = {
-  onSubmit: (input: string) => {}
-}
+  onSubmit: (input: string) => {};
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -53,12 +53,13 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
   const [uploading, setUploading] = useState(false);
 
   const insets = useSafeAreaInsets();
+   //@ts-ignore
   const { pubKey, walletBearer } = useSelector((state) => state.auth);
 
   const bottomSheetModalRef = useRef(null);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-
+  //@ts-ignore
   const users = useSelector((state) => state.messages.users);
   const userArray = useMemo(() => {
     return Object.keys(users).map((user) => users[user]);
@@ -68,7 +69,7 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
     keyword,
     onSuggestionPress,
   }) => {
-    if (keyword == null) {
+    if (keyword == null || keyword.length < 1) {
       return null;
     }
     const matches = matchSorter(userArray, keyword, { keys: ['name'] })
@@ -141,7 +142,7 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
               {
                 trigger: '@',
                 renderSuggestions,
-                textStyle: { fontWeight: 'bold', color: colors.primary500 },
+                textStyle: { color: colors.primary500 },
               },
             ]}
             multiline
@@ -177,6 +178,7 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
       >
         <BottomSheetView onLayout={handleContentLayout}>
           <View style={{ padding: 24, paddingBottom: insets.bottom }}>
+            {/* @ts-ignore */}
             <CustomButton
               text="Image"
               icon="image"
