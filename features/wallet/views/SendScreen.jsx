@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text } from 'react-native';
-import { Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Keyboard } from 'react-native';
 import useErrorToast from '../../../hooks/useErrorToast';
 import { bolt11Regex, emailRegex } from '../../../constants';
 import { globalStyles } from '../../../styles';
@@ -21,9 +20,9 @@ const WalletSendScreen = ({ navigation, route }) => {
   const nextHandler = () => {
     const address = inputText.toLowerCase().match(emailRegex);
     if (
-      !inputText.match(bolt11Regex) &&
-      !address &&
-      !inputText.includes('lnurl')
+      !inputText.match(bolt11Regex)
+      && !address
+      && !inputText.includes('lnurl')
     ) {
       Keyboard.dismiss();
       invalidInput();
@@ -47,7 +46,7 @@ const WalletSendScreen = ({ navigation, route }) => {
         label="Invoice/Address"
         textInputConfig={{
           placeholder: 'Invoice/Address',
-          autoCapitalize: false,
+          autoCapitalize: 'none',
           autoCorrect: false,
           value: inputText.toLowerCase(),
           onChangeText: (e) => {
