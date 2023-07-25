@@ -12,6 +12,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../styles';
 import { BackHeader } from '../components';
 import { SendScreen, ReceiveScreen } from '../features/wallet/views';
+import BackHeaderWithButton from '../components/BackHeaderWithButton';
+import { Text } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +34,6 @@ const WalletNavigator = () => {
         <Stack.Screen
           name="WalletReceiveScreen"
           component={ReceiveScreen}
-        
         />
         <Stack.Screen
                 name="WalletInvoiceScreen"

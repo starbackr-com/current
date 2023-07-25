@@ -1,15 +1,39 @@
+/* eslint-disable react/no-unstable-nested-components */
 import { View, Text } from 'react-native';
-import React, { useState } from 'react';
-import { globalStyles } from '../../../styles';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { colors, globalStyles } from '../../../styles';
 import { NumPad } from '../../../components';
 import { usePostInvoiceMutation } from '../../../services/walletApi';
 import useErrorToast from '../../../hooks/useErrorToast';
+import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
+import RedeemModal from '../components/RedeemModal';
 
-const ReceiveScreen = ({ navigation }) => {
+const ReceiveScreen = ({ navigation, route }) => {
   const [amount, setAmount] = useState('');
   const [postInvoice, { isLoading }] = usePostInvoiceMutation();
   const amountError = useErrorToast('Please enter an amount');
   const genericError = useErrorToast('Something went wrong');
+  const modalRef = useRef();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <BackHeaderWithButton
+          navigation={navigation}
+          rightButton={() => (
+            <Text
+              style={[globalStyles.textBody, { color: colors.primary500 }]}
+              onPress={() => {
+                modalRef.current.present();
+              }}
+            >
+              Redeem
+            </Text>
+          )}
+        />
+      ),
+    });
+  }, [modalRef]);
 
   const confirmHandler = async () => {
     if (amount.length < 1) {
@@ -45,6 +69,7 @@ const ReceiveScreen = ({ navigation }) => {
           isLoading={isLoading}
         />
       </View>
+      <RedeemModal ref={modalRef} />
     </View>
   );
 };

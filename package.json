@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@cashu/cashu-ts": "^0.8.0-rc.6",
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4",
     "@noble/secp256k1": "^1.7.1",
