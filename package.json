@@ -26,7 +26,6 @@
     "bech32": "^2.0.0",
     "big-integer": "^1.6.51",
     "buffer": "^4.9.2",
-    "eas-cli": "^3.10.2",
     "events": "^1.1.1",
     "expo": "~48.0.15",
     "expo-av": "~13.2.1",
@@ -45,7 +44,6 @@
     "expo-linking": "~4.0.1",
     "expo-localization": "~14.1.1",
     "expo-notifications": "~0.18.1",
-    "expo-random": "~13.1.1",
     "expo-secure-store": "~12.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-sqlite": "~11.1.1",
@@ -113,5 +111,10 @@
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
     "stream": "stream-browserify"
+  },
+  "resolutions": {
+    "@expo/config-plugins": "~6.0.0",
+    "@expo/prebuild-config": "~6.0.0",
+    "expo-modules-autolinking": "~1.1.0"
   }
 }
