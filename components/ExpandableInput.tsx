@@ -53,8 +53,10 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
   const [uploading, setUploading] = useState(false);
 
   const insets = useSafeAreaInsets();
-   //@ts-ignore
-  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { pubKey, walletBearer, isPremium } = useSelector(
+    //@ts-ignore
+    (state) => state.auth,
+  );
 
   const bottomSheetModalRef = useRef(null);
 
@@ -122,17 +124,19 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
   return (
     <View style={[styles.container]}>
       <View style={styles.textBar}>
-        <View>
-          <Ionicons
-            name="add"
-            size={32}
-            color={colors.primary500}
-            onPress={() => {
-              Keyboard.dismiss();
-              handlePresentModalPress();
-            }}
-          />
-        </View>
+        {isPremium ? (
+          <View>
+            <Ionicons
+              name="add"
+              size={32}
+              color={colors.primary500}
+              onPress={() => {
+                Keyboard.dismiss();
+                handlePresentModalPress();
+              }}
+            />
+          </View>
+        ) : undefined}
         <View style={{ flex: 1, marginHorizontal: 6 }}>
           <MentionInput
             value={input}

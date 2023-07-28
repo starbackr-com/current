@@ -1,7 +1,8 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ActiveConversationScreen, ConversationScreen } from '../views';
 import { useSelector } from 'react-redux';
+import { ActiveConversationScreen, ConversationScreen } from '../views';
 import { colors } from '../../../styles';
 import { CustomButton } from '../../../components';
 import { deleteMessageCache } from '../../../utils/database';
@@ -28,10 +29,12 @@ const ConversationNavigator = () => {
           headerTintColor: 'white',
           headerRight: () => (
             <CustomButton
-              buttonConfig={{ onPress: () => {
-                deleteMessageCache(route.params.pk);
-                navigation.goBack();
-              } }}
+              buttonConfig={{
+                onPress: () => {
+                  deleteMessageCache(route.params.pk);
+                  navigation.goBack();
+                },
+              }}
               text="Clear Cache"
             />
           ),

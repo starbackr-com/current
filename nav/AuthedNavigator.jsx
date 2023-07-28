@@ -3,6 +3,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Platform, Pressable } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
 import WalletNavigator from './WalletNavigator';
@@ -11,7 +14,6 @@ import PostView from '../views/post/PostView';
 import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
 import VerifyTwitterModal from '../views/welcome/VerifyTwitterModal';
-import ProfileNavigator from './ProfileNavigator';
 import ZapListModal from '../views/home/ZapListModal';
 import PostMenuModal from '../views/post/PostMenuModal';
 import ReportPostModal from '../features/reports/views/ReportPostModal';
@@ -22,82 +24,86 @@ import TabBarIcon from '../components/TabBarIcon';
 import { colors } from '../styles';
 import { SearchNavigator } from '../features/search';
 import { ConversationNavigator } from '../features/messages';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import ProfileHeader from '../features/profile/components/ProfileHeader';
 import OwnProfileNavigator from './OwnProfileNavigator';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { CommunitiesNavigator } from '../features/community';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => (
-        <TabBarIcon route={route} focused={focused} color={color} size={size} />
-      ),
-      headerStyle: { backgroundColor: colors.backgroundSecondary },
-      headerTitleStyle: {
-        color: 'white',
-        fontFamily: 'Montserrat-Bold',
-      },
-      tabBarActiveTintColor: colors.primary500,
-      tabBarInactiveTintColor: 'gray',
-      tabBarStyle: {
-        backgroundColor: colors.backgroundSecondary,
-        borderTopColor: colors.backgroundPrimary,
-      },
-      tabBarShowLabel: false,
-      headerShadowVisible: false,
-      headerRight: () => <TabBarHeaderRight />,
-      headerLeft: TabBarHeaderLeft,
-      tabBarHideOnKeyboard: Platform.OS !== 'ios',
-      headerTitle: '',
-    })}
-  >
-    <Tab.Screen
-      name="Home"
-      component={HomeView}
-      options={({ navigation }) => ({
-        tabBarButton: (props) => (
-          <Pressable
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            onPress={() => navigation.navigate('Home')}
+const TabNavigator = () => {
+  const isPremium = useSelector((state) => state.auth.isPremium);
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => (
+          <TabBarIcon
+            route={route}
+            focused={focused}
+            color={color}
+            size={size}
           />
         ),
+        headerStyle: { backgroundColor: colors.backgroundSecondary },
+        headerTitleStyle: {
+          color: 'white',
+          fontFamily: 'Montserrat-Bold',
+        },
+        tabBarActiveTintColor: colors.primary500,
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: colors.backgroundSecondary,
+          borderTopColor: colors.backgroundPrimary,
+        },
+        tabBarShowLabel: false,
+        headerShadowVisible: false,
+        headerRight: () => <TabBarHeaderRight />,
+        headerLeft: TabBarHeaderLeft,
+        tabBarHideOnKeyboard: Platform.OS !== 'ios',
+        headerTitle: '',
       })}
-    />
-    {/* eslint-disable-next-line max-len */}
-    {/* <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/> */}
-    <Tab.Screen
-      name="Wallet"
-      component={WalletNavigator}
-      options={{ headerShown: false }}
-    />
-    <Tab.Screen name="Messages" component={ConversationNavigator} />
-    <Tab.Screen
-      name="New"
-      component={WalletNavigator}
-      options={({ navigation }) => ({
-        tabBarButton: (props) => (
-          <Pressable
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            onPress={() => navigation.navigate('PostView')}
-          />
-        ),
-      })}
-    />
-    <Tab.Screen
-      name="Search"
-      component={SearchNavigator}
-      options={{ headerShown: false }}
-    />
-    <Tab.Screen name="Settings" component={SettingsNavigator} />
-  </Tab.Navigator>
-);
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeView}
+        options={({ navigation }) => ({
+          tabBarButton: (props) => (
+            <Pressable
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              onPress={() => navigation.navigate('Home')}
+            />
+          ),
+        })}
+      />
+      {/* eslint-disable-next-line max-len */}
+      {/* <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/> */}
+      <Tab.Screen
+        name="Wallet"
+        component={WalletNavigator}
+        options={{ headerShown: !isPremium }}
+      />
+      <Tab.Screen name="Messages" component={ConversationNavigator} />
+      <Tab.Screen
+        name="New"
+        component={WalletNavigator}
+        options={({ navigation }) => ({
+          tabBarButton: (props) => (
+            <Pressable
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              onPress={() => navigation.navigate('PostView')}
+            />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name="Search"
+        component={SearchNavigator}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen name="Settings" component={SettingsNavigator} />
+    </Tab.Navigator>
+  );
+};
 
 const AuthedNavigator = () => (
   <GestureHandlerRootView style={{ flex: 1 }}>
@@ -126,7 +132,7 @@ const AuthedNavigator = () => (
         <Stack.Screen
           name="Profile"
           component={OwnProfileNavigator}
-          options={({ navigation, route }) => ({
+          options={() => ({
             headerShown: false,
           })}
         />

@@ -62,19 +62,10 @@ const Root = () => {
   };
 
   useEffect(() => {
-    // notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-    //   setNotification(notification);
-    // });
-
-    // responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-    //   console.log(response);
-    // });
-
     const prepare = async () => {
       setAppIsReady(false);
       try {
         await init();
-        await initRC();
         await getProducts();
         await initRelays();
         await hydrateFromDatabase();
@@ -91,6 +82,7 @@ const Root = () => {
             data: { access_token, username },
           } = await loginToWallet(privKey);
           const pubKey = getPublicKey(privKey);
+          await initRC(pubKey);
           dispatch(logIn({ bearer: access_token, username, pubKey }));
           try {
             const contactList = await getContactAndRelayList(pubKey);

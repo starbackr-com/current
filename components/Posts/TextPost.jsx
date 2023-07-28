@@ -6,6 +6,7 @@ import { getAge } from '../../features/shared/utils/getAge';
 import { useParseContent } from '../../hooks/useParseContent';
 import PostActionBar from './PostActionBar';
 import { globalStyles } from '../../styles';
+import { useZapNote } from '../../hooks';
 
 const TextPost = React.memo(({ event, user, onMenu }) => {
   const content = useParseContent(event);
@@ -18,6 +19,12 @@ const TextPost = React.memo(({ event, user, onMenu }) => {
       event,
     });
   };
+  const zapHandler = useZapNote(
+    event.id,
+    user?.lud16 || user?.lud06,
+    user?.name || event?.pubkey.slice(0, 16),
+    event.pubkey,
+  );
 
   return (
     <Animated.View
@@ -62,6 +69,8 @@ const TextPost = React.memo(({ event, user, onMenu }) => {
         onPressMore={() => {
           onMenu(event);
         }}
+        onPressZap={zapHandler}
+        zapDisabled={!user?.lud06 && !user?.lud16}
       />
     </Animated.View>
   );
