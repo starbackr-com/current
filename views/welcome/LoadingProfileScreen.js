@@ -14,6 +14,7 @@ import {
     getKind3Followers,
     updateFollowedUsers,
 } from "../../utils/nostrV2/getUserData";
+import { initRC } from "../../features/premium";
 
 const LoadingProfileScreen = ({ route }) => {
     const {
@@ -104,6 +105,7 @@ const LoadingProfileScreen = ({ route }) => {
             } catch (error) {
                 console.log(error);
             } finally {
+                await initRC(pubKey);
                 dispatch(logIn({ bearer: access_token, username, pubKey }));
             }
         } catch (error) {

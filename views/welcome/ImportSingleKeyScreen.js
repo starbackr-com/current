@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
 import { followPubkey } from "../../features/userSlice";
 import { saveValue } from "../../utils/secureStore";
+import { initRC } from "../../features/premium";
 
 const hexRegex = /^[0-9a-f]{64}$/i;
 
@@ -38,6 +39,7 @@ const ImportSingleKeyScreen = ({ navigation }) => {
         try {
             const result = await loginToWallet(privKey);
             const pk = getPublicKey(privKey);
+            await initRC(pk);
             if (result?.data?.access_token) {
                 await saveValue("privKey", privKey);
                 access_token = result.data.access_token;
