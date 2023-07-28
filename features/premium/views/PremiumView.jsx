@@ -1,13 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { Image } from 'expo-image';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { colors, globalStyles } from '../../../styles';
 import { FeatureCard } from '../components';
 import { CustomButton } from '../../../components';
-import { setPremium } from '../../authSlice';
 import { purchaseSubscription } from '../utils/utils';
-import ampedLogo from '../../../assets/amped_placeholder.png';
+import ampedLogo from '../../../assets/amped_logo.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -20,7 +19,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    height: 100,
+    height: 39,
     width: 100,
   },
   subAction: { width: '90%', paddingTop: 24 },
@@ -29,7 +28,6 @@ const styles = StyleSheet.create({
 const PremiumView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const isPremium = useSelector((state) => state.auth.isPremium);
-  const dispatch = useDispatch();
   const purchaseHandler = async () => {
     setIsLoading(true);
     await purchaseSubscription();
@@ -37,7 +35,7 @@ const PremiumView = () => {
   };
   return (
     <View style={globalStyles.screenContainer}>
-      <Image source={ampedLogo} style={styles.image} />
+      <Image source={ampedLogo} style={styles.image} contentFit="contain" />
       <View style={styles.container}>
         <FeatureCard icon="notifications" text="Push Notifications" />
         <FeatureCard icon="server" text="Premium Relays" />
