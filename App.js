@@ -7,13 +7,16 @@ import Root from './Root';
 import { injectStore } from './utils/nostrV2/Event';
 import 'react-native-gesture-handler';
 import React from 'react';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 const App = () => {
   injectStore(store);
   return (
     <Provider store={store}>
-      <PolyfillCrypto />
-      <Root />
+      <RootSiblingParent>
+        <PolyfillCrypto />
+        <Root />
+      </RootSiblingParent>
     </Provider>
   );
 };

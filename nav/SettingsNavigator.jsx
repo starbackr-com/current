@@ -10,6 +10,7 @@ import RelaySettingsNav from '../features/relays/nav/RelaySettingsNav';
 import SettingsNotifcationsScreen from '../views/settings/SettingsNotifcationsScreen';
 import { BackHeader } from '../components';
 import SettingsLanguageView from '../views/settings/SettingsLanguageView';
+import PremiumView from '../features/premium/views/PremiumView';
 
 const Stack = createStackNavigator();
 
@@ -55,6 +56,13 @@ const SettingsNavigator = () => (
     <Stack.Screen
       name="Language Settings"
       component={SettingsLanguageView}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
+    />
+    <Stack.Screen
+      name="Premium"
+      component={PremiumView}
       options={({ navigation }) => ({
         header: () => <BackHeader navigation={navigation} />,
       })}

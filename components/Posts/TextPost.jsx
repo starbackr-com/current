@@ -4,19 +4,13 @@ import { View, Text } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { getAge } from '../../features/shared/utils/getAge';
 import { useParseContent } from '../../hooks/useParseContent';
-import { useZapNote } from '../../hooks/useZapNote';
 import PostActionBar from './PostActionBar';
 import { globalStyles } from '../../styles';
+import { useZapNote } from '../../hooks';
 
-export const TextPost = React.memo(({ event, user, onMenu }) => {
+const TextPost = React.memo(({ event, user, onMenu }) => {
   const content = useParseContent(event);
   const navigation = useNavigation();
-  const zap = useZapNote(
-    event.id,
-    user?.lud16 || user?.lud06,
-    user?.name || event?.pubkey.slice(0, 16),
-    event.pubkey,
-  );
   const commentHandler = () => {
     navigation.push('CommentScreen', {
       eventId: event.id,
@@ -25,10 +19,12 @@ export const TextPost = React.memo(({ event, user, onMenu }) => {
       event,
     });
   };
-
-  const zapHandler = () => {
-    zap();
-  };
+  const zapHandler = useZapNote(
+    event.id,
+    user?.lud16 || user?.lud06,
+    user?.name || event?.pubkey.slice(0, 16),
+    event.pubkey,
+  );
 
   return (
     <Animated.View
@@ -70,12 +66,14 @@ export const TextPost = React.memo(({ event, user, onMenu }) => {
       </Text>
       <PostActionBar
         onPressComment={commentHandler}
-        onPressZap={zapHandler}
         onPressMore={() => {
           onMenu(event);
         }}
+        onPressZap={zapHandler}
         zapDisabled={!user?.lud06 && !user?.lud16}
       />
     </Animated.View>
   );
 });
+
+export default TextPost;

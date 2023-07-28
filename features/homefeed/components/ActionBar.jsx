@@ -6,6 +6,7 @@ import Animated, {
   withRepeat,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useZapNote } from '../../../hooks/useZapNote';
@@ -16,6 +17,7 @@ const ActionBar = ({ user, event, width }) => {
   const [zapPending, setZapPending] = useState(false);
   const [repostPending, setRepostPending] = useState(false);
   const navigation = useNavigation();
+  const isPremium = useSelector((state) => state.auth.isPremium);
   const zap = useZapNote(
     event.id,
     user?.lud16 || user?.lud06,
@@ -50,7 +52,7 @@ const ActionBar = ({ user, event, width }) => {
         width: '10%',
       }}
     >
-      {user?.lud06 || user?.lud16 ? (
+      {isPremium && (user?.lud06 || user?.lud16) ? (
         <Pressable
           style={({ pressed }) => [
             {
@@ -90,7 +92,7 @@ const ActionBar = ({ user, event, width }) => {
             eventId: event.id,
             rootId: event.id,
             type: 'root',
-            event: event,
+            event,
           });
         }}
       >
@@ -101,28 +103,28 @@ const ActionBar = ({ user, event, width }) => {
         />
       </Pressable>
       <Pressable
-          style={({ pressed }) => [
-            {
-              width: (width / 100) * 8,
-              height: (width / 100) * 8,
-              borderRadius: (width / 100) * 4,
-              backgroundColor: colors.backgroundSecondary,
-              marginBottom: 16,
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
-            pressed ? { backgroundColor: '#777777' } : undefined,
-          ]}
-          onPress={repostHandler}
-        >
-          <Animated.View style={[repostPending ? zapStyle : { opacity: 1 }]}>
-            <Ionicons
-              name="repeat"
-              color={colors.primary500}
-              size={(width / 100) * 5}
-            />
-          </Animated.View>
-        </Pressable>
+        style={({ pressed }) => [
+          {
+            width: (width / 100) * 8,
+            height: (width / 100) * 8,
+            borderRadius: (width / 100) * 4,
+            backgroundColor: colors.backgroundSecondary,
+            marginBottom: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+          pressed ? { backgroundColor: '#777777' } : undefined,
+        ]}
+        onPress={repostHandler}
+      >
+        <Animated.View style={[repostPending ? zapStyle : { opacity: 1 }]}>
+          <Ionicons
+            name="repeat"
+            color={colors.primary500}
+            size={(width / 100) * 5}
+          />
+        </Animated.View>
+      </Pressable>
       <Pressable
         style={{
           width: (width / 100) * 8,
@@ -133,7 +135,7 @@ const ActionBar = ({ user, event, width }) => {
           justifyContent: 'center',
         }}
         onPress={() => {
-          navigation.navigate('PostMenuModal', { event: event });
+          navigation.navigate('PostMenuModal', { event });
         }}
       >
         <Ionicons

@@ -1,3 +1,3 @@
 export * from './ImagePost';
-export * from './TextPost';
-export * from './ZapPost'
+export { default as TextPost } from './TextPost';
+export * from './ZapPost';

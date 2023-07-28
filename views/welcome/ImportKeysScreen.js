@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { logIn } from "../../features/authSlice";
 import { getOldKind0 } from "../../utils/nostrV2/getUserData";
 import { followPubkey } from "../../features/userSlice";
+import { initRC } from "../../features/premium";
 
 const ImportKeysScreen = ({ navigation }) => {
     const input1 = useRef();
@@ -51,6 +52,7 @@ const ImportKeysScreen = ({ navigation }) => {
                 const privKey = await mnemonicToSeed(mem);
                 const pubKey = getPublicKey(privKey);
                 const result = await loginToWallet(privKey);
+                await initRC(pubKey);
                 const access_token = result?.data?.access_token;
                 const username = result?.data?.username;
                 if (access_token) {

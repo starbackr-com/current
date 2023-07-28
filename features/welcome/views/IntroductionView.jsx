@@ -44,7 +44,7 @@ const IntroductionView = ({ navigation }) => {
         />
         <IntroductionItem
           title="Usernames"
-          text="Current comes with a single username for you nostr and Lightning address"
+          text="Current comes with a single username for your nostr and Lightning address"
           icon="person-circle-outline"
         />
       </ScrollView>

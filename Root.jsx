@@ -30,6 +30,7 @@ import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
 import './translations/translations';
+import { getProducts, initRC } from './features/premium/utils/utils';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -61,18 +62,11 @@ const Root = () => {
   };
 
   useEffect(() => {
-    // notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-    //   setNotification(notification);
-    // });
-
-    // responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-    //   console.log(response);
-    // });
-
     const prepare = async () => {
       setAppIsReady(false);
       try {
         await init();
+        await getProducts();
         await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();
@@ -88,6 +82,7 @@ const Root = () => {
             data: { access_token, username },
           } = await loginToWallet(privKey);
           const pubKey = getPublicKey(privKey);
+          await initRC(pubKey);
           dispatch(logIn({ bearer: access_token, username, pubKey }));
           try {
             const contactList = await getContactAndRelayList(pubKey);

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Linking from 'expo-linking';
 import { deleteValue } from '../../utils/secureStore';
@@ -15,9 +15,10 @@ import {
   removeData,
 } from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
-import { dbLogout, deleteMessageCache } from '../../utils/database';
+import { dbLogout } from '../../utils/database';
 
 const settings = [
+  'Premium',
   'Payment Settings',
   'Backup Keys',
   'Network Settings',
@@ -49,17 +50,16 @@ const SettingItem = ({ item, onNav }) => (
 );
 
 const SettingsHomeScreen = ({ navigation }) => {
-  const [ispushnotifyChecked, setpushnotifyChecked] = useState(false);
   const dispatch = useDispatch();
   const navigationHandler = (route) => {
     navigation.navigate(route);
   };
 
-  const { pubKey, walletBearer } = useSelector((state) => state.auth);
+  const { walletBearer } = useSelector((state) => state.auth);
   const { pushToken } = useSelector((state) => state.user);
 
   const logoutHandler = async () => {
-    //clear push notifications
+    // clear push notifications
     const initialState = {
       status: false,
       zaps: false,
@@ -71,9 +71,7 @@ const SettingsHomeScreen = ({ navigation }) => {
       token: pushToken,
     };
 
-    console.log(initialState);
-
-    fetch(`${process.env.BASEURL}/v2/pushtoken`, {
+    await fetch(`${process.env.BASEURL}/v2/pushtoken`, {
       method: 'POST',
       body: JSON.stringify(initialState),
       headers: {
