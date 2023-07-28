@@ -62,14 +62,6 @@ const PremiumView = () => {
             loading={isLoading}
           />
         )}
-        <CustomButton
-          text="Toggle Premium"
-          buttonConfig={{
-            onPress: () => {
-              dispatch(setPremium(!isPremium));
-            },
-          }}
-        />
       </View>
     </View>
   );
