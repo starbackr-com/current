@@ -40,7 +40,7 @@ const PremiumView = () => {
         <FeatureCard icon="notifications" text="Push Notifications" />
         <FeatureCard icon="server" text="Premium Relays" />
         <FeatureCard icon="chatbubble" text="Encrypted Messages" />
-        <FeatureCard icon="flash" text="One-Click Zaps" />
+        <FeatureCard icon="flash" text="Send & Receive Zaps" />
         <FeatureCard icon="image" text="HD Media Upload" />
         <FeatureCard icon="at" text="Lightning Address" />
         <FeatureCard icon="save" text="Automatic Event Backups" />
