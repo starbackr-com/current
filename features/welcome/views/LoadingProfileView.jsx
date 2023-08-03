@@ -12,6 +12,7 @@ import globalStyles from '../../../styles/globalStyles';
 import { LoadingSpinner } from '../../../components';
 import { followUser } from '../../../utils/users';
 import devLog from '../../../utils/internal';
+import { initRC } from '../../premium';
 
 const LoadingProfileScreen = ({ route }) => {
   const { image, svg, svgId, address, bio, isImport, sk, mem } = route.params;
@@ -87,6 +88,7 @@ const LoadingProfileScreen = ({ route }) => {
         } catch (error) {
           devLog(error);
         } finally {
+          await initRC(pk);
           dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
         }
       } catch (error) {

@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 import Purchases, {
-  CustomerInfo,
   PurchasesOffering,
 } from 'react-native-purchases';
 import { store } from '../../../store/store';
@@ -8,13 +7,13 @@ import { setPremium } from '../../authSlice';
 
 export async function initRC(userId: string) {
   try {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' || Platform.OS === 'macos') {
       Purchases.configure({
         apiKey: process.env.RC_IOS_KEY,
         appUserID: userId,
       });
       const customerInfo = await getCustomerInfo();
-      if (customerInfo.entitlements.active.Pleb !== undefined) {
+      if (customerInfo && customerInfo.entitlements.active.Pleb !== undefined) {
         store.dispatch(setPremium(true));
       }
     }
@@ -36,7 +35,7 @@ export async function getProducts(): Promise<PurchasesOffering> {
   }
 }
 
-export async function getCustomerInfo(): Promise<CustomerInfo> {
+export async function getCustomerInfo() {
   try {
     const customerInfo = await Purchases.getCustomerInfo();
     return customerInfo;

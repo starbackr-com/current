@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
   EULAView,
   IntroductionView,
@@ -9,7 +10,6 @@ import {
 } from '../views';
 import CreateProfileNavigator from './CreateProfileNavigator';
 import ImportNavigator from './ImportNavigator';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const Stack = createStackNavigator();
 

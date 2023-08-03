@@ -31,6 +31,7 @@ import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
 import './translations/translations';
 import { getProducts, initRC } from './features/premium/utils/utils';
+import Purchases from 'react-native-purchases';
 
 SplashScreen.preventAutoHideAsync();
 

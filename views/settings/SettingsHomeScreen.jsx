@@ -16,6 +16,7 @@ import {
 } from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
 import { dbLogout } from '../../utils/database';
+import Purchases from 'react-native-purchases';
 
 const settings = [
   'Premium',
@@ -91,10 +92,11 @@ const SettingsHomeScreen = ({ navigation }) => {
       'relays',
       'pushToken',
     ]);
+    await Purchases.logOut();
     dispatch(clearStore());
     dispatch(clearUserStore());
-    dispatch(logOut());
     dispatch(resetAll());
+    dispatch(logOut());
   };
 
   const introHandler = async () => {
