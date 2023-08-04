@@ -1,18 +1,25 @@
 import { View, Text, useWindowDimensions, Pressable } from 'react-native';
-import React from 'react';
-import { useGetWalletBalanceQuery } from '../../services/walletApi';
+import React, { useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import CustomButton from '../../components/CustomButton';
+import Purchases from 'react-native-purchases';
 import { useIsFocused } from '@react-navigation/native';
+import { useGetWalletBalanceQuery } from '../../services/walletApi';
+import CustomButton from '../../components/CustomButton';
 import { colors, globalStyles } from '../../styles';
 import useBalance from '../../features/wallet/hooks/useBalance';
 import PressableIcon from '../../components/PressableIcon';
+import MenuBottomSheet from '../../components/MenuBottomSheet';
+import { TopUpCard } from '../../features/wallet/components';
+import { LoadingSpinner } from '../../components';
+import { getSatProducts } from '../../features/premium';
 
 const WalletHomeScreen = ({ navigation: { navigate } }) => {
-  const { data, error, refetch } = useGetWalletBalanceQuery(null, {
+  const [products, setProducts] = useState();
+  const { data, refetch } = useGetWalletBalanceQuery(null, {
     skip: !useIsFocused(),
   });
   useBalance();
+  const modalRef = useRef();
 
   const device = useWindowDimensions();
   return (
@@ -27,7 +34,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
         <View style={{ flex: 1 }}>
           <PressableIcon
             icon="list"
-            label="Transactions"
+            label="History"
             onPress={() => {
               navigate('WalletTransactionScreen');
             }}
@@ -46,7 +53,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
         <View style={{ flex: 1 }}>
           <PressableIcon
             icon="key"
-            label="Wallet Connect"
+            label="Connect"
             onPress={() => {
               navigate('WalletConnectScreen');
             }}
@@ -58,6 +65,17 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
             label="Reload"
             onPress={() => {
               refetch();
+            }}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <PressableIcon
+            icon="cash"
+            label="Top Up"
+            onPress={async () => {
+              modalRef.current.present();
+              const rcProducts = await getSatProducts();
+              setProducts(rcProducts);
             }}
           />
         </View>
@@ -79,9 +97,10 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
         <View
           style={{
             flexDirection: 'row',
-            width: '90%',
+            width: '100%',
             justifyContent: 'space-between',
             marginBottom: device.height / 30,
+            gap: 10,
           }}
         >
           <CustomButton
@@ -91,7 +110,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                 navigate('WalletSendScreen');
               },
             }}
-            containerStyles={{ flex: 1, marginRight: 6 }}
+            containerStyles={{ flex: 1 }}
             icon="arrow-up-circle"
           />
           <CustomButton
@@ -101,7 +120,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
                 navigate('WalletReceiveScreen');
               },
             }}
-            containerStyles={{ flex: 1, marginLeft: 6 }}
+            containerStyles={{ flex: 1 }}
             icon="arrow-down-circle"
           />
         </View>
@@ -121,6 +140,24 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
           <Ionicons name="qr-code" color="white" size={device.width / 16} />
         </Pressable>
       </View>
+      <MenuBottomSheet ref={modalRef}>
+        {products ? (
+          <View>
+            <Text style={[globalStyles.textH2, { textAlign: 'center' }]}>
+              {products.length > 0
+                ? 'Top up your wallet!'
+                : 'No products found'}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              {products.map((product) => (
+                <TopUpCard product={product} />
+              ))}
+            </View>
+          </View>
+        ) : (
+          <LoadingSpinner size={24} />
+        )}
+      </MenuBottomSheet>
     </View>
   );
 };

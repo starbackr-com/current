@@ -62,3 +62,14 @@ export async function purchaseSubscription() {
     }
   }
 }
+
+export async function getSatProducts() {
+  try {
+    const rcProducts = await Purchases.getProducts(['sats_1usd']);
+    return rcProducts;
+  }
+  catch(e) {
+    console.log(e);
+    return []
+  }
+}
