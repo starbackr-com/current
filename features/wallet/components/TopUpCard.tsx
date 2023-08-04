@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { colors, globalStyles } from '../../../styles';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { LoadingSpinner } from '../../../components';
 
 type TopUpCardProps = {
   product: PurchasesStoreProduct;
+  refetchFn: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const TopUpCard = ({ product }: TopUpCardProps) => {
+const TopUpCard = ({ product, refetchFn }: TopUpCardProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   if (isLoading) {
     return <LoadingSpinner size={24} />;
@@ -42,16 +43,23 @@ const TopUpCard = ({ product }: TopUpCardProps) => {
         setIsLoading(true);
         try {
           await Purchases.purchaseStoreProduct(product);
-          setIsLoading(false);
+          setTimeout(() => {
+            refetchFn();
+            setIsLoading(false);
+          }, 5000);
         } catch (e) {
+          if (e.userCancelled) {
+            alert('Transaction cancelled!');
+          } else {
+            alert('Something went wrong...');
+          }
           console.log(e);
-        } finally {
-          setIsLoading(false);
         }
       }}
     >
       <FontAwesome5 name="coins" size={24} color={colors.primary500} />
-      <Text style={styles.price}>${product.price}</Text>
+      <Text style={styles.price}>2100 SATS</Text>
+      <Text style={globalStyles.textBody}>${product.price}</Text>
     </Pressable>
   );
 };

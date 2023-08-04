@@ -1,7 +1,6 @@
 import { View, Text, useWindowDimensions, Pressable } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Purchases from 'react-native-purchases';
 import { useIsFocused } from '@react-navigation/native';
 import { useGetWalletBalanceQuery } from '../../services/walletApi';
 import CustomButton from '../../components/CustomButton';
@@ -22,6 +21,10 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
   const modalRef = useRef();
 
   const device = useWindowDimensions();
+  const modalRefetch = () => {
+    refetch();
+    modalRef.current.dismiss();
+  };
   return (
     <View style={globalStyles.screenContainer}>
       <View
@@ -150,7 +153,7 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
             </Text>
             <View style={{ flexDirection: 'row', gap: 12 }}>
               {products.map((product) => (
-                <TopUpCard product={product} />
+                <TopUpCard product={product} refetchFn={modalRefetch} />
               ))}
             </View>
           </View>
