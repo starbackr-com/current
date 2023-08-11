@@ -41,7 +41,9 @@ const SettingsNavigator = () => (
     <Stack.Screen
       name="Payment Settings"
       component={SettingsPaymentsScreen}
-      options={{ headerShown: false }}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
     />
     <Stack.Screen
       name="Muted Users"

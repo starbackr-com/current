@@ -1,4 +1,10 @@
-import { View, Text, useWindowDimensions, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  Pressable,
+  Platform,
+} from 'react-native';
 import React, { useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
@@ -71,17 +77,19 @@ const WalletHomeScreen = ({ navigation: { navigate } }) => {
             }}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <PressableIcon
-            icon="cash"
-            label="Top Up"
-            onPress={async () => {
-              modalRef.current.present();
-              const rcProducts = await getSatProducts();
-              setProducts(rcProducts);
-            }}
-          />
-        </View>
+        {Platform.OS !== 'android' ? (
+          <View style={{ flex: 1 }}>
+            <PressableIcon
+              icon="cash"
+              label="Top Up"
+              onPress={async () => {
+                modalRef.current.present();
+                const rcProducts = await getSatProducts();
+                setProducts(rcProducts);
+              }}
+            />
+          </View>
+        ) : undefined}
       </View>
       <View
         style={{ flex: 1, justifyContent: 'center', flexDirection: 'column' }}

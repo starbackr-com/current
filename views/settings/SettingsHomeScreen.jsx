@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, Pressable } from 'react-native';
 import React from 'react';
+import Purchases from 'react-native-purchases';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Linking from 'expo-linking';
 import { deleteValue } from '../../utils/secureStore';
@@ -16,7 +17,6 @@ import {
 } from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
 import { dbLogout } from '../../utils/database';
-import Purchases from 'react-native-purchases';
 
 const settings = [
   'Premium',

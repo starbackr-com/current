@@ -18,6 +18,7 @@ export async function initRC(userId: string) {
       }
     }
     if (Platform.OS === 'android') {
+      store.dispatch(setPremium(true));
       return;
     }
   } catch (e) {

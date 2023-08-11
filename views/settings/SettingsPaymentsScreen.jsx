@@ -13,11 +13,14 @@ import {
 } from '../../features/userSlice';
 import { storeData } from '../../utils/cache/asyncStorage';
 import { colors, globalStyles } from '../../styles';
+import MenuBottomSheet from '../../components/MenuBottomSheet';
+import { SweepModal } from '../../features/wallet/components';
 
 const SettingsPaymentsScreen = ({ navigation }) => {
   const { zapAmount, zapComment, zapNoconf } = useSelector(
     (state) => state.user,
   );
+  const modalRef = useRef();
   const [zapValueInput, setZapValueInput] = useState();
   const [zapValueComment, setZapValueComment] = useState();
   const [iszapNoconfChecked, setzapNoconfChecked] = useState(false);
@@ -114,6 +117,14 @@ const SettingsPaymentsScreen = ({ navigation }) => {
             No Zap Confirmation?
           </Text>
         </View>
+        <CustomButton
+          text="Sweep Account"
+          buttonConfig={{
+            onPress: () => {
+              modalRef.current.present();
+            },
+          }}
+        />
       </View>
       <View
         style={{
@@ -124,16 +135,10 @@ const SettingsPaymentsScreen = ({ navigation }) => {
         }}
       >
         <CustomButton text="Save" buttonConfig={{ onPress: submitHandler }} />
-        <CustomButton
-          text="Back"
-          secondary
-          buttonConfig={{
-            onPress: () => {
-              navigation.navigate('SettingsHomeScreen');
-            },
-          }}
-        />
       </View>
+      <MenuBottomSheet ref={modalRef}>
+        <SweepModal />
+      </MenuBottomSheet>
     </KeyboardAvoidingView>
   );
 };
