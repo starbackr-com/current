@@ -16,7 +16,8 @@
     },
     "scheme": "nostr",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/04522974-aa48-4b3e-ad26-71be0648d73c"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -56,7 +57,22 @@
       }
     },
     "plugins": [
-      "expo-localization"
-    ]
+      "expo-localization",
+      "sentry-expo"
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "lightning-digital-entertainmen",
+            "project": "current"
+          }
+        }
+      ]
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
   }
 }

@@ -30,8 +30,7 @@ import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
 import './translations/translations';
-import { getProducts, initRC } from './features/premium/utils/utils';
-import Purchases from 'react-native-purchases';
+import { initRC } from './features/premium/utils/utils';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,8 +39,6 @@ const Root = () => {
   const silentFollow = useSilentFollow();
   const dispatch = useDispatch();
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
-  // const notificationListener = useRef();
-  // const responseListener = useRef();
 
   const hydrateWc = async () => {
     const wcDataString = await getValue('wcdata');
@@ -67,7 +64,6 @@ const Root = () => {
       setAppIsReady(false);
       try {
         await init();
-        await getProducts();
         await initRelays();
         await hydrateFromDatabase();
         await hydrateStore();

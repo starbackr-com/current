@@ -3,6 +3,7 @@ import { addZap } from '../features/interactionSlice';
 import { hydrate } from '../features/messagesSlice';
 import { followMultiplePubkeys, mutePubkey } from '../features/userSlice';
 import { store } from '../store/store';
+import * as Sentry from 'sentry-expo';
 
 const openDatabase = () => SQLite.openDatabase('current.db');
 export const db = openDatabase();
@@ -55,10 +56,9 @@ export const init = async () => {
   try {
     db.transaction(async (tx) => {
       initArray.forEach((table) => tx.executeSql(table));
-      console.log('DB init success!');
     });
   } catch (error) {
-    console.error('DB init error: ', error);
+    Sentry.Native.captureException(error);
   }
 };
 
