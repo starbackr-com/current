@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
 import WalletNavigator from './WalletNavigator';
-import SettingsNavigator from './SettingsNavigator';
 import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
 import VerifyTwitterModal from '../views/welcome/VerifyTwitterModal';
@@ -25,6 +24,7 @@ import { SearchNavigator } from '../features/search';
 import { ConversationNavigator } from '../features/messages';
 import OwnProfileNavigator from './OwnProfileNavigator';
 import PostNavigator from '../features/post/nav/PostNavigator';
+import { SettingsNavigator } from '../features/settings';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

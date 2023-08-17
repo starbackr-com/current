@@ -6,7 +6,7 @@ import {
   getWriteRelays,
   pool,
 } from '../../../utils/nostrV2/relays.ts';
-import { mentionRegex, nip27Regex } from '../../../constants';
+import { mentionRegex } from '../../../constants';
 
 export const publishReply = async (content, event) => {
   const writeUrls = getRelayUrls(getWriteRelays());

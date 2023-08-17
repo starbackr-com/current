@@ -2,12 +2,11 @@ import { View, Text } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { globalStyles } from '../../styles';
-import { SwitchBar } from '../../components';
-import registerPushToken from '../../utils/notifications';
-import { storeData } from '../../utils/cache/asyncStorage';
-import { setPushToken } from '../../features/userSlice';
+import { globalStyles } from '../../../styles';
+import { SwitchBar } from '../../../components';
+import { storeData } from '../../../utils/cache/asyncStorage';
+import { setPushToken } from '../../userSlice';
+import registerPushToken from '../../../utils/notifications';
 
 const initialState = {
   status: false,
@@ -19,7 +18,7 @@ const initialState = {
   lntxn: false,
 };
 
-const SettingsNotifcationsScreen = () => {
+const NotifcationsSettingsScreen = () => {
   const dispatch = useDispatch();
   const [notificationSettings, setNotificationSettings] = useState(initialState);
   const [pushTokenInput, setPushTokenInput] = useState();
@@ -68,7 +67,6 @@ const SettingsNotifcationsScreen = () => {
   return (
     <ScrollView style={globalStyles.screenContainerScroll}>
       <Text style={globalStyles.textH2}>Push Notifications</Text>
-
       <SwitchBar
         text="Allow Notifications"
         value={notificationSettings.status}
@@ -76,7 +74,6 @@ const SettingsNotifcationsScreen = () => {
           try {
             if (!pushTokenInput) {
               const token = await registerPushToken(walletBearer);
-
               if (token) {
                 // console.log('token is: ', token);
                 await storeData('pushToken', token);
@@ -177,4 +174,4 @@ const SettingsNotifcationsScreen = () => {
   );
 };
 
-export default SettingsNotifcationsScreen;
+export default NotifcationsSettingsScreen;
