@@ -41,8 +41,12 @@ const CommentScreen = ({ route, navigation }) => {
   };
 
   const getEvent = async () => {
-    const parentEvent = await getEventById(eventId);
-    setEvent(parentEvent);
+    try {
+      const parentEvent = await getEventById(eventId);
+      setEvent(parentEvent);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
@@ -74,12 +78,15 @@ const CommentScreen = ({ route, navigation }) => {
     return undefined;
   };
 
-  const submitHandler = useCallback(async (input) => {
-    const success = await publishReply(input, event);
-    if (!success) {
-      Alert.alert('Something went wrong publishing your note...');
-    }
-  }, [event]);
+  const submitHandler = useCallback(
+    async (input) => {
+      const success = await publishReply(input, event);
+      if (!success) {
+        Alert.alert('Something went wrong publishing your note...');
+      }
+    },
+    [event],
+  );
 
   return (
     <CustomKeyboardView>
