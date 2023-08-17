@@ -10,7 +10,6 @@ import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
 import WalletNavigator from './WalletNavigator';
 import SettingsNavigator from './SettingsNavigator';
-import PostView from '../views/post/PostView';
 import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
 import VerifyTwitterModal from '../views/welcome/VerifyTwitterModal';
@@ -25,6 +24,7 @@ import { colors } from '../styles';
 import { SearchNavigator } from '../features/search';
 import { ConversationNavigator } from '../features/messages';
 import OwnProfileNavigator from './OwnProfileNavigator';
+import PostNavigator from '../features/post/nav/PostNavigator';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,37 +64,13 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeView}
-        options={({ navigation }) => ({
-          tabBarButton: (props) => (
-            <Pressable
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              onPress={() => navigation.navigate('Home')}
-            />
-          ),
-        })}
       />
-      {/* eslint-disable-next-line max-len */}
-      {/* <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/> */}
       <Tab.Screen
         name="Wallet"
         component={WalletNavigator}
         options={{ headerShown: !isPremium }}
       />
       <Tab.Screen name="Messages" component={ConversationNavigator} />
-      <Tab.Screen
-        name="New"
-        component={WalletNavigator}
-        options={({ navigation }) => ({
-          tabBarButton: (props) => (
-            <Pressable
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              onPress={() => navigation.navigate('PostView')}
-            />
-          ),
-        })}
-      />
       <Tab.Screen
         name="Search"
         component={SearchNavigator}
@@ -126,7 +102,7 @@ const AuthedNavigator = () => (
         />
         <Stack.Screen
           name="PostView"
-          component={PostView}
+          component={PostNavigator}
           options={{ presentation: 'modal', headerShown: false }}
         />
         <Stack.Screen

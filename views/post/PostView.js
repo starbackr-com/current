@@ -109,19 +109,6 @@ ${gif}`,
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={headerHeight}
     >
-      <View
-        style={{
-          width: '100%',
-          flexDirection: 'row',
-          marginBottom: 12,
-        }}
-      >
-        <BackButton
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-      </View>
       <Input
         inputStyle={{ flex: 3, maxHeight: '30%' }}
         textInputConfig={{
