@@ -13,7 +13,7 @@ import { useZapNote } from '../../../hooks/useZapNote';
 import { colors } from '../../../styles';
 import { publishRepost } from '../../../utils/nostrV2';
 
-const ActionBar = ({ user, event, width }) => {
+const ActionBar = ({ user, event, width, onMenu }) => {
   const [zapPending, setZapPending] = useState(false);
   const [repostPending, setRepostPending] = useState(false);
   const navigation = useNavigation();
@@ -135,7 +135,7 @@ const ActionBar = ({ user, event, width }) => {
           justifyContent: 'center',
         }}
         onPress={() => {
-          navigation.navigate('PostMenuModal', { event });
+          onMenu(event);
         }}
       >
         <Ionicons

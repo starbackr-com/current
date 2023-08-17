@@ -48,7 +48,7 @@ const FeedImage = ({ size, images }) => {
   );
 };
 
-const ImagePost = React.memo(({ item, height, width, user, zaps }) => {
+const ImagePost = React.memo(({ item, height, width, user, zaps, onMenu }) => {
   const navigation = useNavigation();
   const [hasMore, setHasMore] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -260,7 +260,7 @@ const ImagePost = React.memo(({ item, height, width, user, zaps }) => {
           </View>
         </Pressable>
       </Animated.View>
-      <ActionBar user={user} event={item} width={width} />
+      <ActionBar user={user} event={item} width={width} onMenu={onMenu}/>
     </View>
   );
 });

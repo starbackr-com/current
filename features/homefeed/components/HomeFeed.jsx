@@ -7,11 +7,14 @@ import ImagePost from './ImagePost';
 import PostItem from './PostItem';
 import { usePaginatedFeed } from '../hooks/usePaginatedFeed';
 import { colors, globalStyles } from '../../../styles';
+import NewPostButton from './NewPostButton';
+import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
 
 const HomeFeed = ({ width, height }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const listRef = useRef();
+  const modalRef = useRef();
 
   const zapAmount = useSelector((state) => state.user.zapAmount);
   const users = useSelector((state) => state.messages.users);
@@ -21,6 +24,13 @@ const HomeFeed = ({ width, height }) => {
   const [get25RootPosts, refresh, events] = usePaginatedFeed(now);
   const navigation = useNavigation();
   useScrollToTop(listRef);
+
+  const onMenuHandler = useCallback(
+    (data) => {
+      modalRef.current.present(data);
+    },
+    [modalRef],
+  );
 
   const refreshHandler = useCallback(() => {
     setRefreshing(true);
@@ -38,6 +48,7 @@ const HomeFeed = ({ width, height }) => {
             width={width}
             user={users[item.pubkey]}
             zapAmount={zapAmount}
+            onMenu={onMenuHandler}
           />
         );
       }
@@ -48,6 +59,7 @@ const HomeFeed = ({ width, height }) => {
           width={width}
           user={users[item.pubkey]}
           zapAmount={zapAmount}
+          onMenu={onMenuHandler}
         />
       );
     },
@@ -76,6 +88,8 @@ const HomeFeed = ({ width, height }) => {
           ref={listRef}
           keyExtractor={(item) => item.id}
         />
+        <NewPostButton />
+        <PostMenuBottomSheet ref={modalRef} />
       </View>
     );
   }
