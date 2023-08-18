@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform, Pressable } from 'react-native';
+import { Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -61,10 +61,7 @@ const TabNavigator = () => {
         headerTitle: '',
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeView}
-      />
+      <Tab.Screen name="Home" component={HomeView} />
       <Tab.Screen
         name="Wallet"
         component={WalletNavigator}

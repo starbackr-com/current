@@ -68,7 +68,8 @@ const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
           {
             backgroundColor: colors.backgroundSecondary,
             marginBottom: 16,
-            width: '85%',
+            flex: 1,
+            marginRight: 8,
             height: '90%',
             padding: 12,
             borderRadius: 10,

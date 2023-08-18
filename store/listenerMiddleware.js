@@ -7,6 +7,7 @@ import {
   removeRelay,
 } from '../features/relays/relaysSlice';
 import { addWalletconnect, changeWalletconnect, wcListener } from '../features/walletconnect/walletconnectSlice';
+import { addLike, likeListener } from '../features/interactionSlice';
 
 const listener = createListenerMiddleware();
 
@@ -21,6 +22,10 @@ listener.startListening({
 listener.startListening({
   actionCreator: joinCommunity,
   effect: communityListener,
+});
+listener.startListening({
+  actionCreator: addLike,
+  effect: likeListener,
 });
 
 export default listener.middleware;

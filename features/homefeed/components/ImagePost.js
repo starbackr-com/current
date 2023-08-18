@@ -19,8 +19,7 @@ import { useIsZapped } from '../../zaps/hooks/useIsZapped';
 
 const FeedImage = ({ size, images }) => {
   const navigation = useNavigation();
-  const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
   return (
     <Pressable
       style={{ width: size, flex: 1 }}
@@ -59,7 +58,7 @@ const ImagePost = React.memo(({ item, height, width, user, zaps, onMenu }) => {
     if (event.mentions.length < 1) {
       return event.content;
     }
-    let content = event.content;
+    let { content } = event;
     content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
       return (
         <Text
@@ -122,8 +121,9 @@ const ImagePost = React.memo(({ item, height, width, user, zaps, onMenu }) => {
       <Animated.View
         style={[
           {
+            flex: 1,
             marginBottom: 16,
-            width: '85%',
+            marginRight: 8,
             height: '90%',
             borderRadius: 10,
             backgroundColor: colors.backgroundSecondary,
@@ -260,7 +260,7 @@ const ImagePost = React.memo(({ item, height, width, user, zaps, onMenu }) => {
           </View>
         </Pressable>
       </Animated.View>
-      <ActionBar user={user} event={item} width={width} onMenu={onMenu}/>
+      <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
     </View>
   );
 });

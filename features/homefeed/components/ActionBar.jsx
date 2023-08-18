@@ -6,16 +6,21 @@ import Animated, {
   withRepeat,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Haptics from 'expo-haptics';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useZapNote } from '../../../hooks/useZapNote';
 import { colors } from '../../../styles';
-import { publishRepost } from '../../../utils/nostrV2';
+import { publishReaction, publishRepost } from '../../../utils/nostrV2';
+import { addLike } from '../../interactionSlice';
 
 const ActionBar = ({ user, event, width, onMenu }) => {
   const [zapPending, setZapPending] = useState(false);
   const [repostPending, setRepostPending] = useState(false);
+  const likedEvents = useSelector((state) => state.interaction.likedEvents);
+  const isLiked = likedEvents.includes(event.id);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const isPremium = useSelector((state) => state.auth.isPremium);
   const zap = useZapNote(
@@ -50,17 +55,16 @@ const ActionBar = ({ user, event, width, onMenu }) => {
       style={{
         flexDirection: 'column',
         width: '10%',
+        gap: 16,
       }}
     >
       {isPremium && (user?.lud06 || user?.lud16) ? (
         <Pressable
           style={({ pressed }) => [
             {
-              width: (width / 100) * 8,
               height: (width / 100) * 8,
-              borderRadius: (width / 100) * 4,
+              borderRadius: 10,
               backgroundColor: colors.backgroundSecondary,
-              marginBottom: 16,
               alignItems: 'center',
               justifyContent: 'center',
             },
@@ -72,18 +76,42 @@ const ActionBar = ({ user, event, width, onMenu }) => {
             <Ionicons
               name="flash"
               color={colors.primary500}
-              size={(width / 100) * 5}
+              size={Math.floor((width / 100) * 5)}
             />
           </Animated.View>
         </Pressable>
       ) : undefined}
       <Pressable
         style={{
-          width: (width / 100) * 8,
           height: (width / 100) * 8,
-          borderRadius: (width / 100) * 4,
+          borderRadius: 10,
+          backgroundColor: isLiked ? colors.primary500 : colors.backgroundSecondary,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        onPress={async () => {
+          try {
+            Haptics.notificationAsync(
+              Haptics.NotificationFeedbackType.Success
+          );
+            dispatch(addLike([event.id]));
+            publishReaction('+', event.id, event.pubkey);
+          } catch (e) {
+            console.log(e);
+          }
+        }}
+      >
+        <Ionicons
+          name="heart"
+          color={isLiked ? colors.backgroundSecondary : colors.primary500}
+          size={Math.floor((width / 100) * 5)}
+        />
+      </Pressable>
+      <Pressable
+        style={{
+          height: (width / 100) * 8,
+          borderRadius: 10,
           backgroundColor: colors.backgroundSecondary,
-          marginBottom: 16,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -99,17 +127,15 @@ const ActionBar = ({ user, event, width, onMenu }) => {
         <Ionicons
           name="chatbubble-ellipses"
           color={colors.primary500}
-          size={(width / 100) * 5}
+          size={Math.floor((width / 100) * 5)}
         />
       </Pressable>
       <Pressable
         style={({ pressed }) => [
           {
-            width: (width / 100) * 8,
             height: (width / 100) * 8,
-            borderRadius: (width / 100) * 4,
+            borderRadius: 10,
             backgroundColor: colors.backgroundSecondary,
-            marginBottom: 16,
             alignItems: 'center',
             justifyContent: 'center',
           },
@@ -121,15 +147,14 @@ const ActionBar = ({ user, event, width, onMenu }) => {
           <Ionicons
             name="repeat"
             color={colors.primary500}
-            size={(width / 100) * 5}
+            size={Math.floor((width / 100) * 5)}
           />
         </Animated.View>
       </Pressable>
       <Pressable
         style={{
-          width: (width / 100) * 8,
           height: (width / 100) * 8,
-          borderRadius: (width / 100) * 4,
+          borderRadius: 10,
           backgroundColor: colors.backgroundSecondary,
           alignItems: 'center',
           justifyContent: 'center',
@@ -141,7 +166,7 @@ const ActionBar = ({ user, event, width, onMenu }) => {
         <Ionicons
           name="ellipsis-horizontal"
           color={colors.primary500}
-          size={(width / 100) * 5}
+          size={Math.floor((width / 100) * 5)}
         />
       </Pressable>
     </View>

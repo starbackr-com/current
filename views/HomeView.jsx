@@ -6,7 +6,7 @@ import globalStyles from '../styles/globalStyles';
 import CommentScreen from '../features/comments/views/CommentScreen';
 import { storeData } from '../utils/cache/asyncStorage';
 import { setTwitterModal } from '../features/introSlice';
-import GetStartedItems from '../features/homefeed/components/GetStartedItems';
+// import GetStartedItems from '../features/homefeed/components/GetStartedItems';
 import HomeFeed from '../features/homefeed/components/HomeFeed';
 import ProfileNavigator from '../nav/ProfileNavigator';
 
@@ -34,10 +34,10 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View
-      style={[globalStyles.screenContainer, { paddingTop: 12 }]}
+      style={[globalStyles.screenContainer, { paddingTop: 0 }]}
       onLayout={onLayoutViewWidth}
     >
-      <GetStartedItems />
+      {/* <GetStartedItems /> */}
       <View onLayout={onLayoutViewHeight} style={{ flex: 1, width: '100%' }}>
         <HomeFeed width={width} height={height} />
       </View>
