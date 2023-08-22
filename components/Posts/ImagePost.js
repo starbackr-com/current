@@ -1,16 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
 import { Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
+import * as Haptics from 'expo-haptics';
 import { getAge } from "../../features/shared/utils/getAge";
 import { useParseContent } from "../../hooks/useParseContent";
 import { useZapNote } from "../../hooks/useZapNote";
 import globalStyles from "../../styles/globalStyles";
 import FeedImage from "../Images/FeedImage";
 import PostActionBar from "./PostActionBar";
+import { useDispatch } from "react-redux";
+import useInteractions from "../../hooks/useInteractions";
+import { useCallback } from "react";
+import { addLike, removeLike } from "../../features/interactionSlice";
+import { publishReaction } from "../../utils/nostrV2";
 
 export const ImagePost = ({ event, user, width, onMenu }) => {
     const content = useParseContent(event);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const {isLiked} = useInteractions(event.id)
 
     const zap = useZapNote(
         event.id,
@@ -18,6 +26,17 @@ export const ImagePost = ({ event, user, width, onMenu }) => {
         user?.name || event?.pubkey.slice(0, 16),
         event.pubkey
     );
+
+    const likeHandler = useCallback(async () => {
+        try {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          dispatch(addLike([event.id]));
+          await publishReaction('+', event.id, event.pubkey);
+        } catch (e) {
+          dispatch(removeLike(event.id));
+          console.log(e);
+        }
+      }, [dispatch]);
 
     const commentHandler = () => {
         navigation.navigate("CommentScreen", {
@@ -76,6 +95,8 @@ export const ImagePost = ({ event, user, width, onMenu }) => {
                     onPressZap={zapHandler}
                     onPressMore={() => {onMenu(event)}}
                     zapDisabled={!user?.lud06 && !user?.lud16}
+                    onPressLike={likeHandler}
+                    isLiked={isLiked}
                 />
             </View>
         </Animated.View>

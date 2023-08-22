@@ -9,7 +9,7 @@ import {
 } from '../../features/userSlice';
 import { store } from '../../store/store';
 import { getValue } from '../secureStore';
-import { addLike } from '../../features/interactionSlice';
+import { addLike, addRepost } from '../../features/interactionSlice';
 
 export const generateRandomString = async (length) => {
   const value = await AsyncStorage.getItem('appId');
@@ -57,6 +57,7 @@ export const hydrateStore = async () => {
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
   const likedEvents = await getData('likedEvents');
+  const repostedEvents = await getData('repostedEvents');
   if (zapAmount) {
     store.dispatch(setZapAmount(zapAmount));
   }
@@ -86,6 +87,10 @@ export const hydrateStore = async () => {
   if (likedEvents) {
     const array = JSON.parse(likedEvents);
     store.dispatch(addLike(array));
+  }
+  if (repostedEvents) {
+    const array = JSON.parse(repostedEvents);
+    store.dispatch(addRepost(array));
   }
 };
 

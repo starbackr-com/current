@@ -5,7 +5,7 @@ import {
   getRelayUrls,
   getWriteRelays,
   pool,
-} from '../../../utils/nostrV2/relays.ts';
+} from '../../../utils/nostrV2/relays';
 import { mentionRegex } from '../../../constants';
 
 export const publishReply = async (content, event) => {
@@ -21,9 +21,9 @@ export const publishReply = async (content, event) => {
   try {
     const oldETags = event.tags.filter((tag) => tag[0] === 'e');
     const oldPTags = event.tags.filter((tag) => tag[0] === 'p');
-
     if (oldETags.length > 0) {
-      replyETags = [oldETags[0], ['e', event.id, 'reply']];
+      const rootTag = oldETags.filter((tag) => tag.includes('root'));
+      replyETags = [rootTag[0], ['e', event.id, '', 'reply']];
     } else {
       replyETags = [['e', event.id, 'reply']];
     }
@@ -52,6 +52,7 @@ export const publishReply = async (content, event) => {
         resolve(true);
       }, 2500);
       pubs.on('ok', () => {
+        console.log('ok');
         clearTimeout(timer);
         resolve(true);
       });

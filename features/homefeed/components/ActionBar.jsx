@@ -1,5 +1,5 @@
 import { View, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import Animated, {
   withSequence,
   withTiming,
@@ -13,13 +13,22 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useZapNote } from '../../../hooks/useZapNote';
 import { colors } from '../../../styles';
 import { publishReaction, publishRepost } from '../../../utils/nostrV2';
-import { addLike } from '../../interactionSlice';
+import {
+  addLike,
+  addRepost,
+  removeLike,
+  removeRepost,
+} from '../../interactionSlice';
 
-const ActionBar = ({ user, event, width, onMenu }) => {
+const ActionBar = memo(({ user, event, width, onMenu }) => {
   const [zapPending, setZapPending] = useState(false);
   const [repostPending, setRepostPending] = useState(false);
   const likedEvents = useSelector((state) => state.interaction.likedEvents);
+  const repostedEvents = useSelector(
+    (state) => state.interaction.repostedEvents,
+  );
   const isLiked = likedEvents.includes(event.id);
+  const isReposted = repostedEvents.includes(event.id);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const isPremium = useSelector((state) => state.auth.isPremium);
@@ -37,10 +46,26 @@ const ActionBar = ({ user, event, width, onMenu }) => {
   };
 
   const repostHandler = async () => {
-    setRepostPending(true);
-    await publishRepost(event.id, event.pubkey);
-    setRepostPending(false);
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      dispatch(addRepost([event.id]));
+      await publishRepost(event.id, event.pubkey);
+    } catch (e) {}
+    console.log(e);
+    dispatch(removeRepost(event.id));
   };
+
+  const likeHandler = useCallback(async () => {
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      dispatch(addLike([event.id]));
+      await publishReaction('+', event.id, event.pubkey);
+    } catch (e) {
+      dispatch(removeLike(event.id));
+      console.log(e);
+    }
+  }, [dispatch]);
+
   const zapStyle = useAnimatedStyle(() => ({
     opacity: withRepeat(
       withSequence(
@@ -85,21 +110,13 @@ const ActionBar = ({ user, event, width, onMenu }) => {
         style={{
           height: (width / 100) * 8,
           borderRadius: 10,
-          backgroundColor: isLiked ? colors.primary500 : colors.backgroundSecondary,
+          backgroundColor: isLiked
+            ? colors.primary500
+            : colors.backgroundSecondary,
           alignItems: 'center',
           justifyContent: 'center',
         }}
-        onPress={async () => {
-          try {
-            Haptics.notificationAsync(
-              Haptics.NotificationFeedbackType.Success
-          );
-            dispatch(addLike([event.id]));
-            publishReaction('+', event.id, event.pubkey);
-          } catch (e) {
-            console.log(e);
-          }
-        }}
+        onPress={likeHandler}
       >
         <Ionicons
           name="heart"
@@ -131,25 +148,22 @@ const ActionBar = ({ user, event, width, onMenu }) => {
         />
       </Pressable>
       <Pressable
-        style={({ pressed }) => [
-          {
-            height: (width / 100) * 8,
-            borderRadius: 10,
-            backgroundColor: colors.backgroundSecondary,
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-          pressed ? { backgroundColor: '#777777' } : undefined,
-        ]}
+        style={{
+          height: (width / 100) * 8,
+          borderRadius: 10,
+          backgroundColor: isReposted
+            ? colors.primary500
+            : colors.backgroundSecondary,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
         onPress={repostHandler}
       >
-        <Animated.View style={[repostPending ? zapStyle : { opacity: 1 }]}>
-          <Ionicons
-            name="repeat"
-            color={colors.primary500}
-            size={Math.floor((width / 100) * 5)}
-          />
-        </Animated.View>
+        <Ionicons
+          name="repeat"
+          color={isReposted ? colors.backgroundSecondary : colors.primary500}
+          size={Math.floor((width / 100) * 5)}
+        />
       </Pressable>
       <Pressable
         style={{
@@ -171,6 +185,6 @@ const ActionBar = ({ user, event, width, onMenu }) => {
       </Pressable>
     </View>
   );
-};
+});
 
 export default ActionBar;

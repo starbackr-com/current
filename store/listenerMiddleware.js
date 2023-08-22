@@ -7,7 +7,7 @@ import {
   removeRelay,
 } from '../features/relays/relaysSlice';
 import { addWalletconnect, changeWalletconnect, wcListener } from '../features/walletconnect/walletconnectSlice';
-import { addLike, likeListener } from '../features/interactionSlice';
+import { addLike, addRepost, likeListener, removeLike, removeRepost, repostListener } from '../features/interactionSlice';
 
 const listener = createListenerMiddleware();
 
@@ -24,8 +24,12 @@ listener.startListening({
   effect: communityListener,
 });
 listener.startListening({
-  actionCreator: addLike,
+  matcher: isAnyOf(addLike, removeLike),
   effect: likeListener,
+});
+listener.startListening({
+  matcher: isAnyOf(addRepost, removeRepost),
+  effect: repostListener,
 });
 
 export default listener.middleware;

@@ -224,7 +224,6 @@ export const publishRepost = async (eTag, pTag) => {
       }
     });
   });
-  alert('Success!');
 };
 
 export const publishReaction = async (sign, eTag, pTag) => {

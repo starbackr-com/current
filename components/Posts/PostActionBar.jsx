@@ -33,7 +33,7 @@ const PostActionBar = memo(
         style={{
           flexDirection: 'row',
           marginTop: 32,
-          gap: 10,
+          gap: 4,
         }}
       >
         {isPremium ? (
