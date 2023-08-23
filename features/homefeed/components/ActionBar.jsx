@@ -50,9 +50,10 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       dispatch(addRepost([event.id]));
       await publishRepost(event.id, event.pubkey);
-    } catch (e) {}
-    console.log(e);
-    dispatch(removeRepost(event.id));
+    } catch (e) {
+      console.log(e);
+      dispatch(removeRepost(event.id));
+    }
   };
 
   const likeHandler = useCallback(async () => {
@@ -64,7 +65,7 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       dispatch(removeLike(event.id));
       console.log(e);
     }
-  }, [dispatch]);
+  }, [dispatch, event]);
 
   const zapStyle = useAnimatedStyle(() => ({
     opacity: withRepeat(

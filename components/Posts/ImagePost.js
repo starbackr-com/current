@@ -36,7 +36,7 @@ export const ImagePost = ({ event, user, width, onMenu }) => {
           dispatch(removeLike(event.id));
           console.log(e);
         }
-      }, [dispatch]);
+      }, [dispatch, event]);
 
     const commentHandler = () => {
         navigation.navigate("CommentScreen", {

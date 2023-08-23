@@ -43,7 +43,7 @@ const TextPost = React.memo(({ event, user, onMenu }) => {
       dispatch(removeLike(event.id));
       console.log(e);
     }
-  }, [dispatch]);
+  }, [dispatch, event]);
 
   return (
     <Animated.View
