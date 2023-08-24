@@ -142,7 +142,53 @@ const NewPostScreen = ({ navigation, route }) => {
       </View>
     );
   };
-
+  if (Platform.OS === 'android') {
+    return (
+      <View style={globalStyles.screenContainer}>
+        <MentionInput
+          value={input}
+          containerStyle={styles.input}
+          style={[globalStyles.textBody, { textAlign: 'left', flex: 1, verticalAlign: 'top' }]}
+          onChange={setInput}
+          partTypes={[
+            {
+              trigger: '@',
+              renderSuggestions,
+              textStyle: { color: colors.primary500 },
+              isBottomMentionSuggestionsRender: true,
+            },
+          ]}
+          multiline
+          placeholderTextColor={colors.backgroundActive}
+          placeholder="Type a message"
+          autoFocus
+        />
+        <View
+          style={{
+            width: '100%',
+            marginVertical: 6,
+            flexDirection: 'row',
+            gap: 10,
+          }}
+        >
+          <Pressable onPress={imageHandler} disabled={uploading}>
+            {!uploading ? (
+              <Ionicons name="image" size={24} color={colors.primary500} />
+            ) : (
+              <LoadingSpinner size={24} />
+            )}
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              navigation.navigate('PlebhySelector', { opener: 'PostNote' });
+            }}
+          >
+            <MaterialIcons name="gif" size={24} color={colors.primary500} />
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
   return (
     <CustomKeyboardView noBottomBar>
       <View style={globalStyles.screenContainer}>
@@ -162,7 +208,7 @@ const NewPostScreen = ({ navigation, route }) => {
           multiline
           placeholderTextColor={colors.backgroundActive}
           placeholder="Type a message"
-          autoFocus={Platform.OS === 'ios'}
+          autoFocus
         />
         <View
           style={{
