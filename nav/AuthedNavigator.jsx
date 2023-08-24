@@ -13,7 +13,6 @@ import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
 import VerifyTwitterModal from '../views/welcome/VerifyTwitterModal';
 import ZapListModal from '../views/home/ZapListModal';
-import PostMenuModal from '../views/post/PostMenuModal';
 import ReportPostModal from '../features/reports/views/ReportPostModal';
 import { BackHeader, TabBarHeaderLeft, TabBarHeaderRight } from '../components';
 import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
@@ -120,14 +119,6 @@ const AuthedNavigator = () => (
         <Stack.Screen
           name="ReadMoreModal"
           component={ReadMoreModal}
-          options={{
-            presentation: 'transparentModal',
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="PostMenuModal"
-          component={PostMenuModal}
           options={{
             presentation: 'transparentModal',
             headerShown: false,
