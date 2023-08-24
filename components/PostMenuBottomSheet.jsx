@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import {
   BottomSheetBackdrop,
@@ -12,12 +12,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomButton from './CustomButton';
 import { colors } from '../styles';
 import { encodeNoteID } from '../utils';
-import { publishRepost } from '../utils/nostrV2';
 import { muteUser } from '../utils/users';
 import devLog from '../utils/internal';
 
 const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
-  const [repostLoading, setRepostLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -27,12 +25,6 @@ const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
     } catch (e) {
       devLog(e);
     }
-  };
-
-  const repostHandler = async (event) => {
-    setRepostLoading(true);
-    await publishRepost(event.id, event.pubkey);
-    setRepostLoading(false);
   };
 
   const reportHandler = (event) => {
@@ -75,18 +67,6 @@ const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
       {({ data: event }) => (
         <BottomSheetView onLayout={handleContentLayout}>
           <View style={{ padding: 24, paddingBottom: insets.bottom }}>
-            <CustomButton
-              text="Repost Event"
-              icon="repeat"
-              containerStyles={{ marginVertical: 6 }}
-              buttonConfig={{
-                onPress: async () => {
-                  await repostHandler(event);
-                  bottomSheetModalRef.current.dismiss();
-                },
-              }}
-              loading={repostLoading}
-            />
             <CustomButton
               text="Copy Event ID"
               icon="clipboard-outline"

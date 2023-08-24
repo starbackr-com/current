@@ -30,6 +30,9 @@
         "UIBackgroundModes": [
           "remote-notification"
         ]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {

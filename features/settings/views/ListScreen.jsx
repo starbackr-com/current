@@ -57,7 +57,6 @@ const ListScreen = ({ navigation }) => {
       'relays',
       'pushToken',
     ]);
-    await Purchases.logOut();
     dispatch(clearStore());
     dispatch(clearUserStore());
     dispatch(resetAll());
