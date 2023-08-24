@@ -23,7 +23,11 @@ export const publishReply = async (content, event) => {
     const oldPTags = event.tags.filter((tag) => tag[0] === 'p');
     if (oldETags.length > 0) {
       const rootTag = oldETags.filter((tag) => tag.includes('root'));
-      replyETags = [rootTag[0], ['e', event.id, '', 'reply']];
+      if (rootTag[0]) {
+        replyETags = [rootTag[0], ['e', event.id, '', 'reply']];
+      } else {
+        replyETags = [['e', oldETags[0][1], '', 'root'], ['e', event.id, '', 'reply']];
+      }
     } else {
       replyETags = [['e', event.id, 'reply']];
     }
@@ -44,6 +48,7 @@ export const publishReply = async (content, event) => {
       tags: [...replyETags, ...replyPTags, ...mentions],
       content: parsedContent,
     };
+    console.log(reply);
     reply.id = getEventHash(reply);
     reply.sig = signEvent(reply, sk);
     const success = await new Promise((resolve, reject) => {
