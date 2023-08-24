@@ -5,12 +5,12 @@ import { getUserData } from '../../../utils/nostrV2';
 import { GifContainer } from '../components';
 import { globalStyles } from '../../../styles';
 
-const PlebhyGifView = () => {
+const PlebhyGifView = ({ route }) => {
   const [gifs, setGifs] = useState([]);
   const [containerWidth, setContainerWidth] = useState();
   const [page, setPage] = useState(0);
 
-  //   const { opener } = route?.params;
+  const { opener } = route?.params || undefined;
 
   const getTrendingGifs = async (activePage) => {
     let plebhyGifs = [];
@@ -65,7 +65,7 @@ const PlebhyGifView = () => {
                 numColumns={2}
                 data={gifs}
                 renderItem={({ item }) => (
-                  <GifContainer item={item} width={containerWidth} />
+                  <GifContainer item={item} width={containerWidth} opener={opener} />
                 )}
                 estimatedItemSize={180}
                 showsVerticalScrollIndicator={false}

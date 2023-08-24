@@ -6,12 +6,12 @@ import { getUserData } from '../../../utils/nostrV2';
 import { GifContainer } from '../components';
 import devLog from '../../../utils/internal';
 
-const PlebhyStickerView = () => {
+const PlebhyStickerView = ({ route }) => {
   const [sticker, setSticker] = useState([]);
   const [containerWidth, setContainerWidth] = useState();
   const [page, setPage] = useState(0);
 
-  //   const { opener } = route?.params;
+  const { opener } = route?.params || undefined;
 
   const getTrendingStickers = async (currentPage) => {
     let plebhySticker = [];
@@ -56,29 +56,6 @@ const PlebhyStickerView = () => {
           alignItems: 'center',
         }}
       >
-        {/* <View
-                    style={{
-                        flexDirection: "row",
-                        width: "95%",
-                        alignItems: "center",
-                        paddingVertical: 12,
-                    }}
-                >
-                    <View style={{ flex: 1, marginRight: 12 }}>
-                        <Input
-                            textInputConfig={{
-                                onChangeText: setInput,
-                                onSubmitEditing: getTrendingGifs,
-                            }}
-                        />
-                    </View>
-                    <Ionicons
-                        name="search"
-                        size={24}
-                        color={colors.primary500}
-                        onPress={getTrendingGifs}
-                    />
-                </View> */}
         <View style={{ width: '100%', flex: 1 }} onLayout={onLayoutView}>
           {sticker ? (
             <View style={{ flex: 1 }}>
@@ -89,7 +66,11 @@ const PlebhyStickerView = () => {
                 numColumns={2}
                 data={sticker}
                 renderItem={({ item }) => (
-                  <GifContainer item={item} width={containerWidth} />
+                  <GifContainer
+                    item={item}
+                    width={containerWidth}
+                    opener={opener}
+                  />
                 )}
                 estimatedItemSize={180}
                 showsVerticalScrollIndicator={false}

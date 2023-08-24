@@ -1,10 +1,10 @@
-import { View, Text, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PostView from '../../../views/post/PostView';
-import { BackHeader } from '../../../components';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../../styles';
+import { NewPostScreen } from '../views';
+import { PlebhyNavigator } from '../../plebhy';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,15 +15,12 @@ const PostNavigator = () => {
       style={{
         flex: 1,
         paddingTop: Platform.OS === 'android' ? insets.top : 0,
-        backgroundColor: colors.backgroundPrimary
+        backgroundColor: colors.backgroundPrimary,
       }}
     >
-      <Stack.Navigator
-        screenOptions={({ navigation }) => ({
-          header: () => <BackHeader navigation={navigation} />,
-        })}
-      >
-        <Stack.Screen name="PostNote" component={PostView} />
+      <Stack.Navigator>
+        <Stack.Screen name="PostNote" component={NewPostScreen} />
+        <Stack.Screen name="PlebhySelector" component={PlebhyNavigator} />
       </Stack.Navigator>
     </View>
   );
