@@ -6,17 +6,20 @@ import { getPublicKey } from 'nostr-tools';
 import { useDispatch } from 'react-redux';
 import { createWallet, loginToWallet } from '../../../utils/wallet';
 import { saveValue } from '../../../utils/secureStore';
-import { publishKind0, updateFollowedUsers } from '../../../utils/nostrV2';
+import { getContactAndRelayList, publishKind0, updateFollowedUsers } from '../../../utils/nostrV2';
 import { logIn } from '../../authSlice';
 import globalStyles from '../../../styles/globalStyles';
 import { LoadingSpinner } from '../../../components';
 import { followUser } from '../../../utils/users';
 import devLog from '../../../utils/internal';
 import { initRC } from '../../premium';
+import { setupRelay } from '../../relays/relaysSlice';
+import useSilentFollow from '../../../hooks/useSilentFollow';
 
 const LoadingProfileScreen = ({ route }) => {
   const { image, svg, svgId, address, bio, isImport, sk, mem } = route.params;
   const dispatch = useDispatch();
+  const silentFollow = useSilentFollow();
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -30,6 +33,7 @@ const LoadingProfileScreen = ({ route }) => {
     const match = /\.(\w+)$/.exec(filename);
     const type = match ? `image/${match[1]}` : 'image';
     const formData = new FormData();
+
     formData.append('asset', { uri: localUri, name: filename, type });
     formData.append('name', `${id}/profile/avatar.${match[1]}`);
     formData.append('type', 'image');
@@ -105,6 +109,25 @@ const LoadingProfileScreen = ({ route }) => {
       await saveValue('address', address);
       const result = await loginToWallet(sk);
       const { access_token, username } = result.data;
+      try {
+        const contactList = await getContactAndRelayList(pk);
+        if (contactList.content.length > 0) {
+          const relayMetadata = JSON.parse(contactList.content);
+          const relays = Object.keys(relayMetadata).map((relay) => ({
+            url: relay,
+            read: relayMetadata[relay].read,
+            write: relayMetadata[relay].write,
+          }));
+          dispatch(setupRelay(relays));
+        }
+        if (contactList.tags.length > 0) {
+          const pubkeys = contactList.tags.map((tag) => tag[1]);
+          silentFollow(pubkeys);
+        }
+        await updateFollowedUsers();
+      } catch (e) {
+        devLog(e);
+      }
       await followUser(pk);
       await updateFollowedUsers();
       dispatch(logIn({ bearer: access_token, username, pubKey: pk }));
