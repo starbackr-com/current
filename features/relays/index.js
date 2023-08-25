@@ -1,2 +1,2 @@
-// eslint-disable-next-line import/prefer-default-export
 export { useRelayUrls } from './hooks';
+export { default as RelaySettingsNav } from './nav/RelaySettingsNav';

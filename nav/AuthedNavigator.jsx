@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform, Pressable } from 'react-native';
+import { Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -9,13 +9,10 @@ import { useSelector } from 'react-redux';
 import HomeView from '../views/HomeView';
 import TwitterModal from '../views/welcome/TwitterModal';
 import WalletNavigator from './WalletNavigator';
-import SettingsNavigator from './SettingsNavigator';
-import PostView from '../views/post/PostView';
 import FullScreenImage from '../components/Images/FullScreenImage';
 import ReadMoreModal from '../features/homefeed/components/ReadMoreModal';
 import VerifyTwitterModal from '../views/welcome/VerifyTwitterModal';
 import ZapListModal from '../views/home/ZapListModal';
-import PostMenuModal from '../views/post/PostMenuModal';
 import ReportPostModal from '../features/reports/views/ReportPostModal';
 import { BackHeader, TabBarHeaderLeft, TabBarHeaderRight } from '../components';
 import MentionsNavigator from '../features/mentions/nav/MentionsNavigator';
@@ -25,6 +22,8 @@ import { colors } from '../styles';
 import { SearchNavigator } from '../features/search';
 import { ConversationNavigator } from '../features/messages';
 import OwnProfileNavigator from './OwnProfileNavigator';
+import PostNavigator from '../features/post/nav/PostNavigator';
+import { SettingsNavigator } from '../features/settings';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -61,40 +60,13 @@ const TabNavigator = () => {
         headerTitle: '',
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeView}
-        options={({ navigation }) => ({
-          tabBarButton: (props) => (
-            <Pressable
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              onPress={() => navigation.navigate('Home')}
-            />
-          ),
-        })}
-      />
-      {/* eslint-disable-next-line max-len */}
-      {/* <Tab.Screen name="Community" component={CommunitiesNavigator} options={{headerShown: false}}/> */}
+      <Tab.Screen name="Home" component={HomeView} />
       <Tab.Screen
         name="Wallet"
         component={WalletNavigator}
         options={{ headerShown: !isPremium }}
       />
       <Tab.Screen name="Messages" component={ConversationNavigator} />
-      <Tab.Screen
-        name="New"
-        component={WalletNavigator}
-        options={({ navigation }) => ({
-          tabBarButton: (props) => (
-            <Pressable
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              onPress={() => navigation.navigate('PostView')}
-            />
-          ),
-        })}
-      />
       <Tab.Screen
         name="Search"
         component={SearchNavigator}
@@ -126,7 +98,7 @@ const AuthedNavigator = () => (
         />
         <Stack.Screen
           name="PostView"
-          component={PostView}
+          component={PostNavigator}
           options={{ presentation: 'modal', headerShown: false }}
         />
         <Stack.Screen
@@ -147,14 +119,6 @@ const AuthedNavigator = () => (
         <Stack.Screen
           name="ReadMoreModal"
           component={ReadMoreModal}
-          options={{
-            presentation: 'transparentModal',
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="PostMenuModal"
-          component={PostMenuModal}
           options={{
             presentation: 'transparentModal',
             headerShown: false,

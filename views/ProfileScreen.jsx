@@ -8,6 +8,7 @@ import { useSubscribeEvents } from '../hooks';
 import { ImagePost, TextPost } from '../components/Posts';
 import { colors, globalStyles } from '../styles';
 import ProfileInfo from '../features/profile/components/ProfileInfo';
+import PostMenuBottomSheet from '../components/PostMenuBottomSheet';
 
 const ProfileScreen = ({ route }) => {
   const { pubkey } = route.params;
@@ -15,6 +16,8 @@ const ProfileScreen = ({ route }) => {
   const [width, setWidth] = useState();
 
   const listRef = useRef();
+
+  const modalRef = useRef();
 
   const loggedInPubkey = useSelector((state) => state.auth.pubKey);
 
@@ -26,12 +29,16 @@ const ProfileScreen = ({ route }) => {
     setWidth(e.nativeEvent.layout.width);
   };
 
+  const handlePresentModalPress = (data) => {
+    modalRef.current?.present(data);
+  };
+
   const renderItem = ({ item }) => {
     if (item.type === 'image') {
-      return <ImagePost event={item} user={user} width={width} />;
+      return <ImagePost event={item} user={user} width={width} onMenu={handlePresentModalPress} />;
     }
     if (item.type === 'text') {
-      return <TextPost event={item} user={user} width={width} />;
+      return <TextPost event={item} user={user} width={width} onMenu={handlePresentModalPress} />;
     }
     return undefined;
   };
@@ -77,6 +84,7 @@ const ProfileScreen = ({ route }) => {
         />
         <View style={{ height: 36 }} />
       </View>
+      <PostMenuBottomSheet ref={modalRef} />
     </View>
   );
 };

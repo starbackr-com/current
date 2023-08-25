@@ -15,7 +15,7 @@ import { useIsZapped } from '../../zaps/hooks/useIsZapped';
 import ActionBar from './ActionBar';
 import { colors, globalStyles } from '../../../styles';
 
-const PostItem = React.memo(({ item, height, width, user, zaps }) => {
+const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
   const navigation = useNavigation();
   const [hasMore, setHasMore] = useState(false);
   const [numOfLines, setNumOfLines] = useState();
@@ -68,7 +68,8 @@ const PostItem = React.memo(({ item, height, width, user, zaps }) => {
           {
             backgroundColor: colors.backgroundSecondary,
             marginBottom: 16,
-            width: '85%',
+            flex: 1,
+            marginRight: 8,
             height: '90%',
             padding: 12,
             borderRadius: 10,
@@ -180,7 +181,7 @@ const PostItem = React.memo(({ item, height, width, user, zaps }) => {
           </Text>
         </View>
       </Animated.View>
-      <ActionBar user={user} event={item} width={width} />
+      <ActionBar user={user} event={item} width={width} onMenu={onMenu}/>
     </View>
   );
 });

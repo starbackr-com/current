@@ -2,7 +2,7 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -25,11 +25,14 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
         ]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {

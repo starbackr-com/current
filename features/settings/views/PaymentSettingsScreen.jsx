@@ -1,22 +1,18 @@
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import React, { useRef, useEffect, useState } from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import { View, Text } from 'react-native';
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useHeaderHeight } from '@react-navigation/elements';
+import { ScrollView } from 'react-native-gesture-handler';
 import Checkbox from 'expo-checkbox';
-import Input from '../../components/Input';
-import CustomButton from '../../components/CustomButton';
-import {
-  setZapAmount,
-  setZapNoconf,
-  setZapComment,
-} from '../../features/userSlice';
-import { storeData } from '../../utils/cache/asyncStorage';
-import { colors, globalStyles } from '../../styles';
-import MenuBottomSheet from '../../components/MenuBottomSheet';
-import { SweepModal } from '../../features/wallet/components';
+import { CustomButton, CustomKeyboardView, Input } from '../../../components';
+import { colors, globalStyles } from '../../../styles';
+import { storeData } from '../../../utils/cache/asyncStorage';
+import { setZapAmount, setZapComment, setZapNoconf } from '../../userSlice';
+import MenuBottomSheet from '../../../components/MenuBottomSheet';
+import { SweepModal } from '../../wallet/components';
+import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
 
-const SettingsPaymentsScreen = ({ navigation }) => {
+const PaymentSettingsScreen = ({ navigation }) => {
   const { zapAmount, zapComment, zapNoconf } = useSelector(
     (state) => state.user,
   );
@@ -27,54 +23,57 @@ const SettingsPaymentsScreen = ({ navigation }) => {
   const username = useSelector((state) => state.auth.username);
   const dispatch = useDispatch();
 
-  const headerHeight = useHeaderHeight();
-
-  const zapAmountInput = useRef();
-  const zapCommentInput = useRef();
-
-  useEffect(
-    () => {
-      setZapValueInput(zapAmount);
-      setZapValueComment(zapComment);
-      setzapNoconfChecked(zapNoconf);
-    },
-    [zapAmount],
-    [zapComment],
-    [zapNoconf],
-  );
-
   const submitHandler = async () => {
     try {
       await storeData('zapAmount', zapValueInput);
-      let newZapComment = zapValueComment;
-      if (zapValueComment === null || zapValueComment === '') {
-        newZapComment = `⚡️ by ${username}`;
-      }
+      const newZapComment = zapValueComment === null || zapValueComment === '' ? `⚡️ by ${username}` : zapValueComment;
       await storeData('zapComment', newZapComment);
       await storeData('zapNoconf', iszapNoconfChecked.toString());
       dispatch(setZapAmount(zapValueInput));
       dispatch(setZapComment(newZapComment));
       dispatch(setZapNoconf(iszapNoconfChecked));
-      zapAmountInput.current.blur();
       navigation.goBack();
     } catch (e) {
       console.log(e);
     }
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <BackHeaderWithButton
+          navigation={navigation}
+          rightButton={() => (
+            <CustomButton
+              text="Save"
+              icon="save"
+              buttonConfig={{
+                onPress: submitHandler,
+              }}
+            />
+          )}
+        />
+      ),
+    });
+  }, [submitHandler]);
+
+  useEffect(() => {
+    setZapValueInput(zapAmount);
+    setZapValueComment(zapComment);
+    setzapNoconfChecked(zapNoconf);
+  }, []);
+
   return (
-    <KeyboardAvoidingView
-      style={[globalStyles.screenContainer]}
-      keyboardVerticalOffset={headerHeight}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <Text style={globalStyles.textH2}>Payment Settings</Text>
-      <View style={{ flex: 2, width: '80%' }}>
+    <CustomKeyboardView>
+      <ScrollView
+        style={globalStyles.screenContainerScroll}
+        contentContainerStyle={{ alignItems: 'center' }}
+      >
         <Input
           textInputConfig={{
             value: zapValueInput,
             onChangeText: setZapValueInput,
             inputMode: 'numeric',
-            ref: zapAmountInput,
             marginTop: 20,
             marginBottom: 20,
           }}
@@ -88,7 +87,6 @@ const SettingsPaymentsScreen = ({ navigation }) => {
             value: zapValueComment,
             multiline: true,
             onChangeText: setZapValueComment,
-            ref: zapCommentInput,
             marginTop: 20,
           }}
           label="Zap Comment"
@@ -125,22 +123,12 @@ const SettingsPaymentsScreen = ({ navigation }) => {
             },
           }}
         />
-      </View>
-      <View
-        style={{
-          width: '100%',
-          justifyContent: 'space-evenly',
-          flexDirection: 'row',
-          marginBottom: 32,
-        }}
-      >
-        <CustomButton text="Save" buttonConfig={{ onPress: submitHandler }} />
-      </View>
-      <MenuBottomSheet ref={modalRef}>
-        <SweepModal />
-      </MenuBottomSheet>
-    </KeyboardAvoidingView>
+        <MenuBottomSheet ref={modalRef}>
+          <SweepModal />
+        </MenuBottomSheet>
+      </ScrollView>
+    </CustomKeyboardView>
   );
 };
 
-export default SettingsPaymentsScreen;
+export default PaymentSettingsScreen;

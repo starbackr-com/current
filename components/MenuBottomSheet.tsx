@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, memo, useMemo } from 'react';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -15,32 +15,33 @@ type MenuBottomSheetProps = {
   children: React.ReactNode;
 };
 
-const MenuBottomSheet = forwardRef(
-  (
-    { children }: MenuBottomSheetProps,
-    ref: React.Ref<BottomSheetModalMethods>,
-  ) => {
-    console.log('Runs!');
-    const insets = useSafeAreaInsets();
+const MenuBottomSheet = memo(
+  forwardRef(
+    (
+      { children }: MenuBottomSheetProps,
+      ref: React.Ref<BottomSheetModalMethods>,
+    ) => {
+      console.log('Runs!');
+      const insets = useSafeAreaInsets();
 
-    const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+      const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
-    const {
-      animatedHandleHeight,
-      animatedSnapPoints,
-      animatedContentHeight,
-      handleContentLayout,
-    } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+      const {
+        animatedHandleHeight,
+        animatedSnapPoints,
+        animatedContentHeight,
+        handleContentLayout,
+      } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-    const renderBackground = (props) => (
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    );
-    return (
+      const renderBackground = (props) => (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+        />
+      );
+      return (
         <BottomSheetModal
           ref={ref}
           snapPoints={animatedSnapPoints}
@@ -51,13 +52,19 @@ const MenuBottomSheet = forwardRef(
           handleIndicatorStyle={{ backgroundColor: colors.backgroundSecondary }}
         >
           <BottomSheetView onLayout={handleContentLayout}>
-            <View style={{ padding: 24, paddingBottom: Math.max(insets.bottom, 32)}}>
+            <View
+              style={{
+                padding: 24,
+                paddingBottom: Math.max(insets.bottom, 32),
+              }}
+            >
               {children}
             </View>
           </BottomSheetView>
         </BottomSheetModal>
-    );
-  },
+      );
+    },
+  ),
 );
 
 export default MenuBottomSheet;

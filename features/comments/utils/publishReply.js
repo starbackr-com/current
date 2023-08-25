@@ -5,8 +5,8 @@ import {
   getRelayUrls,
   getWriteRelays,
   pool,
-} from '../../../utils/nostrV2/relays.ts';
-import { mentionRegex, nip27Regex } from '../../../constants';
+} from '../../../utils/nostrV2/relays';
+import { mentionRegex } from '../../../constants';
 
 export const publishReply = async (content, event) => {
   const writeUrls = getRelayUrls(getWriteRelays());
@@ -21,9 +21,13 @@ export const publishReply = async (content, event) => {
   try {
     const oldETags = event.tags.filter((tag) => tag[0] === 'e');
     const oldPTags = event.tags.filter((tag) => tag[0] === 'p');
-
     if (oldETags.length > 0) {
-      replyETags = [oldETags[0], ['e', event.id, 'reply']];
+      const rootTag = oldETags.filter((tag) => tag.includes('root'));
+      if (rootTag[0]) {
+        replyETags = [rootTag[0], ['e', event.id, '', 'reply']];
+      } else {
+        replyETags = [['e', oldETags[0][1], '', 'root'], ['e', event.id, '', 'reply']];
+      }
     } else {
       replyETags = [['e', event.id, 'reply']];
     }
@@ -44,6 +48,7 @@ export const publishReply = async (content, event) => {
       tags: [...replyETags, ...replyPTags, ...mentions],
       content: parsedContent,
     };
+    console.log(reply);
     reply.id = getEventHash(reply);
     reply.sig = signEvent(reply, sk);
     const success = await new Promise((resolve, reject) => {
@@ -52,6 +57,7 @@ export const publishReply = async (content, event) => {
         resolve(true);
       }, 2500);
       pubs.on('ok', () => {
+        console.log('ok');
         clearTimeout(timer);
         resolve(true);
       });

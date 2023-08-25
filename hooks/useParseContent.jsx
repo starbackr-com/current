@@ -74,12 +74,25 @@ export const useParseContent = (event) => {
             </Text>
           );
         }
-        if (type === 'nevent' || type === 'note') {
+        if (type === 'note') {
           return (
             <Text
               style={{ color: colors.primary500 }}
               onPress={() => {
                 navigation.push('CommentScreen', { eventId: data });
+              }}
+              key={m + i}
+            >
+              {`${m.slice(0, 32)}...`}
+            </Text>
+          );
+        }
+        if (type === 'nevent') {
+          return (
+            <Text
+              style={{ color: colors.primary500 }}
+              onPress={() => {
+                navigation.push('CommentScreen', { eventId: data.id });
               }}
               key={m + i}
             >

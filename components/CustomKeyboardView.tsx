@@ -11,6 +11,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 type CustomKeyboardViewProps = {
   children: ReactNode;
+  noBottomBar?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -19,15 +20,23 @@ const styles = StyleSheet.create({
   },
   avoidingContainer: {
     flex: 1,
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 });
 
-const CustomKeyboardView = ({ children }: CustomKeyboardViewProps) => {
+const CustomKeyboardView = ({
+  children,
+  noBottomBar,
+}: CustomKeyboardViewProps) => {
   const [outerContainerHeight, setOuterContainerHeight] =
     useState<number>(null);
   const { height } = useWindowDimensions();
-  const bottomTabBarHeight = useBottomTabBarHeight();
+  let bottomTabBarHeight: number;
+  if (noBottomBar) {
+    bottomTabBarHeight = 0;
+  } else {
+    bottomTabBarHeight = useBottomTabBarHeight();
+  }
   return (
     <View
       style={styles.outerContainer}

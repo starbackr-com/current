@@ -9,6 +9,7 @@ import {
 } from '../../features/userSlice';
 import { store } from '../../store/store';
 import { getValue } from '../secureStore';
+import { addLike, addRepost } from '../../features/interactionSlice';
 
 export const generateRandomString = async (length) => {
   const value = await AsyncStorage.getItem('appId');
@@ -55,6 +56,8 @@ export const hydrateStore = async () => {
   const joinedCommunities = await getData('joinedCommunities');
   const twitterModalShown = await getData('twitterModalShown');
   const getStartedItemsShown = await getData('getStartedItemsShown');
+  const likedEvents = await getData('likedEvents');
+  const repostedEvents = await getData('repostedEvents');
   if (zapAmount) {
     store.dispatch(setZapAmount(zapAmount));
   }
@@ -80,6 +83,14 @@ export const hydrateStore = async () => {
       console.log('adding community')
       store.dispatch(joinCommunity(slug));
     });
+  }
+  if (likedEvents) {
+    const array = JSON.parse(likedEvents);
+    store.dispatch(addLike(array));
+  }
+  if (repostedEvents) {
+    const array = JSON.parse(repostedEvents);
+    store.dispatch(addRepost(array));
   }
 };
 

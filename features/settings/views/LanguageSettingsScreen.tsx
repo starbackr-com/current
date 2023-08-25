@@ -1,19 +1,18 @@
 import { View, Text, Pressable, Alert } from 'react-native';
 import React, { useCallback, useRef } from 'react';
-import { colors, globalStyles } from '../../styles';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
-import { storeData } from '../../utils/cache/asyncStorage';
-import MenuBottomSheetWithData from '../../components/MenuBottomSheetWithData';
-import { CustomButton } from '../../components';
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { colors, globalStyles } from '../../../styles';
+import { CustomButton, MenuBottomSheetWithData } from '../../../components';
+import { storeData } from '../../../utils/cache/asyncStorage';
 
 const availableLanguages = [
   { code: 'de', name: 'Deutsch' },
   { code: 'en', name: 'English' },
 ];
 
-const SettingsLanguageView = () => {
+const LanguageSettingsScreen = () => {
   const { t, i18n } = useTranslation('settings');
 
   const modalRef = useRef<BottomSheetModalMethods>();
@@ -108,4 +107,4 @@ const SettingsLanguageView = () => {
   );
 };
 
-export default SettingsLanguageView;
+export default LanguageSettingsScreen;

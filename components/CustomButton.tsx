@@ -78,6 +78,7 @@ const CustomButton = memo(
           name={icon}
           color={iconColor || colors.primary500}
           size={16}
+          style={{marginRight: 6}}
         />
       ) : undefined}
       {!loading ? (

@@ -21,7 +21,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { matchSorter } from 'match-sorter';
 
 type ExpanableInputProps = {
-  onSubmit: (input: string) => {};
+  onSubmit: (input: string) => Promise<void>;
 };
 
 const styles = StyleSheet.create({
