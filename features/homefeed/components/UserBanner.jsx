@@ -1,16 +1,25 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
-import globalStyles from '../../../styles/globalStyles';
-import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import globalStyles from '../../../styles/globalStyles';
+import useStatus from '../../../hooks/useStatus';
 
 const placeholder = require('../../../assets/user_placeholder.jpg');
 
-const UserBanner = ({ user, event, width, isZapped }) => {
+const UserBanner = ({ user, event, width }) => {
   const imageDimensions = (width / 100) * 12;
   const navigation = useNavigation();
+  const [status, statusLoading] = useStatus(event.pubkey);
+
+  let userStatus;
+  if (statusLoading) {
+    userStatus = 'Loading...';
+  }
+  if (!statusLoading) {
+    userStatus = status?.content || '';
+  }
 
   return (
     <TouchableOpacity
@@ -21,7 +30,6 @@ const UserBanner = ({ user, event, width, isZapped }) => {
         width: '100%',
       }}
       onPress={() => {
-        console.log('12345!')
         navigation.navigate('Profile', {
           screen: 'ProfileScreen',
           params: {
@@ -45,8 +53,7 @@ const UserBanner = ({ user, event, width, isZapped }) => {
           {user?.name || event.pubkey.slice(0, 16)}
         </Text>
         <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>
-          {user?.nip05}
-          <Ionicons name={user?.nip05 ? 'checkbox' : 'close-circle'} />
+          {userStatus}
         </Text>
       </View>
     </TouchableOpacity>

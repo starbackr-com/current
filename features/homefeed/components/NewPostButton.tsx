@@ -33,6 +33,18 @@ const NewPostButton = () => {
           style={{ gap: 12, marginBottom: 12 }}
         >
           <CustomButton
+            text="Status"
+            icon="newspaper"
+            containerStyles={{ borderWidth: 1 }}
+            buttonConfig={{
+              onPress: () => {
+                // @ts-ignore
+                navigation.navigate('PostView', {screen: 'PostStatus'});
+                setOpen(false);
+              },
+            }}
+          />
+          <CustomButton
             text="Note"
             icon="pencil"
             containerStyles={{ borderWidth: 1 }}

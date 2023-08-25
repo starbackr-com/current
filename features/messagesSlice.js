@@ -6,6 +6,7 @@ const initialState = {
   users: {},
   relayReady: false,
   userBadges: {},
+  userStatus: {},
 };
 
 export const messageSlice = createSlice({
@@ -60,6 +61,9 @@ export const messageSlice = createSlice({
       state.users = {};
       state.relayReady = false;
     },
+    setStatus: (state, action) => {
+      state.userStatus[action.payload.pubkey] = action.payload.status;
+    },
   },
 });
 
@@ -69,7 +73,8 @@ export const {
   removeAuthorsMessages,
   clearStore,
   hydrate,
-  setUserBadges
+  setUserBadges,
+  setStatus,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
