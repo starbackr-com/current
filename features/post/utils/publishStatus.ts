@@ -2,7 +2,6 @@ import { getEventHash, getPublicKey, signEvent } from 'nostr-tools';
 import { getValue } from '../../../utils';
 import devLog from '../../../utils/internal';
 import { getRelayUrls, getWriteRelays, pool } from '../../../utils/nostrV2';
-import { tags } from 'react-native-svg/lib/typescript/xml';
 
 export const publishStatus = async (
   content: string,
@@ -26,7 +25,7 @@ export const publishStatus = async (
       sig: '',
     };
     if (expiresIn) {
-      event.tags.push(['expiration', String(now + expiresIn)])
+      event.tags.push(['expiration', String(now + expiresIn)]);
     }
     if (website) {
       event.tags.push(['r', website]);

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { View, Text, Platform, Keyboard } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { globalStyles } from '../../../styles';
 import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
 import {
@@ -12,6 +12,7 @@ import {
 } from '../../../components';
 import useStatus from '../../../hooks/useStatus';
 import { publishStatus } from '../utils/publishStatus';
+import { setStatus } from '../../messagesSlice';
 
 const timings = [
   { title: '1 Hour', value: 3600 },
@@ -28,6 +29,8 @@ const NewStatusScreen = ({ navigation }) => {
   const [expiry, setExpiry] = useState({ title: 'Never', value: 0 });
 
   const { pubKey } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
 
   const [status] = useStatus(pubKey);
 
@@ -47,12 +50,21 @@ const NewStatusScreen = ({ navigation }) => {
                 onPress: async () => {
                   setSending(true);
                   try {
-                    const result = await publishStatus(
+                    await publishStatus(
                       content,
                       website.length > 0 ? website : undefined,
                       expiry.value > 0 ? expiry.value : undefined,
                     );
-                    console.log(result);
+                    dispatch(
+                      setStatus({
+                        pubkey: pubKey,
+                        status: {
+                          content,
+                          r: website,
+                          updatedAt: Math.floor(Date.now() / 1000),
+                        },
+                      }),
+                    );
                     navigation.navigate('MainTabNav');
                   } catch (e) {
                     console.log(e);
@@ -65,7 +77,7 @@ const NewStatusScreen = ({ navigation }) => {
         />
       ),
     });
-  }, [sending]);
+  }, [sending, content, website, expiry, dispatch]);
 
   if (Platform.OS === 'android') {
     return (

@@ -20,10 +20,18 @@ const useStatus = (pubkeyInHex) => {
           dispatch(setStatus({pubkey: pubkeyInHex, status: {content: '', r: '', updatedAt: now}}))
         }
         if (status.length === 1) {
+          const rTag = status[0].tags.filter(tag => tag[0] === 'r');
+          if (rTag.length > 0) {
+            dispatch(setStatus({pubkey: pubkeyInHex, status: {content: status[0].content, r: rTag[0][1], updatedAt: now}}))
+          }
           dispatch(setStatus({pubkey: pubkeyInHex, status: {content: status[0].content, r: '', updatedAt: now}}))
         }
         if (status.length > 1) {
           const mostRecent = status.sort((a, b) => b.created_at - a.created_at)[0];
+          const rTag = mostRecent.tags.filter(tag => tag[0] === 'r');
+          if (rTag.length > 0) {
+            dispatch(setStatus({pubkey: pubkeyInHex, status: {content: mostRecent.content, r: rTag[0][1], updatedAt: now}}))
+          }
           dispatch(setStatus({pubkey: pubkeyInHex, status: {content: mostRecent.content, r: '', updatedAt: now}}))
         }
         setLoading(false);
