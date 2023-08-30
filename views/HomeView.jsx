@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import globalStyles from '../styles/globalStyles';
-import CommentScreen from '../features/comments/views/CommentScreen';
+// import CommentScreen from '../features/comments/views/CommentScreen';
 import { storeData } from '../utils/cache/asyncStorage';
 import { setTwitterModal } from '../features/introSlice';
 // import GetStartedItems from '../features/homefeed/components/GetStartedItems';
 import HomeFeed from '../features/homefeed/components/HomeFeed';
 import ProfileNavigator from '../nav/ProfileNavigator';
+import ThreadScreen from '../features/comments/views/ThreadScreen';
 
 const HomeStack = createNativeStackNavigator();
 
@@ -53,7 +54,7 @@ const HomeView = () => (
     initialRouteName="HomeScreen"
   >
     <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
-    <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
+    <HomeStack.Screen name="CommentScreen" component={ThreadScreen} />
     <HomeStack.Screen
       name="Profile"
       component={ProfileNavigator}
