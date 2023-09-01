@@ -1,8 +1,8 @@
-import { View, Text } from 'react-native';
+import { View, Text, useWindowDimensions, FlatList } from 'react-native';
 import React, { useCallback } from 'react';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { globalStyles } from '../../../styles';
+import { colors, globalStyles } from '../../../styles';
 import useUser from '../../../hooks/useUser';
 import { useNavigation } from '@react-navigation/native';
 import { useParseContent, useZapNote } from '../../../hooks';
@@ -12,14 +12,24 @@ import { useDispatch } from 'react-redux';
 import { addLike, removeLike } from '../../interactionSlice';
 import { publishReaction } from '../../../utils/nostrV2';
 import useInteractions from '../../../hooks/useInteractions';
+import UserBanner from '../../homefeed/components/UserBanner';
+import { Image } from 'expo-image';
+import Kind1Note from '../../../models/Kind1Note';
 
-const Comment = ({event}) => {
+type CommentProps = {
+  event: Kind1Note;
+  small?: boolean;
+  onMenu: (event) => void;
+};
+
+const Comment = ({ event, small, onMenu }: CommentProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  
+  const { width } = useWindowDimensions();
+
   const user = useUser(event.pubkey);
-  const content = useParseContent(event)
-  const {isLiked} = useInteractions(event.id);
+  const content = useParseContent(event);
+  const { isLiked } = useInteractions(event.id);
 
   const commentHandler = () => {
     //@ts-ignore
@@ -49,52 +59,44 @@ const Comment = ({event}) => {
     }
   }, [dispatch, event]);
 
-
   return (
     <Animated.View
       entering={FadeIn}
       style={{
         padding: 6,
         marginBottom: 12,
+        flex: 1,
+        width: '100%',
       }}
     >
-      <View
-        style={{
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Text
-          style={[
-            globalStyles.textBodyBold,
-            { textAlign: 'left', width: '50%' },
-          ]}
-          numberOfLines={1}
-          onPress={() => {
-            //@ts-ignore
-            navigation.navigate('Profile', {
-              screen: 'ProfileScreen',
-              params: { pubkey: event.pubkey },
-            });
-          }}
-        >
-          {user?.name || event.pubkey}
-        </Text>
-        <Text style={[globalStyles.textBodyS]}>{getAge(event.created_at)}</Text>
+      <View style={{ flex: 1 }}>
       </View>
-
+      <UserBanner
+        user={user}
+        event={event}
+        width={small ? (width / 100) * 70 : width}
+      />
       <Text
         style={[globalStyles.textBody, { textAlign: 'left', marginTop: 16 }]}
       >
         {content}
       </Text>
+      {event.images.length > 0 ? (
+        <FlatList
+          data={event.images}
+          horizontal
+          renderItem={({ item }) => (
+            <Image source={item} style={{ height: width / 2, width: width / 2, borderRadius: 10 }} />
+          )}
+          contentContainerStyle={{borderRadius: 10, padding: 10, borderColor: colors.backgroundSecondary, borderWidth: 1, marginTop: 12}}
+        />
+      ) : undefined}
       <PostActionBar
-      //@ts-ignore
+        //@ts-ignore
         onPressComment={commentHandler}
-        // onPressMore={() => {
-        //   onMenu(event);
-        // }}
+        onPressMore={() => {
+          onMenu(event);
+        }}
         onPressZap={zapHandler}
         zapDisabled={!user?.lud06 && !user?.lud16}
         onPressLike={likeHandler}

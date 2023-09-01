@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, useWindowDimensions } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -49,7 +49,7 @@ const UserBanner = ({ user, event, width }) => {
         recyclingKey={event.pubkey}
       />
       <View style={{ flex: 1, marginLeft: 12 }}>
-        <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
+        <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]} ellipsizeMode='tail' numberOfLines={1}>
           {user?.name || event.pubkey.slice(0, 16)}
         </Text>
         <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>

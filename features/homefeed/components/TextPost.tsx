@@ -14,11 +14,13 @@ import UserBanner from './UserBanner';
 import { useIsZapped } from '../../zaps/hooks/useIsZapped';
 import ActionBar from './ActionBar';
 import { colors, globalStyles } from '../../../styles';
+import useUser from '../../../hooks/useUser';
 
-const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
+const TextPost = React.memo(({ item, height, width, onMenu }) => {
   const navigation = useNavigation();
+  const user = useUser(item.pubkey);
   const [hasMore, setHasMore] = useState(false);
-  const [numOfLines, setNumOfLines] = useState();
+  const [numOfLines, setNumOfLines] = useState<number>();
   const readMoreText = 'Read More...';
 
   const isZapped = useIsZapped(item.id);
@@ -56,37 +58,40 @@ const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
   return (
     <View
       style={{
-        height: (height / 100) * 100,
-        width: width - 16,
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 6,
-        paddingLeft: 6,
+        height: height,
+        width: width,
+        padding: 5,
       }}
     >
-      <View style={{flexDirection: 'row', height:'100%', width: '100%', backgroundColor: colors.backgroundSecondary, alignItems: 'center', borderRadius: 10}}>
-        <Animated.View
-          style={[
-            {
-              backgroundColor: colors.backgroundSecondary,
-              flex: 1,
-              marginRight: 8,
-              height: '100%',
-              padding: 12,
-              borderRadius: 10,
-              justifyContent: 'space-between',
-              borderWidth: 1,
-            },
-            backgroundStyle,
-          ]}
+      <Animated.View
+        style={[
+          {
+            flexDirection: 'row',
+            height: '100%',
+            width: '100%',
+            backgroundColor: colors.backgroundSecondary,
+            alignItems: 'center',
+            borderRadius: 10,
+            borderWidth: 1,
+          },
+          backgroundStyle,
+        ]}
+      >
+        <View
+          style={{
+            backgroundColor: colors.backgroundSecondary,
+            flex: 1,
+            height: '100%',
+            padding: 12,
+            borderRadius: 10,
+            justifyContent: 'space-between',
+          }}
         >
           <View>
             <UserBanner
               event={item}
               user={user}
               width={((width - 16) / 100) * 85}
-              isZapped={isZapped}
             />
             <Text
               onTextLayout={textLayout}
@@ -142,37 +147,6 @@ const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
               justifyContent: 'space-between',
             }}
           >
-            {zaps ? (
-              <Pressable
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text
-                  style={[
-                    globalStyles.textBodyS,
-                    {
-                      textAlign: 'left',
-                      color: colors.primary500,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    },
-                  ]}
-                >
-                  <Ionicons
-                    name="flash-outline"
-                    style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  />{' '}
-                  {zaps.amount}
-                </Text>
-              </Pressable>
-            ) : (
-              <View></View>
-            )}
             <Text
               style={[
                 globalStyles.textBodyS,
@@ -182,11 +156,11 @@ const PostItem = React.memo(({ item, height, width, user, zaps, onMenu }) => {
               {age}
             </Text>
           </View>
-        </Animated.View>
+        </View>
         <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
-      </View>
+      </Animated.View>
     </View>
   );
 });
 
-export default PostItem;
+export default TextPost;

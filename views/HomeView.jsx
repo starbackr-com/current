@@ -10,6 +10,7 @@ import { setTwitterModal } from '../features/introSlice';
 import HomeFeed from '../features/homefeed/components/HomeFeed';
 import ProfileNavigator from '../nav/ProfileNavigator';
 import ThreadScreen from '../features/comments/views/ThreadScreen';
+import { BackHeader } from '../components';
 
 const HomeStack = createNativeStackNavigator();
 
@@ -35,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View
-      style={[globalStyles.screenContainer, { paddingTop: 0 }]}
+      style={[globalStyles.screenContainer, { paddingTop: 0, paddingHorizontal: 0 }]}
       onLayout={onLayoutViewWidth}
     >
       {/* <GetStartedItems /> */}
@@ -47,14 +48,19 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const HomeView = () => (
-  <HomeStack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-    initialRouteName="HomeScreen"
-  >
-    <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
-    <HomeStack.Screen name="CommentScreen" component={ThreadScreen} />
+  <HomeStack.Navigator initialRouteName="HomeScreen">
+    <HomeStack.Screen
+      name="HomeScreen"
+      component={HomeScreen}
+      options={{ headerShown: false }}
+    />
+    <HomeStack.Screen
+      name="CommentScreen"
+      component={ThreadScreen}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
+    />
     <HomeStack.Screen
       name="Profile"
       component={ProfileNavigator}

@@ -19,10 +19,10 @@ import {
   removeLike,
   removeRepost,
 } from '../../interactionSlice';
+import { useParseContent } from '../../../hooks';
 
 const ActionBar = memo(({ user, event, width, onMenu }) => {
   const [zapPending, setZapPending] = useState(false);
-  const [repostPending, setRepostPending] = useState(false);
   const likedEvents = useSelector((state) => state.interaction.likedEvents);
   const repostedEvents = useSelector(
     (state) => state.interaction.repostedEvents,
@@ -81,16 +81,19 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       style={{
         flexDirection: 'column',
         width: '10%',
-        gap: 16,
+        gap: 24,
+        marginRight: 6,
       }}
     >
       {isPremium && (user?.lud06 || user?.lud16) ? (
         <Pressable
           style={({ pressed }) => [
             {
-              height: (width / 100) * 8,
+              height: (width / 100) * 10,
               borderRadius: 10,
-              backgroundColor: colors.backgroundSecondary,
+              borderColor: colors.backgroundPrimary,
+              borderRightWidth: 0,
+              backgroundColor: colors.backgroundActive,
               alignItems: 'center',
               justifyContent: 'center',
             },
@@ -109,11 +112,13 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       ) : undefined}
       <Pressable
         style={{
-          height: (width / 100) * 8,
+          height: (width / 100) * 10,
           borderRadius: 10,
+          borderColor: colors.backgroundPrimary,
+          borderRightWidth: 0,
           backgroundColor: isLiked
             ? colors.primary500
-            : colors.backgroundSecondary,
+            : colors.backgroundActive,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -127,9 +132,11 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       </Pressable>
       <Pressable
         style={{
-          height: (width / 100) * 8,
+          height: (width / 100) * 10,
           borderRadius: 10,
-          backgroundColor: colors.backgroundSecondary,
+          borderColor: colors.backgroundPrimary,
+          borderRightWidth: 0,
+          backgroundColor: colors.backgroundActive,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -150,11 +157,13 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       </Pressable>
       <Pressable
         style={{
-          height: (width / 100) * 8,
+          height: (width / 100) * 10,
           borderRadius: 10,
+          borderColor: colors.backgroundPrimary,
+          borderRightWidth: 0,
           backgroundColor: isReposted
             ? colors.primary500
-            : colors.backgroundSecondary,
+            : colors.backgroundActive,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -168,9 +177,11 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
       </Pressable>
       <Pressable
         style={{
-          height: (width / 100) * 8,
+          height: (width / 100) * 10,
           borderRadius: 10,
-          backgroundColor: colors.backgroundSecondary,
+          borderColor: colors.backgroundPrimary,
+          borderRightWidth: 0,
+          backgroundColor: colors.backgroundActive,
           alignItems: 'center',
           justifyContent: 'center',
         }}

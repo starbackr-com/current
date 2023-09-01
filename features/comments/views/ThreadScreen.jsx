@@ -1,24 +1,32 @@
-import { View, ActivityIndicator } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, ActivityIndicator, Text, Alert } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import useThread from '../hooks/useThread';
 import { CustomKeyboardView, ExpandableInput } from '../../../components';
 import { colors, globalStyles } from '../../../styles';
 import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
 import Comment from '../components/Comment';
-import { Text } from 'react-native';
 import { MyRefreshControl } from '../components/PullUp';
+import { PullDownNote } from '../components';
+import publishReply from '../utils/publishReply';
 
 const ThreadScreen = ({ route }) => {
-  const { eventId } = route?.params || {};
-  const [showThreads, setShowThreads] = useState(false);
+  const { eventId, noBar } = route?.params || {};
+  console.log(noBar);
   const [refreshing, setRefreshing] = useState(false);
 
-  const [thread, replies, startNote] = useThread(eventId);
+  const [thread, replies, startNote, showThread, setShowThread] =
+    useThread(eventId);
+
   const listRef = useRef();
+  const bottomSheetModalRef = useRef();
+
+  const handlePresentModalPress = (data) => {
+    bottomSheetModalRef.current?.present(data);
+  };
 
   let notes;
-  if (!showThreads) {
+  if (!showThread) {
     notes = [
       { type: 'base', note: startNote },
       ...replies.map((note) => ({
@@ -39,23 +47,49 @@ const ThreadScreen = ({ route }) => {
       })),
     ];
   }
-  const refreshHandler = useCallback(() => {
+
+  const refreshHandler = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setShowThreads(true);
-      setRefreshing(false);
-    }, 1000);
-  }, []);
-  const renderItem = ({ item, index }) => {
+    setShowThread(true);
+    setRefreshing(false);
+  };
+
+  const submitHandler = useCallback(
+    async (input) => {
+      const success = await publishReply(input, startNote);
+      if (!success) {
+        Alert.alert('Something went wrong publishing your note...');
+      }
+    },
+    [startNote],
+  );
+
+  const renderItem = ({ item }) => {
     if (item.type === 'base') {
       return (
         <View
           style={{
             width: '100%',
-            backgroundColor: colors.backgroundSecondary,
+            borderBottomColor: colors.primary500,
+            borderBottomWidth: 2,
           }}
         >
-          <Comment event={item.note} />
+          <Comment event={item.note} onMenu={handlePresentModalPress} />
+        </View>
+      );
+    }
+    if (item.type === 'reply') {
+      return (
+        <View
+          style={{
+            padding: 10,
+            borderRadius: 10,
+            borderColor: colors.backgroundSecondary,
+            borderWidth: 1,
+            margin: 10,
+          }}
+        >
+          <Comment event={item.note} onMenu={handlePresentModalPress} />
         </View>
       );
     }
@@ -69,14 +103,19 @@ const ThreadScreen = ({ route }) => {
           paddingLeft: 12,
         }}
       >
-        <Comment event={item.note} />
+        <Comment event={item.note} small onMenu={handlePresentModalPress} />
       </View>
     );
   };
 
   return (
-    <CustomKeyboardView>
-      <View style={globalStyles.screenContainer}>
+    <CustomKeyboardView noBottomBar={noBar}>
+      <View
+        style={[
+          globalStyles.screenContainer,
+          { paddingHorizontal: 2, paddingTop: 0 },
+        ]}
+      >
         {startNote ? (
           <View style={{ flex: 1, width: '100%' }}>
             <FlashList
@@ -85,17 +124,26 @@ const ThreadScreen = ({ route }) => {
               estimatedItemSize={300}
               keyExtractor={(item) => item.note.id}
               ref={listRef}
-              onRefresh={refreshHandler}
               refreshing={refreshing}
-              refreshControl={<MyRefreshControl refreshing={refreshing} onRefresh={refreshHandler}/>}
-              ListHeaderComponent={!showThreads ? <Text style={globalStyles.textBodyS}>Pull down to load Thread</Text> : null}
+              onRefresh={startNote.repliesTo ? refreshHandler : undefined}
+              refreshControl={
+                startNote.repliesTo ? (
+                  <MyRefreshControl
+                    onRefresh={refreshHandler}
+                    refreshing={refreshing}
+                  />
+                ) : undefined
+              }
+              ListHeaderComponent={
+                !showThread && startNote.repliesTo ? <PullDownNote /> : null
+              }
             />
           </View>
         ) : (
           <ActivityIndicator style={{ flex: 1 }} />
         )}
-        <ExpandableInput />
-        <PostMenuBottomSheet />
+        <ExpandableInput onSubmit={submitHandler} />
+        <PostMenuBottomSheet ref={bottomSheetModalRef} />
       </View>
     </CustomKeyboardView>
   );

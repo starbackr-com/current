@@ -112,7 +112,7 @@ const AuthedNavigator = () => (
           name="ImageModal"
           component={FullScreenImage}
           options={{
-            presentation: 'transparentModal',
+            presentation: 'modal',
             headerShown: false,
           }}
         />

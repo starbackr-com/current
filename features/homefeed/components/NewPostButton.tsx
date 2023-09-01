@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     borderRadius: 10,
-    backgroundColor: colors.primary500,
+    backgroundColor: 'rgba(250,167,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },

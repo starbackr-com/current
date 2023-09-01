@@ -1,4 +1,5 @@
 import { Event } from "nostr-tools";
+import Kind1Note from "../../../models/Kind1Note";
 
 export function repliesTo(event: Event) {
   if (event.tags.length < 1) {
@@ -35,8 +36,8 @@ export function getRoot(event: Event) {
     }
 }
 
-export function buildThread(note, allnotes, thread) {
-  const parentNoteId = repliesTo(note);
+export function buildThread(note: Kind1Note, allnotes, thread) {
+  const parentNoteId = note.repliesTo;
   if (!parentNoteId || !allnotes[parentNoteId]) {
       return [note, ...thread];
   }

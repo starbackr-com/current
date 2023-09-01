@@ -26,7 +26,7 @@ export const useParseContent = (event) => {
           <Text
             style={{ color: colors.primary500 }}
             onPress={() => {
-              navigation.navigate('Profile', {
+              navigation.push('Profile', {
                 screen: 'ProfileScreen',
                 params: { pubkey: event.tags[position][1] },
               });
@@ -63,7 +63,7 @@ export const useParseContent = (event) => {
             <Text
               style={{ color: colors.primary500 }}
               onPress={() => {
-                navigation.navigate('Profile', {
+                navigation.push('Profile', {
                   screen: 'ProfileScreen',
                   params: { pubkey: data },
                 });
@@ -117,7 +117,7 @@ export const useParseContent = (event) => {
       }
     });
     setParsedContent(content);
-  }, [event]);
+  }, [event, users]);
   return parsedContent;
 };
 
