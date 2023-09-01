@@ -14,7 +14,7 @@ import { injectStore } from './utils/nostrV2/Event';
 Sentry.init({
   dsn: 'https://6eeb5d8293007168f999426b87babb1f@o4505690316406784.ingest.sentry.io/4505703093960704',
   enableInExpoDevelopment: true,
-  debug: true,
+  // debug: true,
 });
 
 const App = () => {
