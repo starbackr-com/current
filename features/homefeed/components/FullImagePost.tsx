@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import Animated, {
   withTiming,
   useAnimatedStyle,
@@ -15,19 +14,14 @@ import { useIsZapped } from '../../zaps/hooks/useIsZapped';
 import ActionBar from './ActionBar';
 import { colors, globalStyles } from '../../../styles';
 import useUser from '../../../hooks/useUser';
-import FeedImage from '../../../components/Images/FeedImage';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const FullImagePost = ({ item, height, width, onMenu }) => {
-  const NUM_LINES = 2;
-
   const navigation = useNavigation();
   const [imageDim, setImageDim] = useState();
   const user = useUser(item.pubkey);
-  const [showMore, setShowMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const [numOfLines, setNumOfLines] = useState<number>(NUM_LINES);
-  const readMoreText = 'Read More...';
 
   const isZapped = useIsZapped(item.id);
 
@@ -49,8 +43,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
   const age = getAge(created_at);
 
   const textLayout = (e) => {
-    const lineHeight = e.nativeEvent.lines[0]?.height || 16;
-    const containerHeight = 32;
     const maxLines = 2;
     const numOfLines = e.nativeEvent.lines.length;
     console.log(numOfLines);
@@ -60,7 +52,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
     } else {
       setHasMore(false);
     }
-    setNumOfLines(2);
   };
 
   return (
@@ -99,7 +90,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             });
           }}
           onPress={() => {
-            console.log('pressed')
+            console.log('pressed');
             navigation.navigate('ImageModal', { imageUri: [item.image] });
           }}
         >
@@ -124,7 +115,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             justifyContent: 'space-between',
           }}
           onPress={() => {
-            console.log('pressed')
             navigation.navigate('ImageModal', { imageUri: [item.image] });
           }}
         >
@@ -142,54 +132,77 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
               width={((width - 16) / 100) * 85}
             />
           </View>
-          <View style={{ width: '100%', alignItems: 'flex-end', opacity: 0.8 }}>
-            <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
-          </View>
-          <View
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              padding: 12,
-              borderRadius: 10,
-            }}
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            style={{ height: '25%', justifyContent: 'flex-end' }}
           >
-            <Text
-              onTextLayout={textLayout}
-              style={[
-                globalStyles.textBodyS,
-                {
-                  opacity: 0,
-                  position: 'absolute',
-                },
-              ]}
+            <Pressable
+              onPress={() => {
+                navigation.navigate('ReadMoreModal', {
+                  event: item,
+                  author: user.name || item.pubkey,
+                });
+              }}
+              style={{ width: '85%' }}
             >
-              {content}
-            </Text>
-            <Text
-              style={[
-                globalStyles.textBodyS,
-                {
-                  textAlign: 'left',
-                },
-              ]}
-              numberOfLines={2}
-            >
-              {content}
-            </Text>
-            {hasMore && (
-              <Text
-                style={[
-                  globalStyles.textBodyS,
-                  {
-                    color: colors.primary500,
-                    textAlign: 'left',
-                  },
-                ]}
+              <View
+                style={{
+                  // backgroundColor: 'rgba(0,0,0,0.5)',
+                  padding: 12,
+                  borderRadius: 10,
+                  width: '100%',
+                }}
               >
-                Read more...
-              </Text>
-            )}
-          </View>
+                <Text
+                  onTextLayout={textLayout}
+                  style={[
+                    globalStyles.textBodyS,
+                    {
+                      opacity: 0,
+                      position: 'absolute',
+                    },
+                  ]}
+                >
+                  {content}
+                </Text>
+                <Text
+                  style={[
+                    globalStyles.textBodyS,
+                    {
+                      textAlign: 'left',
+                    },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {content}
+                </Text>
+                {hasMore && (
+                  <Text
+                    style={[
+                      globalStyles.textBodyS,
+                      {
+                        color: colors.primary500,
+                        textAlign: 'left',
+                      },
+                    ]}
+                  >
+                    Read more...
+                  </Text>
+                )}
+              </View>
+            </Pressable>
+          </LinearGradient>
         </Pressable>
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 'auto',
+            bottom: 'auto',
+          }}
+        >
+          <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
+        </View>
       </Animated.View>
     </View>
   );

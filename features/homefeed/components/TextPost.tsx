@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import Animated, {
   withTiming,
   useAnimatedStyle,
@@ -157,7 +156,7 @@ const TextPost = React.memo(({ item, height, width, onMenu }) => {
             </Text>
           </View>
         </View>
-        <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
+        <ActionBar user={user} event={item} width={width} onMenu={onMenu} isZapped={isZapped}/>
       </Animated.View>
     </View>
   );

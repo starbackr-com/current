@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const useUser = (pubkeyInHex) => {
   const user = useSelector((state) => state.messages.users[pubkeyInHex]);
-  return user
+  return user;
 };
 
 export default useUser;

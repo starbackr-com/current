@@ -1,4 +1,4 @@
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import React, { memo, useCallback, useState } from 'react';
 import Animated, {
   withSequence,
@@ -19,9 +19,25 @@ import {
   removeLike,
   removeRepost,
 } from '../../interactionSlice';
-import { useParseContent } from '../../../hooks';
 
-const ActionBar = memo(({ user, event, width, onMenu }) => {
+const styles = StyleSheet.create({
+  iconShadow: {
+    shadowColor: colors.backgroundPrimary,
+    textShadowOffset: { height: 0, width: 0 },
+    shadowRadius: 10,
+    shadowOpacity: 1,
+  },
+  button: {
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonPressed: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+});
+
+const ActionBar = memo(({ user, event, width, onMenu, isZapped }) => {
   const [zapPending, setZapPending] = useState(false);
   const likedEvents = useSelector((state) => state.interaction.likedEvents);
   const repostedEvents = useSelector(
@@ -80,66 +96,47 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
     <View
       style={{
         flexDirection: 'column',
-        width: '10%',
-        gap: 24,
+        gap: 32,
         marginRight: 6,
       }}
     >
       {isPremium && (user?.lud06 || user?.lud16) ? (
         <Pressable
           style={({ pressed }) => [
-            {
-              height: (width / 100) * 10,
-              borderRadius: 10,
-              borderColor: colors.backgroundPrimary,
-              borderRightWidth: 0,
-              backgroundColor: colors.backgroundActive,
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
-            pressed ? { backgroundColor: '#777777' } : undefined,
+            styles.button,
+            pressed ? styles.buttonPressed : undefined,
           ]}
           onPress={zapHandler}
         >
           <Animated.View style={[zapPending ? zapStyle : { opacity: 1 }]}>
             <Ionicons
-              name="flash"
-              color={colors.primary500}
-              size={Math.floor((width / 100) * 5)}
+              name={isZapped ? 'flash' : 'flash-outline'}
+              color="white"
+              size={Math.floor((width / 100) * 7)}
+              style={styles.iconShadow}
             />
           </Animated.View>
         </Pressable>
       ) : undefined}
       <Pressable
-        style={{
-          height: (width / 100) * 10,
-          borderRadius: 10,
-          borderColor: colors.backgroundPrimary,
-          borderRightWidth: 0,
-          backgroundColor: isLiked
-            ? colors.primary500
-            : colors.backgroundActive,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={({ pressed }) => [
+          styles.button,
+          pressed ? styles.buttonPressed : undefined,
+        ]}
         onPress={likeHandler}
       >
         <Ionicons
-          name="heart"
-          color={isLiked ? colors.backgroundSecondary : colors.primary500}
-          size={Math.floor((width / 100) * 5)}
+          name={isLiked ? 'heart' : 'heart-outline'}
+          color="white"
+          size={Math.floor((width / 100) * 7)}
+          style={styles.iconShadow}
         />
       </Pressable>
       <Pressable
-        style={{
-          height: (width / 100) * 10,
-          borderRadius: 10,
-          borderColor: colors.backgroundPrimary,
-          borderRightWidth: 0,
-          backgroundColor: colors.backgroundActive,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={({ pressed }) => [
+          styles.button,
+          pressed ? styles.buttonPressed : undefined,
+        ]}
         onPress={() => {
           navigation.navigate('CommentScreen', {
             eventId: event.id,
@@ -150,49 +147,40 @@ const ActionBar = memo(({ user, event, width, onMenu }) => {
         }}
       >
         <Ionicons
-          name="chatbubble-ellipses"
-          color={colors.primary500}
-          size={Math.floor((width / 100) * 5)}
+          name="chatbubble-outline"
+          color="white"
+          size={Math.floor((width / 100) * 7)}
+          style={styles.iconShadow}
         />
       </Pressable>
       <Pressable
-        style={{
-          height: (width / 100) * 10,
-          borderRadius: 10,
-          borderColor: colors.backgroundPrimary,
-          borderRightWidth: 0,
-          backgroundColor: isReposted
-            ? colors.primary500
-            : colors.backgroundActive,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={({ pressed }) => [
+          styles.button,
+          pressed ? styles.buttonPressed : undefined,
+        ]}
         onPress={repostHandler}
       >
         <Ionicons
           name="repeat"
-          color={isReposted ? colors.backgroundSecondary : colors.primary500}
-          size={Math.floor((width / 100) * 5)}
+          color={isReposted ? colors.backgroundSecondary : 'white'}
+          size={Math.floor((width / 100) * 7)}
+          style={styles.iconShadow}
         />
       </Pressable>
       <Pressable
-        style={{
-          height: (width / 100) * 10,
-          borderRadius: 10,
-          borderColor: colors.backgroundPrimary,
-          borderRightWidth: 0,
-          backgroundColor: colors.backgroundActive,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={({ pressed }) => [
+          styles.button,
+          pressed ? styles.buttonPressed : undefined,
+        ]}
         onPress={() => {
           onMenu(event);
         }}
       >
         <Ionicons
-          name="ellipsis-horizontal"
-          color={colors.primary500}
-          size={Math.floor((width / 100) * 5)}
+          name="ellipsis-horizontal-circle"
+          color="white"
+          size={Math.floor((width / 100) * 7)}
+          style={styles.iconShadow}
         />
       </Pressable>
     </View>

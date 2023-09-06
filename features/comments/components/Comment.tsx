@@ -20,9 +20,10 @@ type CommentProps = {
   event: Kind1Note;
   small?: boolean;
   onMenu: (event) => void;
+  inverted: boolean;
 };
 
-const Comment = ({ event, small, onMenu }: CommentProps) => {
+const Comment = ({ event, small, onMenu, inverted}: CommentProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { width } = useWindowDimensions();
@@ -101,6 +102,7 @@ const Comment = ({ event, small, onMenu }: CommentProps) => {
         zapDisabled={!user?.lud06 && !user?.lud16}
         onPressLike={likeHandler}
         isLiked={isLiked}
+        inverted={inverted}
       />
     </Animated.View>
   );

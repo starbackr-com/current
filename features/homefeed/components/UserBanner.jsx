@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions } from 'react-native';
+import { View, Text, useWindowDimensions, Pressable } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -22,7 +22,7 @@ const UserBanner = ({ user, event, width }) => {
   }
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -56,7 +56,7 @@ const UserBanner = ({ user, event, width }) => {
           {userStatus}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

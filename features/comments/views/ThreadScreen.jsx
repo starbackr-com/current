@@ -12,7 +12,6 @@ import publishReply from '../utils/publishReply';
 
 const ThreadScreen = ({ route }) => {
   const { eventId, noBar } = route?.params || {};
-  console.log(noBar);
   const [refreshing, setRefreshing] = useState(false);
 
   const [thread, replies, startNote, showThread, setShowThread] =
@@ -70,11 +69,11 @@ const ThreadScreen = ({ route }) => {
         <View
           style={{
             width: '100%',
-            borderBottomColor: colors.primary500,
-            borderBottomWidth: 2,
+            borderRadius: 10,
+            backgroundColor: colors.backgroundSecondary,
           }}
         >
-          <Comment event={item.note} onMenu={handlePresentModalPress} />
+          <Comment event={item.note} onMenu={handlePresentModalPress} inverted />
         </View>
       );
     }
@@ -86,7 +85,7 @@ const ThreadScreen = ({ route }) => {
             borderRadius: 10,
             borderColor: colors.backgroundSecondary,
             borderWidth: 1,
-            margin: 10,
+            marginVertical: 10,
           }}
         >
           <Comment event={item.note} onMenu={handlePresentModalPress} />
@@ -96,14 +95,15 @@ const ThreadScreen = ({ route }) => {
     return (
       <View
         style={{
-          width: '98%',
+          width: '96%',
           alignSelf: 'flex-end',
-          borderLeftWidth: 2,
-          borderLeftColor: colors.backgroundSecondary,
-          paddingLeft: 12,
+          borderLeftWidth: 1,
+          borderLeftColor: colors.primary500,
         }}
       >
+        <View style={{borderColor: colors.backgroundSecondary, borderWidth: 1, padding: 10, marginVertical: 6, borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
         <Comment event={item.note} small onMenu={handlePresentModalPress} />
+        </View>
       </View>
     );
   };
@@ -113,7 +113,7 @@ const ThreadScreen = ({ route }) => {
       <View
         style={[
           globalStyles.screenContainer,
-          { paddingHorizontal: 2, paddingTop: 0 },
+          { paddingTop: 0 },
         ]}
       >
         {startNote ? (
@@ -137,6 +137,7 @@ const ThreadScreen = ({ route }) => {
               ListHeaderComponent={
                 !showThread && startNote.repliesTo ? <PullDownNote /> : null
               }
+              showsVerticalScrollIndicator={false}
             />
           </View>
         ) : (

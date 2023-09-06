@@ -3,8 +3,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
-import ImagePost from './ImagePost';
-import PostItem from './PostItem';
 import { usePaginatedFeed } from '../hooks/usePaginatedFeed';
 import { colors, globalStyles } from '../../../styles';
 import NewPostButton from './NewPostButton';
