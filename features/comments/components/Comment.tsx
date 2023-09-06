@@ -23,7 +23,7 @@ type CommentProps = {
   inverted: boolean;
 };
 
-const Comment = ({ event, small, onMenu, inverted}: CommentProps) => {
+const Comment = ({ event, small, onMenu, inverted }: CommentProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { width } = useWindowDimensions();
@@ -60,6 +60,8 @@ const Comment = ({ event, small, onMenu, inverted}: CommentProps) => {
     }
   }, [dispatch, event]);
 
+  const age = getAge(event.createdAt);
+
   return (
     <Animated.View
       entering={FadeIn}
@@ -70,15 +72,15 @@ const Comment = ({ event, small, onMenu, inverted}: CommentProps) => {
         width: '100%',
       }}
     >
-      <View style={{ flex: 1 }}>
-      </View>
-      <UserBanner
-        user={user}
-        event={event}
-        width={small ? (width / 100) * 70 : width}
-      />
+      <View style={{ flex: 1 }}></View>
+        <UserBanner
+          user={user}
+          event={event}
+          width={small ? (width / 100) * 70 : width}
+        />
+      <Text style={[globalStyles.textBodyG, {textAlign: 'left'}]}>{age}</Text>
       <Text
-        style={[globalStyles.textBody, { textAlign: 'left', marginTop: 16 }]}
+        style={[globalStyles.textBody, { textAlign: 'left', marginTop: 6 }]}
       >
         {content}
       </Text>
@@ -87,9 +89,18 @@ const Comment = ({ event, small, onMenu, inverted}: CommentProps) => {
           data={event.images}
           horizontal
           renderItem={({ item }) => (
-            <Image source={item} style={{ height: width / 2, width: width / 2, borderRadius: 10 }} />
+            <Image
+              source={item}
+              style={{ height: width / 2, width: width / 2, borderRadius: 10 }}
+            />
           )}
-          contentContainerStyle={{borderRadius: 10, padding: 10, borderColor: colors.backgroundSecondary, borderWidth: 1, marginTop: 12}}
+          contentContainerStyle={{
+            borderRadius: 10,
+            padding: 10,
+            borderColor: colors.backgroundSecondary,
+            borderWidth: 1,
+            marginTop: 12,
+          }}
         />
       ) : undefined}
       <PostActionBar

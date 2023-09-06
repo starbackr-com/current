@@ -1,4 +1,4 @@
-import { View, ActivityIndicator, Text, Alert } from 'react-native';
+import { View, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import useThread from '../hooks/useThread';
@@ -8,27 +8,59 @@ import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
 import Comment from '../components/Comment';
 import { MyRefreshControl } from '../components/PullUp';
 import { PullDownNote } from '../components';
-import publishReply from '../utils/publishReply';
+import { publishReply } from '../utils/publishReply';
+
+const styles = StyleSheet.create({
+  baseContainer: {
+    width: '100%',
+    borderRadius: 10,
+    backgroundColor: colors.backgroundSecondary,
+  },
+  replyContainer: {
+    padding: 10,
+    borderRadius: 10,
+    borderColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    marginVertical: 10,
+  },
+  threadInnerContainer: {
+    borderColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    padding: 10,
+    marginVertical: 6,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  threadOuterContainer: {
+    width: '96%',
+    alignSelf: 'flex-end',
+    borderLeftWidth: 1,
+    borderLeftColor: colors.primary500,
+  },
+});
 
 const ThreadScreen = ({ route }) => {
   const { eventId, noBar } = route?.params || {};
   const [refreshing, setRefreshing] = useState(false);
 
-  const [thread, replies, startNote, showThread, setShowThread] =
-    useThread(eventId);
+  const [thread, replies, startNote, showThread, setShowThread] = useThread(eventId);
 
   const listRef = useRef();
   const bottomSheetModalRef = useRef();
 
-  const handlePresentModalPress = (data) => {
-    bottomSheetModalRef.current?.present(data);
-  };
+  const handlePresentModalPress = useCallback(
+    (data) => {
+      bottomSheetModalRef.current?.present(data);
+    },
+    [bottomSheetModalRef],
+  );
 
   let notes;
   if (!showThread) {
+    const sortedReplies = replies.sort((a, b) => b.createdAt - a.createdAt)
     notes = [
       { type: 'base', note: startNote },
-      ...replies.map((note) => ({
+      ...sortedReplies.map((note) => ({
         type: 'reply',
         note,
       })),
@@ -43,7 +75,7 @@ const ThreadScreen = ({ route }) => {
       ...replies.map((note) => ({
         type: 'reply',
         note,
-      })),
+      })).sort((a, b) => b.created_at - a.created_at),
     ];
   }
 
@@ -63,59 +95,40 @@ const ThreadScreen = ({ route }) => {
     [startNote],
   );
 
-  const renderItem = ({ item }) => {
-    if (item.type === 'base') {
+  const renderItem = useCallback(
+    ({ item, index}) => {
+      if (item.type === 'base') {
+        return (
+          <View style={styles.baseContainer}>
+            <Comment
+              event={item.note}
+              onMenu={handlePresentModalPress}
+              inverted
+            />
+          </View>
+        );
+      }
+      if (item.type === 'reply') {
+        return (
+          <View style={styles.replyContainer}>
+            <Comment event={item.note} onMenu={handlePresentModalPress} />
+          </View>
+        );
+      }
       return (
-        <View
-          style={{
-            width: '100%',
-            borderRadius: 10,
-            backgroundColor: colors.backgroundSecondary,
-          }}
-        >
-          <Comment event={item.note} onMenu={handlePresentModalPress} inverted />
+        <View style={styles.threadOuterContainer}>
+          <View style={styles.threadInnerContainer}>
+            <Comment event={item.note} small onMenu={handlePresentModalPress} />
+          </View>
         </View>
       );
-    }
-    if (item.type === 'reply') {
-      return (
-        <View
-          style={{
-            padding: 10,
-            borderRadius: 10,
-            borderColor: colors.backgroundSecondary,
-            borderWidth: 1,
-            marginVertical: 10,
-          }}
-        >
-          <Comment event={item.note} onMenu={handlePresentModalPress} />
-        </View>
-      );
-    }
-    return (
-      <View
-        style={{
-          width: '96%',
-          alignSelf: 'flex-end',
-          borderLeftWidth: 1,
-          borderLeftColor: colors.primary500,
-        }}
-      >
-        <View style={{borderColor: colors.backgroundSecondary, borderWidth: 1, padding: 10, marginVertical: 6, borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
-        <Comment event={item.note} small onMenu={handlePresentModalPress} />
-        </View>
-      </View>
-    );
-  };
+    },
+    [handlePresentModalPress],
+  );
 
   return (
     <CustomKeyboardView noBottomBar={noBar}>
-      <View
-        style={[
-          globalStyles.screenContainer,
-          { paddingTop: 0 },
-        ]}
-      >
+      <View style={[globalStyles.screenContainer, { paddingTop: 0 }]}>
         {startNote ? (
           <View style={{ flex: 1, width: '100%' }}>
             <FlashList
