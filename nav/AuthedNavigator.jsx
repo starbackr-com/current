@@ -24,6 +24,7 @@ import { ConversationNavigator } from '../features/messages';
 import OwnProfileNavigator from './OwnProfileNavigator';
 import PostNavigator from '../features/post/nav/PostNavigator';
 import { SettingsNavigator } from '../features/settings';
+import DvmNavigator from '../features/dvm/nav/DvmNavigator';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,6 +73,7 @@ const TabNavigator = () => {
         component={SearchNavigator}
         options={{ headerShown: false }}
       />
+      <Tab.Screen name="DVM" component={DvmNavigator} />
       <Tab.Screen name="Settings" component={SettingsNavigator} />
     </Tab.Navigator>
   );
@@ -112,7 +114,7 @@ const AuthedNavigator = () => (
           name="ImageModal"
           component={FullScreenImage}
           options={{
-            presentation: 'transparentModal',
+            presentation: 'modal',
             headerShown: false,
           }}
         />

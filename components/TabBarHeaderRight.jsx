@@ -21,7 +21,7 @@ const TabBarHeaderRight = () => {
         }}
       >
         <Text style={globalStyles.textBody}>
-          {data ? `${data.balance}` : '----'}{' '}
+          {data ? `${data.balance.length > 4 ? `${Math.round(data.balance / 1000)}k` : data.balance}` : '----'}{' '}
           <Text style={[globalStyles.textBodyS, { color: colors.primary500 }]}>
             SATS
           </Text>

@@ -3,12 +3,12 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
-import ImagePost from './ImagePost';
-import PostItem from './PostItem';
 import { usePaginatedFeed } from '../hooks/usePaginatedFeed';
 import { colors, globalStyles } from '../../../styles';
 import NewPostButton from './NewPostButton';
 import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
+import TextPost from './TextPost';
+import FullImagePost from './FullImagePost';
 
 const HomeFeed = ({ width, height }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -42,7 +42,7 @@ const HomeFeed = ({ width, height }) => {
     ({ item }) => {
       if (item.type === 'image') {
         return (
-          <ImagePost
+          <FullImagePost
             item={item}
             height={height}
             width={width}
@@ -53,7 +53,7 @@ const HomeFeed = ({ width, height }) => {
         );
       }
       return (
-        <PostItem
+        <TextPost
           item={item}
           height={height}
           width={width}
@@ -73,8 +73,8 @@ const HomeFeed = ({ width, height }) => {
           renderItem={renderPost}
           snapToAlignment="start"
           decelerationRate="fast"
-          snapToInterval={(height / 100) * 90}
-          estimatedItemSize={(height / 100) * 90}
+          snapToInterval={height}
+          estimatedItemSize={height}
           directionalLockEnabled
           extraData={[users, zapAmount]}
           getItemType={(item) => item.type}

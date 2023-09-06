@@ -11,6 +11,7 @@ import { usePostInvoiceMutation } from '../../../services/walletApi';
 const RedeemModal = forwardRef(
   (props, ref: React.Ref<BottomSheetModalMethods>) => {
     const [input, setInput] = useState<string>('');
+    const [addedAmount, setAddedAmount] = useState<number | undefined>();
     const [getInvoice] = usePostInvoiceMutation();
     const redeemHandler = () => {
       console.log('works');
@@ -32,8 +33,20 @@ const RedeemModal = forwardRef(
           console.log(invoice);
           const wallet = new CashuWallet(new CashuMint(mint));
           const fee = await wallet.getFee(invoice.payment_request);
-          console.log('fees', fee)
-          const response = await wallet.payLnInvoice(invoice, proofs, feeReserve);
+          console.log('fees', fee);
+          try {
+            const response = await wallet.payLnInvoice(
+              invoice.payment_request,
+              proofs,
+              feeReserve,
+            );
+            if (response.isPaid === true) {
+              setAddedAmount(amount - feeReserve);
+              setTimeout(() => {ref.current.dismiss()}, 2000);
+            }
+          } catch (e) {
+            console.log(JSON.stringify(e));
+          }
           console.log('runs');
         } catch (e) {
           console.log(e);
@@ -45,22 +58,28 @@ const RedeemModal = forwardRef(
         <View style={{ gap: 12 }}>
           <Text style={globalStyles.textBodyBold}>Redeem Cashu or LNURL</Text>
           <Text style={globalStyles.textBody}>Coming soon!</Text>
-          {/* <BottomSheetTextInput
-            style={{
-              width: '100%',
-              backgroundColor: colors.backgroundSecondary,
-              borderColor: colors.primary500,
-              borderWidth: 1,
-              borderRadius: 10,
-              padding: 8,
-              color: 'white',
-            }}
-            onChangeText={setInput}
-          />
-          <CustomButton
-            text="Confirm"
-            buttonConfig={{ onPress: redeemHandler }}
-          /> */}
+          {/* {!addedAmount ? (
+            <View style={{ gap: 12 }}>
+              <BottomSheetTextInput
+                style={{
+                  width: '100%',
+                  backgroundColor: colors.backgroundSecondary,
+                  borderColor: colors.primary500,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  padding: 8,
+                  color: 'white',
+                }}
+                onChangeText={setInput}
+              />
+              <CustomButton
+                text="Confirm"
+                buttonConfig={{ onPress: redeemHandler }}
+              />
+            </View>
+          ) : (
+            <Text style={globalStyles.textBodyBold}>Successfully redeemed {addedAmount} SATS.</Text>
+          )} */}
         </View>
       </MenuBottomSheet>
     );

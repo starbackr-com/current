@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import globalStyles from '../styles/globalStyles';
-import CommentScreen from '../features/comments/views/CommentScreen';
+// import CommentScreen from '../features/comments/views/CommentScreen';
 import { storeData } from '../utils/cache/asyncStorage';
 import { setTwitterModal } from '../features/introSlice';
 // import GetStartedItems from '../features/homefeed/components/GetStartedItems';
 import HomeFeed from '../features/homefeed/components/HomeFeed';
 import ProfileNavigator from '../nav/ProfileNavigator';
+import ThreadScreen from '../features/comments/views/ThreadScreen';
+import { BackHeader } from '../components';
 
 const HomeStack = createNativeStackNavigator();
 
@@ -34,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View
-      style={[globalStyles.screenContainer, { paddingTop: 0 }]}
+      style={[globalStyles.screenContainer, { paddingTop: 0, paddingHorizontal: 0 }]}
       onLayout={onLayoutViewWidth}
     >
       {/* <GetStartedItems /> */}
@@ -46,14 +48,19 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const HomeView = () => (
-  <HomeStack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-    initialRouteName="HomeScreen"
-  >
-    <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
-    <HomeStack.Screen name="CommentScreen" component={CommentScreen} />
+  <HomeStack.Navigator initialRouteName="HomeScreen">
+    <HomeStack.Screen
+      name="HomeScreen"
+      component={HomeScreen}
+      options={{ headerShown: false }}
+    />
+    <HomeStack.Screen
+      name="CommentScreen"
+      component={ThreadScreen}
+      options={({ navigation }) => ({
+        header: () => <BackHeader navigation={navigation} />,
+      })}
+    />
     <HomeStack.Screen
       name="Profile"
       component={ProfileNavigator}
