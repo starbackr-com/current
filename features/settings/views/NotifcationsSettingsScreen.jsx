@@ -6,7 +6,9 @@ import { globalStyles } from '../../../styles';
 import { SwitchBar } from '../../../components';
 import { storeData } from '../../../utils/cache/asyncStorage';
 import { setPushToken } from '../../userSlice';
-import registerPushToken from '../../../utils/notifications';
+import registerPushToken, {
+  registerForPushNotificationsAsync,
+} from '../../../utils/notifications';
 
 const initialState = {
   status: false,
@@ -20,8 +22,10 @@ const initialState = {
 
 const NotifcationsSettingsScreen = () => {
   const dispatch = useDispatch();
-  const [notificationSettings, setNotificationSettings] = useState(initialState);
+  const [notificationSettings, setNotificationSettings] =
+    useState(initialState);
   const [pushTokenInput, setPushTokenInput] = useState();
+  const [error, setError] = useState('');
 
   const { pushToken } = useSelector((state) => state.user);
 
@@ -67,14 +71,18 @@ const NotifcationsSettingsScreen = () => {
   return (
     <ScrollView style={globalStyles.screenContainerScroll}>
       <Text style={globalStyles.textH2}>Push Notifications</Text>
+      {error.length > 0 ? (
+        <Text style={globalStyles.textBodyError}>{error}</Text>
+      ) : undefined}
       <SwitchBar
         text="Allow Notifications"
         value={notificationSettings.status}
         onChange={async () => {
           try {
             if (!pushTokenInput) {
-              const token = await registerPushToken(walletBearer);
-              if (token) {
+              const token = await registerForPushNotificationsAsync();
+              const request = await registerPushToken(walletBearer, token);
+              if (request) {
                 // console.log('token is: ', token);
                 await storeData('pushToken', token);
                 dispatch(setPushToken(token));
@@ -92,6 +100,9 @@ const NotifcationsSettingsScreen = () => {
             }
           } catch (e) {
             console.log(e);
+            if (e.message) {
+              setError(e.message);
+            }
           }
         }}
       />
