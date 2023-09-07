@@ -1,6 +1,7 @@
-import { View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { Image } from 'expo-image';
+import * as FileSystem from 'expo-file-system';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,6 +12,8 @@ import {
   Gesture,
   GestureDetector,
 } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
+import { globalStyles } from '../../styles';
 
 const FullScreenImage = ({ route, navigation }) => {
   const imageUri = route?.params?.imageUri;
@@ -87,6 +90,35 @@ const FullScreenImage = ({ route, navigation }) => {
           />
         </Animated.View>
       </GestureDetector>
+      <Ionicons
+        name="close"
+        size={32}
+        color="white"
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={{ position: 'absolute', top: 12, right: 12 }}
+      />
+      <Pressable
+        style={{
+          width: '100%',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          position: 'absolute',
+          bottom: 0,
+          marginBottom: 50,
+          paddingVertical: 32,
+        }}
+        onPress={async () => {
+          console.log(`${FileSystem.cacheDirectory}${Date.now()}`);
+          // const uri = await FileSystem.downloadAsync(
+          //   imageUri,
+          //   `${FileSystem.cacheDirectory}${Date.now()}`,
+          // );
+          // console.log(uri);
+        }}
+      >
+        <Text style={globalStyles.textBody}>Save Image</Text>
+      </Pressable>
     </View>
   );
 };

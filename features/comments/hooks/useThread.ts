@@ -24,9 +24,7 @@ const useThread = (noteId) => {
       if (!baseNote) {
         return;
       }
-      console.log(baseNote)
       const parsedBaseNote = new Kind1Note(baseNote)
-      console.log(parsedBaseNote)
       setStartNote(parsedBaseNote);
       let filter: Filter[];
       if (parsedBaseNote.root) {

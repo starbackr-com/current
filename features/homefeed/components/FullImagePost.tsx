@@ -45,10 +45,8 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
   const textLayout = (e) => {
     const maxLines = 2;
     const numOfLines = e.nativeEvent.lines.length;
-    console.log(numOfLines);
     if (numOfLines > maxLines) {
       setHasMore(true);
-      console.log('true');
     } else {
       setHasMore(false);
     }
@@ -80,7 +78,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
           style={{
             height: '100%',
             width: '100%',
-            backgroundColor: 'red',
             borderRadius: 10,
           }}
           onLayout={(e) => {
@@ -90,7 +87,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             });
           }}
           onPress={() => {
-            console.log('pressed');
             navigation.navigate('ImageModal', { imageUri: [item.image] });
           }}
         >

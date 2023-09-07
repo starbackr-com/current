@@ -20,7 +20,6 @@ const TrendingPostView = () => {
         const trending = data.profiles.map((note) => note.profile).filter(item => !!item);
         const trendingPubkeys = data.profiles.map((item) => item.pubkey);
         getUserData(trendingPubkeys);
-        console.log(trending)
         setTrendingProfiles(trending);
       } catch (e) {
         devLog(e);

@@ -262,8 +262,8 @@ export const publishReaction = async (sign, eTag, pTag) => {
   });
 };
 
-export async function publishGenericEvent(event) {
-  const writeUrls = getRelayUrls(getWriteRelays());
+export async function publishGenericEvent(event, relays) {
+  const writeUrls = relays || getRelayUrls(getWriteRelays());
   await new Promise((resolve) => {
     let handled = 0;
     const timer = setTimeout(resolve, 3200);

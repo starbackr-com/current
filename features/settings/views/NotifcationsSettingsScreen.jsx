@@ -83,7 +83,6 @@ const NotifcationsSettingsScreen = () => {
               const token = await registerForPushNotificationsAsync();
               const request = await registerPushToken(walletBearer, token);
               if (request) {
-                // console.log('token is: ', token);
                 await storeData('pushToken', token);
                 dispatch(setPushToken(token));
                 setPushTokenInput(token);
