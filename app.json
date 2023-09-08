@@ -25,7 +25,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "2",
+      "buildNumber": "4",
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -60,13 +60,11 @@
       }
     },
     "plugins": [
-      "expo-localization",
-      "sentry-expo"
+      "expo-localization"
     ],
     "hooks": {
       "postPublish": [
         {
-          "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "lightning-digital-entertainmen",
             "project": "current"

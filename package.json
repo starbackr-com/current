@@ -116,6 +116,9 @@
     "_stream_passthrough": "readable-stream/passthrough",
     "stream": "stream-browserify"
   },
+  "resolutions": {
+    "expo-linear-gradient": "~11.4.0"
+  },
   "browser": {
     "_stream_transform": "readable-stream/transform",
     "_stream_readable": "readable-stream/readable",
