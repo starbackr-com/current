@@ -22,8 +22,7 @@ const initialState = {
 
 const NotifcationsSettingsScreen = () => {
   const dispatch = useDispatch();
-  const [notificationSettings, setNotificationSettings] =
-    useState(initialState);
+  const [notificationSettings, setNotificationSettings] = useState(initialState);
   const [pushTokenInput, setPushTokenInput] = useState();
   const [error, setError] = useState('');
 
