@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Animated, {
   withTiming,
   useAnimatedStyle,
@@ -40,7 +40,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
   const content = useParseContent(item);
 
   const { created_at, pubkey } = item;
-  const age = getAge(created_at);
+  const age = useMemo(() => getAge(created_at), []);
 
   const textLayout = (e) => {
     const maxLines = 2;
@@ -149,6 +149,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
                   width: '100%',
                 }}
               >
+                <Text style={[globalStyles.textBodyS, {textAlign: 'left'}]}>{age}</Text>
                 <Text
                   onTextLayout={textLayout}
                   style={[
