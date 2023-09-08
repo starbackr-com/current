@@ -34,7 +34,7 @@ const useImageJob = () => {
     );
     sub.on('event', (event) => {
       allEvents.add(event);
-      setEvents([...allEvents].sort((a, b) => a.created_at - b.created_at));
+      setEvents([...allEvents]);
     });
   }, []);
   return events;

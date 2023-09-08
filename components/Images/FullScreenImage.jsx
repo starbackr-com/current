@@ -1,7 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image } from 'expo-image';
-import * as FileSystem from 'expo-file-system';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,10 +12,12 @@ import {
   GestureDetector,
 } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { globalStyles } from '../../styles';
 
 const FullScreenImage = ({ route, navigation }) => {
   const imageUri = route?.params?.imageUri;
+  const insets = useSafeAreaInsets();
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
@@ -105,19 +106,17 @@ const FullScreenImage = ({ route, navigation }) => {
           backgroundColor: 'rgba(0,0,0,0.3)',
           position: 'absolute',
           bottom: 0,
-          marginBottom: 50,
+          paddingBottom: insets.bottom,
           paddingVertical: 32,
         }}
-        onPress={async () => {
-          console.log(`${FileSystem.cacheDirectory}${Date.now()}`);
-          // const uri = await FileSystem.downloadAsync(
-          //   imageUri,
-          //   `${FileSystem.cacheDirectory}${Date.now()}`,
-          // );
-          // console.log(uri);
+        onPress={() => {
+          navigation.navigate('DVM', {
+            screen: 'ImageGen',
+            params: { remixImg: imageUri[0][0] },
+          });
         }}
       >
-        <Text style={globalStyles.textBody}>Save Image</Text>
+        <Text style={globalStyles.textBody}>Remix Image</Text>
       </Pressable>
     </View>
   );

@@ -1,17 +1,67 @@
 import { View, Text } from 'react-native';
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
+import { useScrollToTop } from '@react-navigation/native';
 import { globalStyles } from '../../../styles';
-import { CustomKeyboardView, ExpandableInput } from '../../../components';
+import {
+  CustomButton,
+  CustomKeyboardView,
+  ExpandableInput,
+  MenuBottomSheet,
+} from '../../../components';
 import { useImageJob } from '../hooks';
-import publishImageJob from '../utils/publishImageJob';
+import publishImageJob, {
+  parseAndReplaceImages,
+} from '../utils/publishImageJob';
 import ImageGenResult from '../components/ImageGenResult';
 import ImageGenRequest from '../components/ImageGenRequest';
+import DVMHeader from '../components/DVMHeader';
 
-const ImageGenScreen = () => {
+const samplePrompts = [
+  { title: 'Snow Landscape', prompt: 'A white snow landscape with stones' },
+  { title: 'Snow Landscape', prompt: 'A white snow landscape with trees' },
+];
+
+const ImageGenScreen = ({ navigation, route }) => {
+  const { remixImg } = route?.params || {};
+
+  const [inititalText, setInitialText] = useState();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <DVMHeader
+          onPress={() => {
+            suggestionRef.current.present();
+          }}
+        />
+      ),
+    });
+  }, [suggestionRef]);
+
+  useEffect(() => {
+    setInitialText(remixImg);
+  }, [remixImg]);
+
   const events = useImageJob();
+  const sortedEvents = events.sort((a, b) => b.created_at - a.created_at);
+
+  const listRef = useRef();
+  const suggestionRef = useRef();
+
+  useScrollToTop(listRef);
+
   const submitJob = (input) => {
-    publishImageJob(input);
+    const [parsedContent, images] = parseAndReplaceImages(input);
+    if (images.length > 1) {
+      alert('Can not remix more than one image at a time!');
+      return;
+    }
+    if (images.length < 1) {
+      publishImageJob(parsedContent);
+    } else {
+      publishImageJob(parsedContent, images[0]);
+    }
   };
 
   const renderEvent = ({ item }) => {
@@ -25,14 +75,35 @@ const ImageGenScreen = () => {
     <CustomKeyboardView>
       <View style={globalStyles.screenContainer}>
         <FlatList
-          data={events}
+          data={sortedEvents}
           renderItem={renderEvent}
           contentContainerStyle={{ gap: 12 }}
           style={{ flex: 1, width: '100%' }}
           showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          inverted
+          ref={listRef}
         />
-        <ExpandableInput onSubmit={submitJob} />
+        <ExpandableInput onSubmit={submitJob} initialText={inititalText} />
       </View>
+      <MenuBottomSheet ref={suggestionRef}>
+        <View style={{ gap: 5 }}>
+          <Text style={globalStyles.textBody}>
+            Sample prompts to get started:
+          </Text>
+          {samplePrompts.map((prompt) => (
+            <CustomButton
+              text={prompt.title}
+              buttonConfig={{
+                onPress: () => {
+                  setInitialText(prompt.prompt);
+                  suggestionRef.current.dismiss();
+                },
+              }}
+            />
+          ))}
+        </View>
+      </MenuBottomSheet>
     </CustomKeyboardView>
   );
 };

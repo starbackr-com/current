@@ -1,8 +1,18 @@
 import { getEventHash, getPublicKey, signEvent } from 'nostr-tools';
 import { getPrivateKey } from '../../../utils/cache/asyncStorage';
 import { publishGenericEvent } from '../../../utils/nostrV2';
+import { imageRegex } from '../../../constants';
 
-const publishImageJob = async (prompt) => {
+export function parseAndReplaceImages(input: string): [string, string[]] {
+  const images: string[] = [];
+  const parsedContent = input.replace(imageRegex, (match) => {
+    images.push(match);
+    return '';
+  });
+  return [parsedContent, images];
+}
+
+const publishImageJob = async (prompt, image) => {
   const sk = await getPrivateKey();
   const event = {
     content: '',
@@ -19,15 +29,18 @@ const publishImageJob = async (prompt) => {
         'wss://relay.conxole.io',
         'wss://wc1.current.ninja',
         'wss://pablof7z.nostr1.com',
-        'wss://relay.f7z.io'
+        'wss://relay.f7z.io',
       ],
-      ['p', 'c70735fa4b01f77f953883a6e671982e31bd7d906b2b6111a6f518555bed1b1a']
+      ['p', 'c70735fa4b01f77f953883a6e671982e31bd7d906b2b6111a6f518555bed1b1a'],
     ],
     created_at: Math.floor(Date.now() / 1000),
     pubkey: getPublicKey(sk),
     id: '',
     sig: '',
   };
+  if (image) {
+    event.tags.push(['i', image, 'url']);
+  }
   event.id = getEventHash(event);
   event.sig = signEvent(event, sk);
   publishGenericEvent(event, [
@@ -37,7 +50,7 @@ const publishImageJob = async (prompt) => {
     'wss://relay.conxole.io',
     'wss://wc1.current.ninja',
     'wss://pablof7z.nostr1.com',
-    'wss://relay.f7z.io'
+    'wss://relay.f7z.io',
   ]);
 };
 

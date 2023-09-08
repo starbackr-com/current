@@ -1,4 +1,10 @@
-import { View, Text, useWindowDimensions, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  FlatList,
+  Pressable,
+} from 'react-native';
 import React, { useCallback } from 'react';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -73,12 +79,12 @@ const Comment = ({ event, small, onMenu, inverted }: CommentProps) => {
       }}
     >
       <View style={{ flex: 1 }}></View>
-        <UserBanner
-          user={user}
-          event={event}
-          width={small ? (width / 100) * 70 : width}
-        />
-      <Text style={[globalStyles.textBodyG, {textAlign: 'left'}]}>{age}</Text>
+      <UserBanner
+        user={user}
+        event={event}
+        width={small ? (width / 100) * 70 : width}
+      />
+      <Text style={[globalStyles.textBodyG, { textAlign: 'left' }]}>{age}</Text>
       <Text
         style={[globalStyles.textBody, { textAlign: 'left', marginTop: 6 }]}
       >
@@ -89,10 +95,20 @@ const Comment = ({ event, small, onMenu, inverted }: CommentProps) => {
           data={event.images}
           horizontal
           renderItem={({ item }) => (
-            <Image
-              source={item}
-              style={{ height: width / 2, width: width / 2, borderRadius: 10 }}
-            />
+            <Pressable
+              onPress={() => {
+                navigation.navigate('ImageModal', { imageUri: [item] });
+              }}
+            >
+              <Image
+                source={item}
+                style={{
+                  height: width / 2,
+                  width: width / 2,
+                  borderRadius: 10,
+                }}
+              />
+            </Pressable>
           )}
           contentContainerStyle={{
             borderRadius: 10,
