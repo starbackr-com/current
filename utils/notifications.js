@@ -1,10 +1,9 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-async function registerForPushNotificationsAsync() {
-  let token;
-
+export async function registerForPushNotificationsAsync() {
   if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -20,45 +19,36 @@ async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return undefined;
+      throw new Error('Permission was not granted!');
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+    try {
+      const tokenRequest = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig.extra.eas.projectId,
+      });
+      return tokenRequest.data;
+    } catch (e) {
+      console.log(e);
+      throw new Error('Could not get push token from expo');
+    }
   } else {
-    alert('Must use physical device for Push Notifications');
     throw new Error('Must use physical device for Push Notifications');
   }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token;
 }
 
-async function registerPushToken(walletBearer) {
-  const settings = await Notifications.getPermissionsAsync();
-
-  if (settings.granted) {
-    //alert('Push notification is enabled..!');
-    // return;
-  }
-
-  const token = await registerForPushNotificationsAsync();
-  console.log(token);
-
-  if (token) {
-
-    const jsonBody = {
-            token: token,
-            status: true
-    }
+async function registerPushToken(walletBearer, token) {
+  const jsonBody = {
+    token,
+    status: true,
+  };
+  try {
     const response = await fetch(`${process.env.BASEURL}/v2/pushtoken`, {
       method: 'POST',
       body: JSON.stringify(jsonBody),
@@ -69,10 +59,14 @@ async function registerPushToken(walletBearer) {
     });
 
     const data = await response.json();
-    if (data.data !== 'updated')
-      alert('Push token update failed. Please contact support');
-
-    return token;
+    if (data.data !== 'updated') {
+      console.log(data);
+      throw new Error('Server responded, but did not update');
+    }
+    return data;
+  } catch (e) {
+    console.log(e);
+    throw new Error('Could not register push token with Current Service.');
   }
 }
 

@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable, Text, Keyboard } from 'react-native';
-import React, { FC, memo, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import {
   MentionInput,
@@ -14,7 +14,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomButton from './CustomButton';
-import pickImageResizeAndUpload from '../utils/images';
+import { pickSingleImage, resizeImageSmall, uploadJpeg } from '../utils/images';
 import { useSelector } from 'react-redux';
 import LoadingSpinner from './LoadingSpinner';
 import { FlatList } from 'react-native-gesture-handler';
@@ -22,6 +22,7 @@ import { matchSorter } from 'match-sorter';
 
 type ExpanableInputProps = {
   onSubmit: (input: string) => Promise<void>;
+  initialText?: string
 };
 
 const styles = StyleSheet.create({
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
+const ExpandableInput = memo(({ onSubmit, initialText }: ExpanableInputProps) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -57,6 +58,26 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
     //@ts-ignore
     (state) => state.auth,
   );
+
+  useEffect(() => {
+    if (initialText) {
+      setInput(initialText)
+    }
+  }, [initialText])
+
+  const imageHandler = async () => {
+    setUploading(true);
+    try {
+      const image = await pickSingleImage();
+      const manipImage = await resizeImageSmall(image);
+      const imageUrl = await uploadJpeg(manipImage, pubKey, walletBearer);
+      setInput((prev) => `${prev}\n${imageUrl}`);
+      setUploading(false);
+    } catch (e) {
+      setUploading(false);
+      console.log(e);
+    }
+  };
 
   const bottomSheetModalRef = useRef(null);
 
@@ -189,16 +210,7 @@ const ExpandableInput = memo(({ onSubmit }: ExpanableInputProps) => {
               containerStyles={{ marginVertical: 6 }}
               loading={uploading}
               buttonConfig={{
-                onPress: async () => {
-                  setUploading(true);
-                  const { data } = await pickImageResizeAndUpload(
-                    pubKey,
-                    walletBearer,
-                  );
-                  setInput((prev) => prev + `\n ${data}`);
-                  setUploading(false);
-                  bottomSheetModalRef.current.dismiss();
-                },
+                onPress: imageHandler,
               }}
             />
           </View>

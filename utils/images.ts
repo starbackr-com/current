@@ -21,8 +21,8 @@ export async function resizeImageSmall(image: ImagePicker.ImagePickerAsset) {
     image.uri,
     [
       image.width > image.height
-        ? { resize: { width: 1080 } }
-        : { resize: { height: 1080 } },
+        ? { resize: { width: 1024 } }
+        : { resize: { height: 1024 } },
     ],
     { compress: 0.5 },
   );

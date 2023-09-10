@@ -7,7 +7,8 @@ const BackHeader = memo(({ navigation }) => (
   <View
     style={{
       backgroundColor: colors.backgroundPrimary,
-      padding: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
     }}
   >
     <BackButton

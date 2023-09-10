@@ -49,6 +49,7 @@ const NewPostScreen = ({ navigation, route }) => {
   const [uploading, setUploading] = useState(false);
 
   const { gif } = route?.params || {};
+  const { image } = route?.params || {};
 
   const users = useSelector((state) => state.messages.users);
   const userArray = useMemo(
@@ -106,7 +107,10 @@ const NewPostScreen = ({ navigation, route }) => {
     if (gif) {
       setInput((prev) => `${prev}\n${gif}`);
     }
-  }, [gif]);
+    if (image) {
+      setInput((prev) => `${prev}\n${image}`);
+    }
+  }, [gif, image]);
 
   const renderSuggestions = ({ keyword, onSuggestionPress }) => {
     if (keyword == null || keyword.length < 1) {
@@ -148,7 +152,10 @@ const NewPostScreen = ({ navigation, route }) => {
         <MentionInput
           value={input}
           containerStyle={styles.input}
-          style={[globalStyles.textBody, { textAlign: 'left', flex: 1, verticalAlign: 'top' }]}
+          style={[
+            globalStyles.textBody,
+            { textAlign: 'left', flex: 1, verticalAlign: 'top' },
+          ]}
           onChange={setInput}
           partTypes={[
             {

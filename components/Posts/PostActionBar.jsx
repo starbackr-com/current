@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
   buttonContainerActive: {
     backgroundColor: colors.backgroundActive,
   },
+  buttonContainerInverted: {
+    backgroundColor: colors.backgroundPrimary,
+  },
 });
 
 const PostActionBar = memo(
@@ -26,6 +29,7 @@ const PostActionBar = memo(
     zapDisabled,
     onPressLike,
     isLiked,
+    inverted,
   }) => {
     const isPremium = useSelector((state) => state.auth.isPremium);
     return (
@@ -40,6 +44,7 @@ const PostActionBar = memo(
           <Pressable
             style={({ pressed }) => [
               styles.buttonContainer,
+              inverted ? styles.buttonContainerInverted : undefined,
               pressed && !zapDisabled
                 ? styles.buttonContainerActive
                 : undefined,
@@ -56,6 +61,7 @@ const PostActionBar = memo(
         <Pressable
           style={({ pressed }) => [
             styles.buttonContainer,
+            inverted ? styles.buttonContainerInverted : undefined,
             pressed ? styles.buttonContainerActive : undefined,
           ]}
           onPress={onPressComment}
@@ -69,6 +75,7 @@ const PostActionBar = memo(
         <Pressable
           style={({ pressed }) => [
             styles.buttonContainer,
+            inverted ? styles.buttonContainerInverted : undefined,
             pressed ? styles.buttonContainerActive : undefined,
           ]}
           onPress={onPressLike}
@@ -82,6 +89,7 @@ const PostActionBar = memo(
         <Pressable
           style={({ pressed }) => [
             styles.buttonContainer,
+            inverted ? styles.buttonContainerInverted : undefined,
             pressed ? styles.buttonContainerActive : undefined,
           ]}
           onPress={onPressMore}

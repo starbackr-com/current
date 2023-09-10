@@ -2,7 +2,7 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -60,13 +60,11 @@
       }
     },
     "plugins": [
-      "expo-localization",
-      "sentry-expo"
+      "expo-localization"
     ],
     "hooks": {
       "postPublish": [
         {
-          "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "lightning-digital-entertainmen",
             "project": "current"

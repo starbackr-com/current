@@ -3,7 +3,6 @@ import { addZap } from '../features/interactionSlice';
 import { hydrate } from '../features/messagesSlice';
 import { followMultiplePubkeys, mutePubkey } from '../features/userSlice';
 import { store } from '../store/store';
-import * as Sentry from 'sentry-expo';
 
 const openDatabase = () => SQLite.openDatabase('current.db');
 export const db = openDatabase();
@@ -11,7 +10,7 @@ export const db = openDatabase();
 const initArray = [
   `
     CREATE TABLE IF NOT EXISTS events (
-    id TEXT PRIMARY KEY NOT NULL,   
+    id TEXT PRIMARY KEY NOT NULL,
     content TEXT NOT NULL,
     created_at INT NOT NULL,
     kind INT NOT NULL,
@@ -21,7 +20,7 @@ const initArray = [
   `
     CREATE TABLE IF NOT EXISTS users (
     pubkey TEXT PRIMARY KEY NOT NULL,
-    id TEXT NOT NULL,   
+    id TEXT NOT NULL,
     name TEXT,
     display_name TEXT,
     picture TEXT,
@@ -58,7 +57,7 @@ export const init = async () => {
       initArray.forEach((table) => tx.executeSql(table));
     });
   } catch (error) {
-    Sentry.Native.captureException(error);
+    //Sentry.Native.captureException(error);
   }
 };
 
