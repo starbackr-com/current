@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Share, View } from 'react-native';
 import React, { forwardRef, useMemo } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { nip19 } from 'nostr-tools';
 import CustomButton from './CustomButton';
 import { colors } from '../styles';
 import { encodeNoteID } from '../utils';
@@ -74,7 +75,7 @@ const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
               buttonConfig={{
                 onPress: () => {
                   bottomSheetModalRef.current.dismiss();
-                  copyEventHandler(event.id);
+                  copyEventHandler(nip19.noteEncode(event.id));
                 },
               }}
             />
@@ -97,6 +98,19 @@ const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
                 onPress: async () => {
                   await muteHandler(event);
                   bottomSheetModalRef.current.dismiss();
+                },
+              }}
+            />
+            <CustomButton
+              text="Share Note"
+              icon="share"
+              containerStyles={{ marginVertical: 6 }}
+              buttonConfig={{
+                onPress: async () => {
+                  Share.share({
+                    message: nip19.noteEncode(event.id),
+                    url: `nostr:${nip19.noteEncode(event.id)}`,
+                  });
                 },
               }}
             />
