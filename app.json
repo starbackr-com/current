@@ -60,7 +60,8 @@
       }
     },
     "plugins": [
-      "expo-localization"
+      "expo-localization",
+      "expo-build-properties"
     ],
     "hooks": {
       "postPublish": [

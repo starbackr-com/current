@@ -21,6 +21,7 @@ import useInteractions from '../../../hooks/useInteractions';
 import UserBanner from '../../homefeed/components/UserBanner';
 import { Image } from 'expo-image';
 import Kind1Note from '../../../models/Kind1Note';
+import useRealmUser from '../../../hooks/useRealmUser';
 
 type CommentProps = {
   event: Kind1Note;
@@ -34,7 +35,7 @@ const Comment = ({ event, small, onMenu, inverted }: CommentProps) => {
   const dispatch = useDispatch();
   const { width } = useWindowDimensions();
 
-  const user = useUser(event.pubkey);
+  const user = useRealmUser(event.pubkey);
   const content = useParseContent(event);
   const { isLiked } = useInteractions(event.id);
 

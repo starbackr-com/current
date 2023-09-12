@@ -6,9 +6,13 @@ import PolyfillCrypto from 'react-native-webview-crypto';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import 'react-native-gesture-handler';
 import 'react-native-url-polyfill/auto';
+import { RealmProvider } from '@realm/react';
 import { store } from './store/store';
 import Root from './Root';
 import { injectStore } from './utils/nostrV2/Event';
+
+import { User } from './schemas';
+
 
 const App = () => {
   injectStore(store);
@@ -16,7 +20,9 @@ const App = () => {
     <Provider store={store}>
       <RootSiblingParent>
         <PolyfillCrypto />
-        <Root />
+        <RealmProvider schema={[User]} deleteRealmIfMigrationNeeded>
+          <Root />
+        </RealmProvider>
       </RootSiblingParent>
     </Provider>
   );

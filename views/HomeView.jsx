@@ -36,7 +36,10 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View
-      style={[globalStyles.screenContainer, { paddingTop: 0, paddingHorizontal: 0 }]}
+      style={[
+        globalStyles.screenContainer,
+        { paddingTop: 0, paddingHorizontal: 0 },
+      ]}
       onLayout={onLayoutViewWidth}
     >
       {/* <GetStartedItems /> */}

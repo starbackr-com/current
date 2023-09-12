@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Share } from 'react-native';
 import React, { useMemo, useState } from 'react';
+import * as Sharing from 'expo-sharing';
 import Animated, {
   withTiming,
   useAnimatedStyle,
@@ -16,11 +17,13 @@ import { colors, globalStyles } from '../../../styles';
 import useUser from '../../../hooks/useUser';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import useRealmUser from '../../../hooks/useRealmUser';
 
 const FullImagePost = ({ item, height, width, onMenu }) => {
+  const user = useRealmUser(item.pubkey)
   const navigation = useNavigation();
   const [imageDim, setImageDim] = useState();
-  const user = useUser(item.pubkey);
+  // const user = useUser(item.pubkey);
   const [hasMore, setHasMore] = useState(false);
 
   const isZapped = useIsZapped(item.id);
@@ -149,7 +152,9 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
                   width: '100%',
                 }}
               >
-                <Text style={[globalStyles.textBodyS, {textAlign: 'left'}]}>{age}</Text>
+                <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>
+                  {age}
+                </Text>
                 <Text
                   onTextLayout={textLayout}
                   style={[
