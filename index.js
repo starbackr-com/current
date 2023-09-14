@@ -1,5 +1,7 @@
 import { registerRootComponent } from 'expo';
 import ViewReactNativeStyleAttributes from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import Realm from "realm";
+Realm.flags.THROW_ON_GLOBAL_REALM = true
 
 ViewReactNativeStyleAttributes.scaleY = true;
 

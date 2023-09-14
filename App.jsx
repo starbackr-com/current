@@ -12,6 +12,7 @@ import Root from './Root';
 import { injectStore } from './utils/nostrV2/Event';
 
 import { User } from './schemas';
+import Note from './schemas/Note';
 
 
 const App = () => {
@@ -20,7 +21,7 @@ const App = () => {
     <Provider store={store}>
       <RootSiblingParent>
         <PolyfillCrypto />
-        <RealmProvider schema={[User]} deleteRealmIfMigrationNeeded>
+        <RealmProvider schema={[User, Note]} deleteRealmIfMigrationNeeded>
           <Root />
         </RealmProvider>
       </RootSiblingParent>

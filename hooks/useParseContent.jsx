@@ -13,13 +13,21 @@ export const useParseContent = (event) => {
   const [parsedContent, setParsedContent] = useState(event.content);
   const navigation = useNavigation();
   const users = useSelector((state) => state.messages.users);
+
   useEffect(() => {
     let pTags;
+    let parsedTags;
     let { content } = event;
+    try {
+      parsedTags = event.tags.map((tag) => JSON.parse(tag));
+    } catch (e) {
+      parsedTags = event.tags;
+      // console.log(parsedTags);
+    }
     content = reactStringReplace(content, /#\[([0-9]+)]/, (m, i) => {
       try {
-        if (event.tags && event.tags.length > 0) {
-          pTags = event.tags.filter((tag) => tag[0] === 'p');
+        if (parsedTags && parsedTags.length > 0) {
+          pTags = parsedTags.filter((tag) => tag[0] === 'p');
         }
         const position = Number(m);
         return (
@@ -28,7 +36,7 @@ export const useParseContent = (event) => {
             onPress={() => {
               navigation.push('Profile', {
                 screen: 'ProfileScreen',
-                params: { pubkey: event.tags[position][1] },
+                params: { pubkey: parsedTags[position][1] },
               });
             }}
             key={m + i}

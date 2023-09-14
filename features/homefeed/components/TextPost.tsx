@@ -15,6 +15,7 @@ import ActionBar from './ActionBar';
 import { colors, globalStyles } from '../../../styles';
 import useUser from '../../../hooks/useUser';
 import { Note } from '../../../utils/nostrV2';
+import useRealmUser from '../../../hooks/useRealmUser';
 
 type TextPostProps = {
   item: Note;
@@ -26,7 +27,7 @@ type TextPostProps = {
 const TextPost = React.memo(
   ({ item, height, width, onMenu }: TextPostProps) => {
     const navigation = useNavigation();
-    const user = useUser(item.pubkey);
+    const user = useRealmUser(item.pubkey);
     const [hasMore, setHasMore] = useState(false);
     const [numOfLines, setNumOfLines] = useState<number>();
     const readMoreText = 'Read More...';
@@ -47,8 +48,8 @@ const TextPost = React.memo(
 
     const content = useParseContent(item);
 
-    const { created_at, pubkey } = item;
-    const age = getAge(created_at);
+    const { createdAt, pubkey } = item;
+    const age = getAge(createdAt);
 
     const textLayout = (e) => {
       const lineHeight = e.nativeEvent.lines[0]?.height || 16;
@@ -171,7 +172,7 @@ const TextPost = React.memo(
             user={user}
             event={item}
             width={width}
-            onMenu={onMenu}
+            onMenu={() => {console.log(user); console.log(item.pubkey)}}
             isZapped={isZapped}
           />
         </Animated.View>

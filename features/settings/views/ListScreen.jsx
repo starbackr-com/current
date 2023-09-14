@@ -18,11 +18,17 @@ import { resetAll } from '../../introSlice';
 import { logOut } from '../../authSlice';
 import appJson from '../../../app.json';
 import { SettingItem } from '../components';
+import { CustomButton } from '../../../components';
+import { useRealm } from '@realm/react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ListScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { walletBearer } = useSelector((state) => state.auth);
   const { pushToken } = useSelector((state) => state.user);
+  const insets = useSafeAreaInsets();
+
+  const realm = useRealm();
 
   const logoutHandler = async () => {
     // clear push notifications
@@ -151,6 +157,11 @@ const ListScreen = ({ navigation }) => {
           description="Log out and clear local data."
           onPress={logoutHandler}
         />
+        <CustomButton text='Clear DB' buttonConfig={{onPress: () => {
+          realm.write(() => {
+            realm.deleteAll();
+          })
+        }}}/>
       </View>
 
       <Text

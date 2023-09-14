@@ -1,27 +1,29 @@
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
-import { usePaginatedFeed } from '../hooks/usePaginatedFeed';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, globalStyles } from '../../../styles';
 import NewPostButton from './NewPostButton';
 import PostMenuBottomSheet from '../../../components/PostMenuBottomSheet';
 import TextPost from './TextPost';
 import FullImagePost from './FullImagePost';
+import useDatabaseFeed from '../hooks/useDatabaseFeed';
+import { MenuBottomSheet, SwitchBar } from '../../../components';
 
 const HomeFeed = ({ width, height }) => {
-  const [refreshing, setRefreshing] = useState(false);
-
   const listRef = useRef();
   const modalRef = useRef();
+  const filterRef = useRef();
+  const [filter, setFilter] = useState({
+    text: true,
+    images: false,
+  });
+
+  const [filteredNotes, setPage] = useDatabaseFeed(filter);
 
   const zapAmount = useSelector((state) => state.user.zapAmount);
-  const users = useSelector((state) => state.messages.users);
-
-  const now = new Date() / 1000;
-
-  const [get25RootPosts, refresh, events] = usePaginatedFeed(now);
   const navigation = useNavigation();
   useScrollToTop(listRef);
 
@@ -32,21 +34,36 @@ const HomeFeed = ({ width, height }) => {
     [modalRef],
   );
 
-  const refreshHandler = useCallback(() => {
-    setRefreshing(true);
-    refresh();
-    setRefreshing(false);
-  }, []);
-
   const renderPost = useCallback(
-    ({ item }) => {
-      if (item.type === 'image') {
+    ({ item, index }) => {
+      if (index === 0) {
+        if (item?.images?.length > 0) {
+          return (
+            <FullImagePost
+              item={item}
+              height={height - 50}
+              width={width}
+              zapAmount={zapAmount}
+              onMenu={onMenuHandler}
+            />
+          );
+        }
+        return (
+          <TextPost
+            item={item}
+            height={height - 50}
+            width={width}
+            zapAmount={zapAmount}
+            onMenu={onMenuHandler}
+          />
+        );
+      }
+      if (item?.images?.length > 0) {
         return (
           <FullImagePost
             item={item}
             height={height}
             width={width}
-            user={users[item.pubkey]}
             zapAmount={zapAmount}
             onMenu={onMenuHandler}
           />
@@ -57,39 +74,77 @@ const HomeFeed = ({ width, height }) => {
           item={item}
           height={height}
           width={width}
-          user={users[item.pubkey]}
           zapAmount={zapAmount}
           onMenu={onMenuHandler}
         />
       );
     },
-    [users, zapAmount, height, width],
+    [zapAmount, height, width],
   );
-  if (events.length >= 3 && height) {
+  if (filteredNotes.length >= 5 && height) {
     return (
       <View style={{ flex: 1, width: '100%', height: '100%' }}>
         <FlashList
-          data={events}
+          data={filteredNotes}
           renderItem={renderPost}
           snapToAlignment="start"
           decelerationRate="fast"
           snapToInterval={height}
           estimatedItemSize={height}
           directionalLockEnabled
-          extraData={[users, zapAmount]}
-          getItemType={(item) => item.type}
+          extraData={[zapAmount]}
+          getItemType={(item) => (item.images.length > 0 ? 'image' : 'text')}
           onEndReached={() => {
-            get25RootPosts();
+            setPage((p) => p + 1);
           }}
-          onEndReachedThreshold={2}
+          onEndReachedThreshold={3}
           showsVerticalScrollIndicator={false}
-          refreshing={refreshing}
-          onRefresh={refreshHandler}
           ref={listRef}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
+          ListHeaderComponent={
+            <Pressable
+              style={({ pressed }) => ({
+                height: 44,
+                flex: 1,
+                backgroundColor: pressed
+                  ? colors.backgroundActive
+                  : colors.backgroundSecondary,
+                marginTop: 6,
+                marginHorizontal: 6,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 10,
+                flexDirection: 'row',
+              })}
+              onPress={() => {
+                filterRef.current.present();
+              }}
+            >
+              <Ionicons name="filter" color={colors.primary500} size={16} />
+              <Text style={globalStyles.textBodyS}>Filter</Text>
+            </Pressable>
+          }
         />
         <NewPostButton />
         <PostMenuBottomSheet ref={modalRef} />
+        <MenuBottomSheet ref={filterRef}>
+          <View style={{ gap: 2 }}>
+            <SwitchBar
+              text="Show Text Posts"
+              value={filter.text}
+              onChange={() => {
+                setFilter((p) => ({ ...filter, text: !p.text }));
+              }}
+            />
+            <SwitchBar
+              text="Show Image Posts"
+              value={filter.images}
+              onChange={() => {
+                setFilter((p) => ({ ...filter, images: !p.images }));
+              }}
+            />
+          </View>
+        </MenuBottomSheet>
       </View>
     );
   }

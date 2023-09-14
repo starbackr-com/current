@@ -6,10 +6,12 @@ import { pool } from '../utils/nostrV2';
 import { useRelayUrls } from '../features/relays';
 
 const useRealmUser = (pubkey) => {
+  console.log(pubkey)
   const users = useQuery(User);
+  const [user] = users.filtered(`pubkey == "${pubkey}"`);
+  console.log(user)
   const realm = useRealm();
   const { readUrls } = useRelayUrls();
-  const [user] = users.filtered(`pubkey == "${pubkey}"`);
   useEffect(() => {
     let sub;
     if (!user) {
@@ -22,7 +24,7 @@ const useRealmUser = (pubkey) => {
         try {
           realm.write(() => {
             const user = realm.create<User>(
-              'User',
+              User,
               {
                 _id: new Realm.BSON.ObjectID(),
                 pubkey: event.pubkey,
@@ -30,7 +32,7 @@ const useRealmUser = (pubkey) => {
                 name: metadata.name,
                 picture: metadata.picture,
               },
-              'modified',
+              'all',
             );
           });
         } catch (e) {
@@ -43,7 +45,7 @@ const useRealmUser = (pubkey) => {
         sub.unsub();
       }
     };
-  }, [pubkey]);
+  }, [user]);
   return user;
 };
 

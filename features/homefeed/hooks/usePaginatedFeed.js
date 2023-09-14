@@ -5,12 +5,16 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Note, pool } from '../../../utils/nostrV2';
 import { useRelayUrls } from '../../relays';
+import { useRealm } from '@realm/react';
+import Realm from 'realm';
+import Kind1Note from '../../../models/Kind1Note';
 
 export const usePaginatedFeed = () => {
   const { readUrls } = useRelayUrls();
+  const realm = useRealm();
 
   const followedPubkeys = useSelector((state) => state.user.followedPubkeys);
-  const events = useSelector(state => state.messages.messages)
+  const events = useSelector((state) => state.messages.messages);
 
   let timer;
 
@@ -50,6 +54,27 @@ export const usePaginatedFeed = () => {
         };
         timer = setTimeout(next, 3200);
         sub.on('event', (event) => {
+          const newNote = new Kind1Note(event);
+          try {
+            realm.write(() => {
+              realm.create('Note', {
+                _id: new Realm.BSON.ObjectID(),
+                content: newNote.content,
+                images: newNote.images,
+                id: newNote.id,
+                pubkey: newNote.pubkey,
+                createdAt: newNote.createdAt,
+                tags: newNote.tags.map(tag => JSON.stringify(tag)),
+                kind: newNote.kind,
+                repliesTo: newNote.repliesTo,
+                root: newNote.root,
+                mentions: newNote.mentions,
+                sig: newNote.sig,
+              });
+            });
+          } catch (e) {
+            console.log(e);
+          }
           clearTimeout(timer);
           if (!event.tags.some((tag) => tag.includes('e'))) {
             const newEvent = new Note(event).saveToStore();

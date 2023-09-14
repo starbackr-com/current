@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Pressable, Share } from 'react-native';
-import React, { useMemo, useState } from 'react';
-import * as Sharing from 'expo-sharing';
+import React, { memo, useMemo, useState } from 'react';
 import Animated, {
   withTiming,
   useAnimatedStyle,
@@ -18,196 +17,214 @@ import useUser from '../../../hooks/useUser';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import useRealmUser from '../../../hooks/useRealmUser';
+import Note from '../../../schemas/Note';
 
-const FullImagePost = ({ item, height, width, onMenu }) => {
-  const user = useRealmUser(item.pubkey)
-  const navigation = useNavigation();
-  const [imageDim, setImageDim] = useState();
-  // const user = useUser(item.pubkey);
-  const [hasMore, setHasMore] = useState(false);
+type FullImagePostProps = {
+  item: Note;
+  height: number;
+  width: number;
+  onMenu: (data: string) => void;
+};
 
-  const isZapped = useIsZapped(item.id);
+const FullImagePost = memo(
+  ({ item, height, width, onMenu }: FullImagePostProps) => {
+    const user = useRealmUser(item.pubkey);
+    const navigation = useNavigation();
+    const [imageDim, setImageDim] = useState<{
+      width: number;
+      height: number;
+    }>();
+    // const user = useUser(item.pubkey);
+    const [hasMore, setHasMore] = useState(false);
 
-  const bgProgress = useDerivedValue(() => withTiming(isZapped ? 1 : 0));
+    const isZapped = useIsZapped(item.id);
 
-  const backgroundStyle = useAnimatedStyle(() => {
-    const borderColor = interpolateColor(
-      bgProgress.value,
-      [0, 1],
-      ['#222222', colors.primary500],
-    );
+    const bgProgress = useDerivedValue(() => withTiming(isZapped ? 1 : 0));
 
-    return { borderColor };
-  });
+    const backgroundStyle = useAnimatedStyle(() => {
+      const borderColor = interpolateColor(
+        bgProgress.value,
+        [0, 1],
+        ['#222222', colors.primary500],
+      );
 
-  const content = useParseContent(item);
+      return { borderColor };
+    });
 
-  const { created_at, pubkey } = item;
-  const age = useMemo(() => getAge(created_at), []);
+    const content = useParseContent(item);
 
-  const textLayout = (e) => {
-    const maxLines = 2;
-    const numOfLines = e.nativeEvent.lines.length;
-    if (numOfLines > maxLines) {
-      setHasMore(true);
-    } else {
-      setHasMore(false);
-    }
-  };
+    const { createdAt, pubkey } = item;
+    const age = useMemo(() => getAge(createdAt), [createdAt]);
 
-  return (
-    <View
-      style={{
-        height: height,
-        width: width,
-        padding: 5,
-      }}
-    >
-      <Animated.View
-        style={[
-          {
-            flexDirection: 'row',
-            height: '100%',
-            width: '100%',
-            backgroundColor: colors.backgroundSecondary,
-            alignItems: 'center',
-            borderRadius: 10,
-            borderWidth: 1,
-          },
-          backgroundStyle,
-        ]}
+    const textLayout = (e) => {
+      const maxLines = 2;
+      const numOfLines = e.nativeEvent.lines.length;
+      if (numOfLines > maxLines) {
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+    };
+
+    return (
+      <View
+        style={{
+          height: height,
+          width: width,
+          padding: 5,
+        }}
       >
-        <Pressable
-          style={{
-            height: '100%',
-            width: '100%',
-            borderRadius: 10,
-          }}
-          onLayout={(e) => {
-            setImageDim({
-              width: e.nativeEvent.layout.width,
-              height: e.nativeEvent.layout.height,
-            });
-          }}
-          onPress={() => {
-            navigation.navigate('ImageModal', { imageUri: [item.image] });
-          }}
+        <Animated.View
+          style={[
+            {
+              flexDirection: 'row',
+              height: '100%',
+              width: '100%',
+              backgroundColor: colors.backgroundSecondary,
+              alignItems: 'center',
+              borderRadius: 10,
+              borderWidth: 1,
+            },
+            backgroundStyle,
+          ]}
         >
-          {imageDim ? (
-            <Image
-              source={item.image}
-              style={{
-                width: imageDim.width,
-                height: imageDim.height,
-                borderRadius: 10,
-              }}
-            />
-          ) : undefined}
-        </Pressable>
-        <Pressable
-          style={{
-            position: 'absolute',
-            flex: 1,
-            height: '100%',
-            width: '100%',
-            borderRadius: 10,
-            justifyContent: 'space-between',
-          }}
-          onPress={() => {
-            navigation.navigate('ImageModal', { imageUri: [item.image] });
-          }}
-        >
-          <View
+          <Pressable
             style={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              padding: 12,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
+              height: '100%',
+              width: '100%',
+              borderRadius: 10,
+            }}
+            onLayout={(e) => {
+              setImageDim({
+                width: e.nativeEvent.layout.width,
+                height: e.nativeEvent.layout.height,
+              });
+            }}
+            onPress={() => {
+              //@ts-ignore
+              navigation.navigate('ImageModal', { imageUri: [item.image] });
             }}
           >
-            <UserBanner
-              event={item}
-              user={user}
-              width={((width - 16) / 100) * 85}
-            />
-          </View>
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.8)']}
-            style={{ height: '25%', justifyContent: 'flex-end' }}
-          >
-            <Pressable
-              onPress={() => {
-                navigation.navigate('ReadMoreModal', {
-                  event: item,
-                  author: user.name || item.pubkey,
-                });
-              }}
-              style={{ width: '85%' }}
-            >
-              <View
+            {imageDim ? (
+              <Image
+                source={item.images[0]}
                 style={{
-                  // backgroundColor: 'rgba(0,0,0,0.5)',
-                  padding: 12,
+                  width: imageDim.width,
+                  height: imageDim.height,
                   borderRadius: 10,
-                  width: '100%',
                 }}
+                recyclingKey={item.id}
+              />
+            ) : undefined}
+          </Pressable>
+          <Pressable
+            style={{
+              position: 'absolute',
+              flex: 1,
+              height: '100%',
+              width: '100%',
+              borderRadius: 10,
+              justifyContent: 'space-between',
+            }}
+            onPress={() => {
+              //@ts-ignore
+              navigation.navigate('ImageModal', { imageUri: [item.image] });
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                padding: 12,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+              }}
+            >
+              <UserBanner
+                event={item}
+                user={user}
+                width={((width - 16) / 100) * 85}
+              />
+            </View>
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.8)']}
+              style={{ height: '25%', justifyContent: 'flex-end' }}
+            >
+              <Pressable
+                onPress={() => {
+                  //@ts-ignore
+                  navigation.navigate('ReadMoreModal', {
+                    event: item,
+                    author: user.name || item.pubkey,
+                  });
+                }}
+                style={{ width: '85%' }}
               >
-                <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>
-                  {age}
-                </Text>
-                <Text
-                  onTextLayout={textLayout}
-                  style={[
-                    globalStyles.textBodyS,
-                    {
-                      opacity: 0,
-                      position: 'absolute',
-                    },
-                  ]}
+                <View
+                  style={{
+                    // backgroundColor: 'rgba(0,0,0,0.5)',
+                    padding: 12,
+                    borderRadius: 10,
+                    width: '100%',
+                  }}
                 >
-                  {content}
-                </Text>
-                <Text
-                  style={[
-                    globalStyles.textBodyS,
-                    {
-                      textAlign: 'left',
-                    },
-                  ]}
-                  numberOfLines={2}
-                >
-                  {content}
-                </Text>
-                {hasMore && (
+                  <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>
+                    {age}
+                  </Text>
+                  <Text
+                    onTextLayout={textLayout}
+                    style={[
+                      globalStyles.textBodyS,
+                      {
+                        opacity: 0,
+                        position: 'absolute',
+                      },
+                    ]}
+                  >
+                    {content}
+                  </Text>
                   <Text
                     style={[
                       globalStyles.textBodyS,
                       {
-                        color: colors.primary500,
                         textAlign: 'left',
                       },
                     ]}
+                    numberOfLines={2}
                   >
-                    Read more...
+                    {content}
                   </Text>
-                )}
-              </View>
-            </Pressable>
-          </LinearGradient>
-        </Pressable>
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 'auto',
-            bottom: 'auto',
-          }}
-        >
-          <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
-        </View>
-      </Animated.View>
-    </View>
-  );
-};
+                  {hasMore && (
+                    <Text
+                      style={[
+                        globalStyles.textBodyS,
+                        {
+                          color: colors.primary500,
+                          textAlign: 'left',
+                        },
+                      ]}
+                    >
+                      Read more...
+                    </Text>
+                  )}
+                </View>
+              </Pressable>
+            </LinearGradient>
+          </Pressable>
+          <View
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 'auto',
+              bottom: 'auto',
+            }}
+          >
+            {/* @ts-ignore */}
+            <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
+          </View>
+        </Animated.View>
+      </View>
+    );
+  },
+);
 
 export default FullImagePost;
