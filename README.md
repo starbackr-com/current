@@ -9,7 +9,9 @@ The Current App for iOS and Android is an open source react-native client on top
 [![Appstore](https://i.current.fyi/help/app-store-badge-blue.svg)](https://apps.apple.com/us/app/current-nostr-bitcoin/id1668517032)
 [![Playstore](https://i.current.fyi/help/play-store-badge-blue.svg)](https://play.google.com/store/apps/details?id=io.getcurrent.current)
 
-[![android](https://i.current.fyi/help/android-apk.png)](https://i.current.fyi/help/current-009.apk)
+[![android](https://i.current.fyi/help/android-apk.png)](https://i.current.fyi/help/Current+App+v0.1.3-Alajuela.apk)
+
+Update as of Sep 17th 2023 -  As of v0.1.3-Alajuela we successfully started to integrate AI features into the App. We now have full screen images on the home feed. Will focus more on creator AI tools and make Current App the go to tool for Causal and professional creators.
 
 
 Update as of May 10th 2023 - As of v0.0.9-Tamrindo we successfully completed all base mode features and on par with other Nostr clients. We also implemnted expert mode feaures such as add/remove relays and using other lightning wallets.
@@ -96,6 +98,7 @@ Never miss a DM or zap again! Receive push notifications for DMs, likes, mention
  - NIP-18: Reposts
  - NIP-19: bech32-encoded entities
  - NIP-25: Reactions
+ - NIP-38: User statuses
  - NIP-47: Nostr Wallet connect
  - NIP-57: Lightning Zaps
  - NIP-58: Badges
@@ -116,7 +119,7 @@ Never miss a DM or zap again! Receive push notifications for DMs, likes, mention
 ## Screenshots
 
 
-![](https://i.current.fyi/current/app/appimage2.png)
+![](https://i.current.fyi/current/app/currentAppv013-store.png)
 
 
 
@@ -171,7 +174,7 @@ iOS: https://apps.apple.com/us/app/current-nostr-bitcoin/id1668517032
 
 Google play: https://play.google.com/store/apps/details?id=io.getcurrent.current
 
-Android APK: https://i.current.fyi/help/current-009.apk
+Android APK: https://i.current.fyi/help/Current+App+v0.1.3-Alajuela.apk
 
 ## Support
 
