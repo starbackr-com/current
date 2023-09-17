@@ -12,6 +12,7 @@ import { ExpandableInput } from '../../../components';
 import { globalStyles } from '../../../styles';
 import ConversationText from '../components/ConversationText';
 import publishMessage from '../utils/publishMessage';
+import CustomKeyboardView from '../../../components/CustomKeyboardView';
 
 const ConversationScreen = ({ route }) => {
   const { pk } = route.params || {};
@@ -35,17 +36,8 @@ const ConversationScreen = ({ route }) => {
   };
 
   return (
-    <View
-      style={{ flex: 1 }}
-      onLayout={(e) => {
-        setViewHeight(e.nativeEvent.layout.height);
-      }}
-    >
-      <KeyboardAvoidingView
-        style={[globalStyles.screenContainer, { paddingTop: 0 }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={height - viewHeight - tabBarHeight}
-      >
+    <CustomKeyboardView>
+      <View style={globalStyles.screenContainer}>
         <FlatList
           data={messages}
           renderItem={renderText}
@@ -55,8 +47,8 @@ const ConversationScreen = ({ route }) => {
         <View style={{ width: '100%', marginTop: 6 }}>
           <ExpandableInput onSubmit={sendHandler} />
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      </View>
+    </CustomKeyboardView>
   );
 };
 

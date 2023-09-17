@@ -4,20 +4,27 @@ import React, { useState } from 'react';
 import { getPublicKey } from 'nostr-tools';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { followPubkey } from '../../userSlice';
 import { logIn } from '../../authSlice';
 import { decodePubkey, loginToWallet, saveValue } from '../../../utils';
-import { getOldKind0Pool } from '../../../utils/nostrV2';
+import { getContactAndRelayList, getOldKind0Pool, updateFollowedUsers } from '../../../utils/nostrV2';
 import { globalStyles } from '../../../styles';
 import { CustomButton, Input } from '../../../components';
 import { bech32Sk, hexRegex } from '../../../constants';
 import devLog from '../../../utils/internal';
+import { setupRelay } from '../../relays/relaysSlice';
+import useSilentFollow from '../../../hooks/useSilentFollow';
 
 const ImportKeyView = ({ navigation }) => {
   const [key, setKey] = useState('');
   const [error, setError] = useState(false);
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
+  const silentFollow = useSilentFollow();
+
+
+  const { t } = useTranslation(['welcome', 'common']);
 
   const submitHandler = async () => {
     let sk;
@@ -37,6 +44,24 @@ const ImportKeyView = ({ navigation }) => {
       if (result?.data?.access_token) {
         await saveValue('privKey', sk);
         const { access_token, username } = result.data;
+        try {
+          const contactList = await getContactAndRelayList(pk);
+          if (contactList.content.length > 0) {
+            const relayMetadata = JSON.parse(contactList.content);
+            const relays = Object.keys(relayMetadata).map((relay) => ({
+              url: relay,
+              read: relayMetadata[relay].read,
+              write: relayMetadata[relay].write,
+            }));
+            dispatch(setupRelay(relays));
+          }
+          if (contactList.tags.length > 0) {
+            const pubkeys = contactList.tags.map((tag) => tag[1]);
+            silentFollow(pubkeys);
+          }
+        } catch (e) {
+          devLog(e);
+        }
         dispatch(followPubkey(pk));
         dispatch(logIn({ bearer: access_token, pubKey: pk, username }));
         return;
@@ -47,11 +72,11 @@ const ImportKeyView = ({ navigation }) => {
           const { deleted } = JSON.parse(mostRecent.content);
           if (deleted) {
             Alert.alert(
-              'Deleted Account?',
-              'You cannot use deleted account. Please use a different key.',
+              t('ImportKeyView_H2_Deleted'),
+              t('ImportKeyView_Body_Deleted'),
               [
                 {
-                  text: 'OK',
+                  text: t('ImportKeyView_Button_Deleted'),
                 },
               ],
             );
@@ -97,15 +122,14 @@ const ImportKeyView = ({ navigation }) => {
         />
         {error ? (
           <Text style={[globalStyles.textBodyS, { color: 'red' }]}>
-            Invalid private key! Only HEX (f57d...) or bech32 (nsec1...) keys
-            are supported
+            {t('ImportKeyView_Error_Key')}
           </Text>
         ) : undefined}
       </View>
       <View>
         <CustomButton
           buttonConfig={{ onPress: submitHandler }}
-          text="Import"
+          text={t('ImportKeyView_Button_Import')}
           containerStyles={{ marginBottom: 16 }}
         />
         <CustomButton
@@ -114,7 +138,7 @@ const ImportKeyView = ({ navigation }) => {
               navigation.goBack();
             },
           }}
-          text="Go Back"
+          text={t('Common_GoBack')}
           secondary
           containerStyles={{ marginBottom: 16 }}
         />

@@ -16,6 +16,16 @@ const style = StyleSheet.create({
   },
 });
 
+function parseAbout(event) {
+  try {
+    const bio = JSON.parse(event.content);
+    return bio.about;
+  } catch (e) {
+    console.log(e);
+    return '';
+  }
+}
+
 const TrendingProfile = ({ event }) => {
   const [viewWidth, setViewWidth] = useState();
   const user = useSelector((state) => state.messages.users[event.pubkey]);
@@ -46,7 +56,7 @@ const TrendingProfile = ({ event }) => {
         style={[globalStyles.textBody, { textAlign: 'left', marginBottom: 12 }]}
         numberOfLines={event.content.length > 100 ? 10 : undefined}
       >
-        {JSON.parse(event.content).about}
+        {parseAbout(event)}
       </Text>
       <CustomButton
         text={isFollowed ? 'Unfollow' : 'Follow'}

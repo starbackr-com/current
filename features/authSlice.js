@@ -6,6 +6,7 @@ const initialState = {
   username: null,
   walletBearer: null,
   walletExpires: null,
+  isPremium: false,
 };
 
 export const authSlice = createSlice({
@@ -30,9 +31,12 @@ export const authSlice = createSlice({
       state.walletBearer = null;
       state.walletExpires = null;
     },
+    setPremium: (state, action) => {
+      state.isPremium = action.payload;
+    },
   },
 });
 
-export const { logIn, setBearer, logOut } = authSlice.actions;
+export const { logIn, setBearer, logOut, setPremium } = authSlice.actions;
 
 export default authSlice.reducer;

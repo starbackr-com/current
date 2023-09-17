@@ -1,21 +1,16 @@
 import { Note } from './Note';
-import { getReadRelays, getRelayUrls, pool } from './relays.ts';
+import { getReadRelays, getRelayUrls, pool } from './relays';
 
 export const getEventById = async (eventIdInHex) => {
   const readUrls = getRelayUrls(getReadRelays());
-  const receivedEvent = await new Promise((resolve, reject) => {
-    const sub = pool.sub(readUrls, [{ ids: [eventIdInHex] }], {
-      skipVerification: true,
-    });
-    sub.on('event', (event) => {
-      const newEvent = new Note(event).save();
-      resolve(newEvent);
-    });
-    setTimeout(() => {
-      reject();
-    }, 3200);
+  const event = await pool.get(readUrls, { ids: [eventIdInHex] }, {
+    skipVerification: true,
   });
-  return receivedEvent;
+  if (!event) {
+    throw new Error('Event was not found!');
+  }
+  const newEvent = new Note(event).save();
+  return newEvent;
 };
 
 export default getEventById;

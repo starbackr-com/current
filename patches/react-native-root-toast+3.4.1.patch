@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-root-toast/index.d.ts b/node_modules/react-native-root-toast/index.d.ts
+index 7c93779..8493dc5 100644
+--- a/node_modules/react-native-root-toast/index.d.ts
++++ b/node_modules/react-native-root-toast/index.d.ts
+@@ -45,7 +45,7 @@ declare module "react-native-root-toast"{
+         CENTER:number,
+     }
+     export default class Toast extends React.Component<ToastProps>{
+-        static show:(message:string,options?:ToastOptions)=>any;
++        static show:(message:string | React.ReactNode ,options?:ToastOptions)=>any;
+         static hide:(toast:any)=>void;
+         static durations:Durations;
+         static positions:Positions;

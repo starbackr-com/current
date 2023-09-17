@@ -29,6 +29,8 @@ import useSilentFollow from './hooks/useSilentFollow';
 import { setupRelay } from './features/relays/relaysSlice';
 import { initRelays } from './utils/nostrV2';
 import { hydrate } from './features/walletconnect/walletconnectSlice';
+import './translations/translations';
+import { initRC } from './features/premium/utils/utils';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,8 +39,6 @@ const Root = () => {
   const silentFollow = useSilentFollow();
   const dispatch = useDispatch();
   const { isLoggedIn, walletExpires } = useSelector((state) => state.auth);
-  // const notificationListener = useRef();
-  // const responseListener = useRef();
 
   const hydrateWc = async () => {
     const wcDataString = await getValue('wcdata');
@@ -60,14 +60,6 @@ const Root = () => {
   };
 
   useEffect(() => {
-    // notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-    //   setNotification(notification);
-    // });
-
-    // responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-    //   console.log(response);
-    // });
-
     const prepare = async () => {
       setAppIsReady(false);
       try {
@@ -87,6 +79,7 @@ const Root = () => {
             data: { access_token, username },
           } = await loginToWallet(privKey);
           const pubKey = getPublicKey(privKey);
+          await initRC(pubKey);
           dispatch(logIn({ bearer: access_token, username, pubKey }));
           try {
             const contactList = await getContactAndRelayList(pubKey);

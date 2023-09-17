@@ -10,7 +10,7 @@ export const db = openDatabase();
 const initArray = [
   `
     CREATE TABLE IF NOT EXISTS events (
-    id TEXT PRIMARY KEY NOT NULL,   
+    id TEXT PRIMARY KEY NOT NULL,
     content TEXT NOT NULL,
     created_at INT NOT NULL,
     kind INT NOT NULL,
@@ -20,7 +20,7 @@ const initArray = [
   `
     CREATE TABLE IF NOT EXISTS users (
     pubkey TEXT PRIMARY KEY NOT NULL,
-    id TEXT NOT NULL,   
+    id TEXT NOT NULL,
     name TEXT,
     display_name TEXT,
     picture TEXT,
@@ -55,10 +55,9 @@ export const init = async () => {
   try {
     db.transaction(async (tx) => {
       initArray.forEach((table) => tx.executeSql(table));
-      console.log('DB init success!');
     });
   } catch (error) {
-    console.error('DB init error: ', error);
+    //Sentry.Native.captureException(error);
   }
 };
 

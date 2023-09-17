@@ -2,7 +2,7 @@
   "expo": {
     "name": "Current",
     "slug": "current",
-    "version": "0.0.9",
+    "version": "0.1.3",
     "orientation": "portrait",
     "backgroundColor": "#18181b",
     "icon": "./assets/icon.png",
@@ -16,7 +16,8 @@
     },
     "scheme": "nostr",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/04522974-aa48-4b3e-ad26-71be0648d73c"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -24,9 +25,14 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "14",
-      "infoPlist":{
-        "UIBackgroundModes":["remote-notification"]
+      "buildNumber": "4",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -35,7 +41,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "io.getcurrent.current",
-      "versionCode": 42,
+      "versionCode": 45,
       "googleServicesFile": "./google-services.json"
     },
     "notification": {
@@ -52,6 +58,22 @@
       "eas": {
         "projectId": "04522974-aa48-4b3e-ad26-71be0648d73c"
       }
+    },
+    "plugins": [
+      "expo-localization"
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "config": {
+            "organization": "lightning-digital-entertainmen",
+            "project": "current"
+          }
+        }
+      ]
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

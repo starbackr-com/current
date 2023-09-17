@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { colors, globalStyles } from '../../../styles';
 
 const styles = StyleSheet.create({
@@ -15,34 +16,39 @@ const styles = StyleSheet.create({
   },
 });
 
-const ImportTypeItem = ({ title, text, example, icon, onPress }) => (
-  <Pressable
-    style={({ pressed }) => [
-      styles.container,
-      pressed ? { backgroundColor: '#333333' } : {},
-    ]}
-    onPress={onPress}
-  >
-    <Ionicons color={colors.primary500} name={icon} size={32} />
-    <View style={{ marginLeft: 12, flex: 1 }}>
-      <Text
-        style={[globalStyles.textH2, { textAlign: 'left', marginBottom: 6 }]}
-      >
-        {title}
-      </Text>
-      <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>{text}</Text>
-      {example ? (
+const ImportTypeItem = ({ title, text, example, icon, onPress }) => {
+  const { t } = useTranslation('welcome');
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.container,
+        pressed ? { backgroundColor: '#333333' } : {},
+      ]}
+      onPress={onPress}
+    >
+      <Ionicons color={colors.primary500} name={icon} size={32} />
+      <View style={{ marginLeft: 12, flex: 1 }}>
         <Text
-          style={[
-            globalStyles.textBodyS,
-            { textAlign: 'left', color: colors.primary500 },
-          ]}
+          style={[globalStyles.textH2, { textAlign: 'left', marginBottom: 6 }]}
         >
-          {`Example: ${example}`}
+          {title}
         </Text>
-      ) : undefined}
-    </View>
-  </Pressable>
-);
+        <Text style={[globalStyles.textBody, { textAlign: 'left' }]}>
+          {text}
+        </Text>
+        {example ? (
+          <Text
+            style={[
+              globalStyles.textBodyS,
+              { textAlign: 'left', color: colors.primary500 },
+            ]}
+          >
+            {`${t('ImportTypeItem_Body_Example')}: ${example}`}
+          </Text>
+        ) : undefined}
+      </View>
+    </Pressable>
+  );
+};
 
 export default ImportTypeItem;

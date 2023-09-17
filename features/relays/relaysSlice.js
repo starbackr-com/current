@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { publishGenericEvent } from '../../utils/nostrV2';
-import { getPrivateKey, storeData } from '../../utils/cache/asyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { publishGenericEvent } from '../../utils/nostrV2/publishEvents';
 import { createKind3 } from '../../utils/nostrV2/createEvent';
 
 const initialState = {
@@ -62,8 +63,8 @@ export const relayListener = async (action, listenerApi) => {
     user: { followedPubkeys },
   } = listenerApi.getState();
   const json = JSON.stringify(relays);
-  await storeData('relays', json);
-  const sk = await getPrivateKey();
+  await AsyncStorage.setItem('relays', json);
+  const sk = await SecureStore.getItemAsync('privKey');
   const event = await createKind3(followedPubkeys, relays, sk);
   await publishGenericEvent(event);
 };

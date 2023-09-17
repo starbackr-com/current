@@ -224,14 +224,13 @@ export const publishRepost = async (eTag, pTag) => {
       }
     });
   });
-  alert('Success!');
 };
 
 export const publishReaction = async (sign, eTag, pTag) => {
   if (sign !== '+' && sign !== '-') {
     throw new Error('Invalid sign for reaction! Must be + or -');
   }
-  const writeUrls = getRelayUrls(getWriteRelays);
+  const writeUrls = getRelayUrls(getWriteRelays());
   const sk = await getValue('privKey');
   if (!sk) {
     throw new Error('No private key in secure storage found!');
@@ -261,11 +260,10 @@ export const publishReaction = async (sign, eTag, pTag) => {
       }
     });
   });
-  alert('Success!');
 };
 
-export async function publishGenericEvent(event) {
-  const writeUrls = getRelayUrls(getWriteRelays());
+export async function publishGenericEvent(event, relays) {
+  const writeUrls = relays || getRelayUrls(getWriteRelays());
   await new Promise((resolve) => {
     let handled = 0;
     const timer = setTimeout(resolve, 3200);
@@ -288,13 +286,11 @@ export async function publishGenericEvent(event) {
 }
 
 export async function publishGenericEventToRelay(event, relay) {
-        const pubs = await pool.publish([relay], event);
-        pubs.on('ok', () => {
-          console.log('ok - publish event');
-
-        });
-        pubs.on('failed', () => {
-          console.log('failed - publish event');
-
-        });
-  }
+  const pubs = await pool.publish([relay], event);
+  pubs.on('ok', () => {
+    console.log('ok - publish event');
+  });
+  pubs.on('failed', () => {
+    console.log('failed - publish event');
+  });
+}

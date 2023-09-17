@@ -1,5 +1,6 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const TabBarIcon = ({ route, focused, color, size }) => {
   let iconName;
@@ -16,6 +17,10 @@ const TabBarIcon = ({ route, focused, color, size }) => {
     iconName = focused ? 'add-circle' : 'add-circle-outline';
   } else if (route.name === 'Messages') {
     iconName = focused ? 'mail-sharp' : 'mail-outline';
+  } else if (route.name === 'Community') {
+    iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+  } else if (route.name === 'DVM') {
+    return <MaterialCommunityIcons name="robot" size={size} color={color} />;
   }
   return <Ionicons name={iconName} size={size} color={color} />;
 };
