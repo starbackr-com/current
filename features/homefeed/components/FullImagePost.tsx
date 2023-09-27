@@ -86,9 +86,6 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
               height: e.nativeEvent.layout.height,
             });
           }}
-          onPress={() => {
-            navigation.navigate('ImageModal', { imageUri: [item.image] });
-          }}
         >
           {imageDim ? (
             <Image
@@ -111,7 +108,8 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             justifyContent: 'space-between',
           }}
           onPress={() => {
-            navigation.navigate('ImageModal', { imageUri: [item.image] });
+            console.log(item.image);
+            navigation.navigate('ImageModal', { imageUri: item.image });
           }}
         >
           <View
@@ -149,7 +147,9 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
                   width: '100%',
                 }}
               >
-                <Text style={[globalStyles.textBodyS, {textAlign: 'left'}]}>{age}</Text>
+                <Text style={[globalStyles.textBodyS, { textAlign: 'left' }]}>
+                  {age}
+                </Text>
                 <Text
                   onTextLayout={textLayout}
                   style={[

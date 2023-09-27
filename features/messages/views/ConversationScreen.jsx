@@ -1,12 +1,8 @@
 import {
   View,
-  KeyboardAvoidingView,
-  Platform,
-  useWindowDimensions,
 } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList } from 'react-native-gesture-handler';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import useMessages from '../hooks/useMessages';
 import { ExpandableInput } from '../../../components';
 import { globalStyles } from '../../../styles';
@@ -16,11 +12,8 @@ import CustomKeyboardView from '../../../components/CustomKeyboardView';
 
 const ConversationScreen = ({ route }) => {
   const { pk } = route.params || {};
-  const [viewHeight, setViewHeight] = useState();
 
   const messages = useMessages(pk);
-  const tabBarHeight = useBottomTabBarHeight();
-  const { height } = useWindowDimensions();
 
   const renderText = ({ item }) => {
     if (item.pubkey === pk) {
