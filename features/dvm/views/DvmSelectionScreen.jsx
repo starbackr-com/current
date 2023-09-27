@@ -1,44 +1,38 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import React from 'react';
-import { globalStyles } from '../../../styles';
-import { CustomButton } from '../../../components';
-import { pool } from '../../../utils/nostrV2';
-import { useRelayUrls } from '../../relays';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, globalStyles } from '../../../styles';
+import DVMSelectionItem from '../components/DVMSelectionItem';
 
-const DvmSelectionScreen = ({ navigation }) => {
-  const { readUrls } = useRelayUrls();
-  return (
-    <View style={globalStyles.screenContainer}>
-      <Text>DvmSelectionScreen</Text>
-      <CustomButton
-        text="Image Gen"
-        buttonConfig={{
-          onPress: () => {
+const DvmSelectionScreen = ({ navigation }) => (
+  <View style={globalStyles.screenContainer}>
+    <View style={{ flex: 1, gap: 10 }}>
+      <View style={{ flexDirection: 'row', width: '100%', gap: 10 }}>
+        <DVMSelectionItem
+          text="Generate Image"
+          icon={<Ionicons name="image" color={colors.primary500} size={24} />}
+          color={colors.primary500}
+          onPress={() => {
             navigation.navigate('ImageGen');
-          },
-        }}
-      />
-      <CustomButton
-        text="Test"
-        buttonConfig={{
-          onPress: async () => {
-            const events = await pool.list(
-              readUrls,
-              [
-                {
-                  authors:
-                    '40b9c85fffeafc1cadf8c30a4e5c88660ff6e4971a0dc723d5ab674b5e61b451',
-                  kinds: [30001],
-                },
-              ],
-              { skipVerification: true },
-            );
-            console.log(JSON.stringify(events));
-          },
-        }}
-      />
+          }}
+        />
+        <DVMSelectionItem
+          text="Generate Text"
+          icon={
+            <Ionicons name="text" color="#7f35ab" size={24} />
+          }
+          color="#7f35ab"
+        />
+      </View>
+      <View style={{ flexDirection: 'row', width: '100%', gap: 10 }}>
+        <DVMSelectionItem
+          text="Summarize Note"
+          icon={<Ionicons name="document" color="#6495ed" size={24} />}
+          color="#6495ed"
+        />
+      </View>
     </View>
-  );
-};
+  </View>
+);
 
 export default DvmSelectionScreen;

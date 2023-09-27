@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useScrollToTop } from '@react-navigation/native';
-import { globalStyles } from '../../../styles';
+import { colors, globalStyles } from '../../../styles';
 import {
   CustomButton,
   CustomKeyboardView,
@@ -15,15 +15,37 @@ import publishImageJob, {
 } from '../utils/publishImageJob';
 import ImageGenResult from '../components/ImageGenResult';
 import ImageGenRequest from '../components/ImageGenRequest';
-import DVMHeader from '../components/DVMHeader';
+import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
 
 const samplePrompts = [
-  { title: 'A man with a beard', prompt: 'Close up portrait of a man with beard in a worn mech suit' },
-  { title: 'Beautiful futuristic city', prompt: 'Envision a captivating aerial view showcasing a modern futuristic lanscape design' },
-  { title: 'Yellow car ', prompt: 'is500, yellow body, vehicle focus, ground vehicle, motor vehicle, no humans, reflection, cloud, outdoors, sky' },
-  { title: 'A delicious burger', prompt: 'masterpiece, best quality,burger photo, food, food focus, no humans, tomato, blurry, still life, realistic, burger, cup, lettuce, fruit, onion, bowl, depth of field, vegetable, blurry background, cheese, bottle' },
-  { title: 'Animated girl dancing', prompt: 'animation, portrait, young girl dancing in the rain ' },
-  { title: 'A close up of a woman', prompt: 'a close up of a woman wearing a helmet, robort, serious looking, portrait, rococo, looks straight ahead, glowing, realistic fantasy photography, dressed in light armor ' },
+  {
+    title: 'A man with a beard',
+    prompt: 'Close up portrait of a man with beard in a worn mech suit',
+  },
+  {
+    title: 'Beautiful futuristic city',
+    prompt:
+      'Envision a captivating aerial view showcasing a modern futuristic lanscape design',
+  },
+  {
+    title: 'Yellow car ',
+    prompt:
+      'is500, yellow body, vehicle focus, ground vehicle, motor vehicle, no humans, reflection, cloud, outdoors, sky',
+  },
+  {
+    title: 'A delicious burger',
+    prompt:
+      'masterpiece, best quality,burger photo, food, food focus, no humans, tomato, blurry, still life, realistic, burger, cup, lettuce, fruit, onion, bowl, depth of field, vegetable, blurry background, cheese, bottle',
+  },
+  {
+    title: 'Animated girl dancing',
+    prompt: 'animation, portrait, young girl dancing in the rain ',
+  },
+  {
+    title: 'A close up of a woman',
+    prompt:
+      'a close up of a woman wearing a helmet, robort, serious looking, portrait, rococo, looks straight ahead, glowing, realistic fantasy photography, dressed in light armor ',
+  },
 ];
 
 const ImageGenScreen = ({ navigation, route }) => {
@@ -33,13 +55,7 @@ const ImageGenScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <DVMHeader
-          onPress={() => {
-            suggestionRef.current.present();
-          }}
-        />
-      ),
+      header: () => <BackHeaderWithButton rightButton={() => <CustomButton text='Suggestions'/>} navigation={navigation}/>,
     });
   }, [suggestionRef]);
 
@@ -77,7 +93,7 @@ const ImageGenScreen = ({ navigation, route }) => {
 
   return (
     <CustomKeyboardView>
-      <View style={globalStyles.screenContainer}>
+      <View style={[globalStyles.screenContainer, {paddingTop: 0, borderTopColor: colors.backgroundSecondary, borderTopWidth: 1}]}>
         <FlatList
           data={sortedEvents}
           renderItem={renderEvent}

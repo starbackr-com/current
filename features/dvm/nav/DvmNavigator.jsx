@@ -1,19 +1,15 @@
-import { View, Text } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DvmSelectionScreen, ImageGenScreen } from '../views';
-import { globalStyles } from '../../../styles';
-import DVMHeader from '../components/DVMHeader';
+import { colors } from '../../../styles';
 
 const Stack = createNativeStackNavigator();
 
-const DvmNavigator = () => {
-  return (
-    <Stack.Navigator initialRouteName="ImageGen">
-      <Stack.Screen name="DvmSelection" component={DvmSelectionScreen} />
-      <Stack.Screen name="ImageGen" component={ImageGenScreen} />
-    </Stack.Navigator>
-  );
-};
+const DvmNavigator = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="DvmSelection" component={DvmSelectionScreen} options={{headerStyle: {backgroundColor: colors.backgroundSecondary}, headerTitle: 'Select your task'}}/>
+    <Stack.Screen name="ImageGen" component={ImageGenScreen}/>
+  </Stack.Navigator>
+);
 
 export default DvmNavigator;
