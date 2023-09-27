@@ -5,6 +5,7 @@ export * from './useSubscribeReplies';
 export * from './useUpdateFollowing';
 export * from './useZapNote';
 export * from './usePaginatedPosts';
+export * from './stateHooks';
 export { default as useIsFollowed } from './useIsFollowed';
 
 export { default as useSubscribeEvents } from './useSubscribeEvents';

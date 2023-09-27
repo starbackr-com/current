@@ -11,6 +11,7 @@ import walletconnectReducer from '../features/walletconnect/walletconnectSlice';
 import listener from './listenerMiddleware';
 import badgeReducer from '../features/badges/badgeSlice';
 import communityReducer from '../features/community/communitySlice';
+import composeReducer from '../features/post/composeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,9 +24,13 @@ export const store = configureStore({
     walletconnect: walletconnectReducer,
     badges: badgeReducer,
     community: communityReducer,
+    compose: composeReducer,
     [walletApi.reducerPath]: walletApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .prepend(listener)
     .concat([walletApi.middleware]),
 });
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
