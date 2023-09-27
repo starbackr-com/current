@@ -1,6 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import React, { useMemo, useState } from 'react';
 import { Image } from 'expo-image';
+import * as Sharing from 'expo-sharing';
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,10 +15,14 @@ import {
 } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { globalStyles } from '../../styles';
+import { colors, globalStyles } from '../../styles';
+import { downloadFileAndGetUri } from '../../utils/files';
+import CustomButton from '../CustomButton';
 
 const FullScreenImage = ({ route, navigation }) => {
   const imageUri = route?.params?.imageUri;
+
+  const [shareIsLoading, setShareIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
 
   const [imageDimensions, setImageDimensions] = useState({
@@ -60,6 +66,18 @@ const FullScreenImage = ({ route, navigation }) => {
     ],
   }));
 
+  const shareHandler = async () => {
+    setShareIsLoading(true);
+    try {
+      const uri = await downloadFileAndGetUri(imageUri[0]);
+      Sharing.shareAsync(uri);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setShareIsLoading(false);
+    }
+  };
+
   return (
     <View
       style={{
@@ -86,7 +104,7 @@ const FullScreenImage = ({ route, navigation }) => {
         >
           <Image
             style={{ width: '100%', flex: 1 }}
-            source={imageUri[0]}
+            source={imageUri}
             contentFit="contain"
           />
         </Animated.View>
@@ -100,24 +118,52 @@ const FullScreenImage = ({ route, navigation }) => {
         }}
         style={{ position: 'absolute', top: 12, right: 12 }}
       />
-      <Pressable
+      <View
         style={{
           width: '100%',
-          backgroundColor: 'rgba(0,0,0,0.3)',
           position: 'absolute',
           bottom: 0,
-          paddingBottom: insets.bottom,
-          paddingVertical: 32,
-        }}
-        onPress={() => {
-          navigation.navigate('DVM', {
-            screen: 'ImageGen',
-            params: { remixImg: imageUri[0][0] },
-          });
+          backgroundColor: colors.backgroundPrimary,
+          paddingBottom: insets.bottom || 12,
+          padding: 12,
+          gap: 10,
+          flexDirection: 'row',
+          opacity: 0.8,
         }}
       >
-        <Text style={globalStyles.textBody}>Remix Image</Text>
-      </Pressable>
+        {/* <Pressable
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}
+          onPress={() => {
+            navigation.navigate('DVM', {
+              screen: 'ImageGen',
+              params: { remixImg: imageUri[0][0] },
+            });
+          }}
+        >
+          <Text style={globalStyles.textBody}>Remix Image</Text>
+        </Pressable> */}
+        <View style={{ flex: 1 }}>
+          <CustomButton text="Remix" icon="color-wand" />
+        </View>
+        <View style={{ flex: 1 }}>
+          <CustomButton
+            text="Share"
+            icon="share"
+            buttonConfig={{ onPress: shareHandler }}
+            loading={shareIsLoading}
+          />
+        </View>
+        {/* <Pressable
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}
+          onPress={async () => {
+            const uri = await downloadFileAndGetUri(imageUri[0]);
+            Sharing.shareAsync(uri);
+            // console.log(uri);
+          }}
+        >
+          <Text style={globalStyles.textBody}>Share Image</Text>
+        </Pressable> */}
+      </View>
     </View>
   );
 };
