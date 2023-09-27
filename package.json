@@ -50,6 +50,7 @@
     "expo-localization": "~14.3.0",
     "expo-notifications": "~0.20.1",
     "expo-secure-store": "~12.3.1",
+    "expo-sharing": "~11.5.0",
     "expo-splash-screen": "~0.20.5",
     "expo-sqlite": "~11.3.2",
     "expo-status-bar": "~1.6.0",
