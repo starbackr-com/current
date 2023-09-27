@@ -1,6 +1,12 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Pressable, View, Text, StyleSheet, Platform } from 'react-native';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { MentionInput } from 'react-native-controlled-mentions';
@@ -20,6 +26,10 @@ import {
   resizeImageSmall,
   uploadJpeg,
 } from '../../../utils/images';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { replaceText } from '../composeSlice';
+import { MagicTextSheet } from '../components';
+import ComposeToolBar from '../components/ComposeToolBar';
 
 const styles = StyleSheet.create({
   container: {
@@ -48,8 +58,13 @@ const NewPostScreen = ({ navigation, route }) => {
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const text = useAppSelector((state) => state.compose.text);
+  const dispatch = useAppDispatch();
+
   const { gif } = route?.params || {};
   const { image } = route?.params || {};
+
+  const magicTextRef = useRef();
 
   const users = useSelector((state) => state.messages.users);
   const userArray = useMemo(
@@ -74,8 +89,8 @@ const NewPostScreen = ({ navigation, route }) => {
   const imageHandler = async () => {
     setUploading(true);
     try {
-      const image = await pickSingleImage();
-      const manipImage = await resizeImageSmall(image);
+      const pickedImage = await pickSingleImage();
+      const manipImage = await resizeImageSmall(pickedImage);
       const imageUrl = await uploadJpeg(manipImage, pubKey, walletBearer);
       setInput((prev) => `${prev}\n${imageUrl}`);
       setUploading(false);
@@ -150,13 +165,13 @@ const NewPostScreen = ({ navigation, route }) => {
     return (
       <View style={globalStyles.screenContainer}>
         <MentionInput
-          value={input}
+          value={text}
           containerStyle={styles.input}
           style={[
             globalStyles.textBody,
             { textAlign: 'left', flex: 1, verticalAlign: 'top' },
           ]}
-          onChange={setInput}
+          onChange={dispatch(replaceText)}
           partTypes={[
             {
               trigger: '@',
@@ -200,10 +215,12 @@ const NewPostScreen = ({ navigation, route }) => {
     <CustomKeyboardView noBottomBar>
       <View style={globalStyles.screenContainer}>
         <MentionInput
-          value={input}
+          value={text}
           containerStyle={styles.input}
           style={[globalStyles.textBody, { textAlign: 'left', flex: 1 }]}
-          onChange={setInput}
+          onChange={(inputText) => {
+            dispatch(replaceText(inputText));
+          }}
           partTypes={[
             {
               trigger: '@',
@@ -217,30 +234,9 @@ const NewPostScreen = ({ navigation, route }) => {
           placeholder="Type a message"
           autoFocus
         />
-        <View
-          style={{
-            width: '100%',
-            marginVertical: 6,
-            flexDirection: 'row',
-            gap: 10,
-          }}
-        >
-          <Pressable onPress={imageHandler} disabled={uploading}>
-            {!uploading ? (
-              <Ionicons name="image" size={24} color={colors.primary500} />
-            ) : (
-              <LoadingSpinner size={24} />
-            )}
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              navigation.navigate('PlebhySelector', { opener: 'PostNote' });
-            }}
-          >
-            <MaterialIcons name="gif" size={24} color={colors.primary500} />
-          </Pressable>
-        </View>
       </View>
+      <ComposeToolBar ref={magicTextRef} />
+      <MagicTextSheet ref={magicTextRef} />
     </CustomKeyboardView>
   );
 };
