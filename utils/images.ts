@@ -61,5 +61,5 @@ export async function uploadJpeg(
   if (data.error || !data.data) {
     throw new Error('Could not upload image')
   }
-  return data.data;
+  return data.data as string;
 }

@@ -19,7 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const FullImagePost = ({ item, height, width, onMenu }) => {
   const navigation = useNavigation();
-  const [imageDim, setImageDim] = useState();
+  const [imageDim, setImageDim] = useState<{width: number, height: number}>();
   const user = useUser(item.pubkey);
   const [hasMore, setHasMore] = useState(false);
 
@@ -109,6 +109,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
           }}
           onPress={() => {
             console.log(item.image);
+            //@ts-ignore
             navigation.navigate('ImageModal', { imageUri: item.image });
           }}
         >
@@ -132,6 +133,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
           >
             <Pressable
               onPress={() => {
+                //@ts-ignore
                 navigation.navigate('ReadMoreModal', {
                   event: item,
                   author: user.name || item.pubkey,
@@ -198,6 +200,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             bottom: 'auto',
           }}
         >
+          {/* @ts-ignore */}
           <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
         </View>
       </Animated.View>
