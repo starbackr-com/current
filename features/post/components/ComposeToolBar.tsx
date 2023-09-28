@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, Keyboard } from 'react-native';
 import React, { forwardRef, useState } from 'react';
 import {
   pickSingleImage,
@@ -42,6 +42,8 @@ const ComposeToolBar = forwardRef((_, ref: React.RefObject<BottomSheetModalMetho
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingHorizontal: 6,
+        backgroundColor: colors.backgroundSecondary
       }}
     >
       <View
@@ -69,6 +71,7 @@ const ComposeToolBar = forwardRef((_, ref: React.RefObject<BottomSheetModalMetho
         </Pressable>
         <Pressable
           onPress={() => {
+            Keyboard.dismiss();
             ref.current.present();
           }}
         >
