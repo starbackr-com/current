@@ -1,4 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {
+  ListenerEffectAPI,
+  PayloadAction,
+  createSlice,
+} from '@reduxjs/toolkit';
+import { AppDispatch, RootState } from '../store/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { requestReview } from '../utils/review';
 
 const initialState = {
   followedPubkeys: [],
@@ -8,6 +15,8 @@ const initialState = {
   zapNoconf: false,
   pushToken: null,
   relays: {},
+  reviewInteractions: 0,
+  reviewDialogueShown: false,
 };
 
 export const userSlice = createSlice({
@@ -72,8 +81,28 @@ export const userSlice = createSlice({
       const newRelaysObject = action.payload;
       state.relays = { ...state.relays, ...newRelaysObject };
     },
+    addReviewInteraction: (state) => {
+      state.reviewInteractions += 1;
+    },
+    setReviewDialogueShown: (state) => {
+      state.reviewDialogueShown = true;
+    },
   },
 });
+
+export const reviewInteractionListener = async (
+  _,
+  listenerApi: ListenerEffectAPI<RootState, AppDispatch>,
+) => {
+  const {
+    user: { reviewInteractions, reviewDialogueShown },
+  } = listenerApi.getState();
+  if (!reviewDialogueShown && reviewInteractions > 2) {
+    listenerApi.dispatch(setReviewDialogueShown());
+    await AsyncStorage.setItem('reviewDialogueShown', 'true');
+    requestReview();
+  }
+};
 
 export const {
   followPubkey,
@@ -87,6 +116,8 @@ export const {
   clearUserStore,
   addRelays,
   setPushToken,
+  setReviewDialogueShown,
+  addReviewInteraction,
 } = userSlice.actions;
 
 export default userSlice.reducer;

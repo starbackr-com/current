@@ -6,6 +6,7 @@ import {
   setZapNoconf,
   setZapComment,
   setPushToken,
+  setReviewDialogueShown,
 } from '../../features/userSlice';
 import { store } from '../../store/store';
 import { getValue } from '../secureStore';
@@ -58,6 +59,7 @@ export const hydrateStore = async () => {
   const getStartedItemsShown = await getData('getStartedItemsShown');
   const likedEvents = await getData('likedEvents');
   const repostedEvents = await getData('repostedEvents');
+  const reviewDialogueShown = await getData('reviewDialogueShown');
   if (zapAmount) {
     store.dispatch(setZapAmount(zapAmount));
   }
@@ -80,7 +82,6 @@ export const hydrateStore = async () => {
   if (joinedCommunities) {
     const array = JSON.parse(joinedCommunities);
     array.forEach((slug) => {
-      console.log('adding community')
       store.dispatch(joinCommunity(slug));
     });
   }
@@ -91,6 +92,10 @@ export const hydrateStore = async () => {
   if (repostedEvents) {
     const array = JSON.parse(repostedEvents);
     store.dispatch(addRepost(array));
+  }
+  if (reviewDialogueShown) {
+    const value = JSON.parse(reviewDialogueShown);
+    store.dispatch(setReviewDialogueShown(value));
   }
 };
 

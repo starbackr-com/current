@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { ListenerEffectAPI, PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { AppDispatch, RootState } from '../store/store';
+import { addReviewInteraction } from './userSlice';
 
 type InteractionSlice = {
   zappedEvents: string[];
   likedEvents: string[];
-  repostedEvents: string[]
+  repostedEvents: string[];
 }
 
 const initialState: InteractionSlice = {
@@ -48,12 +50,13 @@ export const interactionSlice = createSlice({
   },
 });
 
-export const likeListener = async (_, listenerApi) => {
+export const likeListener = async (_, listenerApi: ListenerEffectAPI<RootState, AppDispatch>) => {
   const {
     interaction: { likedEvents },
   } = listenerApi.getState();
   const json = JSON.stringify(likedEvents);
   await AsyncStorage.setItem('likedEvents', json);
+  listenerApi.dispatch(addReviewInteraction());
 };
 export const repostListener = async (_, listenerApi) => {
   const {
@@ -61,6 +64,7 @@ export const repostListener = async (_, listenerApi) => {
   } = listenerApi.getState();
   const json = JSON.stringify(repostedEvents);
   await AsyncStorage.setItem('repostedEvents', json);
+  listenerApi.dispatch(addReviewInteraction());
 };
 
 export const { addZap, addLike, removeLike, addRepost, removeRepost } = interactionSlice.actions;

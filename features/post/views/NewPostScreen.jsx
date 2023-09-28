@@ -30,6 +30,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { replaceText } from '../composeSlice';
 import { MagicTextSheet } from '../components';
 import ComposeToolBar from '../components/ComposeToolBar';
+import { addReviewInteraction } from '../../userSlice';
 
 const styles = StyleSheet.create({
   container: {
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary500,
     color: 'white',
     padding: 6,
+    marginBottom: 6,
   },
 });
 
@@ -79,6 +81,7 @@ const NewPostScreen = ({ navigation, route }) => {
     try {
       const { parsedContent, mentionArray } = parseInputMentions(input);
       await publishNote(parsedContent, mentionArray);
+      dispatch(addReviewInteraction());
       navigation.navigate('MainTabNav');
       return;
     } catch (e) {
