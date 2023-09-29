@@ -108,8 +108,7 @@ const PostMenuBottomSheet = forwardRef((props, bottomSheetModalRef) => {
               buttonConfig={{
                 onPress: async () => {
                   Share.share({
-                    message: nip19.noteEncode(event.id),
-                    url: `nostr:${nip19.noteEncode(event.id)}`,
+                    message: `https://getcurrent.io/link/e/${nip19.noteEncode(event.id)}`,
                   });
                 },
               }}

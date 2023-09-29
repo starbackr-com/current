@@ -2,21 +2,60 @@ import * as Notifications from 'expo-notifications';
 import { Event, nip19 } from 'nostr-tools';
 import { Linking } from 'react-native';
 
+function returnHexFromEntity(entity) {
+  try {
+    const { type, data } = nip19.decode(entity);
+    switch (type) {
+      case 'npub':
+        console.log(data);
+        return data;
+      case 'nprofile':
+        //@ts-ignore
+        return data.pubkey;
+      case 'note':
+        console.log(data);
+        return data;
+      case 'nevent':
+        //@ts-ignore
+        return data.id;
+    }
+  } catch (e) {
+    console.log(e);
+    return entity;
+  }
+}
+
 const linkingConfig = {
-  prefixes: ['exp://', 'exp://192.168.3.116:19000/--/', 'nostr:'],
+  prefixes: [
+    'exp://',
+    'exp://192.168.3.116:19000/--/',
+    'nostr:',
+    'https://getcurrent.io',
+  ],
   config: {
     screens: {
       Profile: {
         initialRouteName: 'MainTabNav',
         screens: {
-          ProfileScreen: 'profile/:pubkey',
+          ProfileScreen: {
+            path: '/link/p/:pubkey',
+            parse: {
+              pubkey: (entity) => returnHexFromEntity(entity),
+            },
+          },
         },
       },
       MainTabNav: {
         screens: {
           Home: {
+            initialRouteName: 'HomeScreen',
             screens: {
-              CommentScreen: 'note/:eventId',
+              CommentScreen: {
+                path: '/link/e/:eventId',
+                parse: {
+                  eventId: (entity) => returnHexFromEntity(entity),
+                },
+              },
             },
           },
           Messages: {
@@ -31,16 +70,19 @@ const linkingConfig = {
   },
   async getInitialURL() {
     const url = await Linking.getInitialURL();
-
     if (url != null) {
+      if (url.startsWith('https://getcurrent.io')) {
+        return url;
+      }
       if (url.startsWith('nostr:')) {
+        const entity = url.slice(6);
         try {
-          const { type, data } = nip19.decode(url.slice(6));
+          const { type } = nip19.decode(entity);
           if (type === 'npub') {
-            return `exp://profile/${data}`;
+            return `/link/p/${entity}`;
           }
           if (type === 'note') {
-            return `nostr://note/${data}`;
+            return `/link/e/${entity}`;
           }
         } catch (e) {
           console.log(e);
@@ -57,20 +99,26 @@ const linkingConfig = {
       }
       if (event.kind === 1) {
         const id = event.id;
-        return `nostr://note/${id}`;
+        return `/link/e/${id}`;
       }
     }
     return null;
   },
   subscribe(listener) {
     const onReceiveURL = ({ url }) => {
+      if (url.startsWith('https://getcurrent.io')) {
+        listener(url);
+      }
       if (url.startsWith('nostr:')) {
-        const { type, data } = nip19.decode(url.slice(6));
-        if (type === 'npub') {
-          listener(`nostr://profile/${data}`);
+        const data = url.slice(6);
+        if (data.startsWith('npub')) {
+          listener(`/link/p/${data}`);
         }
-        if (type === 'note') {
-          listener(`nostr://note/${data}`);
+        if (data.startsWith('nprofile')) {
+          listener(`/link/p/${data}`);
+        }
+        if (data.startsWith('nprofile')) {
+          listener(`/link/e/${data}`);
         }
       }
     };
