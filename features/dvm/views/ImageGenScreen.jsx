@@ -1,7 +1,9 @@
+/* eslint-disable react/no-unstable-nested-components */
 import { View, Text } from 'react-native';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useScrollToTop } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, globalStyles } from '../../../styles';
 import {
   CustomButton,
@@ -53,9 +55,26 @@ const ImageGenScreen = ({ navigation, route }) => {
 
   const [inititalText, setInitialText] = useState();
 
+  const listRef = useRef();
+  const suggestionRef = useRef();
+
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <BackHeaderWithButton rightButton={() => <CustomButton text='Suggestions'/>} navigation={navigation}/>,
+      header: () => (
+        <BackHeaderWithButton
+          rightButton={() => (
+            <Ionicons
+              size={24}
+              color={colors.primary500}
+              name="help-circle-outline"
+              onPress={() => {
+                suggestionRef.current.present();
+              }}
+            />
+          )}
+          navigation={navigation}
+        />
+      ),
     });
   }, [suggestionRef]);
 
@@ -65,9 +84,6 @@ const ImageGenScreen = ({ navigation, route }) => {
 
   const events = useImageJob();
   const sortedEvents = events.sort((a, b) => b.created_at - a.created_at);
-
-  const listRef = useRef();
-  const suggestionRef = useRef();
 
   useScrollToTop(listRef);
 
@@ -85,6 +101,11 @@ const ImageGenScreen = ({ navigation, route }) => {
   };
 
   const renderEvent = ({ item }) => {
+    if (item.kind === 65000) {
+      return (
+        <Text style={globalStyles.textBody}>{JSON.stringify(item.tags)}</Text>
+      );
+    }
     if (item.kind === 65005) {
       return <ImageGenRequest event={item} />;
     }
@@ -93,7 +114,16 @@ const ImageGenScreen = ({ navigation, route }) => {
 
   return (
     <CustomKeyboardView>
-      <View style={[globalStyles.screenContainer, {paddingTop: 0, borderTopColor: colors.backgroundSecondary, borderTopWidth: 1}]}>
+      <View
+        style={[
+          globalStyles.screenContainer,
+          {
+            paddingTop: 0,
+            borderTopColor: colors.backgroundSecondary,
+            borderTopWidth: 1,
+          },
+        ]}
+      >
         <FlatList
           data={sortedEvents}
           renderItem={renderEvent}

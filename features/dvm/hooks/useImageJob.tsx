@@ -30,6 +30,13 @@ const useImageJob = () => {
           ],
           '#p': [pubKey],
         },
+        {
+          kinds: [65000],
+          authors: [
+            'c70735fa4b01f77f953883a6e671982e31bd7d906b2b6111a6f518555bed1b1a',
+          ],
+          '#p': [pubKey],
+        },
       ],
     );
     sub.on('event', (event) => {

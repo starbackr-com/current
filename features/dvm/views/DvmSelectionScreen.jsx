@@ -19,16 +19,19 @@ const DvmSelectionScreen = ({ navigation }) => (
         <DVMSelectionItem
           text="Generate Text"
           icon={
-            <Ionicons name="text" color="#7f35ab" size={24} />
+            <Ionicons name="text" color={colors.backgroundActive} size={24} />
           }
-          color="#7f35ab"
+          color={colors.backgroundActive}
         />
       </View>
       <View style={{ flexDirection: 'row', width: '100%', gap: 10 }}>
         <DVMSelectionItem
           text="Summarize Note"
-          icon={<Ionicons name="document" color="#6495ed" size={24} />}
-          color="#6495ed"
+          icon={
+            <Ionicons name="document" color={colors.backgroundActive} size={24} />
+          }
+          color={colors.backgroundActive}
+          disabled
         />
       </View>
     </View>
