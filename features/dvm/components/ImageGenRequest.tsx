@@ -1,10 +1,7 @@
-import { View, Text, Pressable } from 'react-native';
-import React from 'react';
+import { View, Text } from 'react-native';
+import React, { memo } from 'react';
 import { Event } from 'nostr-tools';
-import { imageRegex } from '../../../constants';
 import { Image } from 'expo-image';
-import { useNavigation } from '@react-navigation/native';
-import { tags } from 'react-native-svg/lib/typescript/xml';
 import { colors, globalStyles } from '../../../styles';
 
 function getPrompt(event: Event): string {
@@ -27,8 +24,11 @@ function getImage(event: Event): string {
   return undefined;
 }
 
-const ImageGenRequest = ({ event }) => {
-  const nav = useNavigation();
+type ImageGenRequestProps = {
+  event: Event
+}
+
+const ImageGenRequest = memo(({ event }: ImageGenRequestProps) => {
   const prompt = getPrompt(event);
   const image = getImage(event);
   return (
@@ -46,13 +46,16 @@ const ImageGenRequest = ({ event }) => {
         {image ? 'Remix Request' : 'Generation Request'}
       </Text>
       {image ? (
-        <Image style={{width: 200, height: 200, borderRadius: 10}} source={image}/>
+        <Image
+          style={{ width: 200, height: 200, borderRadius: 10 }}
+          source={image}
+        />
       ) : undefined}
       <Text style={[globalStyles.textBody, { textAlign: 'right' }]}>
         {prompt?.trim()}
       </Text>
     </View>
   );
-};
+});
 
 export default ImageGenRequest;

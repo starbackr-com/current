@@ -1,5 +1,5 @@
-import { Pressable, Text, View } from 'react-native';
-import React, { useMemo, useState } from 'react';
+import { View } from 'react-native';
+import React, { useState } from 'react';
 import { Image } from 'expo-image';
 import * as Sharing from 'expo-sharing';
 
@@ -15,7 +15,7 @@ import {
 } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, globalStyles } from '../../styles';
+import { colors } from '../../styles';
 import { downloadFileAndGetUri } from '../../utils/files';
 import CustomButton from '../CustomButton';
 
@@ -131,19 +131,19 @@ const FullScreenImage = ({ route, navigation }) => {
           opacity: 0.8,
         }}
       >
-        {/* <Pressable
-          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}
-          onPress={() => {
-            navigation.navigate('DVM', {
-              screen: 'ImageGen',
-              params: { remixImg: imageUri[0][0] },
-            });
-          }}
-        >
-          <Text style={globalStyles.textBody}>Remix Image</Text>
-        </Pressable> */}
         <View style={{ flex: 1 }}>
-          <CustomButton text="Remix" icon="color-wand" />
+          <CustomButton
+            text="Remix"
+            icon="color-wand"
+            buttonConfig={{
+              onPress: () => {
+                navigation.navigate('DVM', {
+                  screen: 'ImageGen',
+                  params: { remixImg: imageUri[0] },
+                });
+              },
+            }}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <CustomButton
@@ -153,16 +153,6 @@ const FullScreenImage = ({ route, navigation }) => {
             loading={shareIsLoading}
           />
         </View>
-        {/* <Pressable
-          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}
-          onPress={async () => {
-            const uri = await downloadFileAndGetUri(imageUri[0]);
-            Sharing.shareAsync(uri);
-            // console.log(uri);
-          }}
-        >
-          <Text style={globalStyles.textBody}>Share Image</Text>
-        </Pressable> */}
       </View>
     </View>
   );
