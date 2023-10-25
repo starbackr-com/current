@@ -12,6 +12,7 @@ import listener from './listenerMiddleware';
 import badgeReducer from '../features/badges/badgeSlice';
 import communityReducer from '../features/community/communitySlice';
 import composeReducer from '../features/post/composeSlice';
+import { dvmApi } from '../features/dvm/api/dvmApi';
 
 export const store = configureStore({
   reducer: {
@@ -26,11 +27,14 @@ export const store = configureStore({
     community: communityReducer,
     compose: composeReducer,
     [walletApi.reducerPath]: walletApi.reducer,
+    [dvmApi.reducerPath]: dvmApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-    .prepend(listener)
-    .concat([walletApi.middleware]),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .prepend(listener)
+      .concat([walletApi.middleware])
+      .concat([dvmApi.middleware]),
 });
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

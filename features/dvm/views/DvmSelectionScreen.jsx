@@ -1,41 +1,81 @@
-import { View } from 'react-native';
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+/* eslint-disable react/no-unstable-nested-components */
+import { Text, View } from 'react-native';
+import React, { useMemo, useRef } from 'react';
+import { FlashList } from '@shopify/flash-list';
+import { ScrollView } from 'react-native-gesture-handler';
 import { colors, globalStyles } from '../../../styles';
 import DVMSelectionItem from '../components/DVMSelectionItem';
+import { useGetAgentsQuery } from '../api/dvmApi';
+import { LoadingSpinner } from '../../../components';
+import { excludeSensitiveAgents, sortAgentsByCategory } from '../utils/agents';
+import AmpedRequiredModal from '../../premium/components/AmpedRequiredModal';
+import { useAppSelector } from '../../../hooks';
 
-const DvmSelectionScreen = ({ navigation }) => (
-  <View style={globalStyles.screenContainer}>
-    <View style={{ flex: 1, gap: 10 }}>
-      <View style={{ flexDirection: 'row', width: '100%', gap: 10 }}>
-        <DVMSelectionItem
-          text="Generate Image"
-          icon={<Ionicons name="image" color={colors.primary500} size={24} />}
-          color={colors.primary500}
-          onPress={() => {
-            navigation.navigate('ImageGen');
-          }}
-        />
-        <DVMSelectionItem
-          text="Generate Text"
-          icon={
-            <Ionicons name="text" color={colors.backgroundActive} size={24} />
-          }
-          color={colors.backgroundActive}
-        />
+const DvmSelectionScreen = ({ navigation }) => {
+  const { data, isLoading } = useGetAgentsQuery();
+  const isPremium = useAppSelector((state) => state.auth.isPremium);
+
+  const categorizedAndFilteredAgents = useMemo(() => {
+    if (data) {
+      const filteredAgents = excludeSensitiveAgents(data);
+      return sortAgentsByCategory(filteredAgents);
+    }
+    return null;
+  }, [data]);
+
+  const subscriptionRef = useRef();
+  if (categorizedAndFilteredAgents) {
+    return (
+      <ScrollView
+        style={globalStyles.screenContainerScroll}
+        contentContainerStyle={{ gap: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {categorizedAndFilteredAgents.map((category) => (
+          <View style={{ flex: 1, width: '100%' }}>
+            <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
+              {category.category}
+            </Text>
+            <FlashList
+              data={category.agents}
+              horizontal
+              estimatedItemSize={100}
+              ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <DVMSelectionItem
+                  agent={item}
+                  text={item.title}
+                  icon={item.symbol}
+                  color={colors.primary500}
+                  onPress={() => {
+                    if (!isPremium && item.paid) {
+                      subscriptionRef.current.present();
+                      return;
+                    }
+                    navigation.navigate('AgentChat', { agent: item });
+                  }}
+                />
+              )}
+            />
+          </View>
+        ))}
+        <AmpedRequiredModal ref={subscriptionRef} />
+      </ScrollView>
+    );
+  }
+  if (isLoading) {
+    return (
+      <View style={globalStyles.screenContainer}>
+        <LoadingSpinner size={32} />
       </View>
-      <View style={{ flexDirection: 'row', width: '100%', gap: 10 }}>
-        <DVMSelectionItem
-          text="Summarize Note"
-          icon={
-            <Ionicons name="document" color={colors.backgroundActive} size={24} />
-          }
-          color={colors.backgroundActive}
-          disabled
-        />
-      </View>
+    );
+  }
+  return (
+    <View style={globalStyles.screenContainer}>
+      <Text style={globalStyles.textBody}>No Agents found</Text>
     </View>
-  </View>
-);
+  );
+};
 
 export default DvmSelectionScreen;

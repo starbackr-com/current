@@ -8,10 +8,13 @@ import {
 import React, { ReactElement, ReactNode } from 'react';
 import { colors, globalStyles } from '../../../styles';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { Agent } from '../utils/agents';
 
 type DVMSelectionItemProps = {
+  agent: Agent;
   text: string;
-  icon: ReactNode;
+  icon: string;
   color: string;
   onPress: () => void;
   disabled: boolean;
@@ -19,7 +22,6 @@ type DVMSelectionItemProps = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.backgroundSecondary,
     borderRadius: 10,
     borderWidth: 1,
@@ -27,61 +29,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     padding: 10,
+    height: 150,
+    width: 100,
   },
   containerPressed: {
     backgroundColor: colors.backgroundActive,
   },
-  containerDisabled: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
+  proBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    backgroundColor: colors.primary500,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.backgroundActive,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-    padding: 10,
-  },
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  }
 });
 
-const DVMSelectionItem = ({
-  text,
-  icon,
-  color,
-  onPress,
-  disabled,
-}: DVMSelectionItemProps) => {
-  const { height } = useWindowDimensions();
-  if (disabled) {
-    return (
-      <View style={[styles.containerDisabled, { height: height / 5 }]}>
-        {icon}
-        <View>
-          <Text
-            style={[globalStyles.textBody, { color: colors.backgroundActive }]}
-          >
-            {text}
-          </Text>
-          <Text
-            style={[globalStyles.textBodyS, { color: colors.backgroundActive }]}
-          >
-            Coming soon!
-          </Text>
-        </View>
-      </View>
-    );
-  }
+const DVMSelectionItem = ({ agent, color, onPress }: DVMSelectionItemProps) => {
   return (
     <Pressable
       style={({ pressed }) => [
         styles.container,
         pressed ? styles.containerPressed : undefined,
-        { borderColor: color, height: height / 5 },
+        { borderColor: color },
       ]}
       onPress={onPress}
     >
-      {icon}
-      <Text style={globalStyles.textBody}>{text}</Text>
+      <Image
+        style={{ height: 80, width: 80, borderRadius: 40 }}
+        source={agent.symbol}
+      />
+      <Text style={globalStyles.textBodyS}>{agent.title}</Text>
+      {agent.paid ? <View style={styles.proBadge}>
+        <Text style={{color: 'white'}}>Pro</Text>
+      </View> : undefined}
     </Pressable>
   );
 };

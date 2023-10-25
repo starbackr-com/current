@@ -13,6 +13,7 @@ import {
 import { RelaySettingsNav } from '../../relays';
 import { BackHeader } from '../../../components';
 import { PremiumView } from '../../premium';
+import ChooseTierView from '../../premium/views/ChooseTierView';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -72,7 +73,7 @@ const SettingsNavigator = () => (
     />
     <NativeStack.Screen
       name="Premium"
-      component={PremiumView}
+      component={ChooseTierView}
       options={({ navigation }) => ({
         header: () => <BackHeader navigation={navigation} />,
       })}
