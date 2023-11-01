@@ -13,6 +13,8 @@ import Animated, {
 import { ScrollView } from 'react-native-gesture-handler';
 import { FeatureCard } from '../components';
 import { CustomButton } from '../../../components';
+import { useAppDispatch } from '../../../hooks';
+import { displayModal } from '../../modal/modalSlice';
 
 const styles = StyleSheet.create({
   selectionContainer: {
@@ -58,6 +60,7 @@ const styles = StyleSheet.create({
 
 const ChooseTierView = () => {
   const [selectedTier, setSelectedTier] = useState(1);
+  const dispatch = useAppDispatch();
   const translateX = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -147,7 +150,15 @@ const ChooseTierView = () => {
             Surge
           </Animated.Text>
         </View>
-        <CustomButton text={selectedTier === 1 ? '$0.99 / mon' : '$3.99 / mon'} containerStyles={{ marginHorizontal: 10, marginBottom: 10 }} />
+        <CustomButton
+          text={selectedTier === 1 ? '$0.99 / mon' : '$3.99 / mon'}
+          containerStyles={{ marginHorizontal: 10, marginBottom: 10 }}
+          buttonConfig={{
+            onPress: () => {
+              dispatch(displayModal({ modalKey: 'testModal' }));
+            },
+          }}
+        />
       </View>
     </View>
   );

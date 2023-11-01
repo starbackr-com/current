@@ -37,6 +37,7 @@ const PremiumView = () => {
     <View style={globalStyles.screenContainer}>
       <Image source={ampedLogo} style={styles.image} contentFit="contain" />
       <View style={styles.container}>
+        <FeatureCard icon="star" text="Unlimited PlebAI Access" />
         <FeatureCard icon="notifications" text="Push Notifications" />
         <FeatureCard icon="server" text="Premium Relays" />
         <FeatureCard icon="chatbubble" text="Encrypted Messages" />
