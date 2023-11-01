@@ -133,20 +133,6 @@ const FullScreenImage = ({ route, navigation }) => {
       >
         <View style={{ flex: 1 }}>
           <CustomButton
-            text="Remix"
-            icon="color-wand"
-            buttonConfig={{
-              onPress: () => {
-                navigation.navigate('DVM', {
-                  screen: 'ImageGen',
-                  params: { remixImg: imageUri[0] },
-                });
-              },
-            }}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <CustomButton
             text="Share"
             icon="share"
             buttonConfig={{ onPress: shareHandler }}
