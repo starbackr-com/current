@@ -25,6 +25,8 @@ import OwnProfileNavigator from './OwnProfileNavigator';
 import PostNavigator from '../features/post/nav/PostNavigator';
 import { SettingsNavigator } from '../features/settings';
 import DvmNavigator from '../features/dvm/nav/DvmNavigator';
+import SubscriptionModal from '../features/modal/components/SubscriptionModal';
+import PaymentConfirmationModal from '../features/modal/components/PaymentConfirmationModal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -156,6 +158,8 @@ const AuthedNavigator = () => (
           })}
         />
       </Stack.Navigator>
+      <SubscriptionModal />
+      <PaymentConfirmationModal />
     </BottomSheetModalProvider>
   </GestureHandlerRootView>
 );

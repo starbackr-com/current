@@ -13,6 +13,7 @@ import badgeReducer from '../features/badges/badgeSlice';
 import communityReducer from '../features/community/communitySlice';
 import composeReducer from '../features/post/composeSlice';
 import { dvmApi } from '../features/dvm/api/dvmApi';
+import modalReducer from '../features/modal/modalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
     badges: badgeReducer,
     community: communityReducer,
     compose: composeReducer,
+    modal: modalReducer,
     [walletApi.reducerPath]: walletApi.reducer,
     [dvmApi.reducerPath]: dvmApi.reducer,
   },
