@@ -15,3 +15,4 @@ export { default as CustomKeyboardView } from './CustomKeyboardView';
 export { default as NumPad } from './NumPad';
 export { default as MenuBottomSheet } from './MenuBottomSheet';
 export { default as MenuBottomSheetWithData } from './MenuBottomSheetWithData';
+export { default as SwipeToConfirm } from './SwipeToConfirm';
