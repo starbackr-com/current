@@ -9,11 +9,13 @@ import { useGetAgentsQuery } from '../api/dvmApi';
 import { LoadingSpinner } from '../../../components';
 import { excludeSensitiveAgents, sortAgentsByCategory } from '../utils/agents';
 import AmpedRequiredModal from '../../premium/components/AmpedRequiredModal';
-import { useAppSelector } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { displayModal } from '../../modal/modalSlice';
 
 const DvmSelectionScreen = ({ navigation }) => {
   const { data, isLoading } = useGetAgentsQuery();
   const isPremium = useAppSelector((state) => state.auth.isPremium);
+  const dispatch = useAppDispatch();
 
   const categorizedAndFilteredAgents = useMemo(() => {
     if (data) {
@@ -50,7 +52,7 @@ const DvmSelectionScreen = ({ navigation }) => {
                   color={colors.primary500}
                   onPress={() => {
                     if (!isPremium && item.paid) {
-                      subscriptionRef.current.present();
+                      dispatch(displayModal({ modalKey: 'subscriptionModal' }));
                       return;
                     }
                     navigation.navigate('AgentChat', { agent: item });

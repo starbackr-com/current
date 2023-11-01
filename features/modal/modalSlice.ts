@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 type ModalProps = {
   mounted: boolean;
-  data: any;
+  data?: any;
 };
 
 type ModalState = {
@@ -19,7 +19,6 @@ type ModalState = {
 type DisplayPayload =
   | {
       modalKey: 'subscriptionModal';
-      data: undefined;
     }
   | {
       modalKey: 'paymentModal';

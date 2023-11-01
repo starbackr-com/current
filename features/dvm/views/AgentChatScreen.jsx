@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { View, Text } from 'react-native';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { Image } from 'expo-image';
 import { FlatList } from 'react-native-gesture-handler';
 import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { colors, globalStyles } from '../../../styles';
 import {
   CustomButton,
@@ -16,22 +16,11 @@ import { useAgentChat } from '../hooks';
 import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
 import publishPrompt from '../utils/publishPrompt';
 import PromptPaymentButton from '../components/PromptPaymentButton';
-import AmpedRequiredModal from '../../premium/components/AmpedRequiredModal';
-import { useAppSelector } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 import AgentRequest from '../components/AgentRequest';
 import AgentTextResponse from '../components/AgentTextResponse';
-
-const samplePrompts = [
-  {
-    title: 'A man with a beard',
-    prompt: 'Close up portrait of a man with beard in a worn mech suit',
-  },
-  {
-    title: 'Beautiful futuristic city',
-    prompt:
-      'Envision a captivating aerial view showcasing a modern futuristic lanscape design',
-  },
-];
+import { displayModal } from '../../modal/modalSlice';
+import AgentImageResponse from '../components/AgentImageResponse';
 
 const AgentChatScreen = ({ navigation, route }) => {
   const { agent } = route?.params || {};
@@ -40,14 +29,11 @@ const AgentChatScreen = ({ navigation, route }) => {
 
   const listRef = useRef();
   const suggestionRef = useRef();
-  const subscriptionModal = useRef();
 
   const isPremium = useAppSelector((state) => state.auth.isPremium);
   const ownPk = useAppSelector((state) => state.auth.pubKey);
+  const dispatch = useAppDispatch();
 
-  const subHandler = () => {
-    subscriptionModal.current.present();
-  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -57,7 +43,7 @@ const AgentChatScreen = ({ navigation, route }) => {
             <Ionicons
               size={24}
               color={colors.primary500}
-              name="help-circle-outline"
+              name="information-circle-outline"
               onPress={() => {
                 suggestionRef.current.present();
               }}
@@ -97,7 +83,7 @@ const AgentChatScreen = ({ navigation, route }) => {
               icon="flash"
               buttonConfig={{
                 onPress: () => {
-                  navigation.navigate('Premium');
+                  dispatch(displayModal({ modalKey: 'subscriptionModal' }));
                 },
               }}
             />
@@ -109,17 +95,12 @@ const AgentChatScreen = ({ navigation, route }) => {
           <Text style={globalStyles.textBodyG}>
             This agent requires a payment to process your last request
           </Text>
-          <PromptPaymentButton invoice={item.data} onSubRequired={subHandler} />
+          <PromptPaymentButton invoice={item.data} />
         </View>
       );
     }
     if (item.type === 'image') {
-      return (
-        <View>
-          <Text style={globalStyles.textBody}>Image:</Text>
-          <Image style={{ height: 200, width: 200 }} source={item.data} />
-        </View>
-      );
+      return <AgentImageResponse imageUri={item.data} />;
     }
     return <Text style={globalStyles.textBody}>{item.data}</Text>;
   };
@@ -149,16 +130,22 @@ const AgentChatScreen = ({ navigation, route }) => {
         <ExpandableInput onSubmit={submitJob} initialText={inititalText} />
       </View>
       <MenuBottomSheet ref={suggestionRef}>
-        <View style={{ gap: 5 }}>
+        <View style={{ gap: 5, alignItems: 'center' }}>
+          <Text style={globalStyles.textH2}>{agent.title}</Text>
+          <Image
+            source={agent.symbol}
+            style={{ height: 70, width: 70, borderRadius: 35 }}
+          />
+          <Text style={globalStyles.textBodyG}>{agent.placeholder}</Text>
           <Text style={globalStyles.textBody}>
             Sample prompts to get started:
           </Text>
-          {samplePrompts.map((prompt) => (
+          {agent.examples.map((prompt) => (
             <CustomButton
-              text={prompt.title}
+              text={`${prompt.slice(0, 30)}...`}
               buttonConfig={{
                 onPress: () => {
-                  setInitialText(prompt.prompt);
+                  setInitialText(prompt);
                   suggestionRef.current.dismiss();
                 },
               }}
@@ -166,7 +153,6 @@ const AgentChatScreen = ({ navigation, route }) => {
           ))}
         </View>
       </MenuBottomSheet>
-      <AmpedRequiredModal ref={subscriptionModal} />
     </CustomKeyboardView>
   );
 };

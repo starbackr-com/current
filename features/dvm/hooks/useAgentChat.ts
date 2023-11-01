@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { pool } from '../../../utils/nostrV2';
 import { useRelayUrls } from '../../relays';
-import Message from '../../../utils/nostrV2/Message';
-import { dbAddMessage, getMessagesFromDb } from '../../../utils/database';
-import devLog from '../../../utils/internal';
-import { getValue } from '../../../utils';
-import { checkAgentReponseType, decryptAgentResponse, getAgentReponseTypeAndData } from '../utils/agents';
+import {
+  decryptAgentResponse,
+  getAgentReponseTypeAndData,
+} from '../utils/agents';
+import { useAppSelector } from '../../../hooks';
 
 const useAgentChat = (agentPublicKey) => {
   const [messages, setMessages] = useState([]);
-  const pk = useSelector((state) => state.auth.pubKey);
+  const pk = useAppSelector((state) => state.auth.pubKey);
   const { readUrls } = useRelayUrls();
 
   useEffect(() => {

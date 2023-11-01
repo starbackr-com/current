@@ -1,7 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AgentChatScreen, DvmSelectionScreen, ImageGenScreen } from '../views';
-import { colors } from '../../../styles';
 import ChooseTierView from '../../premium/views/ChooseTierView';
 import { BackHeader } from '../../../components';
 
