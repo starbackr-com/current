@@ -29,7 +29,7 @@ const AgentImageResponse = ({ imageUri }: AgentImageResponseProps) => {
   const dispatch = useAppDispatch();
 
   const createPostHandler = () => {
-    dispatch(replaceText(imageUri));
+    dispatch(replaceText(imageUri[0]));
     navigation.navigate('PostView');
   };
   return (

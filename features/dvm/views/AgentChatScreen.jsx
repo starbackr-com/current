@@ -34,7 +34,6 @@ const AgentChatScreen = ({ navigation, route }) => {
   const ownPk = useAppSelector((state) => state.auth.pubKey);
   const dispatch = useAppDispatch();
 
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (

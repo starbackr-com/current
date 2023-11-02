@@ -44,6 +44,7 @@ const DvmSelectionScreen = ({ navigation }) => {
               estimatedItemSize={100}
               ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
               showsHorizontalScrollIndicator={false}
+              extraData={[isPremium]}
               renderItem={({ item }) => (
                 <DVMSelectionItem
                   agent={item}
