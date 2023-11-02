@@ -10,6 +10,7 @@ import { colors, globalStyles } from '../../../styles';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { Agent } from '../utils/agents';
+import { useAppSelector } from '../../../hooks';
 
 type DVMSelectionItemProps = {
   agent: Agent;
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     padding: 10,
-    height: 150,
+    height: 180,
     width: 100,
   },
   containerPressed: {
@@ -39,14 +40,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 2,
     right: 2,
-    backgroundColor: colors.primary500,
+    backgroundColor: colors.backgroundActive,
     borderRadius: 10,
     paddingHorizontal: 4,
-    paddingVertical: 2,
-  }
+    paddingVertical: 4,
+  },
 });
 
 const DVMSelectionItem = ({ agent, color, onPress }: DVMSelectionItemProps) => {
+  const isPremium = useAppSelector((state) => state.auth.isPremium);
   return (
     <Pressable
       style={({ pressed }) => [
@@ -61,9 +63,19 @@ const DVMSelectionItem = ({ agent, color, onPress }: DVMSelectionItemProps) => {
         source={agent.symbol}
       />
       <Text style={globalStyles.textBodyS}>{agent.title}</Text>
-      {agent.paid ? <View style={styles.proBadge}>
-        <Text style={{color: 'white'}}>Pro</Text>
-      </View> : undefined}
+      <View style={{ flexDirection: 'row', gap: 6 }}>
+        <Ionicons name="chatbubble" color="grey" />
+        <Text style={globalStyles.textBodyG}>{agent.chatruns}</Text>
+      </View>
+      {agent.paid ? (
+        <View style={styles.proBadge}>
+          {isPremium ? (
+            <Ionicons name="lock-open" color={colors.primary500} />
+          ) : (
+            <Ionicons name="lock-closed" color={colors.primary500} />
+          )}
+        </View>
+      ) : undefined}
     </Pressable>
   );
 };
