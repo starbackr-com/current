@@ -20,7 +20,6 @@ const MenuBottomSheetWithData = React.memo(forwardRef(
   { render }: MenuBottomSheetProps,
     ref: React.Ref<BottomSheetModalMethods>,
   ) => {
-    console.log('Runs!');
     const insets = useSafeAreaInsets();
 
     const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
