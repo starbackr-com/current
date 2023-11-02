@@ -95,7 +95,7 @@ const AgentChatScreen = ({ navigation, route }) => {
           <Text style={globalStyles.textBodyG}>
             This agent requires a payment to process your last request
           </Text>
-          <PromptPaymentButton invoice={item.data} />
+          <PromptPaymentButton invoice={item.data} agent={agent} />
         </View>
       );
     }
@@ -123,7 +123,7 @@ const AgentChatScreen = ({ navigation, route }) => {
           contentContainerStyle={{ gap: 12 }}
           style={{ flex: 1, width: '100%' }}
           showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.response.id}
           inverted
           ref={listRef}
         />

@@ -4,7 +4,6 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
-  useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import { colors, globalStyles } from '../../../styles';
 import { CustomButton } from '../../../components';
@@ -37,15 +36,6 @@ const SubscriptionModal = memo(() => {
     }
   }, [mounted, modalRef]);
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], [data]);
-
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
-
   const renderBackground = (props) => (
     <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
   );
@@ -57,9 +47,7 @@ const SubscriptionModal = memo(() => {
   return (
     <BottomSheetModal
       ref={modalRef}
-      snapPoints={animatedSnapPoints}
-      handleHeight={animatedHandleHeight}
-      contentHeight={animatedContentHeight}
+      enableDynamicSizing={true}
       backgroundStyle={{ backgroundColor: colors.backgroundPrimary }}
       backdropComponent={renderBackground}
       handleIndicatorStyle={{ backgroundColor: colors.backgroundSecondary }}
@@ -67,13 +55,12 @@ const SubscriptionModal = memo(() => {
         dispatch(dismissModal({ modalKey: 'subscriptionModal' }));
       }}
     >
-      <BottomSheetView onLayout={handleContentLayout}>
+      <BottomSheetView>
         <View
           style={{
             padding: 24,
             alignItems: 'center',
             gap: 12,
-            flex: 1,
           }}
         >
           <Image

@@ -6,6 +6,7 @@ import {
   Swipeable,
 } from 'react-native-gesture-handler';
 import Animated, {
+  interpolate,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -23,26 +24,36 @@ type SwipeToConfirmProps = {
 const SwipeToConfirm = ({ onConfirm, loading }: SwipeToConfirmProps) => {
   const [trackLength, setTrackLength] = useState(0);
   const [active, setActive] = useState(true);
+
   const translateX = useSharedValue(0);
+  const textOpacity = useSharedValue(1);
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
+  }));
+  const animatedTextStyle = useAnimatedStyle(() => ({
+    opacity: textOpacity.value,
   }));
 
   const pan = Gesture.Pan()
     .enabled(active)
+    .onBegin(() => {
+      textOpacity.value = withTiming(0);
+    })
     .onChange((e) => {
       const newValue = translateX.value + e.changeX;
       if (newValue < 0) {
         translateX.value = 0;
-      } else if (newValue > trackLength - 120) {
-        translateX.value = trackLength - 120;
+      } else if (newValue > trackLength - 60) {
+        translateX.value = trackLength - 60;
       } else {
         translateX.value = newValue;
       }
     })
     .onEnd(() => {
-      if (translateX.value !== trackLength - 120) {
+      if (translateX.value !== trackLength - 60) {
         translateX.value = withTiming(0);
+        textOpacity.value = withTiming(1);
       } else {
         runOnJS(setActive)(false);
         runOnJS(onConfirm)();
@@ -55,6 +66,7 @@ const SwipeToConfirm = ({ onConfirm, loading }: SwipeToConfirmProps) => {
         height: 50,
         backgroundColor: colors.backgroundSecondary,
         borderRadius: 10,
+        flexDirection: 'row',
       }}
       onLayout={(e) => {
         setTrackLength(e.nativeEvent.layout.width);
@@ -65,13 +77,15 @@ const SwipeToConfirm = ({ onConfirm, loading }: SwipeToConfirmProps) => {
           style={[
             {
               height: 50,
-              width: 120,
+              width: 60,
               borderRadius: 10,
               justifyContent: 'center',
               alignItems: 'center',
               borderColor: colors.primary500,
               borderWidth: 1,
               flexDirection: 'row',
+              zIndex: 2,
+              backgroundColor: colors.backgroundSecondary,
             },
             animatedStyle,
           ]}
@@ -79,13 +93,20 @@ const SwipeToConfirm = ({ onConfirm, loading }: SwipeToConfirmProps) => {
           {loading ? (
             <LoadingSpinner size={24} />
           ) : (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={globalStyles.textBodyBold}>Confirm</Text>
-              <Ionicons name="chevron-forward" size={20} color="white" />
+            <View style={{ flexDirection: 'row' }}>
+              <Ionicons name="chevron-forward" size={20} color={colors.primary500} />
             </View>
           )}
         </Animated.View>
       </GestureDetector>
+      <Animated.View
+        style={[
+          { flex: 1, justifyContent: 'center', zIndex: 1 },
+          animatedTextStyle,
+        ]}
+      >
+        <Text style={globalStyles.textBodyG}>Slide to confirm</Text>
+      </Animated.View>
     </View>
   );
 };

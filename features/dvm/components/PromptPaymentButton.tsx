@@ -7,14 +7,16 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { useNavigation } from '@react-navigation/native';
 import { usePostPaymentMutation } from '../../../services/walletApi';
 import { displayModal } from '../../modal/modalSlice';
+import { Agent } from '../utils/agents';
 
 type PromptPaymentButtonProps = {
   invoice: string;
   onSubRequired: () => void;
+  agent: Agent;
 };
 
 const PromptPaymentButton = memo(
-  ({ invoice }: PromptPaymentButtonProps) => {
+  ({ invoice, agent }: PromptPaymentButtonProps) => {
     const isPremium = useAppSelector((state) => state.auth.isPremium);
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
@@ -33,7 +35,7 @@ const PromptPaymentButton = memo(
       dispatch(
         displayModal({
           modalKey: 'paymentModal',
-          data: { invoice, receiver: 'Agent' },
+          data: { invoice, receiver: agent.title },
         }),
       );
     };
