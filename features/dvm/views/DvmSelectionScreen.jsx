@@ -63,6 +63,7 @@ const DvmSelectionScreen = ({ navigation }) => {
           </View>
         ))}
         <AmpedRequiredModal ref={subscriptionRef} />
+        <View style={{ height: 32 }} />
       </ScrollView>
     );
   }
