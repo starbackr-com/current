@@ -34,7 +34,7 @@ const DvmSelectionScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         {categorizedAndFilteredAgents.map((category) => (
-          <View style={{ flex: 1, width: '100%' }}>
+          <View style={{ flex: 1, width: '100%' }} key={category.category}>
             <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
               {category.category}
             </Text>

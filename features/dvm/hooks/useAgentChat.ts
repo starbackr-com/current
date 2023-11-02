@@ -18,19 +18,28 @@ const useAgentChat = (agentPublicKey) => {
       readUrls,
       [
         { kinds: [4], authors: [pk], '#p': [agentPublicKey] },
-        { kinds: [4], authors: [agentPublicKey], '#p': [pk] },
+        { kinds: [4, 7000], authors: [agentPublicKey], '#p': [pk] },
       ],
       { skipVerification: true },
     );
     sub.on('event', async (event) => {
       if (!knownIds.includes(event.id)) {
-        const response = await decryptAgentResponse(event, agentPublicKey);
-        const [type, data] = getAgentReponseTypeAndData(response);
-        setMessages((prev) =>
-          [...prev, { type, response, data }].sort(
-            (a, b) => b.response.created_at - a.response.created_at,
-          ),
-        );
+        //@ts-ignore
+        if (event.kind === 7000) {
+          setMessages((prev) =>
+            [...prev, { type: 'text', response: event }].sort(
+              (a, b) => b.response.created_at - a.response.created_at,
+            ),
+          );
+        } else {
+          const response = await decryptAgentResponse(event, agentPublicKey);
+          const [type, data] = getAgentReponseTypeAndData(response);
+          setMessages((prev) =>
+            [...prev, { type, response, data }].sort(
+              (a, b) => b.response.created_at - a.response.created_at,
+            ),
+          );
+        }
       }
     });
     return () => {
