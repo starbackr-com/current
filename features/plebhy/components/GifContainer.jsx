@@ -5,18 +5,28 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useZapPlebhy } from '../hooks/useZapPlebhy';
 import { colors, globalStyles } from '../../../styles';
+import { useAppDispatch } from '../../../hooks';
+import { replaceText } from '../../post/composeSlice';
 
 const GifContainer = memo(({ item, width, opener }) => {
   const navigation = useNavigation();
   const user = useSelector((state) => state.messages.users[item.pTag]);
   const zapPlebhy = useZapPlebhy();
 
+  const dispatch = useAppDispatch();
+
   const yesHandler = () => {
+    if (opener === 'PostNote') {
+      dispatch(replaceText(item.result));
+    }
     zapPlebhy(item.eTag, user, item.pTag);
     navigation.navigate(opener, { gif: item.result });
   };
 
   const noHandler = () => {
+    if (opener === 'PostNote') {
+      dispatch(replaceText(item.result));
+    }
     navigation.navigate(opener, { gif: item.result });
   };
   const ratio = width / 2 / item.width;

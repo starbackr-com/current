@@ -112,7 +112,7 @@ const NewPostScreen = ({ navigation }) => {
   }
   return (
     <CustomKeyboardView noBottomBar>
-      <View style={[globalStyles.screenContainer, { paddingTop: 0}]}>
+      <View style={[globalStyles.screenContainer, { paddingTop: 0 }]}>
         <MentionInput
           value={text}
           containerStyle={styles.input}
