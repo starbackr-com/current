@@ -67,13 +67,9 @@ const DVMSelectionItem = ({ agent, color, onPress }: DVMSelectionItemProps) => {
         <Ionicons name="chatbubble" color="grey" />
         <Text style={globalStyles.textBodyG}>{agent.chatruns}</Text>
       </View>
-      {agent.paid ? (
+      {agent.paid && !isPremium ? (
         <View style={styles.proBadge}>
-          {isPremium ? (
-            <Ionicons name="lock-open" color={colors.primary500} />
-          ) : (
-            <Ionicons name="lock-closed" color={colors.primary500} />
-          )}
+          <Ionicons name="lock-closed" color={colors.primary500} />
         </View>
       ) : undefined}
     </Pressable>

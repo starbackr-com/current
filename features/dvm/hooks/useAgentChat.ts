@@ -13,12 +13,11 @@ const useAgentChat = (agentPublicKey) => {
   const pk = useAppSelector((state) => state.auth.pubKey);
   const { readUrls } = useRelayUrls();
   const appState = useAppState();
-  console.log(appState)
 
   useEffect(() => {
     let sub;
     if (appState === 'active') {
-      const knownIds = messages.map(item => item.response.id)
+      const knownIds = messages.map((item) => item.response.id);
       sub = pool.sub(
         readUrls,
         [
