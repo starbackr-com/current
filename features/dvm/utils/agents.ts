@@ -2,6 +2,7 @@ import { Event, nip04 } from 'nostr-tools';
 import { getTagValue } from '../../../utils/nostrV2/tags';
 import { getPrivateKey } from '../../../utils/cache/asyncStorage';
 import { imageRegex } from '../../../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AgentResponseTypes = 'invoice' | 'image' | 'movie' | 'text';
 
@@ -104,7 +105,8 @@ export class AgentResponse {
 }
 
 export async function decryptAgentResponse(
-  event: Event, agentPublicKey: string
+  event: Event,
+  agentPublicKey: string,
 ): Promise<DecryptedAgentResponse> {
   const sk = await getPrivateKey();
   if (!sk) {
@@ -124,4 +126,25 @@ export function getAgentReponseTypeAndData(response: DecryptedAgentResponse) {
     return ['image', images];
   }
   return ['text', response.content];
+}
+
+export async function agentIntroShown(agentKey) {
+  const agentIntrosShownJson = await AsyncStorage.getItem('agentIntrosShown');
+  console.log(agentIntrosShownJson);
+  if (agentIntrosShownJson) {
+    const parsedJson = JSON.parse(agentIntrosShownJson);
+    if (parsedJson.length > 0 && !parsedJson.includes(agentKey)) {
+      parsedJson.push(agentKey);
+      await AsyncStorage.setItem(
+        'agentIntrosShown',
+        JSON.stringify(parsedJson),
+      );
+      return false;
+    }
+    return true;
+  } else {
+    const newArray = [agentKey];
+    await AsyncStorage.setItem('agentIntrosShown', JSON.stringify(newArray));
+    return false;
+  }
 }

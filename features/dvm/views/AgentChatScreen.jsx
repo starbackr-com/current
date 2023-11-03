@@ -1,19 +1,17 @@
 /* eslint-disable react/no-unstable-nested-components */
-import { View, Text } from 'react-native';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import { View, Text, Platform } from 'react-native';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useScrollToTop } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, globalStyles } from '../../../styles';
 import {
   CustomButton,
   CustomKeyboardView,
-  ExpandableInput,
-  MenuBottomSheet,
+  StandardInput,
 } from '../../../components';
 import { useAgentChat } from '../hooks';
-import BackHeaderWithButton from '../../../components/BackHeaderWithButton';
 import publishPrompt from '../utils/publishPrompt';
 import PromptPaymentButton from '../components/PromptPaymentButton';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
@@ -21,6 +19,9 @@ import AgentRequest from '../components/AgentRequest';
 import AgentTextResponse from '../components/AgentTextResponse';
 import { displayModal } from '../../modal/modalSlice';
 import AgentImageResponse from '../components/AgentImageResponse';
+import AgentInfoModal from '../components/AgentInfoModal';
+import BackButton from '../../../components/BackButton';
+import { agentIntroShown } from '../utils/agents';
 
 const AgentChatScreen = ({ navigation, route }) => {
   const { agent } = route?.params || {};
@@ -34,24 +35,53 @@ const AgentChatScreen = ({ navigation, route }) => {
   const ownPk = useAppSelector((state) => state.auth.pubKey);
   const dispatch = useAppDispatch();
 
+  const insets = useSafeAreaInsets();
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <BackHeaderWithButton
-          rightButton={() => (
-            <Ionicons
-              size={24}
-              color={colors.primary500}
-              name="information-circle-outline"
+        <View
+          style={{
+            backgroundColor: colors.backgroundPrimary,
+            padding: 12,
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingTop: Platform.OS === 'android' ? insets.top : 12,
+          }}
+        >
+          {/* @ts-ignore */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <BackButton
               onPress={() => {
-                suggestionRef.current.present();
+                navigation.goBack();
               }}
             />
-          )}
-          navigation={navigation}
-        />
+            <Text style={globalStyles.textBodyBold}>{agent.title}</Text>
+          </View>
+          <Ionicons
+            size={24}
+            color={colors.primary500}
+            name="information-circle-outline"
+            onPress={() => {
+              suggestionRef.current.present();
+            }}
+          />
+        </View>
       ),
     });
+  }, [suggestionRef]);
+
+  useEffect(() => {
+    async function check() {
+      const introShown = await agentIntroShown(agent.pubkey);
+      if (!introShown) {
+        suggestionRef.current.present();
+      }
+    }
+    if (suggestionRef.current) {
+      check();
+    }
   }, [suggestionRef]);
 
   const sortedEvents = useAgentChat(agent.pubkey);
@@ -126,32 +156,13 @@ const AgentChatScreen = ({ navigation, route }) => {
           inverted
           ref={listRef}
         />
-        <ExpandableInput onSubmit={submitJob} initialText={inititalText} />
+        <StandardInput onSubmit={submitJob} initialText={inititalText} />
       </View>
-      <MenuBottomSheet ref={suggestionRef}>
-        <View style={{ gap: 5, alignItems: 'center' }}>
-          <Text style={globalStyles.textH2}>{agent.title}</Text>
-          <Image
-            source={agent.symbol}
-            style={{ height: 70, width: 70, borderRadius: 35 }}
-          />
-          <Text style={globalStyles.textBodyG}>{agent.placeholder}</Text>
-          <Text style={globalStyles.textBody}>
-            Sample prompts to get started:
-          </Text>
-          {agent.examples.map((prompt) => (
-            <CustomButton
-              text={`${prompt.slice(0, 30)}...`}
-              buttonConfig={{
-                onPress: () => {
-                  setInitialText(prompt);
-                  suggestionRef.current.dismiss();
-                },
-              }}
-            />
-          ))}
-        </View>
-      </MenuBottomSheet>
+      <AgentInfoModal
+        agent={agent}
+        suggestionCallback={setInitialText}
+        ref={suggestionRef}
+      />
     </CustomKeyboardView>
   );
 };
