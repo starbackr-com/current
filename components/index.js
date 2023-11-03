@@ -7,6 +7,7 @@ export { default as TabBarHeaderLeft } from './TabBarHeaderLeft';
 export { default as TabBarIcon } from './TabBarIcon';
 export { default as LoadingSkeleton } from './LoadingSkeleton';
 export { default as ExpandableInput } from './ExpandableInput';
+export { default as StandardInput } from './StandardInput';
 export { default as ExpandingSearch } from './ExpandingSearch';
 export { default as SwitchBar } from './SwitchBar';
 export { default as SuccessToast } from './SuccessToast';
