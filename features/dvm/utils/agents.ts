@@ -54,7 +54,7 @@ export function sortAgentsByCategory(agents: Agent[]): CategorizedAgents[] {
 export function excludeSensitiveAgents(agents: Agent[]): Agent[] {
   const filteredAgents = [] as Agent[];
   for (let i = 0; i < agents.length; i++) {
-    if (!agents[i].restricted) {
+    if (!agents[i].restricted && agents[i].pubkey) {
       filteredAgents.push(agents[i]);
     }
   }

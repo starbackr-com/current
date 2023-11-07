@@ -1,6 +1,7 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '../styles';
 
 const TabBarIcon = ({ route, focused, color, size }) => {
   let iconName;
@@ -8,7 +9,8 @@ const TabBarIcon = ({ route, focused, color, size }) => {
   if (route.name === 'Home') {
     iconName = focused ? 'home-sharp' : 'home-outline';
   } else if (route.name === 'Wallet') {
-    iconName = focused ? 'wallet' : 'wallet-outline';
+    // iconName = focused ? 'wallet' : 'wallet-outline';
+    return;
   } else if (route.name === 'Settings') {
     iconName = focused ? 'settings' : 'settings-outline';
   } else if (route.name === 'Search') {
@@ -20,7 +22,12 @@ const TabBarIcon = ({ route, focused, color, size }) => {
   } else if (route.name === 'Community') {
     iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
   } else if (route.name === 'DVM') {
-    return <MaterialCommunityIcons name="robot" size={size} color={color} />;
+    if (focused) {
+      return <MaterialCommunityIcons name="robot" size={size} color={color} />;
+    }
+    return (
+      <MaterialCommunityIcons name="robot-outline" size={size} color={color} />
+    );
   }
   return <Ionicons name={iconName} size={size} color={color} />;
 };

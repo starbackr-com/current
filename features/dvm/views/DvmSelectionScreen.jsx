@@ -30,12 +30,18 @@ const DvmSelectionScreen = ({ navigation }) => {
     return (
       <ScrollView
         style={globalStyles.screenContainerScroll}
-        contentContainerStyle={{ gap: 32 }}
+        contentContainerStyle={{ gap: 16 }}
         showsVerticalScrollIndicator={false}
       >
+        <Text style={[globalStyles.textH2, { marginBottom: 0 }]}>PlebAI</Text>
         {categorizedAndFilteredAgents.map((category) => (
           <View style={{ flex: 1, width: '100%' }} key={category.category}>
-            <Text style={[globalStyles.textBodyBold, { textAlign: 'left' }]}>
+            <Text
+              style={[
+                globalStyles.textBodyBold,
+                { textAlign: 'left', marginBottom: 6 },
+              ]}
+            >
               {category.category}
             </Text>
             <FlashList

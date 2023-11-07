@@ -67,15 +67,16 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Wallet"
         component={WalletNavigator}
-        options={{ headerShown: !isPremium }}
+        options={{ headerShown: !isPremium, tabBarButton: () => undefined }}
       />
       <Tab.Screen name="Messages" component={ConversationNavigator} />
+
+      <Tab.Screen name="DVM" component={DvmNavigator} />
       <Tab.Screen
         name="Search"
         component={SearchNavigator}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="DVM" component={DvmNavigator} />
       <Tab.Screen name="Settings" component={SettingsNavigator} />
     </Tab.Navigator>
   );
