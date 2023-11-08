@@ -8,6 +8,13 @@ type AgentResponseTypes = 'invoice' | 'image' | 'movie' | 'text';
 
 type DecryptedAgentResponse = Event;
 
+export type SamplePrompts = {
+  message_id: string;
+  agent_id: string;
+  prompt: string;
+  imageurl: string;
+};
+
 export type Agent = {
   id: string;
   title: string;

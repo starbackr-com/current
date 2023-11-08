@@ -1,10 +1,15 @@
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { RefObject, forwardRef } from 'react';
-import { CustomButton, MenuBottomSheet } from '../../../components';
+import {
+  CustomButton,
+  LoadingSpinner,
+  MenuBottomSheet,
+} from '../../../components';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { Agent } from '../utils/agents';
 import { globalStyles } from '../../../styles';
 import { Image } from 'expo-image';
+import { useGetSamplePromptsQuery } from '../api/dvmApi';
 
 type AgentInfoModalProps = {
   agent: Agent;
@@ -16,6 +21,11 @@ const AgentInfoModal = forwardRef(
     { agent, suggestionCallback }: AgentInfoModalProps,
     suggestionRef: RefObject<BottomSheetModalMethods>,
   ) => {
+    const { data, isLoading } = useGetSamplePromptsQuery({
+      agentId: agent.id,
+      limit: 3,
+      offset: 0,
+    });
     const renderPriceInfo = () => {
       if (agent.paid) {
         return (
@@ -31,6 +41,46 @@ const AgentInfoModal = forwardRef(
         </Text>
       );
     };
+    let samplePrompts;
+    if (isLoading) {
+      samplePrompts = <LoadingSpinner size={24} />;
+    } else if (data && agent.category != 'Image Generation') {
+      samplePrompts = data.map((prompt) => (
+        <CustomButton
+          key={prompt.message_id}
+          text={`${prompt.prompt.slice(0, 30)}...`}
+          buttonConfig={{
+            onPress: () => {
+              suggestionCallback(prompt.prompt);
+              suggestionRef.current.dismiss();
+            },
+          }}
+        />
+      ));
+    } else if (data && agent.category === 'Image Generation') {
+      samplePrompts = (
+        <View style={{ width: '100%', flexDirection: 'row', gap: 10 }}>
+          {data.map((prompt) => (
+            <Pressable
+              onPress={() => {
+                suggestionCallback(prompt.prompt);
+                suggestionRef.current.dismiss();
+              }}
+              style={{ flex: 1 }}
+            >
+              <Image
+                source={prompt.imageurl}
+                style={{ flex: 1, height: 100, borderRadius: 10 }}
+              />
+            </Pressable>
+          ))}
+        </View>
+      );
+    } else {
+      samplePrompts = (
+        <Text style={globalStyles.textBodyG}>No Sampleprompts found...</Text>
+      );
+    }
 
     return (
       <MenuBottomSheet ref={suggestionRef}>
@@ -45,17 +95,7 @@ const AgentInfoModal = forwardRef(
           <Text style={globalStyles.textBody}>
             Sample prompts to get started:
           </Text>
-          {agent.examples.map((prompt) => (
-            <CustomButton
-              text={`${prompt.slice(0, 30)}...`}
-              buttonConfig={{
-                onPress: () => {
-                  suggestionCallback(prompt);
-                  suggestionRef.current.dismiss();
-                },
-              }}
-            />
-          ))}
+          {samplePrompts}
         </View>
       </MenuBottomSheet>
     );
