@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
 const AgentTextResponse = ({ content }) => {
   return (
     <View style={styles.card}>
-      <Text style={styles.body}>{content}</Text>
+      <Text style={styles.body} selectable>
+        {content}
+      </Text>
     </View>
   );
 };
