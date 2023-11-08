@@ -69,7 +69,7 @@ const AgentInfoModal = forwardRef(
               style={{ flex: 1 }}
             >
               <Image
-                source={prompt.imageurl}
+                source={prompt.response}
                 style={{ flex: 1, height: 100, borderRadius: 10 }}
               />
             </Pressable>

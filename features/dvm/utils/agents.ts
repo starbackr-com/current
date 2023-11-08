@@ -12,7 +12,7 @@ export type SamplePrompts = {
   message_id: string;
   agent_id: string;
   prompt: string;
-  imageurl: string;
+  response: string;
 };
 
 export type Agent = {
