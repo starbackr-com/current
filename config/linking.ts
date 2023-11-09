@@ -1,6 +1,8 @@
 import * as Notifications from 'expo-notifications';
 import { Event, nip19 } from 'nostr-tools';
 import { Linking } from 'react-native';
+import { store } from '../store/store';
+import { replaceText } from '../features/post/composeSlice';
 
 function returnHexFromEntity(entity) {
   try {
@@ -45,6 +47,14 @@ const linkingConfig = {
           },
         },
       },
+      PostView: {
+        initialRouteName: 'MainTabNav',
+        screens: {
+          PostNote: {
+            path: '/intent?text',
+          },
+        },
+      },
       MainTabNav: {
         screens: {
           Home: {
@@ -72,6 +82,13 @@ const linkingConfig = {
     const url = await Linking.getInitialURL();
     if (url != null) {
       if (url.startsWith('https://getcurrent.io')) {
+        const { pathname, searchParams } = new URL(url);
+        if (pathname.startsWith('/intent')) {
+          const text = searchParams.get('text');
+          if (text) {
+            store.dispatch(replaceText(text));
+          }
+        }
         return url;
       }
       if (url.startsWith('nostr:')) {
@@ -107,6 +124,13 @@ const linkingConfig = {
   subscribe(listener) {
     const onReceiveURL = ({ url }) => {
       if (url.startsWith('https://getcurrent.io')) {
+        const { pathname, searchParams } = new URL(url);
+        if (pathname.startsWith('/intent')) {
+          const text = searchParams.get('text');
+          if (text) {
+            store.dispatch(replaceText(text));
+          }
+        }
         listener(url);
       }
       if (url.startsWith('nostr:')) {

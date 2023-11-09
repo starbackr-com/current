@@ -25,6 +25,8 @@ import OwnProfileNavigator from './OwnProfileNavigator';
 import PostNavigator from '../features/post/nav/PostNavigator';
 import { SettingsNavigator } from '../features/settings';
 import DvmNavigator from '../features/dvm/nav/DvmNavigator';
+import SubscriptionModal from '../features/modal/components/SubscriptionModal';
+import PaymentConfirmationModal from '../features/modal/components/PaymentConfirmationModal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,15 +67,16 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Wallet"
         component={WalletNavigator}
-        options={{ headerShown: !isPremium }}
+        options={{ headerShown: !isPremium, tabBarButton: () => undefined }}
       />
       <Tab.Screen name="Messages" component={ConversationNavigator} />
+
+      <Tab.Screen name="DVM" component={DvmNavigator} />
       <Tab.Screen
         name="Search"
         component={SearchNavigator}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="DVM" component={DvmNavigator} />
       <Tab.Screen name="Settings" component={SettingsNavigator} />
     </Tab.Navigator>
   );
@@ -156,6 +159,8 @@ const AuthedNavigator = () => (
           })}
         />
       </Stack.Navigator>
+      <SubscriptionModal />
+      <PaymentConfirmationModal />
     </BottomSheetModalProvider>
   </GestureHandlerRootView>
 );

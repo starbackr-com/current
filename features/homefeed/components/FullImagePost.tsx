@@ -19,7 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const FullImagePost = ({ item, height, width, onMenu }) => {
   const navigation = useNavigation();
-  const [imageDim, setImageDim] = useState<{width: number, height: number}>();
+  const [imageDim, setImageDim] = useState<{ width: number; height: number }>();
   const user = useUser(item.pubkey);
   const [hasMore, setHasMore] = useState(false);
 
@@ -40,7 +40,7 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
   const content = useParseContent(item);
 
   const { created_at, pubkey } = item;
-  const age = useMemo(() => getAge(created_at), []);
+  const age = useMemo(() => getAge(created_at), [item]);
 
   const textLayout = (e) => {
     const maxLines = 2;
@@ -200,8 +200,14 @@ const FullImagePost = ({ item, height, width, onMenu }) => {
             bottom: 'auto',
           }}
         >
-          {/* @ts-ignore */}
-          <ActionBar user={user} event={item} width={width} onMenu={onMenu} />
+          <ActionBar
+            //@ts-ignore
+            user={user}
+            event={item}
+            width={width}
+            onMenu={onMenu}
+            isZapped={isZapped}
+          />
         </View>
       </Animated.View>
     </View>

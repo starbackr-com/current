@@ -19,17 +19,13 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/04522974-aa48-4b3e-ad26-71be0648d73c"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.getcurrent.current",
-      "buildNumber": "2",
+      "buildNumber": "7",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["remote-notification"]
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -74,9 +70,7 @@
         "projectId": "04522974-aa48-4b3e-ad26-71be0648d73c"
       }
     },
-    "plugins": [
-      "expo-localization"
-    ],
+    "plugins": ["expo-localization"],
     "hooks": {
       "postPublish": [
         {
