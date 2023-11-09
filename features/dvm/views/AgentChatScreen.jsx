@@ -9,6 +9,7 @@ import { colors, globalStyles } from '../../../styles';
 import {
   CustomButton,
   CustomKeyboardView,
+  ExpandableInput,
   StandardInput,
 } from '../../../components';
 import { useAgentChat } from '../hooks';
@@ -156,7 +157,7 @@ const AgentChatScreen = ({ navigation, route }) => {
           inverted
           ref={listRef}
         />
-        <StandardInput onSubmit={submitJob} initialText={inititalText} />
+        <ExpandableInput onSubmit={submitJob} initialText={inititalText} />
       </View>
       <AgentInfoModal
         agent={agent}
