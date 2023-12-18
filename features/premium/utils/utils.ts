@@ -1,13 +1,24 @@
 import { Platform } from 'react-native';
-import Purchases, {
-  PurchasesOffering,
-} from 'react-native-purchases';
+import Purchases, { PurchasesOffering } from 'react-native-purchases';
 import { store } from '../../../store/store';
 import { setPremium } from '../../authSlice';
 
 export async function initRC(userId: string) {
   try {
     if (Platform.OS === 'ios' || Platform.OS === 'macos') {
+      try {
+        const res = await fetch(`https://getcurrent.io/subscribers/${userId}`);
+        const data = await res.json();
+        if (!data) {
+          throw new Error('Subscribers Endpoint returned invalid reponse');
+        }
+        if (data.active) {
+          store.dispatch(setPremium(true));
+          return;
+        }
+      } catch (e) {
+        console.log('Failed to get subscriber status from endpoint: ', e);
+      }
       Purchases.configure({
         apiKey: process.env.RC_IOS_KEY,
         appUserID: userId,
@@ -68,9 +79,8 @@ export async function getSatProducts() {
   try {
     const rcProducts = await Purchases.getProducts(['sats_1usd']);
     return rcProducts;
-  }
-  catch(e) {
+  } catch (e) {
     console.log(e);
-    return []
+    return [];
   }
 }
