@@ -6,11 +6,13 @@ import Message from '../../../utils/nostrV2/Message';
 import { dbAddMessage, getMessagesFromDb } from '../../../utils/database';
 import devLog from '../../../utils/internal';
 import { getValue } from '../../../utils';
+import useAppState from '../../../hooks/useAppState';
 
 const useMessages = (partnerPubkey) => {
   const [messages, setMessages] = useState([]);
   const pk = useSelector((state) => state.auth.pubKey);
   const { readUrls } = useRelayUrls();
+  const appState = useAppState();
 
   useEffect(() => {
     let sub;
@@ -20,7 +22,9 @@ const useMessages = (partnerPubkey) => {
       try {
         const cachedMessages = await getMessagesFromDb(partnerPubkey);
         const cachedIds = cachedMessages.map((message) => message.id);
-        setMessages([...cachedMessages].sort((a, b) => b.created_at - a.created_at));
+        setMessages(
+          [...cachedMessages].sort((a, b) => b.created_at - a.created_at),
+        );
         cachedIds.forEach((id) => knownIds.push(id));
       } catch (e) {
         devLog(e);
@@ -46,17 +50,21 @@ const useMessages = (partnerPubkey) => {
             message.sig,
             message.tags,
           );
-          setMessages((prev) => [...prev, message].sort((a, b) => b.created_at - a.created_at));
+          setMessages((prev) =>
+            [...prev, message].sort((a, b) => b.created_at - a.created_at),
+          );
         }
       });
     }
-    getMessages();
+    if (appState === 'active') {
+      getMessages();
+    }
     return () => {
       if (sub) {
         sub.unsub();
       }
     };
-  }, []);
+  }, [appState]);
 
   return messages;
 };

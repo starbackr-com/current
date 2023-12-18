@@ -28,7 +28,7 @@ const useAgentChat = (agentPublicKey) => {
       );
       sub.on('event', async (event) => {
         if (!knownIds.includes(event.id)) {
-          //@ts-ignore
+          // @ts-ignore
           if (event.kind === 7000) {
             setMessages((prev) =>
               [...prev, { type: 'text', response: event }].sort(
